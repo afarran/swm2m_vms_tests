@@ -14,6 +14,9 @@ function propertiesToTable(propertyList)
 end
 
 function reverseMap(map)
+  if not map then
+    return nil
+  end
   result = {}
   for key, value in pairs(map) do
     result[value] = key

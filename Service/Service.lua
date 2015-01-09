@@ -1,11 +1,9 @@
-module("Service", package.seeall)
-
 cfg, framework, gateway, lsf, device, gps = require "TestFramework"()
-require "Service/TextUtils"
-require "Service/ArrayUtils"
+require "UtilLibs/Text"
+require "UtilLibs/Array"
 
 
-local ServiceWrapper = {}
+ServiceWrapper = {}
   ServiceWrapper.__index = ServiceWrapper
   setmetatable(ServiceWrapper, {
     __call = function(cls, ...)
@@ -16,11 +14,17 @@ local ServiceWrapper = {}
   
   function ServiceWrapper:getPin(name)
     local result = self.pins_named[name]
+    if not result then
+      printf("Can't find pin %s\n", name)
+    end
     return result
   end
 
   function ServiceWrapper:getPinName(pin)
     local result = self.pins[pin]
+    if not result then
+      printf("Can't find pin name %d\n", pin)
+    end
     return result
   end
   
@@ -28,21 +32,26 @@ local ServiceWrapper = {}
     pins = {}
     pins_named = {}
     pins_types = {}
+    pins_enums = {}
+    pins_enums_reverse = {}
     for index, tuple in pairs(properties) do
       pins_named[tuple.name] = tuple.pin
       pins[tuple.pin] = tuple.name
       pins_types[tuple.pin] = tuple.ptype
+      pins_enums[tuple.pin] = tuple.enums
+      pins_enums_reverse[tuple.pin] = reverseMap(tuple.enums)
     end
-    return pins, pins_named, pins_types
+    return pins, pins_named, pins_types, pins_enums, pins_enums_reverse
   end
   
   function ServiceWrapper:_init(args)
     self.sin = args.sin
     self.name = args.name
+    -- ptype can be set to: unsignedint, signedint, string, boolean, enum, data
     self.properties = args.properties
     
     self.mins = args.mins or {}
-    self.pins, self.pins_named, self.pins_types = self:__processProperties(self.properties)
+    self.pins, self.pins_named, self.pins_types, self.pins_enums, self.pins_enums_reverse = self:__processProperties(self.properties)
     printf("ServiceWrapper %s initialized. SIN %d\n", self.name, self.sin )
   end
   
@@ -73,22 +82,30 @@ local ServiceWrapper = {}
   function ServiceWrapper:_processPinValues(pinValues)
     local result = {}
     for pin, value in pairs(pinValues) do
-      --result[self.pins[pin]] = value
-      result[self:getPinName(pin)] = value
+      local ptype = self.pins_types[pin]
+      local decoded_value = value
+      if ptype == "enum" then
+        decoded_value = self.pins_enums_reverse[pin][tonumber(value)]
+      end
+      result[self:getPinName(pin)] = decoded_value
     end
     return result
   end
   
-  function ServiceWrapper:getProperties(pinList)
-    return self:_processPinValues(propertiesToTable(lsf.getProperties(self.sin, pinList)))
+  function ServiceWrapper:getProperties(pinList, raw)
+    if raw then
+      return propertiesToTable(lsf.getProperties(self.sin, pinList))
+    else
+      return self:_processPinValues(propertiesToTable(lsf.getProperties(self.sin, pinList)))
+    end
   end
   
-  function ServiceWrapper:getPropertiesByName(propertiesList)
+  function ServiceWrapper:getPropertiesByName(propertiesList, raw)
     local pinList = {}
     for index, propertyName in pairs(propertiesList) do
       pinList[#pinList + 1] = self:getPin(propertyName)
     end
-    return self:getProperties(pinList) 
+    return self:getProperties(pinList, raw) 
   end
   
   -- pinValues = {pin1 = val1, pin2 = val2}
@@ -134,13 +151,5 @@ PositionServiceWrapper = {}
 
 
 
--- test
-position = PositionServiceWrapper()
--- a = service:getPropertiesByName({"latitude", "longitude"})
-
-a = position:getPropertiesByName({"latitude", "longitude"})
-position:setPropertiesByName({latitude = 1, continuous = 1})
-a = position:getPropertiesByName({"latitude", "continuous"})
-print(a)
 
 
