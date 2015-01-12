@@ -12,28 +12,13 @@ ServiceWrapper = {}
       return self
     end,})
   
-  function ServiceWrapper:getPin(name)
-    local result = self.pins_named[name]
-    if not result then
-      printf("Can't find pin %s\n", name)
-    end
-    return result
-  end
-
-  function ServiceWrapper:getPinName(pin)
-    local result = self.pins[pin]
-    if not result then
-      printf("Can't find pin name %d\n", pin)
-    end
-    return result
-  end
-  
   function ServiceWrapper:__processProperties(properties)
-    pins = {}
-    pins_named = {}
-    pins_types = {}
-    pins_enums = {}
-    pins_enums_named = {}
+    properties = properties or {}
+    local pins = {}
+    local pins_named = {}
+    local pins_types = {}
+    local pins_enums = {}
+    local pins_enums_named = {}
     for index, tuple in pairs(properties) do
       pins_named[tuple.name] = tuple.pin
       pins[tuple.pin] = tuple.name
@@ -44,39 +29,29 @@ ServiceWrapper = {}
     return pins, pins_named, pins_types, pins_enums, pins_enums_named
   end
   
+  function ServiceWrapper:__processMessages(messages)
+    messages = messages or {}
+    local mins = {}
+    local mins_named = {}
+    for index, tuple in pairs(messages) do
+      mins[tuple.min] = tuple.name
+      mins_named[tuple.name] = tuple.min
+    end
+    return mins, mins_named
+  end
+  
   function ServiceWrapper:_init(args)
     self.sin = args.sin
     self.name = args.name
     -- ptype can be set to: unsignedint, signedint, string, boolean, enum, data
     self.properties = args.properties
     
-    self.mins = args.mins or {}
+    self.messages_to = args.messages_to or {}
+    self.messages_from = args.messages_from or {}
     self.pins, self.pins_named, self.pins_types, self.pins_enums, self.pins_enums_named = self:__processProperties(self.properties)
+    self.mins_to, self.mins_to_named = self:__processMessages(self.messages_to)
+    self.mins_from, self.mins_from_named = self:__processMessages(self.messages_from)
     printf("ServiceWrapper %s initialized. SIN %d\n", self.name, self.sin )
-  end
-  
-  function ServiceWrapper:matchReturnMessages(expectedMins, timeout)
-    if type(expectedMins) ~= "table" then 
-      expectedMins = {expectedMins}
-    end
-    timeout = tonumber(timeout) or GATEWAY_TIMEOUT
-
-    local msgList = {count = 0}
-
-      local function UpdateMsgMatchingList(msg)
-        if msg then   --TODO: why would this function be called with no msg?
-          for idx, min in pairs(expectedMins) do
-            if msg.Payload and min == msg.Payload.MIN and msg.SIN == self.sin and msgList[min] == nil then
-              msgList[min] = framework.collapseMessage(msg).Payload
-              msgList.count = msgList.count + 1
-              break
-            end
-          end
-        end
-        return #expectedMins == msgList.count
-      end
-    gateway.getReturnMessage(UpdateMsgMatchingList, nil, timeout)
-    return msgList
   end
   
   function ServiceWrapper:__decodePinValue(pin, raw_value)
@@ -161,4 +136,62 @@ ServiceWrapper = {}
     end
     return self:setProperties(pinValues)
   end
+  
+    
+  function ServiceWrapper:getPin(name)
+    local result = self.pins_named[name]
+    if not result then
+      printf("Can't find pin %s\n", name)
+    end
+    return result
+  end
 
+  function ServiceWrapper:getPinName(pin)
+    local result = self.pins[pin]
+    if not result then
+      printf("Can't find pin name %d\n", pin)
+    end
+    return result
+  end
+  
+  function ServiceWrapper:sendMessage(min, fields)
+    local message = {}
+    message.SIN = self.sin
+    message.MIM = min
+    message.Fields = fields
+    gateway.submitForwardMessage(message)
+  end
+  
+  function ServiceWrapper:sendMessageByName(message_name, fields)
+    
+    local min = self.mins_named.from[message_name]
+    if not message.MIN then
+      printf("Can't find min %s\n", message_name)
+      return nil
+    end
+    self:sendMessage(message_name, fields)    
+  end
+  
+  function ServiceWrapper:matchReturnMessages(expectedMins, timeout)
+    if type(expectedMins) ~= "table" then 
+      expectedMins = {expectedMins}
+    end
+    timeout = tonumber(timeout) or GATEWAY_TIMEOUT
+
+    local msgList = {count = 0}
+
+      local function UpdateMsgMatchingList(msg)
+        if msg then   --TODO: why would this function be called with no msg?
+          for idx, min in pairs(expectedMins) do
+            if msg.Payload and min == msg.Payload.MIN and msg.SIN == self.sin and msgList[min] == nil then
+              msgList[min] = framework.collapseMessage(msg).Payload
+              msgList.count = msgList.count + 1
+              break
+            end
+          end
+        end
+        return #expectedMins == msgList.count
+      end
+    gateway.getReturnMessage(UpdateMsgMatchingList, nil, timeout)
+    return msgList
+  end

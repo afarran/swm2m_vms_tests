@@ -16,5 +16,8 @@ PositionServiceWrapper = {}
                   {name = "heading", pin = 10, ptype="unsignedint"},
                   {name = "continuous", pin = 15, ptype="unsignedint"},
                  }
-    ServiceWrapper:_init({sin = 20, name = "Position", mins = {}, properties = properties})
+          
+    local messages_from = {{name="position", min = 1 }}
+    local messages_to = {{name="getPosition", min = 1}}
+    ServiceWrapper:_init({sin = 20, name = "Position", messages_to = messages_to, messages_from = messages_from, properties = properties})
   end

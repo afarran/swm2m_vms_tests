@@ -26,5 +26,5 @@ EioServiceWrapper = {}
                         {name = "port1AlarmMsg", pin = 2, ptype="boolean"},
                         {name = "port2Config", pin = 12, ptype="enum", enums=portConfigEnums}
                  }
-    ServiceWrapper:_init({sin = 25, name = "EIO", mins = {}, properties = properties})
+    ServiceWrapper:_init({sin = 25, name = "EIO", properties = properties})
   end
