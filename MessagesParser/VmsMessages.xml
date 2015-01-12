@@ -1,0 +1,1378 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MessageDefinition xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Services>
+    <Service>
+      <Name>VMS</Name>
+      <SIN>115</SIN>
+      <ForwardMessages>
+        <Message>
+          <Name>PollRequest1</Name>
+          <Description>Send this message to request @{FromMobileMessages.PollResponse1|PollResponse1}.</Description>
+          <MIN>1</MIN>
+        </Message>
+        <Message>
+          <Name>PollRequest2</Name>
+          <Description>Send this message to request @{FromMobileMessages.PollResponse2|PollResponse2}.</Description>
+          <MIN>2</MIN>
+        </Message>
+        <Message>
+          <Name>PollRequest3</Name>
+          <Description>Send this message to request @{FromMobileMessages.PollResponse3|PollResponse3}.</Description>
+          <MIN>3</MIN>
+        </Message>
+        <Message>
+          <Name>GetConfigReport1</Name>
+          <Description>Send this message to request @{FromMobileMessages.ConfigReport1|ConfigReport1}.</Description>
+          <MIN>4</MIN>
+        </Message>
+        <Message>
+          <Name>GetConfigReport2</Name>
+          <Description>Send this message to request @{FromMobileMessages.ConfigReport2|ConfigReport2}.</Description>
+          <MIN>5</MIN>
+        </Message>
+        <Message>
+          <Name>GetConfigReport3</Name>
+          <Description>Send this message to request @{FromMobileMessages.ConfigReport3|ConfigReport3}.</Description>
+          <MIN>6</MIN>
+        </Message>
+        <Message>
+          <Name>GetProperties</Name>
+          <Description>Send this message to request @{FromMobileMessages.Properties|Properties} return message.</Description>
+          <MIN>7</MIN>
+        </Message>
+        <Message>
+          <Name>GetVersion</Name>
+          <Description>Get the version number of all components in the VMS system</Description>
+          <MIN>8</MIN>
+        </Message>
+        <Message>
+          <Name>SetConfigReport1</Name>
+          <Description>Set service 1 reporting configuration @{Properties|properties}.</Description>
+          <MIN>10</MIN>
+          <Fields>
+            <Field xsi:type="UnsignedIntField">
+              <Name>StandardReport1Interval</Name>
+              <Description>See @{Properties.StandardReport1Interval}.</Description>
+              <Size>11</Size>
+              <Default>60</Default>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>AcceleratedReport1Rate</Name>
+              <Description>See @{Properties.AcceleratedReport1Rate}.</Description>
+              <Size>11</Size>
+              <Default>1</Default>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>LogReport1Rate</Name>
+              <Description>See @{Properties.LogReport1Rate}.</Description>
+              <Size>11</Size>
+              <Default>1</Default>
+            </Field>
+          </Fields>
+        </Message>
+        <Message>
+          <Name>SetConfigReport2</Name>
+          <Description>Similar to @{ToMobileMessages.SetConfigReport1|SetConfigReport1}.</Description>
+          <MIN>11</MIN>
+          <Fields>
+            <Field xsi:type="UnsignedIntField">
+              <Name>StandardReport2Interval</Name>
+              <Description>See @{Properties.StandardReport2Interval}.</Description>
+              <Size>11</Size>
+              <Default>60</Default>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>AcceleratedReport2Rate</Name>
+              <Description>See @{Properties.AcceleratedReport2Rate}.</Description>
+              <Size>11</Size>
+              <Default>1</Default>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>LogReport2Rate</Name>
+              <Description>See @{Properties.LogReport2Rate}.</Description>
+              <Size>11</Size>
+              <Default>1</Default>
+            </Field>
+          </Fields>
+        </Message>
+        <Message>
+          <Name>SetConfigReport3</Name>
+          <Description>Similar to @{ToMobileMessages.SetConfigReport1|SetConfigReport1}.</Description>
+          <MIN>12</MIN>
+          <Fields>
+            <Field xsi:type="UnsignedIntField">
+              <Name>StandardReport3Interval</Name>
+              <Description>See @{Properties.StandardReport3Interval}.</Description>
+              <Size>11</Size>
+              <Default>60</Default>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>AcceleratedReport3Rate</Name>
+              <Description>See @{Properties.AcceleratedReport3Rate}.</Description>
+              <Size>11</Size>
+              <Default>1</Default>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>LogReport3Rate</Name>
+              <Description>See @{Properties.LogReport3Rate}.</Description>
+              <Size>11</Size>
+              <Default>1</Default>
+            </Field>
+          </Fields>
+        </Message>
+        <Message>
+          <Name>SetProperties</Name>
+          <Description>Set configuration @{Properties|properties} not specific to reporting rates and intervals.</Description>
+          <MIN>13</MIN>
+          <Fields>
+            <Field xsi:type="BooleanField">
+              <Name>GpsJammedSendReport</Name>
+              <Description>See @{Properties.GpsJammedSendReport}.</Description>
+              <Optional>true</Optional>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>GpsJammedStartDebounceTime</Name>
+              <Description>See @{Properties.GpsJammedStartDebounceTime}.</Description>
+              <Optional>true</Optional>
+              <Size>12</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>GpsJammedEndDebounceTime</Name>
+              <Description>See @{Properties.GpsJammedEndDebounceTime}.</Description>
+              <Optional>true</Optional>
+              <Size>12</Size>
+            </Field>
+            <Field xsi:type="BooleanField">
+              <Name>GpsBlockedSendReport</Name>
+              <Description>See @{Properties.GpsBlockedSendReport}.</Description>
+              <Optional>true</Optional>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>GpsBlockedStartDebounceTime</Name>
+              <Description>See @{Properties.GpsBlockedStartDebounceTime}.</Description>
+              <Optional>true</Optional>
+              <Size>12</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>GpsBlockedEndDebounceTime</Name>
+              <Description>See @{Properties.GpsBlockedEndDebounceTime}.</Description>
+              <Optional>true</Optional>
+              <Size>12</Size>
+            </Field>
+            <Field xsi:type="BooleanField">
+              <Name>IdpBlockedSendReport</Name>
+              <Description>See @{Properties.IdpBlockedSendReport}.</Description>
+              <Optional>true</Optional>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>IdpBlockedStartDebounceTime</Name>
+              <Description>See @{Properties.IdpBlockedStartDebounceTime}.</Description>
+              <Optional>true</Optional>
+              <Size>12</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>IdpBlockedEndDebounceTime</Name>
+              <Description>See @{Properties.IdpBlockedEndDebounceTime}.</Description>
+              <Optional>true</Optional>
+              <Size>12</Size>
+            </Field>
+            <Field xsi:type="BooleanField">
+              <Name>HwClientDisconnectedSendReport</Name>
+              <Description>See @{Properties.HwClientDisconnectedSendReport}.</Description>
+              <Optional>true</Optional>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>HwClientDisconnectedStartDebounceTime</Name>
+              <Description>See @{Properties.HwClientDisconnectedStartDebounceTime}.</Description>
+              <Optional>true</Optional>
+              <Size>12</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>HwClientDisconnectedEndDebounceTime</Name>
+              <Description>See @{Properties.HwClientDisconnectedEndDebounceTime}.</Description>
+              <Optional>true</Optional>
+              <Size>12</Size>
+            </Field>
+            <Field xsi:type="BooleanField">
+              <Name>HelmPanelDisconnectedSendReport</Name>
+              <Description>See @{Properties.HelmPanelDisconnectedSendReport}.</Description>
+              <Optional>true</Optional>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>HelmPanelDisconnectedStartDebounceTime</Name>
+              <Description>See @{Properties.HelmPanelDisconnectedStartDebounceTime}.</Description>
+              <Optional>true</Optional>
+              <Size>12</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>HelmPanelDisconnectedEndDebounceTime</Name>
+              <Description>See @{Properties.HelmPanelDisconnectedEndDebounceTime}.</Description>
+              <Optional>true</Optional>
+              <Size>12</Size>
+            </Field>
+            <Field xsi:type="BooleanField">
+              <Name>ExtPowerDisconnectedSendReport</Name>
+              <Description>See @{Properties.ExtPowerDisconnectedSendReport}.</Description>
+              <Optional>true</Optional>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>ExtPowerDisconnectedStartDebounceTime</Name>
+              <Description>See @{Properties.ExtPowerDisconnectedStartDebounceTime}.</Description>
+              <Optional>true</Optional>
+              <Size>12</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>ExtPowerDisconnectedEndDebounceTime</Name>
+              <Description>See @{Properties.ExtPowerDisconnectedEndDebounceTime}.</Description>
+              <Optional>true</Optional>
+              <Size>12</Size>
+            </Field>
+            <Field xsi:type="BooleanField">
+              <Name>PowerDisconnectedSendReport</Name>
+              <Description>See @{Properties.PowerDisconnectedSendReport}.</Description>
+              <Optional>true</Optional>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>PowerDisconnectedStartDebounceTime</Name>
+              <Description>See @{Properties.PowerDisconnectedStartDebounceTime}.</Description>
+              <Optional>true</Optional>
+              <Size>12</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>PowerDisconnectedEndDebounceTime</Name>
+              <Description>See @{Properties.PowerDisconnectedEndDebounceTime}.</Description>
+              <Optional>true</Optional>
+              <Size>12</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>PropertyChangeDebounceTime</Name>
+              <Description>See @{Properties.PropertyChangeDebounceTime}.</Description>
+              <Optional>true</Optional>
+              <Size>11</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>MinStandardReportLedFlashTime</Name>
+              <Description>See @{Properties.MinStandardReportLedFlashTime|MinStandardReportLedFlashTime}</Description>
+              <Size>12</Size>
+            </Field>
+          </Fields>
+        </Message>
+      </ForwardMessages>
+      <ReturnMessages>
+        <Message>
+          <Name>PollResponse1</Name>
+          <Description>This message is sent in response to a @{ToMobileMessages.PollRequest1|PollRequest1} request.</Description>
+          <MIN>1</MIN>
+          <Fields>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Timestamp</Name>
+              <Description>GPS UTC fix time in seconds since the epoch or terminal UTC time if GPS is blocked (see StatusBitmap). If GPS is blocked and the terminal is power cycled before terminal UTC time becomes known, 0 is used.</Description>
+              <Size>31</Size>
+            </Field>
+            <Field xsi:type="SignedIntField">
+              <Name>Latitude</Name>
+              <Description>GPS latitude in milli-minute resolution. If a valid GPS fix was never acquired, value 5460000 (equivalent to 91 degree) is used.</Description>
+              <Size>24</Size>
+            </Field>
+            <Field xsi:type="SignedIntField">
+              <Name>Longitude</Name>
+              <Description>GPS longitude in milli-minute resolution. If a valid GPS fix was never acquired, value 10860000 (equivalent to 181 degree) is used.</Description>
+              <Size>25</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Speed</Name>
+              <Description>GPS speed in tenths of knots. 511 means 51.1 knots or more.</Description>
+              <Size>9</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Course</Name>
+              <Description>GPS course in degrees. 361 is used when the speed is 0 knots.</Description>
+              <Size>9</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Hdop</Name>
+              <Description>HDOP (Horizontal Dilution of Precision), a metric indicating GPS quality (255 if unavailable).</Description>
+              <Size>8</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>NumSats</Name>
+              <Description>Number of GPS satellites.</Description>
+              <Size>4</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>IdpCnr</Name>
+              <Description>IDP Average Carrier to Noise Ratio for the last full minute, in tenths of dBHz (0 if unavailable). 1023 means 102.3 dBHz or more.</Description>
+              <Size>10</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>StatusBitmap</Name>
+              <Description>Bitmap of current debounced VMS states. See @{Event.EventStateId}.</Description>
+              <Size>16</Size>
+            </Field>
+          </Fields>
+        </Message>
+        <Message>
+          <Name>PollResponse2</Name>
+          <Description>This message is sent in response to a @{ToMobileMessages.PollRequest2|PollRequest2} request.</Description>
+          <MIN>2</MIN>
+          <Fields>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Timestamp</Name>
+              <Description>GPS UTC fix time in seconds since the epoch or terminal UTC time if GPS is blocked (see StatusBitmap). If GPS is blocked and the terminal is power cycled before terminal UTC time becomes known, 0 is used.</Description>
+              <Size>31</Size>
+            </Field>
+            <Field xsi:type="SignedIntField">
+              <Name>Latitude</Name>
+              <Description>GPS latitude in milli-minute resolution. If a valid GPS fix was never acquired, value 5460000 (equivalent to 91 degree) is used.</Description>
+              <Size>24</Size>
+            </Field>
+            <Field xsi:type="SignedIntField">
+              <Name>Longitude</Name>
+              <Description>GPS longitude in milli-minute resolution. If a valid GPS fix was never acquired, value 10860000 (equivalent to 181 degree) is used.</Description>
+              <Size>25</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Speed</Name>
+              <Description>GPS speed in tenths of knots. 511 means 51.1 knots or more.</Description>
+              <Size>9</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Course</Name>
+              <Description>GPS course in degrees. 361 is used when the speed is 0 knots.</Description>
+              <Size>9</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Hdop</Name>
+              <Description>HDOP (Horizontal Dilution of Precision), a metric indicating GPS quality (255 if unavailable).</Description>
+              <Size>8</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>NumSats</Name>
+              <Description>Number of GPS satellites.</Description>
+              <Size>4</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>IdpCnr</Name>
+              <Description>IDP Average Carrier to Noise Ratio for the last full minute, in tenths of dBHz (0 if unavailable). 1023 means 102.3 dBHz or more.</Description>
+              <Size>10</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>StatusBitmap</Name>
+              <Description>Bitmap of current debounced VMS states. See @{Event.EventStateId}.</Description>
+              <Size>16</Size>
+            </Field>
+          </Fields>
+        </Message>
+        <Message>
+          <Name>PollResponse3</Name>
+          <Description>This message is sent in response to a @{ToMobileMessages.PollRequest3|PollRequest3} request.</Description>
+          <MIN>3</MIN>
+          <Fields>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Timestamp</Name>
+              <Description>GPS UTC fix time in seconds since the epoch or terminal UTC time if GPS is blocked (see StatusBitmap). If GPS is blocked and the terminal is power cycled before terminal UTC time becomes known, 0 is used.</Description>
+              <Size>31</Size>
+            </Field>
+            <Field xsi:type="SignedIntField">
+              <Name>Latitude</Name>
+              <Description>GPS latitude in milli-minute resolution. If a valid GPS fix was never acquired, value 5460000 (equivalent to 91 degree) is used.</Description>
+              <Size>24</Size>
+            </Field>
+            <Field xsi:type="SignedIntField">
+              <Name>Longitude</Name>
+              <Description>GPS longitude in milli-minute resolution. If a valid GPS fix was never acquired, value 10860000 (equivalent to 181 degree) is used.</Description>
+              <Size>25</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Speed</Name>
+              <Description>GPS speed in tenths of knots. 511 means 51.1 knots or more.</Description>
+              <Size>9</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Course</Name>
+              <Description>GPS course in degrees. 361 is used when the speed is 0 knots.</Description>
+              <Size>9</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Hdop</Name>
+              <Description>HDOP (Horizontal Dilution of Precision), a metric indicating GPS quality (255 if unavailable).</Description>
+              <Size>8</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>NumSats</Name>
+              <Description>Number of GPS satellites.</Description>
+              <Size>4</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>IdpCnr</Name>
+              <Description>IDP Average Carrier to Noise Ratio for the last full minute, in tenths of dBHz (0 if unavailable). 1023 means 102.3 dBHz or more.</Description>
+              <Size>10</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>StatusBitmap</Name>
+              <Description>Bitmap of current debounced VMS states. See @{Event.EventStateId}.</Description>
+              <Size>16</Size>
+            </Field>
+          </Fields>
+        </Message>
+        <Message>
+          <Name>ConfigReport1</Name>
+          <Description>This message is sent in response to a @{ToMobileMessages.GetConfigReport1|GetConfigReport1} request.</Description>
+          <MIN>4</MIN>
+          <Fields>
+            <Field xsi:type="UnsignedIntField">
+              <Name>StandardReport1Interval</Name>
+              <Description>See @{Properties.StandardReport1Interval}.</Description>
+              <Size>11</Size>
+              <Default>60</Default>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>AcceleratedReport1Rate</Name>
+              <Description>See @{Properties.AcceleratedReport1Rate}.</Description>
+              <Size>11</Size>
+              <Default>1</Default>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>LogReport1Rate</Name>
+              <Description>See @{Properties.LogReport1Rate}.</Description>
+              <Size>11</Size>
+              <Default>1</Default>
+            </Field>
+          </Fields>
+        </Message>
+        <Message>
+          <Name>ConfigReport2</Name>
+          <Description>This message is sent in response to a @{ToMobileMessages.GetConfigReport2|GetConfigReport2} request.</Description>
+          <MIN>5</MIN>
+          <Fields>
+            <Field xsi:type="UnsignedIntField">
+              <Name>StandardReport2Interval</Name>
+              <Description>See @{Properties.StandardReport2Interval}.</Description>
+              <Size>11</Size>
+              <Default>60</Default>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>AcceleratedReport2Rate</Name>
+              <Description>See @{Properties.AcceleratedReport2Rate}.</Description>
+              <Size>11</Size>
+              <Default>1</Default>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>LogReport2Rate</Name>
+              <Description>See @{Properties.LogReport2Rate}.</Description>
+              <Size>11</Size>
+              <Default>1</Default>
+            </Field>
+          </Fields>
+        </Message>
+        <Message>
+          <Name>ConfigReport3</Name>
+          <Description>This message is sent in response to a @{ToMobileMessages.GetConfigReport3|GetConfigReport3} request.</Description>
+          <MIN>6</MIN>
+          <Fields>
+            <Field xsi:type="UnsignedIntField">
+              <Name>StandardReport3Interval</Name>
+              <Description>See @{Properties.StandardReport3Interval}.</Description>
+              <Size>11</Size>
+              <Default>60</Default>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>AcceleratedReport3Rate</Name>
+              <Description>See @{Properties.AcceleratedReport3Rate}.</Description>
+              <Size>11</Size>
+              <Default>1</Default>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>LogReport3Rate</Name>
+              <Description>See @{Properties.LogReport3Rate}.</Description>
+              <Size>11</Size>
+              <Default>1</Default>
+            </Field>
+          </Fields>
+        </Message>
+        <Message>
+          <Name>Properties</Name>
+          <Description>Get all configurable @{Properties|properties} not specific to reporting rates and intervals.</Description>
+          <MIN>7</MIN>
+          <Fields>
+            <Field xsi:type="BooleanField">
+              <Name>GpsJammedSendReport</Name>
+              <Description>See @{Properties.GpsJammedSendReport}.</Description>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>GpsJammedStartDebounceTime</Name>
+              <Description>See @{Properties.GpsJammedStartDebounceTime}.</Description>
+              <Size>12</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>GpsJammedEndDebounceTime</Name>
+              <Description>See @{Properties.GpsJammedEndDebounceTime}.</Description>
+              <Size>12</Size>
+            </Field>
+            <Field xsi:type="BooleanField">
+              <Name>GpsBlockedSendReport</Name>
+              <Description>See @{Properties.GpsBlockedSendReport}.</Description>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>GpsBlockedStartDebounceTime</Name>
+              <Description>See @{Properties.GpsBlockedStartDebounceTime}.</Description>
+              <Size>12</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>GpsBlockedEndDebounceTime</Name>
+              <Description>See @{Properties.GpsBlockedEndDebounceTime}.</Description>
+              <Size>12</Size>
+            </Field>
+            <Field xsi:type="BooleanField">
+              <Name>IdpBlockedSendReport</Name>
+              <Description>See @{Properties.IdpBlockedSendReport}.</Description>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>IdpBlockedStartDebounceTime</Name>
+              <Description>See @{Properties.IdpBlockedStartDebounceTime}.</Description>
+              <Size>12</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>IdpBlockedEndDebounceTime</Name>
+              <Description>See @{Properties.IdpBlockedEndDebounceTime}.</Description>
+              <Size>12</Size>
+            </Field>
+            <Field xsi:type="BooleanField">
+              <Name>HwClientDisconnectedSendReport</Name>
+              <Description>See @{Properties.HwClientDisconnectedSendReport}.</Description>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>HwClientDisconnectedStartDebounceTime</Name>
+              <Description>See @{Properties.HwClientDisconnectedStartDebounceTime}.</Description>
+              <Size>12</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>HwClientDisconnectedEndDebounceTime</Name>
+              <Description>See @{Properties.HwClientDisconnectedEndDebounceTime}.</Description>
+              <Size>12</Size>
+            </Field>
+            <Field xsi:type="BooleanField">
+              <Name>HelmPanelDisconnectedSendReport</Name>
+              <Description>See @{Properties.HelmPanelDisconnectedSendReport}.</Description>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>HelmPanelDisconnectedStartDebounceTime</Name>
+              <Description>See @{Properties.HelmPanelDisconnectedStartDebounceTime}.</Description>
+              <Size>12</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>HelmPanelDisconnectedEndDebounceTime</Name>
+              <Description>See @{Properties.HelmPanelDisconnectedEndDebounceTime}.</Description>
+              <Size>12</Size>
+            </Field>
+            <Field xsi:type="BooleanField">
+              <Name>ExtPowerDisconnectedSendReport</Name>
+              <Description>See @{Properties.ExtPowerDisconnectedSendReport}.</Description>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>ExtPowerDisconnectedStartDebounceTime</Name>
+              <Description>See @{Properties.ExtPowerDisconnectedStartDebounceTime}.</Description>
+              <Size>12</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>ExtPowerDisconnectedEndDebounceTime</Name>
+              <Description>See @{Properties.ExtPowerDisconnectedEndDebounceTime}.</Description>
+              <Size>12</Size>
+            </Field>
+            <Field xsi:type="BooleanField">
+              <Name>PowerDisconnectedSendReport</Name>
+              <Description>See @{Properties.PowerDisconnectedSendReport}.</Description>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>PowerDisconnectedStartDebounceTime</Name>
+              <Description>See @{Properties.PowerDisconnectedStartDebounceTime}.</Description>
+              <Size>12</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>PowerDisconnectedEndDebounceTime</Name>
+              <Description>See @{Properties.PowerDisconnectedEndDebounceTime}.</Description>
+              <Size>12</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>PropertyChangeDebounceTime</Name>
+              <Description>See @{Properties.PropertyChangeDebounceTime}.</Description>
+              <Size>11</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>MinStandardReportLedFlashTime</Name>
+              <Description>See @{Properties.MinStandardReportLedFlashTime|MinStandardReportLedFlashTime}</Description>
+              <Size>12</Size>
+            </Field>
+          </Fields>
+        </Message>
+        <Message>
+          <Name>Version</Name>
+          <Description>Version numbers of all components in the VMS system</Description>
+          <MIN>8</MIN>
+          <Fields>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Timestamp</Name>
+              <Description>GPS UTC fix time in seconds since the epoch or terminal UTC time if GPS is blocked (see StatusBitmap). If GPS is blocked and the terminal is power cycled before terminal UTC time becomes known, 0 is used.</Description>
+              <Size>31</Size>
+            </Field>
+            <Field xsi:type="StringField">
+              <Name>IdpPackage</Name>
+              <Description>The version number of IDP pacakge</Description>
+              <Size>20</Size>
+            </Field>
+            <Field xsi:type="StringField">
+              <Name>VmsAgent</Name>
+              <Description>The version number of VMS agent</Description>
+              <Size>20</Size>
+            </Field>
+            <Field xsi:type="StringField">
+              <Name>HelmPanelInterface</Name>
+              <Description>The version number of Helm Panel Interface.</Description>
+              <Size>20</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>SourceCodeHash</Name>
+              <Description>The hash of source files.</Description>
+              <Size>16</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>PropDefHash</Name>
+              <Description>The hash of property definition file.</Description>
+              <Size>16</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>MessageDefHash</Name>
+              <Description>The hash of message definition file.</Description>
+              <Size>16</Size>
+            </Field>
+          </Fields>
+        </Message>
+        <Message>
+          <Name>ConfigChangeReport1</Name>
+          <Description>This message is sent on change to any of the service 1 report configuration @{Properties|properties} to indicate the time of change and current and previous values.</Description>
+          <MIN>10</MIN>
+          <Fields>
+            <Field xsi:type="EnumField">
+              <Name>ChangeSource</Name>
+              <Description>Source of the change. The field value is OtaMessage when properties are changed over-the-air via a @{ToMobileMessages.SetConfigReport1|SetConfigReport1} message; otherwise Console.</Description>
+              <Items>
+                <string>OtaMessage</string>
+                <string>Console</string>
+              </Items>
+              <Size>3</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Timestamp</Name>
+              <Description>GPS UTC fix time in seconds since the epoch or terminal UTC time if GPS is blocked (see StatusBitmap). If GPS is blocked and the terminal is power cycled before terminal UTC time becomes known, 0 is used.</Description>
+              <Size>31</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>StatusBitmap</Name>
+              <Description>Bitmap of current debounced VMS states. See @{Event.EventStateId}.</Description>
+              <Size>16</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>StandardReport1Interval</Name>
+              <Description>Current @{Properties.StandardReport1Interval} value.</Description>
+              <Size>11</Size>
+              <Default>60</Default>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>OldStandardReport1Interval</Name>
+              <Description>Previous @{Properties.StandardReport1Interval} value.</Description>
+              <Size>11</Size>
+              <Default>60</Default>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>AcceleratedReport1Rate</Name>
+              <Description>Current @{Properties.AcceleratedReport1Rate} value.</Description>
+              <Size>11</Size>
+              <Default>1</Default>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>OldAcceleratedReport1Rate</Name>
+              <Description>Previous @{Properties.AcceleratedReport1Rate} value.</Description>
+              <Size>11</Size>
+              <Default>1</Default>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>LogReport1Rate</Name>
+              <Description>Current @{Properties.LogReport1Rate} value.</Description>
+              <Size>11</Size>
+              <Default>1</Default>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>OldLogReport1Rate</Name>
+              <Description>Previous @{Properties.LogReport1Rate} value.</Description>
+              <Size>11</Size>
+              <Default>1</Default>
+            </Field>
+          </Fields>
+        </Message>
+        <Message>
+          <Name>ConfigChangeReport2</Name>
+          <Description>Similar to @{FromMobileMessages.ConfigChangeReport1|ConfigChangeReport1}.</Description>
+          <MIN>11</MIN>
+          <Fields>
+            <Field xsi:type="EnumField">
+              <Name>ChangeSource</Name>
+              <Description>Source of the change. The field value is OtaMessage when properties are changed over-the-air via a @{ToMobileMessages.SetConfigReport2|SetConfigReport2} message; otherwise Console.</Description>
+              <Items>
+                <string>OtaMessage</string>
+                <string>Console</string>
+              </Items>
+              <Size>3</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Timestamp</Name>
+              <Description>GPS UTC fix time in seconds since the epoch or terminal UTC time if GPS is blocked (see StatusBitmap). If GPS is blocked and the terminal is power cycled before terminal UTC time becomes known, 0 is used.</Description>
+              <Size>31</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>StatusBitmap</Name>
+              <Description>Bitmap of current debounced VMS states. See @{Event.EventStateId}.</Description>
+              <Size>16</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>StandardReport2Interval</Name>
+              <Description>Current @{Properties.StandardReport2Interval} value.</Description>
+              <Size>11</Size>
+              <Default>60</Default>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>OldStandardReport2Interval</Name>
+              <Description>Previous @{Properties.StandardReport2Interval} value.</Description>
+              <Size>11</Size>
+              <Default>60</Default>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>AcceleratedReport2Rate</Name>
+              <Description>Current @{Properties.AcceleratedReport2Rate} value.</Description>
+              <Size>11</Size>
+              <Default>1</Default>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>OldAcceleratedReport2Rate</Name>
+              <Description>Previous @{Properties.AcceleratedReport2Rate} value.</Description>
+              <Size>11</Size>
+              <Default>1</Default>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>LogReport2Rate</Name>
+              <Description>Current @{Properties.LogReport2Rate} value.</Description>
+              <Size>11</Size>
+              <Default>1</Default>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>OldLogReport2Rate</Name>
+              <Description>Previous @{Properties.LogReport2Rate} value.</Description>
+              <Size>11</Size>
+              <Default>1</Default>
+            </Field>
+          </Fields>
+        </Message>
+        <Message>
+          <Name>ConfigChangeReport3</Name>
+          <Description>Similar to @{FromMobileMessages.ConfigChangeReport1|ConfigChangeReport1}.</Description>
+          <MIN>12</MIN>
+          <Fields>
+            <Field xsi:type="EnumField">
+              <Name>ChangeSource</Name>
+              <Description>Source of the change. The field value is OtaMessage when properties are changed over-the-air via a @{ToMobileMessages.SetConfigReport3|SetConfigReport3} message; otherwise Console.</Description>
+              <Items>
+                <string>OtaMessage</string>
+                <string>Console</string>
+              </Items>
+              <Size>3</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Timestamp</Name>
+              <Description>GPS UTC fix time in seconds since the epoch or terminal UTC time if GPS is blocked (see StatusBitmap). If GPS is blocked and the terminal is power cycled before terminal UTC time becomes known, 0 is used.</Description>
+              <Size>31</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>StatusBitmap</Name>
+              <Description>Bitmap of current debounced VMS states. See @{Event.EventStateId}.</Description>
+              <Size>16</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>StandardReport3Interval</Name>
+              <Description>Current @{Properties.StandardReport3Interval} value.</Description>
+              <Size>11</Size>
+              <Default>60</Default>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>OldStandardReport3Interval</Name>
+              <Description>Previous @{Properties.StandardReport3Interval} value.</Description>
+              <Size>11</Size>
+              <Default>60</Default>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>AcceleratedReport3Rate</Name>
+              <Description>Current @{Properties.AcceleratedReport3Rate} value.</Description>
+              <Size>11</Size>
+              <Default>1</Default>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>OldAcceleratedReport3Rate</Name>
+              <Description>Previous @{Properties.AcceleratedReport3Rate} value.</Description>
+              <Size>11</Size>
+              <Default>1</Default>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>LogReport3Rate</Name>
+              <Description>Current @{Properties.LogReport3Rate} value.</Description>
+              <Size>11</Size>
+              <Default>1</Default>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>OldLogReport3Rate</Name>
+              <Description>Previous @{Properties.LogReport3Rate} value.</Description>
+              <Size>11</Size>
+              <Default>1</Default>
+            </Field>
+          </Fields>
+        </Message>
+        <Message>
+          <Name>StandardReport1</Name>
+          <Description>This is the standard report 1 periodically sent at @{Properties.StandardReport1Interval|StandardReport1Interval}.</Description>
+          <MIN>20</MIN>
+          <Fields>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Timestamp</Name>
+              <Description>GPS UTC fix time in seconds since the epoch or terminal UTC time if GPS is blocked (see StatusBitmap). If GPS is blocked and the terminal is power cycled before terminal UTC time becomes known, 0 is used.</Description>
+              <Size>31</Size>
+            </Field>
+            <Field xsi:type="SignedIntField">
+              <Name>Latitude</Name>
+              <Description>GPS latitude in milli-minute resolution. If a valid GPS fix was never acquired, value 5460000 (equivalent to 91 degree) is used.</Description>
+              <Size>24</Size>
+            </Field>
+            <Field xsi:type="SignedIntField">
+              <Name>Longitude</Name>
+              <Description>GPS longitude in milli-minute resolution. If a valid GPS fix was never acquired, value 10860000 (equivalent to 181 degree) is used.</Description>
+              <Size>25</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Speed</Name>
+              <Description>GPS speed in tenths of knots. 511 means 51.1 knots or more.</Description>
+              <Size>9</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Course</Name>
+              <Description>GPS course in degrees. 361 is used when the speed is 0 knots.</Description>
+              <Size>9</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Hdop</Name>
+              <Description>HDOP (Horizontal Dilution of Precision), a metric indicating GPS quality (255 if unavailable).</Description>
+              <Size>8</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>NumSats</Name>
+              <Description>Number of GPS satellites.</Description>
+              <Size>4</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>IdpCnr</Name>
+              <Description>IDP Average Carrier to Noise Ratio for the last full minute, in tenths of dBHz (0 if unavailable). 1023 means 102.3 dBHz or more.</Description>
+              <Size>10</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>StatusBitmap</Name>
+              <Description>Bitmap of current debounced VMS states. See @{Event.EventStateId}.</Description>
+              <Size>16</Size>
+            </Field>
+          </Fields>
+        </Message>
+        <Message>
+          <Name>AcceleratedReport1</Name>
+          <Description>This is the accelerated report 1 periodically sent at shorter interval, which is calculated as follow:
+
+accelerated_report_interval =  @{Properties.StandardReport1Interval|StandardReport1Interval} / @{Properties.AcceleratedReport1Rate|AcceleratedReport1Rate}</Description>
+          <MIN>21</MIN>
+          <Fields>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Timestamp</Name>
+              <Description>GPS UTC fix time in seconds since the epoch or terminal UTC time if GPS is blocked (see StatusBitmap). If GPS is blocked and the terminal is power cycled before terminal UTC time becomes known, 0 is used.</Description>
+              <Size>31</Size>
+            </Field>
+            <Field xsi:type="SignedIntField">
+              <Name>Latitude</Name>
+              <Description>GPS latitude in milli-minute resolution. If a valid GPS fix was never acquired, value 5460000 (equivalent to 91 degree) is used.</Description>
+              <Size>24</Size>
+            </Field>
+            <Field xsi:type="SignedIntField">
+              <Name>Longitude</Name>
+              <Description>GPS longitude in milli-minute resolution. If a valid GPS fix was never acquired, value 10860000 (equivalent to 181 degree) is used.</Description>
+              <Size>25</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Speed</Name>
+              <Description>GPS speed in tenths of knots. 511 means 51.1 knots or more.</Description>
+              <Size>9</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Course</Name>
+              <Description>GPS course in degrees. 361 is used when the speed is 0 knots.</Description>
+              <Size>9</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Hdop</Name>
+              <Description>HDOP (Horizontal Dilution of Precision), a metric indicating GPS quality (255 if unavailable).</Description>
+              <Size>8</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>NumSats</Name>
+              <Description>Number of GPS satellites.</Description>
+              <Size>4</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>IdpCnr</Name>
+              <Description>IDP Average Carrier to Noise Ratio for the last full minute, in tenths of dBHz (0 if unavailable). 1023 means 102.3 dBHz or more.</Description>
+              <Size>10</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>StatusBitmap</Name>
+              <Description>Bitmap of current debounced VMS states. See @{Event.EventStateId}.</Description>
+              <Size>16</Size>
+            </Field>
+          </Fields>
+        </Message>
+        <Message>
+          <Name>LogReport1</Name>
+          <Description>This is the log-only report 1 logged periodically at sent at shorter interval, which is calculated as follow:
+
+log_report_interval =  @{Properties.StandardReport1Interval|StandardReport1Interval} / @{Properties.LogReport1Rate|LogReport1Rate}</Description>
+          <MIN>22</MIN>
+          <Fields>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Timestamp</Name>
+              <Description>GPS UTC fix time in seconds since the epoch or terminal UTC time if GPS is blocked (see StatusBitmap). If GPS is blocked and the terminal is power cycled before terminal UTC time becomes known, 0 is used.</Description>
+              <Size>31</Size>
+            </Field>
+            <Field xsi:type="SignedIntField">
+              <Name>Latitude</Name>
+              <Description>GPS latitude in milli-minute resolution. If a valid GPS fix was never acquired, value 5460000 (equivalent to 91 degree) is used.</Description>
+              <Size>24</Size>
+            </Field>
+            <Field xsi:type="SignedIntField">
+              <Name>Longitude</Name>
+              <Description>GPS longitude in milli-minute resolution. If a valid GPS fix was never acquired, value 10860000 (equivalent to 181 degree) is used.</Description>
+              <Size>25</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Speed</Name>
+              <Description>GPS speed in tenths of knots. 511 means 51.1 knots or more.</Description>
+              <Size>9</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Course</Name>
+              <Description>GPS course in degrees. 361 is used when the speed is 0 knots.</Description>
+              <Size>9</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Hdop</Name>
+              <Description>HDOP (Horizontal Dilution of Precision), a metric indicating GPS quality (255 if unavailable).</Description>
+              <Size>8</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>NumSats</Name>
+              <Description>Number of GPS satellites.</Description>
+              <Size>4</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>IdpCnr</Name>
+              <Description>IDP Average Carrier to Noise Ratio for the last full minute, in tenths of dBHz (0 if unavailable). 1023 means 102.3 dBHz or more.</Description>
+              <Size>10</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>StatusBitmap</Name>
+              <Description>Bitmap of current debounced VMS states. See @{Event.EventStateId}.</Description>
+              <Size>16</Size>
+            </Field>
+          </Fields>
+        </Message>
+        <Message>
+          <Name>StandardReport2</Name>
+          <Description>Similar to @{FromMobileMessages.StandardReport1|StandardReport1}</Description>
+          <MIN>30</MIN>
+          <Fields>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Timestamp</Name>
+              <Description>GPS UTC fix time in seconds since the epoch or terminal UTC time if GPS is blocked (see StatusBitmap). If GPS is blocked and the terminal is power cycled before terminal UTC time becomes known, 0 is used.</Description>
+              <Size>31</Size>
+            </Field>
+            <Field xsi:type="SignedIntField">
+              <Name>Latitude</Name>
+              <Description>GPS latitude in milli-minute resolution. If a valid GPS fix was never acquired, value 5460000 (equivalent to 91 degree) is used.</Description>
+              <Size>24</Size>
+            </Field>
+            <Field xsi:type="SignedIntField">
+              <Name>Longitude</Name>
+              <Description>GPS longitude in milli-minute resolution. If a valid GPS fix was never acquired, value 10860000 (equivalent to 181 degree) is used.</Description>
+              <Size>25</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Speed</Name>
+              <Description>GPS speed in tenths of knots. 511 means 51.1 knots or more.</Description>
+              <Size>9</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Course</Name>
+              <Description>GPS course in degrees. 361 is used when the speed is 0 knots.</Description>
+              <Size>9</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Hdop</Name>
+              <Description>HDOP (Horizontal Dilution of Precision), a metric indicating GPS quality (255 if unavailable).</Description>
+              <Size>8</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>NumSats</Name>
+              <Description>Number of GPS satellites.</Description>
+              <Size>4</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>IdpCnr</Name>
+              <Description>IDP Average Carrier to Noise Ratio for the last full minute, in tenths of dBHz (0 if unavailable). 1023 means 102.3 dBHz or more.</Description>
+              <Size>10</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>StatusBitmap</Name>
+              <Description>Bitmap of current debounced VMS states. See @{Event.EventStateId}.</Description>
+              <Size>16</Size>
+            </Field>
+          </Fields>
+        </Message>
+        <Message>
+          <Name>AcceleratedReport2</Name>
+          <Description>Similar to @{FromMobileMessages.AcceleratedReport1|AcceleratedReport1}</Description>
+          <MIN>31</MIN>
+          <Fields>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Timestamp</Name>
+              <Description>GPS UTC fix time in seconds since the epoch or terminal UTC time if GPS is blocked (see StatusBitmap). If GPS is blocked and the terminal is power cycled before terminal UTC time becomes known, 0 is used.</Description>
+              <Size>31</Size>
+            </Field>
+            <Field xsi:type="SignedIntField">
+              <Name>Latitude</Name>
+              <Description>GPS latitude in milli-minute resolution. If a valid GPS fix was never acquired, value 5460000 (equivalent to 91 degree) is used.</Description>
+              <Size>24</Size>
+            </Field>
+            <Field xsi:type="SignedIntField">
+              <Name>Longitude</Name>
+              <Description>GPS longitude in milli-minute resolution. If a valid GPS fix was never acquired, value 10860000 (equivalent to 181 degree) is used.</Description>
+              <Size>25</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Speed</Name>
+              <Description>GPS speed in tenths of knots. 511 means 51.1 knots or more.</Description>
+              <Size>9</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Course</Name>
+              <Description>GPS course in degrees. 361 is used when the speed is 0 knots.</Description>
+              <Size>9</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Hdop</Name>
+              <Description>HDOP (Horizontal Dilution of Precision), a metric indicating GPS quality (255 if unavailable).</Description>
+              <Size>8</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>NumSats</Name>
+              <Description>Number of GPS satellites.</Description>
+              <Size>4</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>IdpCnr</Name>
+              <Description>IDP Average Carrier to Noise Ratio for the last full minute, in tenths of dBHz (0 if unavailable). 1023 means 102.3 dBHz or more.</Description>
+              <Size>10</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>StatusBitmap</Name>
+              <Description>Bitmap of current debounced VMS states. See @{Event.EventStateId}.</Description>
+              <Size>16</Size>
+            </Field>
+          </Fields>
+        </Message>
+        <Message>
+          <Name>LogReport2</Name>
+          <Description>Similar to @{FromMobileMessages.LogReport1|LogReport1}</Description>
+          <MIN>32</MIN>
+          <Fields>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Timestamp</Name>
+              <Description>GPS UTC fix time in seconds since the epoch or terminal UTC time if GPS is blocked (see StatusBitmap). If GPS is blocked and the terminal is power cycled before terminal UTC time becomes known, 0 is used.</Description>
+              <Size>31</Size>
+            </Field>
+            <Field xsi:type="SignedIntField">
+              <Name>Latitude</Name>
+              <Description>GPS latitude in milli-minute resolution. If a valid GPS fix was never acquired, value 5460000 (equivalent to 91 degree) is used.</Description>
+              <Size>24</Size>
+            </Field>
+            <Field xsi:type="SignedIntField">
+              <Name>Longitude</Name>
+              <Description>GPS longitude in milli-minute resolution. If a valid GPS fix was never acquired, value 10860000 (equivalent to 181 degree) is used.</Description>
+              <Size>25</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Speed</Name>
+              <Description>GPS speed in tenths of knots. 511 means 51.1 knots or more.</Description>
+              <Size>9</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Course</Name>
+              <Description>GPS course in degrees. 361 is used when the speed is 0 knots.</Description>
+              <Size>9</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Hdop</Name>
+              <Description>HDOP (Horizontal Dilution of Precision), a metric indicating GPS quality (255 if unavailable).</Description>
+              <Size>8</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>NumSats</Name>
+              <Description>Number of GPS satellites.</Description>
+              <Size>4</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>IdpCnr</Name>
+              <Description>IDP Average Carrier to Noise Ratio for the last full minute, in tenths of dBHz (0 if unavailable). 1023 means 102.3 dBHz or more.</Description>
+              <Size>10</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>StatusBitmap</Name>
+              <Description>Bitmap of current debounced VMS states. See @{Event.EventStateId}.</Description>
+              <Size>16</Size>
+            </Field>
+          </Fields>
+        </Message>
+        <Message>
+          <Name>StandardReport3</Name>
+          <Description>Similar to @{FromMobileMessages.StandardReport1|StandardReport1}</Description>
+          <MIN>40</MIN>
+          <Fields>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Timestamp</Name>
+              <Description>GPS UTC fix time in seconds since the epoch or terminal UTC time if GPS is blocked (see StatusBitmap). If GPS is blocked and the terminal is power cycled before terminal UTC time becomes known, 0 is used.</Description>
+              <Size>31</Size>
+            </Field>
+            <Field xsi:type="SignedIntField">
+              <Name>Latitude</Name>
+              <Description>GPS latitude in milli-minute resolution. If a valid GPS fix was never acquired, value 5460000 (equivalent to 91 degree) is used.</Description>
+              <Size>24</Size>
+            </Field>
+            <Field xsi:type="SignedIntField">
+              <Name>Longitude</Name>
+              <Description>GPS longitude in milli-minute resolution. If a valid GPS fix was never acquired, value 10860000 (equivalent to 181 degree) is used.</Description>
+              <Size>25</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Speed</Name>
+              <Description>GPS speed in tenths of knots. 511 means 51.1 knots or more.</Description>
+              <Size>9</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Course</Name>
+              <Description>GPS course in degrees. 361 is used when the speed is 0 knots.</Description>
+              <Size>9</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Hdop</Name>
+              <Description>HDOP (Horizontal Dilution of Precision), a metric indicating GPS quality (255 if unavailable).</Description>
+              <Size>8</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>NumSats</Name>
+              <Description>Number of GPS satellites.</Description>
+              <Size>4</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>IdpCnr</Name>
+              <Description>IDP Average Carrier to Noise Ratio for the last full minute, in tenths of dBHz (0 if unavailable). 1023 means 102.3 dBHz or more.</Description>
+              <Size>10</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>StatusBitmap</Name>
+              <Description>Bitmap of current debounced VMS states. See @{Event.EventStateId}.</Description>
+              <Size>16</Size>
+            </Field>
+          </Fields>
+        </Message>
+        <Message>
+          <Name>AcceleratedReport3</Name>
+          <Description>Similar to @{FromMobileMessages.AcceleratedReport1|AcceleratedReport1}</Description>
+          <MIN>41</MIN>
+          <Fields>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Timestamp</Name>
+              <Description>GPS UTC fix time in seconds since the epoch or terminal UTC time if GPS is blocked (see StatusBitmap). If GPS is blocked and the terminal is power cycled before terminal UTC time becomes known, 0 is used.</Description>
+              <Size>31</Size>
+            </Field>
+            <Field xsi:type="SignedIntField">
+              <Name>Latitude</Name>
+              <Description>GPS latitude in milli-minute resolution. If a valid GPS fix was never acquired, value 5460000 (equivalent to 91 degree) is used.</Description>
+              <Size>24</Size>
+            </Field>
+            <Field xsi:type="SignedIntField">
+              <Name>Longitude</Name>
+              <Description>GPS longitude in milli-minute resolution. If a valid GPS fix was never acquired, value 10860000 (equivalent to 181 degree) is used.</Description>
+              <Size>25</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Speed</Name>
+              <Description>GPS speed in tenths of knots. 511 means 51.1 knots or more.</Description>
+              <Size>9</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Course</Name>
+              <Description>GPS course in degrees. 361 is used when the speed is 0 knots.</Description>
+              <Size>9</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Hdop</Name>
+              <Description>HDOP (Horizontal Dilution of Precision), a metric indicating GPS quality (255 if unavailable).</Description>
+              <Size>8</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>NumSats</Name>
+              <Description>Number of GPS satellites.</Description>
+              <Size>4</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>IdpCnr</Name>
+              <Description>IDP Average Carrier to Noise Ratio for the last full minute, in tenths of dBHz (0 if unavailable). 1023 means 102.3 dBHz or more.</Description>
+              <Size>10</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>StatusBitmap</Name>
+              <Description>Bitmap of current debounced VMS states. See @{Event.EventStateId}.</Description>
+              <Size>16</Size>
+            </Field>
+          </Fields>
+        </Message>
+        <Message>
+          <Name>LogReport3</Name>
+          <Description>Similar to @{FromMobileMessages.LogReport1|LogReport1}</Description>
+          <MIN>42</MIN>
+          <Fields>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Timestamp</Name>
+              <Description>GPS UTC fix time in seconds since the epoch or terminal UTC time if GPS is blocked (see StatusBitmap). If GPS is blocked and the terminal is power cycled before terminal UTC time becomes known, 0 is used.</Description>
+              <Size>31</Size>
+            </Field>
+            <Field xsi:type="SignedIntField">
+              <Name>Latitude</Name>
+              <Description>GPS latitude in milli-minute resolution. If a valid GPS fix was never acquired, value 5460000 (equivalent to 91 degree) is used.</Description>
+              <Size>24</Size>
+            </Field>
+            <Field xsi:type="SignedIntField">
+              <Name>Longitude</Name>
+              <Description>GPS longitude in milli-minute resolution. If a valid GPS fix was never acquired, value 10860000 (equivalent to 181 degree) is used.</Description>
+              <Size>25</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Speed</Name>
+              <Description>GPS speed in tenths of knots. 511 means 51.1 knots or more.</Description>
+              <Size>9</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Course</Name>
+              <Description>GPS course in degrees. 361 is used when the speed is 0 knots.</Description>
+              <Size>9</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Hdop</Name>
+              <Description>HDOP (Horizontal Dilution of Precision), a metric indicating GPS quality (255 if unavailable).</Description>
+              <Size>8</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>NumSats</Name>
+              <Description>Number of GPS satellites.</Description>
+              <Size>4</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>IdpCnr</Name>
+              <Description>IDP Average Carrier to Noise Ratio for the last full minute, in tenths of dBHz (0 if unavailable). 1023 means 102.3 dBHz or more.</Description>
+              <Size>10</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>StatusBitmap</Name>
+              <Description>Bitmap of current debounced VMS states. See @{Event.EventStateId}.</Description>
+              <Size>16</Size>
+            </Field>
+          </Fields>
+        </Message>
+        <Message>
+          <Name>AbnormalReport</Name>
+          <Description>This message is registered when a VMS event changes state. See @{Event}.</Description>
+          <MIN>50</MIN>
+          <Fields>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Timestamp</Name>
+              <Description>GPS UTC fix time in seconds since the epoch or terminal UTC time if GPS is blocked (see StatusBitmap). If GPS is blocked and the terminal is power cycled before terminal UTC time becomes known, 0 is used.</Description>
+              <Size>31</Size>
+            </Field>
+            <Field xsi:type="SignedIntField">
+              <Name>Latitude</Name>
+              <Description>GPS latitude in milli-minute resolution. If a valid GPS fix was never acquired, value 5460000 (equivalent to 91 degree) is used.</Description>
+              <Size>24</Size>
+            </Field>
+            <Field xsi:type="SignedIntField">
+              <Name>Longitude</Name>
+              <Description>GPS longitude in milli-minute resolution. If a valid GPS fix was never acquired, value 10860000 (equivalent to 181 degree) is used.</Description>
+              <Size>25</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Speed</Name>
+              <Description>GPS speed in tenths of knots. 511 means 51.1 knots or more.</Description>
+              <Size>9</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Course</Name>
+              <Description>GPS course in degrees. 361 is used when the speed is 0 knots.</Description>
+              <Size>9</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>Hdop</Name>
+              <Description>HDOP (Horizontal Dilution of Precision), a metric indicating GPS quality (255 if unavailable).</Description>
+              <Size>8</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>NumSats</Name>
+              <Description>Number of GPS satellites.</Description>
+              <Size>4</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>IdpCnr</Name>
+              <Description>IDP Average Carrier to Noise Ratio for the last full minute, in tenths of dBHz (0 if unavailable). 1023 means 102.3 dBHz or more.</Description>
+              <Size>10</Size>
+            </Field>
+            <Field xsi:type="UnsignedIntField">
+              <Name>StatusBitmap</Name>
+              <Description>Bitmap of current debounced VMS states. See @{Event.EventStateId}.</Description>
+              <Size>16</Size>
+            </Field>
+            <Field xsi:type="EnumField">
+              <Name>EventType</Name>
+              <Description>The event type that triggered this report.</Description>
+              <Items>
+                <string>GpsJammed</string>
+                <string>GpsBlocked</string>
+                <string>IdpBlocked</string>
+                <string>HwClientDisconnected</string>
+                <string>HelmPanelDisconnected</string>
+                <string>ExtPowerDisconnected</string>
+                <string>InsideGeofence</string>
+                <string>PowerDisconnected</string>
+              </Items>
+              <Size>4</Size>
+            </Field>
+          </Fields>
+        </Message>
+      </ReturnMessages>
+    </Service>
+  </Services>
+</MessageDefinition>
