@@ -38,8 +38,7 @@ function test_StandardReportContent()
   --vmsServiceWrapper:setPropertiesByName({StandardReport1Interval=1})
   
   positionServiceWrapper:sendMessageByName("getPosition",{fixType = "3D"})
-  positionMessage = positionServiceWrapper:waitForMessages({1})  -- TODO: add to ServiceMapper a method: waitForMessagesByName()
-  
+  positionMessage = positionServiceWrapper:waitForMessagesByName({"position"}) 
   initialPosition = positionMessage.position
   assert_not_nil(initialPosition.longitude,"No longitude in position messsage.")
   assert_not_nil(initialPosition.latitude,"No latitude in position messsage.")
