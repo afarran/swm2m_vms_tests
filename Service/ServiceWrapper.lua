@@ -40,6 +40,12 @@ ServiceWrapper = {}
     return mins, mins_named
   end
   
+  -- args is a table of named arguments, 
+  -- args.sin - service SIN
+  -- args.name - service name
+  -- args.properties - property definition
+  -- args.messages_to - TO-MOBILE message definitions
+  -- args.messages_from - FROM-MOBILE message definitions
   function ServiceWrapper:_init(args)
     self.sin = args.sin
     self.name = args.name
@@ -157,19 +163,18 @@ ServiceWrapper = {}
   function ServiceWrapper:sendMessage(min, fields)
     local message = {}
     message.SIN = self.sin
-    message.MIM = min
+    message.MIN = min
     message.Fields = fields
     gateway.submitForwardMessage(message)
   end
   
   function ServiceWrapper:sendMessageByName(message_name, fields)
-    
-    local min = self.mins_named.from[message_name]
-    if not message.MIN then
-      printf("Can't find min %s\n", message_name)
+    local min = self.mins_to_named[message_name]
+    if not min then
+      printf("Can't find TO-MOBILE min %s\n", message_name)
       return nil
     end
-    self:sendMessage(message_name, fields)    
+    self:sendMessage(min, fields)    
   end
   
   function ServiceWrapper:matchReturnMessages(expectedMins, timeout)
