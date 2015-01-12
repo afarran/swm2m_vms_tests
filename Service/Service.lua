@@ -79,15 +79,19 @@ ServiceWrapper = {}
     return msgList
   end
   
+  function ServiceWrapper:_decodePinValue(pin, raw_value)
+    local result = raw_value
+    local pin_type = self.pins_types[pin]
+    if pin_type == "enum" then
+      result = self.pins_enums_reverse[pin][tonumber(raw_value)]
+    end
+    return result
+  end
+  
   function ServiceWrapper:_processPinValues(pinValues)
     local result = {}
-    for pin, value in pairs(pinValues) do
-      local ptype = self.pins_types[pin]
-      local decoded_value = value
-      if ptype == "enum" then
-        decoded_value = self.pins_enums_reverse[pin][tonumber(value)]
-      end
-      result[self:getPinName(pin)] = decoded_value
+    for pin, value in pairs(pinValues) do          
+      result[self:getPinName(pin)] = self:_decodePinValue(pin, value)
     end
     return result
   end
