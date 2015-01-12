@@ -1,4 +1,4 @@
-require "Service/Service"
+require "Service/ServiceWrapper"
 
 EioServiceWrapper = {}
   EioServiceWrapper.__index = EioServiceWrapper

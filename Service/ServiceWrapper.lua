@@ -79,7 +79,7 @@ ServiceWrapper = {}
     return msgList
   end
   
-  function ServiceWrapper:_decodePinValue(pin, raw_value)
+  function ServiceWrapper:__decodePinValue(pin, raw_value)
     local decoded_value = raw_value
     local pin_type = self.pins_types[pin]
     if pin_type == "enum" then
@@ -102,10 +102,21 @@ ServiceWrapper = {}
     return decoded_value
   end
   
-  function ServiceWrapper:_processPinValues(pinValues)
+  function ServiceWrapper:__encodePinValue(pin, raw_value)
+    local encoded_value = raw_value
+    local pin_type = self.pins_types[pin]
+    
+    if pin_type == "enum" then
+      encoded_value = self.pins_enums_named[pin][raw_value]
+    end
+    
+    return encoded_value
+  end
+  
+  function ServiceWrapper:__processPinValues(pinValues)
     local result = {}
     for pin, value in pairs(pinValues) do          
-      result[self:getPinName(pin)] = self:_decodePinValue(pin, value)
+      result[self:getPinName(pin)] = self:__decodePinValue(pin, value)
     end
     return result
   end
@@ -115,7 +126,7 @@ ServiceWrapper = {}
     if raw then
       return propertiesToTable(lsf.getProperties(self.sin, pinList))
     else
-      return self:_processPinValues(propertiesToTable(lsf.getProperties(self.sin, pinList)))
+      return self:__processPinValues(propertiesToTable(lsf.getProperties(self.sin, pinList)))
     end
   end
   
@@ -128,10 +139,15 @@ ServiceWrapper = {}
   end
   
   -- pinValues = {pin1 = val1, pin2 = val2}
-  function ServiceWrapper:setProperties(pinValues)
+  function ServiceWrapper:setProperties(pinValues, raw)
+    raw = raw or false
     local pinValueTypes = {}
     for pin, value in pairs(pinValues) do
-      pinValueTypes[#pinValueTypes + 1] = {pin, value, self.pins_types[pin]}
+      if raw then
+        pinValueTypes[#pinValueTypes + 1] = {pin, value, self.pins_types[pin]}
+      else
+        pinValueTypes[#pinValueTypes + 1] = {pin, self:__encodePinValue(pin, value), self.pins_types[pin]}
+      end
     end
     
     return lsf.setProperties(self.sin, pinValueTypes)
@@ -145,30 +161,4 @@ ServiceWrapper = {}
     end
     return self:setProperties(pinValues)
   end
-  
---------------------------------
-
-PositionServiceWrapper = {}
-  PositionServiceWrapper.__index = PositionServiceWrapper
-  setmetatable(PositionServiceWrapper, {
-    __index = ServiceWrapper, -- this is what makes the inheritance work
-    __call = function (cls, ...)
-    local self = setmetatable({}, cls)
-    self:_init(...)
-    return self
-    end,
-  })
-  
-  function PositionServiceWrapper:_init()
-    local properties = {{name = "latitude", pin = 6},
-                  {name = "longitude", pin = 7},
-                  {name = "heading", pin = 10, ptype="unsignedint"},
-                  {name = "continuous", pin = 15, ptype="unsignedint"},
-                 }
-    ServiceWrapper:_init({sin = 20, name = "Position", mins = {}, properties = properties})
-  end
-
-
-
-
 
