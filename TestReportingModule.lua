@@ -10,7 +10,7 @@ function suite_setup()
   -- reset of properties 
   -- restarting VMS agent ?
   
-  --vmsServiceWrapper:setPropertiesByName({StandardReport1Interval=1})
+  
   
   
 end
@@ -35,6 +35,7 @@ end
 
 function test_StandardReportContent()
   
+  --vmsServiceWrapper:setPropertiesByName({StandardReport1Interval=1})
   
   positionServiceWrapper:sendMessageByName("getPosition",{fixType = "3D"})
   positionMessage = positionServiceWrapper:waitForMessages({1})  -- TODO: add to ServiceMapper a method: waitForMessagesByName()
@@ -44,13 +45,14 @@ function test_StandardReportContent()
   assert_not_nil(initialPosition.latitude,"No latitude in position messsage.")
   
   newPosition = {
-    latitude = initialPosition.latitude + 60000,
-    longitude = initialPosition.longitude + 60000
+    latitude = initialPosition.latitude/60000 + 1,
+    longitude = initialPosition.longitude/60000 + 1
   }
   
   gps.set(newPosition)
   framework.delay(GPS_PROCESS_TIME + GPS_READ_INTERVAL)
   
+  --reportMessage = vmsServiceWrapper:waitForMessage({20})
   --TODO : finish this TC, some problems to investigate
   
 end
