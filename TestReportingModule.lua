@@ -9,6 +9,10 @@ module("TestReportingModule", package.seeall)
 function suite_setup()
   -- reset of properties 
   -- restarting VMS agent ?
+  
+  --vmsServiceWrapper:setPropertiesByName({StandardReport1Interval=1})
+  
+  
 end
 
 -- executed after each test suite
@@ -29,10 +33,25 @@ end
 -- Test Cases
 -------------------------
 
-function test_StandardReport()
+function test_StandardReportContent()
   
-  gps.set({speed=10}) 
-  vmsServiceWrapper:setPropertiesByName({StandardReport1Interval=1})
+  
+  positionServiceWrapper:sendMessageByName("getPosition",{fixType = "3D"})
+  positionMessage = positionServiceWrapper:waitForMessages({1})  -- TODO: add to ServiceMapper a method: waitForMessagesByName()
+  
+  initialPosition = positionMessage.position
+  assert_not_nil(initialPosition.longitude,"No longitude in position messsage.")
+  assert_not_nil(initialPosition.latitude,"No latitude in position messsage.")
+  
+  newPosition = {
+    latitude = initialPosition.latitude + 60000,
+    longitude = initialPosition.longitude + 60000
+  }
+  
+  gps.set(newPosition)
+  framework.delay(GPS_PROCESS_TIME + GPS_READ_INTERVAL)
+  
+  --TODO : finish this TC, some problems to investigate
   
 end
 

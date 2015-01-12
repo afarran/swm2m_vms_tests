@@ -3,9 +3,9 @@ lunatest = require "lunatest"
 profileFactory = require("Profile/ProfileFactory")()
 
 require("Service/PositionServiceWrapper")
-positionServiceWrapper = PositionServiceWrapper()
-
 require("Service/VmsServiceWrapper")
+
+positionServiceWrapper = PositionServiceWrapper()
 vmsServiceWrapper = VmsServiceWrapper()
 
 FORCE_ALL_TESTCASES = false                                  -- determines whether to run all TCs or to use random TC for similar features -
