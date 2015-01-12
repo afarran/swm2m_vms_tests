@@ -218,7 +218,7 @@ ServiceWrapper = {}
         if msg then   --TODO: why would this function be called with no msg?
           for idx, min in pairs(expectedMins) do
             if msg.Payload and min == msg.Payload.MIN and msg.SIN == self.sin and msgList[min] == nil then
-              msgList[min] = framework.collapseMessage(msg).Payload
+              msgList[self:getMinFromName(min)] = framework.collapseMessage(msg).Payload
               msgList.count = msgList.count + 1
               break
             end
@@ -228,12 +228,12 @@ ServiceWrapper = {}
       end
     gateway.getReturnMessage(UpdateMsgMatchingList, nil, timeout)
     
-    msgList.getByName = function(name)
-        local min = self:getMinFrom(name)
-        if min then
-          return msgList[min]
+    msgList.getByMin = function(id)
+        local min_name = self:getMinFromName(id)
+        if min_name then
+          return msgList[min_name]
         else
-          printf("Received message has unknown min %d (missing min from mins_from?)\n", min)
+          printf("Received message has unknown min %s (missing min from mins_from?)\n", min_name)
           return nil
         end
       end    
