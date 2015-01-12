@@ -29,3 +29,10 @@ end
 -- Test Cases
 -------------------------
 
+function test_StandardReport()
+  
+  gps.set({speed=10}) 
+  vmsServiceWrapper:setPropertiesByName({StandardReport1Interval=1})
+  
+end
+

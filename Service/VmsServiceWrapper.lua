@@ -1,4 +1,4 @@
-require "Service/Service"
+require "Service/ServiceWrapper"
 
 VmsServiceWrapper = {}
   VmsServiceWrapper.__index = VmsServiceWrapper
