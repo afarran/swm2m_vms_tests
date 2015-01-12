@@ -80,12 +80,24 @@ ServiceWrapper = {}
   end
   
   function ServiceWrapper:_decodePinValue(pin, raw_value)
-    local result = raw_value
+    local decoded_value = raw_value
     local pin_type = self.pins_types[pin]
     if pin_type == "enum" then
-      result = self.pins_enums_reverse[pin][tonumber(raw_value)]
+      decoded_value = self.pins_enums_reverse[pin][tonumber(raw_value)]
+    elseif pin_type == "string" then
+      -- do nothing
+    elseif pin_type == "boolean" then
+      if raw_value == "False" then 
+        decoded_value = false 
+      else
+        decoded_value = true
+      end
+      
+    else
+      decoded_value = tonumber(decoded_value)
     end
-    return result
+    
+    return decoded_value
   end
   
   function ServiceWrapper:_processPinValues(pinValues)
@@ -97,6 +109,7 @@ ServiceWrapper = {}
   end
   
   function ServiceWrapper:getProperties(pinList, raw)
+    raw = raw or false
     if raw then
       return propertiesToTable(lsf.getProperties(self.sin, pinList))
     else
