@@ -163,7 +163,7 @@ ServiceWrapper = {}
   function ServiceWrapper:getMinTo(name)
     local min = self.mins_to_named[name]
     if not min then
-      printf("Can't find min %s", name)
+      printf("Can't find min %s\n", name)
     end
     return min
   end
@@ -171,7 +171,7 @@ ServiceWrapper = {}
   function ServiceWrapper:getMinToName(min)
     local min_name = self.mins_to[min]
     if not min_name then
-      printf("Can't find min %d", min)
+      printf("Can't find min %d\n", min)
     end
     return min_name
   end
@@ -179,7 +179,7 @@ ServiceWrapper = {}
     function ServiceWrapper:getMinFrom(name)
     local min = self.mins_from_named[name]
     if not min then
-      printf("Can't find min %s", name)
+      printf("Can't find min %s\n", name)
     end
     return min
   end
@@ -187,7 +187,7 @@ ServiceWrapper = {}
   function ServiceWrapper:getMinFromName(min)
     local min_name = self.mins_from[min]
     if not min_name then
-      printf("Can't find min %d", min)
+      printf("Can't find min %d\n", min)
     end
     return min_name
   end
@@ -205,6 +205,7 @@ ServiceWrapper = {}
     self:sendMessage(min, fields)    
   end
   
+  --retrieved message list can be accessed via indexes - list[min] or by message name list.getByName("min_name")
   function ServiceWrapper:waitForMessages(expectedMins, timeout)
     if type(expectedMins) ~= "table" then 
       expectedMins = {expectedMins}
@@ -218,12 +219,6 @@ ServiceWrapper = {}
           for idx, min in pairs(expectedMins) do
             if msg.Payload and min == msg.Payload.MIN and msg.SIN == self.sin and msgList[min] == nil then
               msgList[min] = framework.collapseMessage(msg).Payload
-              local min_name = self:getMinFromName(min)
-              if min_name then
-                msgList[min_name] = framework.collapseMessage(msg).Payload
-              else
-                printf("Received message has unknown min %d (missing min from mins_from?)", min)
-              end
               msgList.count = msgList.count + 1
               break
             end
@@ -232,6 +227,17 @@ ServiceWrapper = {}
         return #expectedMins == msgList.count
       end
     gateway.getReturnMessage(UpdateMsgMatchingList, nil, timeout)
+    
+    msgList.getByName = function(name)
+        local min = self:getMinFrom(name)
+        if min then
+          return msgList[min]
+        else
+          printf("Received message has unknown min %d (missing min from mins_from?)\n", min)
+          return nil
+        end
+      end    
+    
     return msgList
   end
   
