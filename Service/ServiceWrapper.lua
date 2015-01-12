@@ -160,6 +160,38 @@ ServiceWrapper = {}
     return result
   end
   
+  function ServiceWrapper:getMinTo(name)
+    local min = self.mins_to_named[name]
+    if not min then
+      printf("Can't find min %s", name)
+    end
+    return min
+  end
+
+  function ServiceWrapper:getMinToName(min)
+    local min_name = self.mins_to_named[min]
+    if not min_name then
+      printf("Can't find min %d", min)
+    end
+    return min_name
+  end
+  
+    function ServiceWrapper:getMinFrom(name)
+    local min = self.mins_from_named[name]
+    if not min then
+      printf("Can't find min %s", name)
+    end
+    return min
+  end
+
+  function ServiceWrapper:getMinFromName(min)
+    local min_name = self.mins_from_named[min]
+    if not min_name then
+      printf("Can't find min %d", min)
+    end
+    return min_name
+  end
+  
   function ServiceWrapper:sendMessage(min, fields)
     local message = {}
     message.SIN = self.sin
@@ -169,15 +201,11 @@ ServiceWrapper = {}
   end
   
   function ServiceWrapper:sendMessageByName(message_name, fields)
-    local min = self.mins_to_named[message_name]
-    if not min then
-      printf("Can't find TO-MOBILE min %s\n", message_name)
-      return nil
-    end
+    local min = self:getMinTo(message_name)
     self:sendMessage(min, fields)    
   end
   
-  function ServiceWrapper:matchReturnMessages(expectedMins, timeout)
+  function ServiceWrapper:waitForMessages(expectedMins, timeout)
     if type(expectedMins) ~= "table" then 
       expectedMins = {expectedMins}
     end
@@ -199,4 +227,16 @@ ServiceWrapper = {}
       end
     gateway.getReturnMessage(UpdateMsgMatchingList, nil, timeout)
     return msgList
+  end
+  
+  function ServiceWrapper:waitForMessagesByName(expectedMessages, timeout)
+    local expectedMins = {}
+    if type(expectedMessages) == "table" then
+      for idx, name in pairs(expectedMessages) do 
+        expectedMins[idx] = self:getMinFrom(name)
+      end
+    else
+      expectedMins = self:getMinFrom(expectedMessages)
+    end
+    return self:waitForMessages(expectedMins, timeout)
   end
