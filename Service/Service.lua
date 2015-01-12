@@ -86,13 +86,15 @@ ServiceWrapper = {}
       decoded_value = self.pins_enums_reverse[pin][tonumber(raw_value)]
     elseif pin_type == "string" then
       -- do nothing
+    elseif pin_type == "data" then
+      -- do nothing
     elseif pin_type == "boolean" then
+      -- map string to boolean
       if raw_value == "False" then 
         decoded_value = false 
       else
         decoded_value = true
       end
-      
     else
       decoded_value = tonumber(decoded_value)
     end
