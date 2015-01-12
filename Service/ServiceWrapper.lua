@@ -169,7 +169,7 @@ ServiceWrapper = {}
   end
 
   function ServiceWrapper:getMinToName(min)
-    local min_name = self.mins_to_named[min]
+    local min_name = self.mins_to[min]
     if not min_name then
       printf("Can't find min %d", min)
     end
@@ -185,7 +185,7 @@ ServiceWrapper = {}
   end
 
   function ServiceWrapper:getMinFromName(min)
-    local min_name = self.mins_from_named[min]
+    local min_name = self.mins_from[min]
     if not min_name then
       printf("Can't find min %d", min)
     end
@@ -218,6 +218,12 @@ ServiceWrapper = {}
           for idx, min in pairs(expectedMins) do
             if msg.Payload and min == msg.Payload.MIN and msg.SIN == self.sin and msgList[min] == nil then
               msgList[min] = framework.collapseMessage(msg).Payload
+              local min_name = self:getMinFromName(min)
+              if min_name then
+                msgList[min_name] = framework.collapseMessage(msg).Payload
+              else
+                printf("Received message has unknown min %d (missing min from mins_from?)", min)
+              end
               msgList.count = msgList.count + 1
               break
             end
