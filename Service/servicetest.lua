@@ -13,5 +13,6 @@ require "Service/PositionServiceWrapper"
 --a = eio:getPropertiesByName({"port1Config"})
 
 position = PositionServiceWrapper()
+position:sendMessageByName("getPosition", {{Name="fixType",Value="2D"},})
 
 print(position.pins)
