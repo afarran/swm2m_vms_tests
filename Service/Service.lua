@@ -33,15 +33,15 @@ ServiceWrapper = {}
     pins_named = {}
     pins_types = {}
     pins_enums = {}
-    pins_enums_reverse = {}
+    pins_enums_named = {}
     for index, tuple in pairs(properties) do
       pins_named[tuple.name] = tuple.pin
       pins[tuple.pin] = tuple.name
       pins_types[tuple.pin] = tuple.ptype
-      pins_enums[tuple.pin] = tuple.enums
-      pins_enums_reverse[tuple.pin] = reverseMap(tuple.enums)
+      pins_enums[tuple.pin] = reverseMap(tuple.enums)
+      pins_enums_named[tuple.pin] = tuple.enums
     end
-    return pins, pins_named, pins_types, pins_enums, pins_enums_reverse
+    return pins, pins_named, pins_types, pins_enums, pins_enums_named
   end
   
   function ServiceWrapper:_init(args)
@@ -51,7 +51,7 @@ ServiceWrapper = {}
     self.properties = args.properties
     
     self.mins = args.mins or {}
-    self.pins, self.pins_named, self.pins_types, self.pins_enums, self.pins_enums_reverse = self:__processProperties(self.properties)
+    self.pins, self.pins_named, self.pins_types, self.pins_enums, self.pins_enums_named = self:__processProperties(self.properties)
     printf("ServiceWrapper %s initialized. SIN %d\n", self.name, self.sin )
   end
   
@@ -83,7 +83,7 @@ ServiceWrapper = {}
     local decoded_value = raw_value
     local pin_type = self.pins_types[pin]
     if pin_type == "enum" then
-      decoded_value = self.pins_enums_reverse[pin][tonumber(raw_value)]
+      decoded_value = self.pins_enums[pin][tonumber(raw_value)]
     elseif pin_type == "string" then
       -- do nothing
     elseif pin_type == "data" then
