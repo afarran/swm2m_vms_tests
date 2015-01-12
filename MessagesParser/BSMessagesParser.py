@@ -1,5 +1,4 @@
 from bs4 import BeautifulSoup
-from bs4 import BeautifulSoup
 xmlStr = open("2VmsMessages.xml").read()
 xmlObj = BeautifulSoup(xmlStr,"xml")
 
