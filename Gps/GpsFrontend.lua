@@ -47,6 +47,6 @@ GpsFrontend = {}
     return tonumber(value) / 60000
   end
   
-  function GpsFrontend:denormalize()
+  function GpsFrontend:denormalize(value)
     return tonumber(value) * 60000
   end
