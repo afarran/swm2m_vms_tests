@@ -53,10 +53,12 @@ function test_CommonReport_WhenSourceCodeHashChanged_SendVersionInfoMessage()
   --rewrite SourceCodeHash so when new hash is calculated they wont be equal, that should trigger the Version message
   local Fields = {}
   local newHashCode = 42475
-  Fields = {{Name="path",Value="/data/svc/VMS/version.dat"},
-          {Name="offset",Value=0},
-          {Name="flags",Value="Overwrite"},
-          {Name="data",Value=framework.base64Encode("V{HelmPanelInterface=\"\",MessageDefHash=53522,PropDefHash=51399,SourceCodeHash=" .. newHashCode ..",VmsAgent=\"1.2.0\",IdpPackage=\"5.0.7.8877\",}\n")}}
+  Fields = {
+    {Name="path",Value="/data/svc/VMS/version.dat"},
+    {Name="offset",Value=0},
+    {Name="flags",Value="Overwrite"},
+    {Name="data",Value=framework.base64Encode("V{HelmPanelInterface=\"\",MessageDefHash=53522,PropDefHash=51399,SourceCodeHash=" .. newHashCode ..",VmsAgent=\"1.2.0\",IdpPackage=\"5.0.7.8877\",}\n")}
+  }
     
   filesystemSW:sendMessageByName("write", Fields)
   --wait till wait message is received
@@ -64,8 +66,15 @@ function test_CommonReport_WhenSourceCodeHashChanged_SendVersionInfoMessage()
   
   --verify that write went OK
   local writeResult = receivedMessages.writeResult
-  assert_not_nil(writeResult, "Could not save data into version info file")
-  assert_equal("OK", writeResult.result, "Error during write into service version file")
+  assert_not_nil(
+    writeResult, 
+    "Could not save data into version info file"
+  )
+  assert_equal(
+    "OK", 
+    writeResult.result, 
+    "Error during write into service version file"
+  )
   
   --restart VMS service
   systemSW:restartService(vmsSW.sin)
@@ -75,17 +84,34 @@ function test_CommonReport_WhenSourceCodeHashChanged_SendVersionInfoMessage()
   
   --verify Version message
   local versionMessage = receivedMessages.Version
-  assert_not_nil(versionMessage, "Version message not received")
+  assert_not_nil(
+    versionMessage, 
+    "Version message not received"
+  )
   
   --check if message contains agent version
-  assert_not_nil(versionMessage.VmsAgent, "Version message does not contain VmsAgent (version) field")
+  assert_not_nil(
+    versionMessage.VmsAgent, 
+    "Version message does not contain VmsAgent (version) field"
+  )
   
   --check if message contains 
-  assert_not_nil(versionMessage.IdpPackage, "Version message does not contain IdpPackage (LSF version) field")
+  assert_not_nil(
+    versionMessage.IdpPackage, 
+    "Version message does not contain IdpPackage (LSF version) field"
+  )
   
   --check if message contains source code hash
-  assert_not_nil(versionMessage.SourceCodeHash, "Version message does not contain SourceCodeHash (Source verification) field")
+  assert_not_nil(
+    versionMessage.SourceCodeHash, 
+    "Version message does not contain SourceCodeHash (Source verification) field"
+  )
   
-  assert_not_equal(newHashCode, versionMessage.SourceCodeHash, "Version Report SourceCodeHash is expected to be different from initial")
+  --check if message source code hash is different than previously set
+  assert_not_equal(
+    newHashCode, 
+    versionMessage.SourceCodeHash, 
+    "Version Report SourceCodeHash is expected to be different from initial"
+  )
   
 end
