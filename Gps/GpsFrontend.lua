@@ -43,3 +43,10 @@ GpsFrontend = {}
     --TODO
   end
   
+  function GpsFrontend:normalize(value)
+    return tonumber(value) / 60000
+  end
+  
+  function GpsFrontend:denormalize()
+    return tonumber(value) * 60000
+  end
