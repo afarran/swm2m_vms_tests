@@ -48,8 +48,7 @@ function test_StandardReportContent()
     longitude = initialPosition.longitude/60000 + 1
   }
   
-  gps.set(newPosition)
-  framework.delay(GPS_PROCESS_TIME + GPS_READ_INTERVAL)
+  GPS:set(newPosition)
   
   reportMessage = vmsSW:waitForMessagesByName({"StandardReport1"})
  

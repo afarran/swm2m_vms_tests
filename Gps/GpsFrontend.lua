@@ -11,6 +11,7 @@ GpsFrontend = {}
     end,})
 
   function GpsFrontend:_init()
+    print("initing gps frontend..")
     -- default config
     self.GPS_PROCESS_TIME = 1
     self.GPS_READ_INTERVAL = 1
@@ -31,7 +32,7 @@ GpsFrontend = {}
     self.GPS_READ_INTERVAL = gpsReadInterval
   end
   
-  function GpsFrontend:setPosition(position, delay)
+  function GpsFrontend:set(position, delay)
     gps.set(position)    
     if delay == nil then
       framework.delay(self.GPS_PROCESS_TIME + self.GPS_READ_INTERVAL)
