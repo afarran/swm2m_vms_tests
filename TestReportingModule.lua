@@ -34,6 +34,10 @@ end
 -------------------------
 
 function test_StandardReportContent()
+  generic_test_StandardReportContent("StandardReport1")
+end
+
+function generic_test_StandardReportContent(reportKey)
   
   vmsSW:setPropertiesByName({StandardReport1Interval=1})
   
@@ -53,23 +57,31 @@ function test_StandardReportContent()
     initialPosition.latitude,
     "No latitude in position messsage."
   )
-  
+  assert_not_nil(
+    initialPosition.speed,
+    "No speed in position messsage."
+  )
   newPosition = {
     latitude  = GPS:normalize(initialPosition.latitude)   + 1,
-    longitude = GPS:normalize(initialPosition.longitude)  + 1
+    longitude = GPS:normalize(initialPosition.longitude)  + 1,
+    speed =  GPS:normalizeSpeed(initialPosition.speed) -- km/h
   }
-  
   GPS:set(newPosition)
-  
-  reportMessage = vmsSW:waitForMessagesByName({"StandardReport1"})
- 
-  print(framework.dump(reportMessage))
-  
+  reportMessage = vmsSW:waitForMessagesByName({reportKey})
   assert_equal(
     GPS:denormalize(newPosition.latitude), 
-    reportMessage["StandardReport1"].Latitude, 
+    tonumber(reportMessage[reportKey].Latitude), 
     "Wrong latitude"
   )
-  
+  assert_equal(
+    GPS:denormalize(newPosition.longitude), 
+    tonumber(reportMessage[reportKey].Longitude), 
+    "Wrong longitude"
+  )
+  assert_equal(
+    GPS:denormalizeSpeed(newPosition.speed), 
+    tonumber(reportMessage[reportKey].Speed), 
+    1,
+    "Wrong speed"
+  )
 end
-
