@@ -74,6 +74,8 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeAboveGpsJammedStartDebounce
 
  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"})
 
+ assert_not_nil(ReceivedMessages["AbnormalReport"], "AbnormalReport not received")
+
   assert_equal(
     InitialPosition.latitude*60000,
     tonumber(ReceivedMessages["AbnormalReport"].Latitude),
