@@ -1,5 +1,7 @@
 require "Service/EioServiceWrapper"
 require "Service/PositionServiceWrapper"
+require "Service/VmsServiceWrapper"
+require "Service/SystemServiceWrapper"
 
 --eio = EioServiceWrapper()
 -- a = service:getPropertiesByName({"latitude", "longitude"})
@@ -13,6 +15,16 @@ require "Service/PositionServiceWrapper"
 --a = eio:getPropertiesByName({"port1Config"})
 
 position = PositionServiceWrapper()
+--r = position:waitForProperties({latitude = 180000}, 10)
+print(r)
+vms = VmsServiceWrapper()
+systemSW = SystemServiceWrapper()
+
+systemSW:restartService(vms.sin)
+systemSW:resetProperties({21,20,22})
+a = systemSW:getPropertiesByName({"ledControl"})
 position:sendMessageByName("getPosition", {{Name="fixType",Value="2D"},})
+
+msg = position:waitForMessagesByName("position")
 
 print(position.pins)

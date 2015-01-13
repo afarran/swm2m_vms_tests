@@ -81,6 +81,6 @@ SystemServiceWrapper = {}
   
   function SystemServiceWrapper:restartService(sin)
     local Fields = {{Name="sin",Value=sin}}
-    self:sendMessageNyName("restartService", Fields}
+    self:sendMessageByName("restartService", Fields)
   end
 
