@@ -4,4 +4,6 @@ data = file("props.txt").readlines()
 #print ("self.avlMaper = {}")
 for item in data:
   splt = item.split()[1].split('=')[1].split('(')
-  print ("{ name=\"%s\", pin=%s, ptype=\"\"},"%(splt[0],splt[1][:-1]))
+  print ("{ pin=%s, name=\"%s\", ptype=\"\"},"%(splt[0],splt[1][:-1]))
+
+
