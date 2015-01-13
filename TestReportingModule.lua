@@ -45,8 +45,14 @@ function test_StandardReportContent()
   positionMessage = positionSW:waitForMessagesByName({"position"}) 
   initialPosition = positionMessage.position
   
-  assert_not_nil(initialPosition.longitude,"No longitude in position messsage.")
-  assert_not_nil(initialPosition.latitude,"No latitude in position messsage.")
+  assert_not_nil(
+    initialPosition.longitude,
+    "No longitude in position messsage."
+  )
+  assert_not_nil(
+    initialPosition.latitude,
+    "No latitude in position messsage."
+  )
   
   newPosition = {
     latitude  = GPS:normalize(initialPosition.latitude)   + 1,
@@ -60,7 +66,7 @@ function test_StandardReportContent()
   print(framework.dump(reportMessage))
   
   assert_equal(
-    GPS:denormalize(tonumber(newPosition.latitude)), 
+    GPS:denormalize(newPosition.latitude), 
     reportMessage["StandardReport1"].Latitude, 
     "Wrong latitude"
   )
