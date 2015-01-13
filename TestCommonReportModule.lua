@@ -107,6 +107,7 @@ function test_CommonReport_WhenSourceCodeHashChanged_SendVersionInfoMessage()
     "Version message does not contain SourceCodeHash (Source verification) field"
   )
   
+  --check if message source code hash is different than previously set
   assert_not_equal(
     newHashCode, 
     versionMessage.SourceCodeHash, 
