@@ -78,4 +78,9 @@ SystemServiceWrapper = {}
     Fields[1] = {Name = "list", Elements = list_elements}
     self:sendMessageByName("resetProperties", Fields)
   end
+  
+  function SystemServiceWrapper:restartService(sin)
+    local Fields = {{Name="sin",Value=sin}}
+    self:sendMessageNyName("restartService", Fields}
+  end
 
