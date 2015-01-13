@@ -105,19 +105,20 @@ end
   -- 4. Report Values are correct.
 function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues()
   generic_test_StandardReportContent("StandardReport3", {StandardReport3Interval=1})
+  --framework.delay(30)
 end
 
 function generic_test_StandardReportContent(reportKey,properties)
   
   vmsSW:setPropertiesByName(properties)
-  
+   
   positionSW:sendMessageByName(
     "getPosition",
     {fixType = "3D"}
   )
   
-  positionMessage = positionSW:waitForMessagesByName({"position"}) 
-  initialPosition = positionMessage.position
+  local positionMessage = positionSW:waitForMessagesByName({"position"}) 
+  local initialPosition = positionMessage.position
   
   assert_not_nil(
     initialPosition.longitude,
@@ -131,13 +132,18 @@ function generic_test_StandardReportContent(reportKey,properties)
     initialPosition.speed,
     "No speed in position messsage."
   )
-  newPosition = {
+  
+  -- wait for raport to ensure that values will be fetched from current gps changes
+  vmsSW:waitForMessagesByName({reportKey})
+  
+  local newPosition = {
     latitude  = GPS:normalize(initialPosition.latitude)   + 1,
     longitude = GPS:normalize(initialPosition.longitude)  + 1,
     speed =  GPS:normalizeSpeed(initialPosition.speed) -- km/h
   }
   GPS:set(newPosition)
-  reportMessage = vmsSW:waitForMessagesByName({reportKey})
+
+  local reportMessage = vmsSW:waitForMessagesByName({reportKey})
   assert_equal(
     GPS:denormalize(newPosition.latitude), 
     tonumber(reportMessage[reportKey].Latitude), 
