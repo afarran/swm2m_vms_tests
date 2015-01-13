@@ -12,7 +12,7 @@ PositionServiceWrapper = {}
   
   function PositionServiceWrapper:_init()
     local sourceEnums = {IDPModem = 0}
-    local fixTypeEnums = {"2D" = 0, "3D" = 1}
+    local fixTypeEnums = {["2D"] = 0, ["3D"] = 1}
     local fixModeEnums = {GPS = 0, GLONASS = 1}
     local modeEnums = {GPS = 0, GLONASS = 1}
     local jammingIndEnums = {Unknown = 0, OK = 1, Warning = 2, Critical = 3}
@@ -33,7 +33,7 @@ PositionServiceWrapper = {}
       { name ="fixMode", pin=13, ptype="enum", enums=fixModeEnums},
       { name ="mode", pin=14, ptype="enum", enums=modeEnums},
       { name ="continuous", pin=15, ptype="unsignedint"},
-      { name ="jammingInd", pin=16, ptype="enum", enums=jamingIndEnums},
+      { name ="jammingInd", pin=16, ptype="enum", enums=jammingIndEnums},
       { name ="jammingFlag", pin=17, ptype="boolean"},
       { name ="jammingRaw", pin=18, ptype="unsignedint"},
       { name ="acquireTimeout", pin=19, ptype="unsignedint"},
