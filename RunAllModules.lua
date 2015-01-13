@@ -5,8 +5,8 @@ profileFactory = require("Profile/ProfileFactory")()
 require("Service/PositionServiceWrapper")
 require("Service/VmsServiceWrapper")
 
-positionServiceWrapper = PositionServiceWrapper()
---vmsServiceWrapper = VmsServiceWrapper() -- TODO: investigate why creation of this object spoils data in positionServiceWrapper? (see TC in TestReportingModule)
+positionSW = PositionServiceWrapper()
+vmsWrapper = VmsServiceWrapper() -- TODO: investigate why creation of this object spoils data in positionServiceWrapper? (see TC in TestReportingModule)
 
 FORCE_ALL_TESTCASES = false                                  -- determines whether to run all TCs or to use random TC for similar features -
 tcRandomizer =  require "Randomizer"()
