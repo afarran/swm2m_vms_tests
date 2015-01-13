@@ -754,7 +754,10 @@ end
 -- @usage gateway.setProperties(20, {{17, true, "boolean"}, {15, 10}})
 -- @usage gateway.setProperties(20, {15, 10, "unsignedint"})
 -- @within lsf
-function lsf.setProperties(sin, settings)
+function lsf.setProperties(sin, settings, save)
+  save = save or false
+  local saveValue = "False"
+  if save then saveValue = "True" end
 	if type(value) == "boolean" then
 		value = value and "True" or "False"
 	end
@@ -764,7 +767,7 @@ function lsf.setProperties(sin, settings)
 		},
 		Name="list"
 	},
-	{Name="save",Value="False"}
+	{Name="save",Value=saveValue}
 	}}
 	local messageID = gateway.submitForwardMessage(payload)
 end

@@ -11,15 +11,47 @@ PositionServiceWrapper = {}
   })
   
   function PositionServiceWrapper:_init()
+    local sourceEnums = {IDPModem = 0}
+    local fixTypeEnums = {["2D"] = 0, ["3D"] = 1}
+    local fixModeEnums = {GPS = 0, GLONASS = 1}
+    local modeEnums = {GPS = 0, GLONASS = 1}
+    local jammingIndEnums = {Unknown = 0, OK = 1, Warning = 2, Critical = 3}
+    
     local properties = {
-      {name = "latitude", pin = 6},
-      {name = "longitude", pin = 7},
-      {name = "heading", pin = 10, ptype="unsignedint"},
-      {name = "continuous", pin = 15, ptype="unsignedint"},
+      { name ="source", pin=1, ptype="enum", enums=sourceEnums},
+      { name ="fixValid", pin=2, ptype="boolean"},
+      { name ="fixType", pin=3, ptype="enum", enums=fixTypeEnums},
+      { name ="reserved1", pin=4, ptype="signedint"},
+      { name ="reserved2", pin=5, ptype="signedint"},
+      { name ="latitude", pin=6, ptype="signedint"},
+      { name ="longitude", pin=7, ptype="signedint"},
+      { name ="altitude", pin=8, ptype="signedint"},
+      { name ="speed", pin=9, ptype="unsignedint"},
+      { name ="heading", pin=10, ptype="unsignedint"},
+      { name ="fixTime", pin=11, ptype="signedint"},
+      { name ="fixAge", pin=12, ptype="unsignedint"},
+      { name ="fixMode", pin=13, ptype="enum", enums=fixModeEnums},
+      { name ="mode", pin=14, ptype="enum", enums=modeEnums},
+      { name ="continuous", pin=15, ptype="unsignedint"},
+      { name ="jammingInd", pin=16, ptype="enum", enums=jammingIndEnums},
+      { name ="jammingFlag", pin=17, ptype="boolean"},
+      { name ="jammingRaw", pin=18, ptype="unsignedint"},
+      { name ="acquireTimeout", pin=19, ptype="unsignedint"},
+      { name ="maxFixTimeout", pin=20, ptype="unsignedint"},
+      { name ="metricSpeed", pin=21, ptype="unsignedint"},
+      { name ="hdop", pin=24, ptype="unsignedint"},
+      { name ="numSats", pin=25, ptype="unsignedint"},
     }
           
-    local messages_from = {{name="position", min = 1 }}
-    local messages_to = {{name="getPosition", min = 1}}
+    local messages_from = {{ name ="position", min=1},
+                           { name ="sources", min=2},
+                          }
+    
+    local messages_to = { { name ="getPosition", min=1},
+                          { name ="getLastPosition", min=2},
+                          { name ="getSources", min=3},
+                        }
+      
     ServiceWrapper._init(self, {
         sin = 20, 
         name = "Position", 

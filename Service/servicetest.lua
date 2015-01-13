@@ -4,8 +4,8 @@ require "Service/VmsServiceWrapper"
 require "Service/SystemServiceWrapper"
 
 --eio = EioServiceWrapper()
--- a = service:getPropertiesByName({"latitude", "longitude"})
-
+--a = eio:getPropertiesByName({"port4Config", "port4EdgeDetect"})
+--print(a)
 --a = eio:getPropertiesByName({"port1Config"}, false)
 --position:setPropertiesByName({latitude = 1, continuous = 1})
 --a = position:getPropertiesByName({"latitude", "continuous"})
@@ -15,6 +15,7 @@ require "Service/SystemServiceWrapper"
 --a = eio:getPropertiesByName({"port1Config"})
 
 position = PositionServiceWrapper()
+s = position:getPropertiesByName({"fixType"})
 --r = position:waitForProperties({latitude = 180000}, 10)
 print(r)
 vms = VmsServiceWrapper()

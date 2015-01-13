@@ -11,7 +11,6 @@ GpsFrontend = {}
     end,})
 
   function GpsFrontend:_init()
-    print("initing gps frontend..")
     -- default config
     self.GPS_PROCESS_TIME = 1
     self.GPS_READ_INTERVAL = 1
@@ -49,4 +48,14 @@ GpsFrontend = {}
   
   function GpsFrontend:denormalize(value)
     return tonumber(value) * 60000
+  end
+  
+  -- from km/h to knots 
+  function GpsFrontend:denormalizeSpeed(value)
+    return tonumber(value) * 5.39957
+  end
+  
+  -- from knots to km/h
+  function GpsFrontend:normalizeSpeed(value)
+    return tonumber(value) * 0.1852
   end
