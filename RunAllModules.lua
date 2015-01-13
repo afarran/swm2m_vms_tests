@@ -40,6 +40,9 @@ local function setup()
   --include the following test suites in the feature tests:
   lunatest.suite("TestStandardReportsModule")
   lunatest.suite("TestCommonReportModule")
+  lunatest.suite("TestGPSEventsModule")
+
+
 end
 
 local function teardown()
