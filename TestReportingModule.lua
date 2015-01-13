@@ -51,8 +51,7 @@ function test_StandardReportContent()
   gps.set(newPosition)
   framework.delay(GPS_PROCESS_TIME + GPS_READ_INTERVAL)
   
-  reportMessage = vmsSW:waitForMessage({20})
-  --TODO : finish this TC, some problems to investigate
+  reportMessage = vmsSW:waitForMessagesByName({"StandardReport1"})
   
 end
 
