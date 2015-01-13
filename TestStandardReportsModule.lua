@@ -116,8 +116,8 @@ function generic_test_StandardReportContent(reportKey,properties)
     {fixType = "3D"}
   )
   
-  positionMessage = positionSW:waitForMessagesByName({"position"}) 
-  initialPosition = positionMessage.position
+  local positionMessage = positionSW:waitForMessagesByName({"position"}) 
+  local initialPosition = positionMessage.position
   
   assert_not_nil(
     initialPosition.longitude,
@@ -131,13 +131,14 @@ function generic_test_StandardReportContent(reportKey,properties)
     initialPosition.speed,
     "No speed in position messsage."
   )
-  newPosition = {
+  
+  local newPosition = {
     latitude  = GPS:normalize(initialPosition.latitude)   + 1,
     longitude = GPS:normalize(initialPosition.longitude)  + 1,
     speed =  GPS:normalizeSpeed(initialPosition.speed) -- km/h
   }
   GPS:set(newPosition)
-  reportMessage = vmsSW:waitForMessagesByName({reportKey})
+  local reportMessage = vmsSW:waitForMessagesByName({reportKey})
   assert_equal(
     GPS:denormalize(newPosition.latitude), 
     tonumber(reportMessage[reportKey].Latitude), 
