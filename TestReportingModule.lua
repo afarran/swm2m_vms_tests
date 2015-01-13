@@ -35,10 +35,10 @@ end
 
 function test_StandardReportContent()
   
-  --vmsServiceWrapper:setPropertiesByName({StandardReport1Interval=1})
+  vmsSW:setPropertiesByName({StandardReport1Interval=1})
   
-  positionServiceWrapper:sendMessageByName("getPosition",{fixType = "3D"})
-  positionMessage = positionServiceWrapper:waitForMessagesByName({"position"}) 
+  positionSW:sendMessageByName("getPosition",{fixType = "3D"})
+  positionMessage = positionSW:waitForMessagesByName({"position"}) 
   initialPosition = positionMessage.position
   assert_not_nil(initialPosition.longitude,"No longitude in position messsage.")
   assert_not_nil(initialPosition.latitude,"No latitude in position messsage.")
@@ -51,7 +51,7 @@ function test_StandardReportContent()
   gps.set(newPosition)
   framework.delay(GPS_PROCESS_TIME + GPS_READ_INTERVAL)
   
-  --reportMessage = vmsServiceWrapper:waitForMessage({20})
+  reportMessage = vmsSW:waitForMessage({20})
   --TODO : finish this TC, some problems to investigate
   
 end
