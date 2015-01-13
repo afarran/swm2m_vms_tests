@@ -120,7 +120,7 @@ ServiceWrapper = {}
   end
   
   -- pinValues = {pin1 = val1, pin2 = val2}
-  function ServiceWrapper:setProperties(pinValues, raw)
+  function ServiceWrapper:setProperties(pinValues, raw, save)
     raw = raw or false
     local pinValueTypes = {}
     for pin, value in pairs(pinValues) do
@@ -131,16 +131,16 @@ ServiceWrapper = {}
       end
     end
     
-    return lsf.setProperties(self.sin, pinValueTypes)
+    return lsf.setProperties(self.sin, pinValueTypes, save)
   end
 
   -- {pinname = val1, pinname2 = val2}
-  function ServiceWrapper:setPropertiesByName(propertyValues)
+  function ServiceWrapper:setPropertiesByName(propertyValues, raw, save)
     local pinValues = {}
     for pinName, value in pairs(propertyValues) do
       pinValues[self:getPin(pinName)] = value
     end
-    return self:setProperties(pinValues)
+    return self:setProperties(pinValues, raw, save)
   end
   
     
