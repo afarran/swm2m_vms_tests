@@ -7,11 +7,16 @@ module("TestReportingModule", package.seeall)
 
 
 function suite_setup()
-  -- reset of properties 
+  -- reset of properties _ 
   -- restarting VMS agent ?
   
-  
-  
+  -- gps setup
+  pos = {
+    latitude  = 0,
+    longitude = 0,
+    speed =  0
+  }
+  GPS:set(pos)
   
 end
 
@@ -21,6 +26,7 @@ end
 
 --- setup function
 function setup()
+  
 end
 
 -----------------------------------------------------------------------------------------------
@@ -33,13 +39,21 @@ end
 -- Test Cases
 -------------------------
 
-function test_StandardReportContent()
-  generic_test_StandardReportContent("StandardReport1")
+function test_StandardReport1Content()
+  generic_test_StandardReportContent("StandardReport1", {StandardReport1Interval=1})
 end
 
-function generic_test_StandardReportContent(reportKey)
+function test_StandardReport2Content()
+  generic_test_StandardReportContent("StandardReport2", {StandardReport2Interval=1})
+end
+
+function test_StandardReport3Content()
+  generic_test_StandardReportContent("StandardReport3", {StandardReport3Interval=1})
+end
+
+function generic_test_StandardReportContent(reportKey,properties)
   
-  vmsSW:setPropertiesByName({StandardReport1Interval=1})
+  vmsSW:setPropertiesByName(properties)
   
   positionSW:sendMessageByName(
     "getPosition",
