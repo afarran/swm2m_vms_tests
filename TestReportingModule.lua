@@ -52,8 +52,9 @@ function test_StandardReportContent()
   framework.delay(GPS_PROCESS_TIME + GPS_READ_INTERVAL)
   
   reportMessage = vmsSW:waitForMessagesByName({"StandardReport1"})
-  
+ 
   print(framework.dump(reportMessage))
+  assert_equal(reportMessage["StandardReport1"].Latitude,newPosition.latitude, "Wrong latitude")
   
 end
 
