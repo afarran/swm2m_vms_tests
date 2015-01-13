@@ -53,5 +53,7 @@ function test_StandardReportContent()
   
   reportMessage = vmsSW:waitForMessagesByName({"StandardReport1"})
   
+  print(framework.dump(reportMessage))
+  
 end
 
