@@ -252,3 +252,32 @@ ServiceWrapper = {}
     end
     return self:waitForMessages(expectedMins, timeout)
   end
+  
+  function ServiceWrapper:waitForProperties(property_values, timeout, sleep)
+    sleep = sleep or 1
+    timeout = timeout or DEFAULT_TIMEOUT or 60
+    local current_properties = {}
+    local valid = false
+    local request_properties = {}
+    for property_name, property_value in pairs(property_values) do
+      request_properties[#request_properties+1] = property_name
+    end
+    
+    local start_time = os.time()
+    current_properties = self:getPropertiesByName(request_properties)
+    while not valid do
+      valid = true
+      for property_name, property_value in pairs(property_values) do
+        if property_value ~= current_properties[property_name] then
+          valid = false
+          break
+        end
+      end
+      if not valid then
+        framework.delay(sleep)
+        current_properties = self:getPropertiesByName(request_properties)
+      end
+      if (os.time() - start_time) >  timeout then break end
+    end
+    return valid, current_properties
+  end
