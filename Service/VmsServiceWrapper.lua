@@ -97,5 +97,11 @@ VmsServiceWrapper = {}
       {name="SetProperties", min = 13},
     }
     
-    ServiceWrapper:_init({sin = 115, name = "VMS", mins = {}, properties = properties})
+    ServiceWrapper._init(self, {
+        sin = 115, 
+        name = "VMS", 
+        messages_to = messages_to, 
+        messages_from = messages_from, 
+        properties = properties
+    })
   end

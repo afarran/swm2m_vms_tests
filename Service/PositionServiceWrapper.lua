@@ -20,7 +20,7 @@ PositionServiceWrapper = {}
           
     local messages_from = {{name="position", min = 1 }}
     local messages_to = {{name="getPosition", min = 1}}
-    ServiceWrapper:_init({
+    ServiceWrapper._init(self, {
         sin = 20, 
         name = "Position", 
         messages_to = messages_to, 
