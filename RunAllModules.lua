@@ -34,7 +34,7 @@ local function setup()
   math.randomseed(os.time())
   io.output():setvbuf("no")
   --include the following test suites in the feature tests:
-  lunatest.suite("TestReportingModule")
+  lunatest.suite("TestStandardReportsModule")
 
 end
 
