@@ -12,7 +12,11 @@ GPS_READ_INTERVAL = 1                                               -- used to c
 -- Services Wrappers
 require("Service/PositionServiceWrapper")
 require("Service/VmsServiceWrapper")
+require("Service/FilesystemServiceWrapper")
+require("Service/SystemServiceWrapper")
 positionSW = PositionServiceWrapper()
+filesystemSW = FilesystemServiceWrapper()
+systemSW = SystemServiceWrapper()
 vmsSW = VmsServiceWrapper() -- TODO: investigate why creation of this object spoils data in positionServiceWrapper? (see TC in TestReportingModule)
 
 -- Gps Frontend
