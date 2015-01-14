@@ -192,3 +192,5 @@ function generic_test_StandardReportContent(reportKey,properties)
   )
   
 end
+
+--TODO: timeout, accelerated reports 
