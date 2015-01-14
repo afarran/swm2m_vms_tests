@@ -10,9 +10,6 @@ function suite_setup()
   -- reset of properties
   -- restarting VMS agent ?
 
-
-
-
 end
 
 -- executed after each test suite
@@ -22,6 +19,7 @@ end
 --- setup function
 function setup()
 
+  positionSW:setPropertiesByName({continuous = GPS_READ_INTERVAL})
   GPS:set({jammingDetect = false})
 
 end
@@ -39,13 +37,9 @@ end
 
 function test_GpsJamming_WhenGpsSignalIsJammedForTimeAboveGpsJammedStartDebouncePeriod_GpsJammedAbnormalReportIsSent()
 
-  local JAMMING_LEVEL = 121                   -- integer decribing level of signal jamming, no unit
-  local GPS_JAMMED_START_DEBOUNCE_TIME = 10   -- seconds
+  -- *** Setup
+  local GPS_JAMMED_START_DEBOUNCE_TIME = 30   -- seconds
   local GPS_JAMMED_END_DEBOUNCE_TIME = 1
-
-  vmsSW:setPropertiesByName({GpsJammedStartDebounceTime = GPS_JAMMED_DEBOUNCE_TIME, GpsJammedEndDebounceTime = GPS_JAMMED_END_DEBOUNCE_TIME}
-
-  )
 
   -- terminal stationary, GPS signal good initially
   local InitialPosition = {
@@ -53,12 +47,7 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeAboveGpsJammedStartDebounce
     latitude = 1,                   -- degrees
     longitude = 1,                  -- degrees
     jammingDetect = false,
-    jammingLevel = JAMMING_LEVEL,
   }
-
-  GPS:set(InitialPosition)
-  -- GPS signal is jammed from now
-  GPS:set({jammingDetect = true})
 
   -- terminal in different position (wrong GPS data)
   local GpsJammedPosition = {
@@ -66,15 +55,29 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeAboveGpsJammedStartDebounce
     latitude = 2,                   -- degrees
     longitude = 2,                  -- degrees
     jammingDetect = true,
-    jammingLevel = JAMMING_LEVEL,
   }
+
+  vmsSW:setPropertiesByName({GpsJammedStartDebounceTime = GPS_JAMMED_START_DEBOUNCE_TIME,
+                             GpsJammedEndDebounceTime = GPS_JAMMED_END_DEBOUNCE_TIME,
+                             GpsJammedSendReport = true
+                             }
+  )
+
+  -- *** Execute
+  -- terminal in initial position, gps signal not jammed
+  GPS:set(InitialPosition)
+  -- GPS signal is jammed from now
+  GPS:set({jammingDetect = true})
+  framework.delay(5)                      -- wait until gps position is read
   GPS:set(GpsJammedPosition)
   framework.delay(GPS_JAMMED_START_DEBOUNCE_TIME)
 
+  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"})
 
- local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"})
+  -- back to initial position with no gps jamming
+  GPS:set(InitialPosition)
 
- assert_not_nil(ReceivedMessages["AbnormalReport"], "AbnormalReport not received")
+  assert_not_nil(ReceivedMessages["AbnormalReport"], "AbnormalReport not received")
 
   assert_equal(
     InitialPosition.latitude*60000,
@@ -127,22 +130,20 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeAboveGpsJammedStartDebounce
   )
   --]]
 
-  -- back to initial position with no gps jamming
-  GPS:set(InitialPosition)
 
 
 end
 
 
-
 function test_GpsJamming_WhenGpsSignalIsJammedForTimeBelowGpsJammedStartDebouncePeriod_GpsJammedAbnormalReportIsNotSent()
 
-  local JAMMING_LEVEL = 121                   -- integer decribing level of signal jamming, no unit
   local GPS_JAMMED_START_DEBOUNCE_TIME = 30   -- seconds
   local GPS_JAMMED_END_DEBOUNCE_TIME = 1
 
-  vmsSW:setPropertiesByName({GpsJammedStartDebounceTime = GPS_JAMMED_DEBOUNCE_TIME,
-                             GpsJammedEndDebounceTime = GPS_JAMMED_END_DEBOUNCE_TIME}
+  vmsSW:setPropertiesByName({GpsJammedStartDebounceTime = GPS_JAMMED_START_DEBOUNCE_TIME,
+                             GpsJammedEndDebounceTime = GPS_JAMMED_END_DEBOUNCE_TIME,
+                             GpsJammedSendReport = true
+                            }
   )
 
   -- terminal stationary, GPS signal good initially
@@ -151,7 +152,6 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeBelowGpsJammedStartDebounce
     latitude = 1,                   -- degrees
     longitude = 1,                  -- degrees
     jammingDetect = false,
-    jammingLevel = JAMMING_LEVEL,
   }
 
   GPS:set(InitialPosition)
@@ -160,16 +160,46 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeBelowGpsJammedStartDebounce
 
   local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
 
-  if(ReceivedMessages["AbnormalReport"] ~= nil) then
-    assert_equal(
-     "GpsJammed",
-      ReceivedMessages["AbnormalReport"].EventType,
-     "GpsJammed abnormal report sent but not expected"
-    )
-  end
   GPS:set(InitialPosition)
 
+  if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "GpsJammed" ) then
+    assert_nil(1, "GpsJammed abnormal report sent but not expected")
+  end
 
+end
+
+function test_GpsJamming_WhenGpsSignalIsJammedForTimeAboveGpsJammedStartDebouncePeriodButGpsJammedReportsAreDisabled_GpsJammedAbnormalReportIsNotSent()
+
+  local GPS_JAMMED_START_DEBOUNCE_TIME = 1   -- seconds
+  local GPS_JAMMED_END_DEBOUNCE_TIME = 1     -- seconds
+
+  vmsSW:setPropertiesByName({GpsJammedStartDebounceTime = GPS_JAMMED_START_DEBOUNCE_TIME,
+                             GpsJammedEndDebounceTime = GPS_JAMMED_END_DEBOUNCE_TIME,
+                             GpsJammedSendReport = false
+                            }
+  )
+
+  -- terminal stationary, GPS signal good initially
+  local InitialPosition = {
+    speed = 0,                      -- kmh
+    latitude = 1,                   -- degrees
+    longitude = 1,                  -- degrees
+    jammingDetect = false,
+  }
+
+  GPS:set(InitialPosition)
+  -- GPS signal is jammed from now
+  GPS:set({jammingDetect = true})
+
+  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
+
+  -- back to not jammed signal
+  GPS:set(InitialPosition)
+
+  if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "GpsJammed" ) then
+    assert_nil(1, "GpsJammed abnormal report sent but not expected")
+  end
 
 
 end
+
