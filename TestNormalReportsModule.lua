@@ -6,9 +6,10 @@
 module("TestNormalReportsModule", package.seeall)
 
 function suite_setup()
-  -- reset of properties _ 
-  -- restarting VMS agent ?
-  
+  -- reset of properties 
+  systemSW:resetProperties(vmsSW.sin)
+
+  -- debounce
   vmsSW:setPropertiesByName({PropertyChangeDebounceTime=1})
   
   -- gps setup
@@ -154,6 +155,27 @@ function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIn
   )
 end
 
+function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport1IsSent()
+  generic_test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReportIsSent(
+   "ConfigChangeReport1",
+   {"StandardReport1Interval", "AcceleratedReport1Rate"}
+  )
+end
+
+function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport2IsSent()
+  generic_test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReportIsSent(
+   "ConfigChangeReport2",
+   {"StandardReport2Interval", "AcceleratedReport2Rate"}
+  )
+end
+
+function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport3IsSent()
+  generic_test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReportIsSent(
+   "ConfigChangeReport3",
+   {"StandardReport3Interval", "AcceleratedReport3Rate"}
+  )
+end
+
 -- This is generic function for configure and test reports (StandardReport,AcceleratedReport)
 function generic_test_StandardReportContent(firstReportKey,reportKey,properties,firstReportInterval,reportInterval)
  
@@ -275,3 +297,43 @@ function generic_test_StandardReportContent(firstReportKey,reportKey,properties,
     "No StatusBitmap in " .. reportKey
   )
 end
+
+-- this is generic function for testing Config Change Reports
+function generic_test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReportIsSent(messageKey,propertiesToChange)
+  -- get properties
+  propertiesBeforeChange = vmsSW:getPropertiesByName(propertiesToChange)
+  D:log(framework.dump(propertiesBeforeChange))
+  
+  propertiesToChangeValues = {}
+
+  for i=1, #propertiesToChange do
+    propertiesToChangeValues[propertiesToChange[i]] = propertiesBeforeChange[propertiesToChange[i]] + 1
+  end
+
+  -- change config to trigger ConfigChange message
+  vmsSW:setPropertiesByName( propertiesToChangeValues)
+  local configChangeMessage = vmsSW:waitForMessagesByName(
+    {messageKey},
+    30
+  )
+  assert_not_nil(
+    configChangeMessage,
+    "No "..messageKey
+  )
+  assert_not_nil(
+    configChangeMessage[messageKey],
+    "No "..messageKey
+  )
+  --D:log(framework.dump(configChangeMessage))
+
+  -- checking if raported values are correct
+  for i=1, #propertiesToChange do
+    assert_equal(
+      tonumber(configChangeMessage[messageKey][propertiesToChange[i]]),   
+      tonumber(propertiesToChangeValues[propertiesToChange[i]]),
+      0,
+      "Property " .. propertiesToChange[i] .. " has not changed!"
+    )
+  end
+end
+
