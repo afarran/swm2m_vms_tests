@@ -5,6 +5,7 @@
 
 module("TestStandardReportsModule", package.seeall)
 
+local STANDARD_REPORT_INTERVAL = 1
 
 function suite_setup()
   -- reset of properties _ 
@@ -60,7 +61,7 @@ end
   -- 3. Status Report is received
   -- 4. Report Values are correct.
 function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues()
-  generic_test_StandardReportContent("StandardReport1", {StandardReport1Interval=1})
+  generic_test_StandardReportContent("StandardReport1", {StandardReport1Interval=STANDARD_REPORT_INTERVAL})
 end
 
 --- TC checks if StandardReport 2 is sent periodically and its values are correct.
@@ -81,8 +82,8 @@ end
   -- 2. GPS is set.
   -- 3. Status Report is received
   -- 4. Report Values are correct.
-function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues()
-  generic_test_StandardReportContent("StandardReport2", {StandardReport2Interval=1})
+function x_test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues()
+  generic_test_StandardReportContent("StandardReport2", {StandardReport2Interval=STANDARD_REPORT_INTERVAL})
 end
 
 --- TC checks if StandardReport 3 is sent periodically and its values are correct.
@@ -103,9 +104,8 @@ end
   -- 2. GPS is set.
   -- 3. Status Report is received
   -- 4. Report Values are correct.
-function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues()
-  generic_test_StandardReportContent("StandardReport3", {StandardReport3Interval=1})
-  --framework.delay(30)
+function x_test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues()
+  generic_test_StandardReportContent("StandardReport3", {StandardReport3Interval=STANDARD_REPORT_INTERVAL})
 end
 
 function generic_test_StandardReportContent(reportKey,properties)
@@ -134,7 +134,8 @@ function generic_test_StandardReportContent(reportKey,properties)
   )
   
   -- wait for raport to ensure that values will be fetched from current gps changes
-  vmsSW:waitForMessagesByName({reportKey})
+  local preReportMessage = vmsSW:waitForMessagesByName({reportKey})
+  local timestampStart = preReportMessage[reportKey].Timestamp 
   
   local newPosition = {
     latitude  = GPS:normalize(initialPosition.latitude)   + 1,
@@ -144,6 +145,17 @@ function generic_test_StandardReportContent(reportKey,properties)
   GPS:set(newPosition)
 
   local reportMessage = vmsSW:waitForMessagesByName({reportKey})
+  local timestampEnd = reportMessage[reportKey].Timestamp 
+
+  local timestampDiff = timestampEnd - timestampStart
+
+  assert_equal(
+    STANDARD_REPORT_INTERVAL*60,
+    timestampDiff,
+    5,
+    "Wrong time diff between raports"
+  )
+
   assert_equal(
     GPS:denormalize(newPosition.latitude), 
     tonumber(reportMessage[reportKey].Latitude), 

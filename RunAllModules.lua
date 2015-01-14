@@ -17,7 +17,7 @@ require("Service/SystemServiceWrapper")
 positionSW = PositionServiceWrapper()
 filesystemSW = FilesystemServiceWrapper()
 systemSW = SystemServiceWrapper()
-vmsSW = VmsServiceWrapper() -- TODO: investigate why creation of this object spoils data in positionServiceWrapper? (see TC in TestReportingModule)
+vmsSW = VmsServiceWrapper()
 
 -- Gps Frontend
 require("Gps/GpsFrontend")
@@ -39,8 +39,8 @@ local function setup()
   io.output():setvbuf("no")
   --include the following test suites in the feature tests:
   lunatest.suite("TestStandardReportsModule")
-  lunatest.suite("TestCommonReportModule")
-  lunatest.suite("TestGPSEventsModule")
+  --lunatest.suite("TestCommonReportModule")
+  --lunatest.suite("TestGPSEventsModule")
 
 
 end
