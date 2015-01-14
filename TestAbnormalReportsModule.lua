@@ -3,7 +3,7 @@
 -- - contains VMS reporting features
 -- @module TestGPSEventsModule
 
-module("TestGPSEventsModule", package.seeall)
+module("TestAbnormalReportsModule", package.seeall)
 
 
 function suite_setup()
