@@ -183,7 +183,7 @@ function generic_test_StandardReportContent(firstReportKey,reportKey,properties,
   
   -- wait for raport to ensure that values will be fetched from current gps changes
   -- and to synchronize report sequence
-  print("Waiting for first report "..firstReportKey)
+  D:log("Waiting for first report "..firstReportKey)
   local preReportMessage = vmsSW:waitForMessagesByName(
     {firstReportKey},
     firstReportInterval*60 + 10
@@ -207,12 +207,11 @@ function generic_test_StandardReportContent(firstReportKey,reportKey,properties,
   GPS:set(newPosition)
 
   -- wait for next report
-  print("Waiting for second report "..reportKey)
+  D:log("Waiting for second report "..reportKey)
   local reportMessage = vmsSW:waitForMessagesByName(
     {reportKey}, 
     reportInterval*60 + 10
   )
-  print(framework.dump(reportMessage))
   assert_not_nil(
     reportMessage,
     "Second Report not received"
