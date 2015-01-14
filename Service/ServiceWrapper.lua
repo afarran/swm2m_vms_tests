@@ -90,6 +90,13 @@ ServiceWrapper = {}
     if pin_type == "enum" then
       encoded_value = self.pins_enums_named[pin][raw_value]
     end
+    if pin_type == "boolean" then
+      if raw_value then
+        encoded_value = "True"
+      else
+        encoded_value = "False"
+      end
+    end
     
     return encoded_value
   end
