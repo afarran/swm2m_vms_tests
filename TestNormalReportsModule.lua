@@ -5,8 +5,6 @@
 
 module("TestNormalReportsModule", package.seeall)
 
-local STANDARD_REPORT_INTERVAL = 1
-
 function suite_setup()
   -- reset of properties _ 
   -- restarting VMS agent ?
@@ -60,8 +58,14 @@ end
   -- 2. GPS is set.
   -- 3. Status Report is received
   -- 4. Report Values are correct.
-function x_test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues()
-  generic_test_StandardReportContent("StandardReport1", {StandardReport1Interval=STANDARD_REPORT_INTERVAL})
+function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues()
+  generic_test_StandardReportContent(
+    "StandardReport1", 
+    "StandardReport1", 
+    {StandardReport1Interval=1, AcceleratedReport1Rate=1},
+    1, 
+    1
+  )
 end
 
 --- TC checks if StandardReport 2 is sent periodically and its values are correct.
@@ -82,8 +86,14 @@ end
   -- 2. GPS is set.
   -- 3. Status Report is received
   -- 4. Report Values are correct.
-function x_test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues()
-  generic_test_StandardReportContent("StandardReport2", {StandardReport2Interval=STANDARD_REPORT_INTERVAL})
+function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues()
+  generic_test_StandardReportContent(
+    "StandardReport2", 
+    "StandardReport2", 
+    {StandardReport2Interval=1, AcceleratedReport2Rate=1},
+    1, 
+    1
+  )
 end
 
 --- TC checks if StandardReport 3 is sent periodically and its values are correct.
@@ -114,8 +124,27 @@ function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport3IsS
   )
 end
 
+function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport1IsSentWithCorrectValues()
+  generic_test_StandardReportContent(
+    "StandardReport1", 
+    "AcceleratedReport1", 
+    {StandardReport1Interval=2, AcceleratedReport1Rate=2},
+    2, 
+    1
+  )
+end
 
-function test_Accelereted_Report_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues()
+function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport2IsSentWithCorrectValues()
+  generic_test_StandardReportContent(
+    "StandardReport2", 
+    "AcceleratedReport2", 
+    {StandardReport2Interval=2, AcceleratedReport2Rate=2},
+    2, 
+    1
+  )
+end
+
+function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport3IsSentWithCorrectValues()
   generic_test_StandardReportContent(
     "StandardReport3", 
     "AcceleratedReport3", 
