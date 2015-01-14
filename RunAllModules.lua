@@ -29,7 +29,7 @@ tcRandomizer =  require "Randomizer"()
 
 -- Profiles
 profileFactory = require("Profile/ProfileFactory")()
-hardwareVariant = 1 -- TODO: avlHelperFunctions.getTerminalHardwareVersion()   -- 1,2 and 3 for 600, 700 and 800 available
+hardwareVariant = systemSW:getTerminalHardwareVersion(false)   -- so far only 690 is available, so we are not resolving variant
 profile = profileFactory.create(hardwareVariant)
 
 --- Called before the start of any test suites
@@ -39,9 +39,8 @@ local function setup()
   io.output():setvbuf("no")
   --include the following test suites in the feature tests:
   lunatest.suite("TestStandardReportsModule")
-  --lunatest.suite("TestCommonReportModule")
-  --lunatest.suite("TestGPSEventsModule")
-
+  lunatest.suite("TestCommonReportModule")
+  lunatest.suite("TestGPSEventsModule")
 
 end
 

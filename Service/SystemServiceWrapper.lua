@@ -84,3 +84,36 @@ SystemServiceWrapper = {}
     self:sendMessageByName("restartService", Fields)
   end
 
+  function SystemServiceWrapper:getTerminalHardwareVersion(resolveHW)
+
+    -- if we are not resolving variant (for example when only 690 is available)
+    if not resolveHW then
+      return 1
+    end
+
+    gateway.setHighWaterMark() -- to get the newest messages
+    -- sending getTerminalInfo to mobile message (MIN 1) from system service
+    local getTerminalInfoMessage = {SIN = 16, MIN = 1}
+    -- local getTerminalInfoMessage = {SIN = lsfConstants.sins.system, MIN = lsfConstans.mins.getTerminalInfo}  -- TODO: change function to use this line
+    gateway.submitForwardMessage(getTerminalInfoMessage)
+    -- receiving terminalInfo messge (MIN 1) as the response to the request
+    local terminalInfoMessage = gateway.getReturnMessage(framework.checkMessageType(16,1), nil, 60)
+
+    if(terminalInfoMessage.Payload.Fields[1].Value == "IDP-6XX") then return 1
+    elseif(terminalInfoMessage.Payload.Fields[1].Value == "IDP-7XX") then  return 2
+    elseif(terminalInfoMessage.Payload.Fields[1].Value == "IDP-8XX") then return 3
+    end
+    gateway.setHighWaterMark() -- to get the newest messages
+    -- sending getTerminalInfo to mobile message (MIN 1) from system service
+    local getTerminalInfoMessage = {SIN = 16, MIN = 1}
+    -- local getTerminalInfoMessage = {SIN = lsfConstants.sins.system, MIN = lsfConstans.mins.getTerminalInfo}  -- TODO: change function to use this line
+    gateway.submitForwardMessage(getTerminalInfoMessage)
+    -- receiving terminalInfo messge (MIN 1) as the response to the request
+    local terminalInfoMessage = gateway.getReturnMessage(framework.checkMessageType(16,1), nil, 60)
+
+    if(terminalInfoMessage.Payload.Fields[1].Value == "IDP-6XX") then return 1
+    elseif(terminalInfoMessage.Payload.Fields[1].Value == "IDP-7XX") then  return 2
+    elseif(terminalInfoMessage.Payload.Fields[1].Value == "IDP-8XX") then return 3
+    end
+
+  end
