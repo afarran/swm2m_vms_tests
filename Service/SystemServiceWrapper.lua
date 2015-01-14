@@ -91,13 +91,13 @@ SystemServiceWrapper = {}
       return 1
     end
 
+    -- TODO: this has just been pasted from old-style AVL code, later can be refactored to wrappers-style
     gateway.setHighWaterMark() -- to get the newest messages
     -- sending getTerminalInfo to mobile message (MIN 1) from system service
-    local getTerminalInfoMessage = {SIN = 16, MIN = 1}
-    -- local getTerminalInfoMessage = {SIN = lsfConstants.sins.system, MIN = lsfConstans.mins.getTerminalInfo}  -- TODO: change function to use this line
+    local getTerminalInfoMessage = {SIN = self.sin, MIN = 1}
     gateway.submitForwardMessage(getTerminalInfoMessage)
     -- receiving terminalInfo messge (MIN 1) as the response to the request
-    local terminalInfoMessage = gateway.getReturnMessage(framework.checkMessageType(16,1), nil, 60)
+    local terminalInfoMessage = gateway.getReturnMessage(framework.checkMessageType(self.sin,1), nil, 60)
 
     if(terminalInfoMessage.Payload.Fields[1].Value == "IDP-6XX") then return 1
     elseif(terminalInfoMessage.Payload.Fields[1].Value == "IDP-7XX") then  return 2
@@ -105,15 +105,15 @@ SystemServiceWrapper = {}
     end
     gateway.setHighWaterMark() -- to get the newest messages
     -- sending getTerminalInfo to mobile message (MIN 1) from system service
-    local getTerminalInfoMessage = {SIN = 16, MIN = 1}
-    -- local getTerminalInfoMessage = {SIN = lsfConstants.sins.system, MIN = lsfConstans.mins.getTerminalInfo}  -- TODO: change function to use this line
+    local getTerminalInfoMessage = {SIN = self.sin, MIN = 1}
     gateway.submitForwardMessage(getTerminalInfoMessage)
     -- receiving terminalInfo messge (MIN 1) as the response to the request
-    local terminalInfoMessage = gateway.getReturnMessage(framework.checkMessageType(16,1), nil, 60)
+    local terminalInfoMessage = gateway.getReturnMessage(framework.checkMessageType(self.sin,1), nil, 60)
 
     if(terminalInfoMessage.Payload.Fields[1].Value == "IDP-6XX") then return 1
     elseif(terminalInfoMessage.Payload.Fields[1].Value == "IDP-7XX") then  return 2
     elseif(terminalInfoMessage.Payload.Fields[1].Value == "IDP-8XX") then return 3
     end
+    -- TODO: end
 
   end
