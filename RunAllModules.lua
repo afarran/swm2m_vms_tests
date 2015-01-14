@@ -9,6 +9,10 @@ TIMEOUT_MSG_NOT_EXPECTED = 20                                       -- in second
 GEOFENCE_INTERVAL = 10                                              -- in seconds
 GPS_READ_INTERVAL = 1                                               -- used to configure the time interval of updating the position , in seconds
 
+-- Debugger
+require("Debugger/Debugger.lua")
+D = Debugger()
+
 -- Services Wrappers
 require("Service/PositionServiceWrapper")
 require("Service/VmsServiceWrapper")
@@ -38,7 +42,7 @@ local function setup()
   math.randomseed(os.time())
   io.output():setvbuf("no")
   --include the following test suites in the feature tests:
-  lunatest.suite("TestStandardReportsModule")
+  lunatest.suite("TestNormalReportsModule")
   lunatest.suite("TestCommonReportModule")
   lunatest.suite("TestGPSEventsModule")
 
