@@ -1,4 +1,5 @@
 require("Profile/Profile680")
+require("Profile/Profile690")
 require("Profile/Profile780")
 require("Profile/Profile800")
 
@@ -9,8 +10,8 @@ local profileFactory = {}
 
 function profileFactory.create(hardwareVariant)
   if hardwareVariant == 1 then
-    print("Creating profile for 680")
-    return Profile680()
+    print("Creating profile for 690")
+    return Profile690()
   elseif hardwareVariant == 2 then
     print("Creating profile for 780")
     return Profile780()
