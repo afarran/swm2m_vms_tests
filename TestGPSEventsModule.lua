@@ -68,6 +68,7 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeAboveGpsJammedStartDebounce
   GPS:set(InitialPosition)
   gateway.setHighWaterMark() -- to get the newest messages
   -- GPS signal is jammed from now
+  timeOfEvent = os.time()  -- to get exact timestamp
   GPS:set({jammingDetect = true})
   framework.delay(5)                      -- wait until gps position is read
   GPS:set(GpsJammedPosition)
@@ -108,6 +109,13 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeAboveGpsJammedStartDebounce
     "GpsJammed",
     ReceivedMessages["AbnormalReport"].EventType,
     "Wrong name of the received EventType in GpsJammed abnormal report"
+  )
+
+  assert_equal(
+    timeOfEvent,
+    tonumber(ReceivedMessages["AbnormalReport"].Timestamp),
+    5,
+    "Wrong Timestamp value in GpsJammed abnormal report"
   )
 
   -- TODO: update this after implementation in TestFramework file
@@ -170,6 +178,7 @@ function test_GpsJamming_ForTerminalInGpsJammedStateWhenGpsSignalIsNotJammedForT
   framework.delay(GPS_JAMMED_START_DEBOUNCE_TIME)
   gateway.setHighWaterMark() -- to get the newest messages
   -- GPS signal is good again
+  timeOfEvent = os.time()  -- to get exact timestamp
   GPS:set(GpsNotJammedPosition)
   framework.delay(GPS_JAMMED_END_DEBOUNCE_TIME)
 
@@ -205,6 +214,13 @@ function test_GpsJamming_ForTerminalInGpsJammedStateWhenGpsSignalIsNotJammedForT
     "GpsJammed",
     ReceivedMessages["AbnormalReport"].EventType,
     "Wrong name of the received EventType in GpsJammed abnormal report"
+  )
+
+  assert_equal(
+    timeOfEvent,
+    tonumber(ReceivedMessages["AbnormalReport"].Timestamp),
+    5,
+    "Wrong Timestamp value in GpsJammed abnormal report"
   )
 
   -- TODO: update this after implementation in TestFramework file
