@@ -39,7 +39,7 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeAboveGpsJammedStartDebounce
 
   -- *** Setup
   local GPS_JAMMED_START_DEBOUNCE_TIME = 30   -- seconds
-  local GPS_JAMMED_END_DEBOUNCE_TIME = 1
+  local GPS_JAMMED_END_DEBOUNCE_TIME = 1      -- seconds
 
   -- terminal stationary, GPS signal good initially
   local InitialPosition = {
@@ -66,6 +66,7 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeAboveGpsJammedStartDebounce
   -- *** Execute
   -- terminal in initial position, gps signal not jammed
   GPS:set(InitialPosition)
+  gateway.setHighWaterMark() -- to get the newest messages
   -- GPS signal is jammed from now
   GPS:set({jammingDetect = true})
   framework.delay(5)                      -- wait until gps position is read
@@ -130,9 +131,107 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeAboveGpsJammedStartDebounce
   )
   --]]
 
-
+  -- TODO: add checking StatusBitmap when the helper function is ready
 
 end
+
+
+function test_GpsJamming_ForTerminalInGpsJammedStateWhenGpsSignalIsNotJammedForTimeAboveGpsJammedEndDebouncePeriod_GpsJammedAbnormalReportIsSent()
+
+  -- *** Setup
+  local GPS_JAMMED_START_DEBOUNCE_TIME = 1    -- seconds
+  local GPS_JAMMED_END_DEBOUNCE_TIME = 1      -- seconds
+
+  -- terminal in different position (wrong GPS data)
+  local GpsJammedPosition = {
+    speed = 0,                      -- kmh
+    latitude = 2,                   -- degrees
+    longitude = 2,                  -- degrees
+    jammingDetect = true,
+  }
+
+  -- terminal in different position (wrong GPS data)
+  local GpsNotJammedPosition = {
+    speed = 0,                      -- kmh
+    latitude = 2,                   -- degrees
+    longitude = 2,                  -- degrees
+    jammingDetect = false,
+  }
+
+  vmsSW:setPropertiesByName({GpsJammedStartDebounceTime = GPS_JAMMED_START_DEBOUNCE_TIME,
+                             GpsJammedEndDebounceTime = GPS_JAMMED_END_DEBOUNCE_TIME,
+                             GpsJammedSendReport = true
+                             }
+  )
+
+  -- *** Execute
+  -- GPS signal is jammed from now
+  GPS:set(GpsJammedPosition)
+  framework.delay(GPS_JAMMED_START_DEBOUNCE_TIME)
+  gateway.setHighWaterMark() -- to get the newest messages
+  -- GPS signal is good again
+  GPS:set(GpsNotJammedPosition)
+  framework.delay(GPS_JAMMED_END_DEBOUNCE_TIME)
+
+  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"})
+
+  assert_not_nil(ReceivedMessages["AbnormalReport"], "AbnormalReport not received")
+
+  assert_equal(
+    GpsNotJammedPosition.latitude*60000,
+    tonumber(ReceivedMessages["AbnormalReport"].Latitude),
+    "Wrong latitude value in GpsJammed abnormal report"
+  )
+
+  assert_equal(
+    GpsNotJammedPosition.longitude*60000,
+    tonumber(ReceivedMessages["AbnormalReport"].Longitude),
+    "Wrong longitude value in GpsJammed abnormal report"
+  )
+
+  assert_equal(
+    GpsNotJammedPosition.speed,
+    tonumber(ReceivedMessages["AbnormalReport"].Speed),
+    "Wrong speed value in GpsJammed abnormal report"
+  )
+
+  assert_equal(
+    361,
+    tonumber(ReceivedMessages["AbnormalReport"].Course),
+    "Wrong course value in GpsJammed abnormal report"
+  )
+
+  assert_equal(
+    "GpsJammed",
+    ReceivedMessages["AbnormalReport"].EventType,
+    "Wrong name of the received EventType in GpsJammed abnormal report"
+  )
+
+  -- TODO: update this after implementation in TestFramework file
+  --[[
+  assert_equal(
+    GpsNotJammedPosition.hdop,
+    ReceivedMessages["AbnormalReport"].Hdop,
+    "Wrong HDOP value in GpsJammed abnormal report"
+  )
+
+  assert_equal(
+    GpsNotJammedPosition.idpsnr,
+    ReceivedMessages["AbnormalReport"].IdpSnr,
+    "Wrong IdpSnr value in GpsJammed abnormal report"
+  )
+
+  assert_equal(
+    GpsNotJammedPosition.numsats,
+    ReceivedMessages["AbnormalReport"].NumSats,
+    "Wrong NumSats value in GpsJammed abnormal report"
+  )
+  --]]
+
+  -- TODO: add checking StatusBitmap when the helper function is ready
+
+end
+
 
 
 function test_GpsJamming_WhenGpsSignalIsJammedForTimeBelowGpsJammedStartDebouncePeriod_GpsJammedAbnormalReportIsNotSent()
@@ -153,7 +252,7 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeBelowGpsJammedStartDebounce
     longitude = 1,                  -- degrees
     jammingDetect = false,
   }
-
+  gateway.setHighWaterMark() -- to get the newest messages
   GPS:set(InitialPosition)
   -- GPS signal is jammed from now
   GPS:set({jammingDetect = true})
@@ -165,6 +264,9 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeBelowGpsJammedStartDebounce
   if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "GpsJammed" ) then
     assert_nil(1, "GpsJammed abnormal report sent but not expected")
   end
+
+
+  -- TODO: add checking StatusBitmap when the helper function is ready
 
 end
 
@@ -186,7 +288,7 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeAboveGpsJammedStartDebounce
     longitude = 1,                  -- degrees
     jammingDetect = false,
   }
-
+  gateway.setHighWaterMark() -- to get the newest messages
   GPS:set(InitialPosition)
   -- GPS signal is jammed from now
   GPS:set({jammingDetect = true})
@@ -199,6 +301,9 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeAboveGpsJammedStartDebounce
   if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "GpsJammed" ) then
     assert_nil(1, "GpsJammed abnormal report sent but not expected")
   end
+
+
+  -- TODO: add checking StatusBitmap when the helper function is ready
 
 
 end
