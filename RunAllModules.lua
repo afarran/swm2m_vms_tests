@@ -17,7 +17,7 @@ require("Service/SystemServiceWrapper")
 positionSW = PositionServiceWrapper()
 filesystemSW = FilesystemServiceWrapper()
 systemSW = SystemServiceWrapper()
-vmsSW = VmsServiceWrapper() -- TODO: investigate why creation of this object spoils data in positionServiceWrapper? (see TC in TestReportingModule)
+vmsSW = VmsServiceWrapper()
 
 -- Gps Frontend
 require("Gps/GpsFrontend")
@@ -29,7 +29,7 @@ tcRandomizer =  require "Randomizer"()
 
 -- Profiles
 profileFactory = require("Profile/ProfileFactory")()
-hardwareVariant = 1 -- TODO: avlHelperFunctions.getTerminalHardwareVersion()   -- 1,2 and 3 for 600, 700 and 800 available
+hardwareVariant = systemSW:getTerminalHardwareVersion(false)   -- so far only 690 is available, so we are not resolving variant
 profile = profileFactory.create(hardwareVariant)
 
 --- Called before the start of any test suites
@@ -41,7 +41,6 @@ local function setup()
   lunatest.suite("TestStandardReportsModule")
   lunatest.suite("TestCommonReportModule")
   lunatest.suite("TestGPSEventsModule")
-
 
 end
 
