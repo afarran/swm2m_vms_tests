@@ -1,9 +1,9 @@
 -----------
 -- Reporting test module
 -- - contains VMS reporting features
--- @module TestReportingModule
+-- @module TestNormalReportModule
 
-module("TestStandardReportsModule", package.seeall)
+module("TestNormalReportsModule", package.seeall)
 
 local STANDARD_REPORT_INTERVAL = 1
 
@@ -60,7 +60,7 @@ end
   -- 2. GPS is set.
   -- 3. Status Report is received
   -- 4. Report Values are correct.
-function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues()
+function x_test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues()
   generic_test_StandardReportContent("StandardReport1", {StandardReport1Interval=STANDARD_REPORT_INTERVAL})
 end
 
@@ -104,19 +104,38 @@ end
   -- 2. GPS is set.
   -- 3. Status Report is received
   -- 4. Report Values are correct.
-function x_test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues()
-  generic_test_StandardReportContent("StandardReport3", {StandardReport3Interval=STANDARD_REPORT_INTERVAL})
+function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues()
+  generic_test_StandardReportContent(
+    "StandardReport3", 
+    "StandardReport3", 
+    {StandardReport3Interval=1, AcceleratedReport3Rate=1},
+    1, 
+    1
+  )
 end
 
-function generic_test_StandardReportContent(reportKey,properties)
-  
+
+function test_Accelereted_Report_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues()
+  generic_test_StandardReportContent(
+    "StandardReport3", 
+    "AcceleratedReport3", 
+    {StandardReport3Interval=2, AcceleratedReport3Rate=2},
+    2, 
+    1
+  )
+end
+
+-- This is generic function for configure and test reports (StandardReport,AcceleratedReport)
+function generic_test_StandardReportContent(firstReportKey,reportKey,properties,firstReportInterval,reportInterval)
+ 
+  -- reports setup 
   vmsSW:setPropertiesByName(properties)
-   
+  
+  -- fetching current position info 
   positionSW:sendMessageByName(
     "getPosition",
     {fixType = "3D"}
   )
-  
   local positionMessage = positionSW:waitForMessagesByName({"position"}) 
   local initialPosition = positionMessage.position
   
@@ -134,9 +153,23 @@ function generic_test_StandardReportContent(reportKey,properties)
   )
   
   -- wait for raport to ensure that values will be fetched from current gps changes
-  local preReportMessage = vmsSW:waitForMessagesByName({reportKey})
-  local timestampStart = preReportMessage[reportKey].Timestamp 
+  -- and to synchronize report sequence
+  print("Waiting for first report "..firstReportKey)
+  local preReportMessage = vmsSW:waitForMessagesByName(
+    {firstReportKey},
+    firstReportInterval*60 + 10
+  )
+  assert_not_nil(
+    preReportMessage,
+    "First Report not received"
+  )
+  assert_not_nil(
+    preReportMessage[firstReportKey],
+    "First Report not received!"
+  )
+  local timestampStart = preReportMessage[firstReportKey].Timestamp 
   
+  -- new position setup
   local newPosition = {
     latitude  = GPS:normalize(initialPosition.latitude)   + 1,
     longitude = GPS:normalize(initialPosition.longitude)  + 1,
@@ -144,18 +177,33 @@ function generic_test_StandardReportContent(reportKey,properties)
   }
   GPS:set(newPosition)
 
-  local reportMessage = vmsSW:waitForMessagesByName({reportKey})
+  -- wait for next report
+  print("Waiting for second report "..reportKey)
+  local reportMessage = vmsSW:waitForMessagesByName(
+    {reportKey}, 
+    reportInterval*60 + 10
+  )
+  print(framework.dump(reportMessage))
+  assert_not_nil(
+    reportMessage,
+    "Second Report not received"
+  )
+  assert_not_nil(
+    reportMessage[reportKey],
+    "Second Report not received"
+  )
+
+  -- calculate time diff
   local timestampEnd = reportMessage[reportKey].Timestamp 
-
   local timestampDiff = timestampEnd - timestampStart
-
   assert_equal(
-    STANDARD_REPORT_INTERVAL*60,
+    reportInterval*60,
     timestampDiff,
     5,
     "Wrong time diff between raports"
   )
 
+  -- check values
   assert_equal(
     GPS:denormalize(newPosition.latitude), 
     tonumber(reportMessage[reportKey].Latitude), 
@@ -173,36 +221,29 @@ function generic_test_StandardReportContent(reportKey,properties)
     "Wrong speed in " .. reportKey
   )
   
+  -- some of values are being checked just for their existance
   assert_not_nil(
     reportMessage[reportKey].Timestamp,
     "No timestamp in " .. reportKey
   )
-  
   assert_not_nil(
     reportMessage[reportKey].Course,
     "No Course in " .. reportKey
   )
-  
   assert_not_nil(
     reportMessage[reportKey].Hdop,
     "No Hdop in " .. reportKey
   )
-  
   assert_not_nil(
     reportMessage[reportKey].NumSats,
     "No NumSats in " .. reportKey
   )
-  
   assert_not_nil(
     reportMessage[reportKey].IdpCnr,
     "No IdpCnr in " .. reportKey
   )
-  
   assert_not_nil(
     reportMessage[reportKey].StatusBitmap,
     "No StatusBitmap in " .. reportKey
   )
-  
 end
-
---TODO: timeout, accelerated reports 
