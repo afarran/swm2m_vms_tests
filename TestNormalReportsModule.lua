@@ -6,9 +6,10 @@
 module("TestNormalReportsModule", package.seeall)
 
 function suite_setup()
-  -- reset of properties _ 
-  -- restarting VMS agent ?
-  
+  -- reset of properties 
+  systemSW:resetProperties(vmsSW.sin)
+
+  -- debounce
   vmsSW:setPropertiesByName({PropertyChangeDebounceTime=1})
   
   -- gps setup
