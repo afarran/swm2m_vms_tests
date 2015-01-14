@@ -4,7 +4,8 @@
 -- @module TestCommonReportModule
 
 module("TestCommonReportModule", package.seeall)
-
+local restoreSourcecode = false
+local SourcecodeData = ""
 
 function suite_setup()
   -- reset of properties 
@@ -18,12 +19,22 @@ end
 
 --- setup function
 function setup()
+  gateway.setHighWaterMark()
 end
 
 -----------------------------------------------------------------------------------------------
 --- teardown function executed after each unit test
 function teardown()
-  
+  if restoreSourcecode then
+  local Fields = {
+    {Name="path",Value="/act/svc/VMS/Smtp.lua"},
+    {Name="offset",Value=0},
+    {Name="flags",Value="Overwrite"},
+    {Name="data",Value=SourcecodeData}
+  }
+  filesystemSW:sendMessageByName("write", Fields)
+  receivedMessages = filesystemSW:waitForMessagesByName({"writeResult"})
+  end
 end
 
 -------------------------
@@ -50,32 +61,40 @@ function test_CommonReport_WhenGetVersionMessageReceived_SendVersionInfoMessage(
 end
 
 function test_CommonReport_WhenSourceCodeHashChanged_SendVersionInfoMessage()
-  --rewrite SourceCodeHash so when new hash is calculated they wont be equal, that should trigger the Version message
+  -- Read 1st char of source code file - 
   local Fields = {}
-  local newHashCode = 42475
   Fields = {
-    {Name="path",Value="/data/svc/VMS/version.dat"},
+    {Name="path",Value="/act/svc/VMS/Smtp.lua"},
     {Name="offset",Value=0},
-    {Name="flags",Value="Overwrite"},
-    {Name="data",Value=framework.base64Encode("V{HelmPanelInterface=\"\",MessageDefHash=53522,PropDefHash=51399,SourceCodeHash=" .. newHashCode ..",VmsAgent=\"1.2.0\",IdpPackage=\"5.0.7.8877\",}\n")}
+    {Name="size",Value=2},
   }
     
-  filesystemSW:sendMessageByName("write", Fields)
+  filesystemSW:sendMessageByName("read", Fields)
   --wait till wait message is received
-  local receivedMessages = filesystemSW:waitForMessagesByName({"writeResult"})
+  local receivedMessages = filesystemSW:waitForMessagesByName({"readResult"})
   
-  --verify that write went OK
-  local writeResult = receivedMessages.writeResult
+  --verify that read went OK
+  local readResult = receivedMessages.readResult
   assert_not_nil(
-    writeResult, 
+    readResult, 
     "Could not save data into version info file"
   )
   assert_equal(
     "OK", 
-    writeResult.result, 
+    readResult.result, 
     "Error during write into service version file"
   )
+  restoreSourcecode = true
+  SourcecodeData = readResult.data
   
+  Fields = {
+    {Name="path",Value="/act/svc/VMS/Smtp.lua"},
+    {Name="offset",Value=0},
+    {Name="flags",Value="Overwrite"},
+    {Name="data",Value=framework.base64Encode(":)")}
+  }
+  filesystemSW:sendMessageByName("write", Fields)
+  receivedMessages = filesystemSW:waitForMessagesByName({"writeResult"})
   --restart VMS service
   systemSW:restartService(vmsSW.sin)
   
@@ -105,13 +124,6 @@ function test_CommonReport_WhenSourceCodeHashChanged_SendVersionInfoMessage()
   assert_not_nil(
     versionMessage.SourceCodeHash, 
     "Version message does not contain SourceCodeHash (Source verification) field"
-  )
-  
-  --check if message source code hash is different than previously set
-  assert_not_equal(
-    newHashCode, 
-    versionMessage.SourceCodeHash, 
-    "Version Report SourceCodeHash is expected to be different from initial"
   )
   
 end
