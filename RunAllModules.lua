@@ -10,7 +10,7 @@ GEOFENCE_INTERVAL = 10                                              -- in second
 GPS_READ_INTERVAL = 1                                               -- used to configure the time interval of updating the position , in seconds
 
 -- Debugger
-require("Debugger/Debugger.lua")
+require("Debugger/Debugger")
 D = Debugger()
 
 -- Services Wrappers

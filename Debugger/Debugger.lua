@@ -2,7 +2,7 @@
 
 DEBUG_MODE = 1
 
-local Debugger = {}
+Debugger = {}
   Debugger.__index = Debugger
   setmetatable(Debugger, {
     __call = function(cls, ...)
