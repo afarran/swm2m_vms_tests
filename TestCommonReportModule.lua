@@ -25,15 +25,19 @@ end
 -----------------------------------------------------------------------------------------------
 --- teardown function executed after each unit test
 function teardown()
+  gateway.setHighWaterMark()
   if restoreSourcecode then
-  local Fields = {
-    {Name="path",Value="/act/svc/VMS/Smtp.lua"},
-    {Name="offset",Value=0},
-    {Name="flags",Value="Overwrite"},
-    {Name="data",Value=SourcecodeData}
-  }
-  filesystemSW:sendMessageByName("write", Fields)
-  receivedMessages = filesystemSW:waitForMessagesByName({"writeResult"})
+    local Fields = {
+      {Name="path",Value="/act/svc/VMS/Smtp.lua"},
+      {Name="offset",Value=0},
+      {Name="flags",Value="Overwrite"},
+      {Name="data",Value=SourcecodeData}
+    }
+    filesystemSW:sendMessageByName("write", Fields)
+    filesystemSW:waitForMessagesByName({"writeResult"})
+    systemSW:restartService(vmsSW.sin)
+    vmsSW:waitForMessagesByName({"Version"})
+    restoreSourcecode = false
   end
 end
 
@@ -126,4 +130,20 @@ function test_CommonReport_WhenSourceCodeHashChanged_SendVersionInfoMessage()
     "Version message does not contain SourceCodeHash (Source verification) field"
   )
   
+end
+
+function test_CommonReport_WhenSourceCodeHasNotChange_VersionReportIsNotSent()
+  systemSW:restartService(vmsSW.sin)
+  local receivedMessages = vmsSW:waitForMessagesByName({"Version"}, 20)
+  
+  assert_nil(receivedMessages.Vesion, "Version message sent incorrectly")
+  
+end
+
+function test_CommonReport_WhenFirmwarePackageHasChanged_VersionReportIsSent()
+  assert_true(false, "Not implemented yet")
+end
+
+function test_CommonReport_WhenVmsVersionHasChanged_VersionReportIsSent()
+  assert_true(false, "Not implemented yet")
 end
