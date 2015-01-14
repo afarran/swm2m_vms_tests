@@ -16,6 +16,7 @@ local Debugger = {}
  
   -- if will be more sophisticated soon .. 
   function Debugger:log(info,tag)
+    if not tag then tag="info" end
     if DEBUG_MODE == 1 then
       print(tag.." | "..info)
     end 
