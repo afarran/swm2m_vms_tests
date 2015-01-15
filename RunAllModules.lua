@@ -10,7 +10,7 @@ GEOFENCE_INTERVAL = 10                                              -- in second
 GPS_READ_INTERVAL = 1                                               -- used to configure the time interval of updating the position , in seconds
 
 -- Debugger
-require("Debugger/Debugger.lua")
+require("Debugger/Debugger")
 D = Debugger()
 
 -- Services Wrappers
@@ -43,8 +43,8 @@ local function setup()
   io.output():setvbuf("no")
   --include the following test suites in the feature tests:
   lunatest.suite("TestNormalReportsModule")
-  lunatest.suite("TestCommonReportModule")
-  lunatest.suite("TestGPSEventsModule")
+  --lunatest.suite("TestCommonReportModule")
+  --lunatest.suite("TestAbnormalReportsModule")
 
 end
 

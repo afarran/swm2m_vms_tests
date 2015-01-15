@@ -69,7 +69,7 @@ VmsServiceWrapper = {}
       {name="Properties", min = 7 },
       {name="Version", min = 8 },
       {name="ConfigChangeReport1", min = 10 },
-      {name="ConfigChangeReport1", min = 11 },
+      {name="ConfigChangeReport2", min = 11 },
       {name="ConfigChangeReport3", min = 12 },
       {name="StandardReport1", min = 20 },
       {name="AcceleratedReport1", min = 21 },
