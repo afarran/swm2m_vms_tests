@@ -38,22 +38,22 @@ end
 function test_GpsJamming_WhenGpsSignalIsJammedForTimeAboveGpsJammedStartDebouncePeriod_GpsJammedAbnormalReportIsSent()
 
   -- *** Setup
-  local GPS_JAMMED_START_DEBOUNCE_TIME = 30   -- seconds
+  local GPS_JAMMED_START_DEBOUNCE_TIME = 1   -- seconds
   local GPS_JAMMED_END_DEBOUNCE_TIME = 1      -- seconds
 
   -- terminal stationary, GPS signal good initially
   local InitialPosition = {
     speed = 0,                      -- kmh
-    latitude = 1,                   -- degrees
-    longitude = 1,                  -- degrees
+    latitude = 2,                   -- degrees
+    longitude = 2,                  -- degrees
     jammingDetect = false,
   }
 
   -- terminal in different position (wrong GPS data)
   local GpsJammedPosition = {
     speed = 0,                      -- kmh
-    latitude = 2,                   -- degrees
-    longitude = 2,                  -- degrees
+    latitude = 1,                   -- degrees
+    longitude = 1,                  -- degrees
     jammingDetect = true,
   }
 
@@ -68,11 +68,11 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeAboveGpsJammedStartDebounce
   GPS:set(InitialPosition)
   gateway.setHighWaterMark() -- to get the newest messages
   -- GPS signal is jammed from now
-  timeOfEvent = os.time()  -- to get exact timestamp
-  GPS:set({jammingDetect = true})
-  framework.delay(5)                      -- wait until gps position is read
   GPS:set(GpsJammedPosition)
   framework.delay(GPS_JAMMED_START_DEBOUNCE_TIME)
+  timeOfEvent = os.time()  -- to get exact timestamp
+  print(framework.dump(timeOfEvent))
+
 
   local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"})
 
@@ -82,19 +82,19 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeAboveGpsJammedStartDebounce
   assert_not_nil(ReceivedMessages["AbnormalReport"], "AbnormalReport not received")
 
   assert_equal(
-    InitialPosition.latitude*60000,
+    GpsJammedPosition.latitude*60000,
     tonumber(ReceivedMessages["AbnormalReport"].Latitude),
     "Wrong latitude value in GpsJammed abnormal report"
   )
 
   assert_equal(
-    InitialPosition.longitude*60000,
+    GpsJammedPosition.longitude*60000,
     tonumber(ReceivedMessages["AbnormalReport"].Longitude),
     "Wrong longitude value in GpsJammed abnormal report"
   )
 
   assert_equal(
-    InitialPosition.speed,
+    GpsJammedPosition.speed,
     tonumber(ReceivedMessages["AbnormalReport"].Speed),
     "Wrong speed value in GpsJammed abnormal report"
   )
@@ -178,9 +178,9 @@ function test_GpsJamming_ForTerminalInGpsJammedStateWhenGpsSignalIsNotJammedForT
   framework.delay(GPS_JAMMED_START_DEBOUNCE_TIME)
   gateway.setHighWaterMark() -- to get the newest messages
   -- GPS signal is good again
-  timeOfEvent = os.time()  -- to get exact timestamp
-  GPS:set(GpsNotJammedPosition)
+   GPS:set(GpsNotJammedPosition)
   framework.delay(GPS_JAMMED_END_DEBOUNCE_TIME)
+  timeOfEvent = os.time()  -- to get exact timestamp
 
   local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"})
 
