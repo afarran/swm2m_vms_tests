@@ -156,23 +156,44 @@ function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIn
 end
 
 function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport1IsSent()
-  generic_test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReportIsSent(
+
+  -- get properties
+  local propertiesToChange = {"StandardReport1Interval", "AcceleratedReport1Rate"}
+  local propertiesBeforeChange = vmsSW:getPropertiesByName(propertiesToChange)
+  D:log(framework.dump(propertiesBeforeChange))
+
+  generic_test_ConfigChangeReportConfigChangeReportIsSent(
    "ConfigChangeReport1",
-   {"StandardReport1Interval", "AcceleratedReport1Rate"}
+    propertiesToChange ,
+    propertiesBeforeChange
   )
 end
 
 function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport2IsSent()
-  generic_test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReportIsSent(
+  
+  -- get properties
+  local propertiesToChange = {"StandardReport2Interval", "AcceleratedReport2Rate"}
+  local propertiesBeforeChange = vmsSW:getPropertiesByName(propertiesToChange)
+  D:log(framework.dump(propertiesBeforeChange))
+
+  generic_test_ConfigChangeReportConfigChangeReportIsSent(
    "ConfigChangeReport2",
-   {"StandardReport2Interval", "AcceleratedReport2Rate"}
+   propertiesToChange,
+   propertiesBeforeChange
   )
 end
 
 function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport3IsSent()
-  generic_test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReportIsSent(
+  
+  -- get properties
+  local propertiesToChange = {"StandardReport3Interval", "AcceleratedReport3Rate"}
+  local propertiesBeforeChange = vmsSW:getPropertiesByName(propertiesToChange)
+  D:log(framework.dump(propertiesBeforeChange))
+
+  generic_test_ConfigChangeReportConfigChangeReportIsSent(
    "ConfigChangeReport3",
-   {"StandardReport3Interval", "AcceleratedReport3Rate"}
+   propertiesToChange ,
+   propertiesBeforeChange
   )
 end
 
@@ -299,10 +320,7 @@ function generic_test_StandardReportContent(firstReportKey,reportKey,properties,
 end
 
 -- this is generic function for testing Config Change Reports
-function generic_test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReportIsSent(messageKey,propertiesToChange)
-  -- get properties
-  propertiesBeforeChange = vmsSW:getPropertiesByName(propertiesToChange)
-  D:log(framework.dump(propertiesBeforeChange))
+function generic_test_ConfigChangeReportConfigChangeReportIsSent(messageKey,propertiesToChange,propertiesBeforeChange)
   
   propertiesToChangeValues = {}
 
@@ -336,4 +354,3 @@ function generic_test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfig
     )
   end
 end
-

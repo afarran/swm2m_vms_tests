@@ -43,8 +43,8 @@ local function setup()
   io.output():setvbuf("no")
   --include the following test suites in the feature tests:
   lunatest.suite("TestNormalReportsModule")
-  lunatest.suite("TestCommonReportModule")
-  lunatest.suite("TestAbnormalReportsModule")
+  --lunatest.suite("TestCommonReportModule")
+  --lunatest.suite("TestAbnormalReportsModule")
 
 end
 
