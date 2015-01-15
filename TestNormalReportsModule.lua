@@ -245,15 +245,36 @@ function test_ConfigChangeReport_WhenSetConfigReport2MessageIsSentAndConfigPrope
   )
 end
 
+-- in development...
 function test_XLOG()
 
+  local LOG_REPORT_RATE = 4
+  local STANDARD_REPORT_INTERVAL = 4
+  local LOG_REPORT_INTERVAL = STANDARD_REPORT_INTERVAL / LOG_REPORT_RATE
+  local ITEMS_IN_LOG = 2
+
+  vmsSW:setPropertiesByName({
+    LogReport1Rate = LOG_REPORT_RATE,
+    StandardReport1Interval = STANDARD_REPORT_INTERVAL
+  })
+  
   logSW:setLogFilter(
     vmsSW.sin, {
     vmsSW:getMinFrom("LogReport1")}, 
     os.time()+5, 
-    os.time()+60, 
+    os.time()+LOG_REPORT_INTERVAL*60+60, 
     "True"
-   )
+  )
+
+  --synchronize first standard report
+  vmsSW:waitForMessagesByName({"StandardReport1"})
+
+  framework.delay(ITEMS_IN_LOG*LOG_REPORT_INTERVAL*60+20)
+
+  logEntries = logSW:getLogEntries(ITEMS_IN_LOG)
+
+  D:log(logEntries[1],"TC 1")
+  D:log(logEntries[1].log,"TC 2")
 
 end
 
