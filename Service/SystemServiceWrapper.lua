@@ -91,7 +91,6 @@ SystemServiceWrapper = {}
       return 1
     end
 
-    -- TODO: this has just been pasted from old-style AVL code, later can be refactored to wrappers-style
     gateway.setHighWaterMark() -- to get the newest messages
     
     self:sendMessageByName("getTerminalInfo")
