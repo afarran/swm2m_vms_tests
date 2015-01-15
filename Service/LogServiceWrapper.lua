@@ -1,4 +1,4 @@
-require "Service/LogServiceWrapper"
+require "Service/ServiceWrapper"
 
 LogServiceWrapper = {}
   LogServiceWrapper.__index = LogServiceWrapper
@@ -98,6 +98,26 @@ LogServiceWrapper = {}
       { name ="setUploadDebugLogFilter2", min=14},
 
     }
+
+    function LogServiceWrapper:setLogFilter(sin, minList, loggingStartTime, loggingEndTime, reverse)
+
+      local minListEncoded = framework.base64Encode(minList)
+    
+      self:sendMessageByName(
+        "setDataLogFilter",
+        {
+          {Name="timeStart",Value=loggingStartTime},
+          {Name="timeEnd",Value=loggingEndTime},
+          {Name="reverse",Value=reverse},
+          {Name="list",Elements={
+             { Index=0,
+               Fields={{Name="sin",Value=sin},{Name="minList",Value=minListEncoded}}}
+             }
+          },
+        }
+      )
+
+    end
 
     ServiceWrapper._init(self, {
         sin = 23, 

@@ -18,10 +18,12 @@ require("Service/PositionServiceWrapper")
 require("Service/VmsServiceWrapper")
 require("Service/FilesystemServiceWrapper")
 require("Service/SystemServiceWrapper")
+require("Service/LogServiceWrapper")
 positionSW = PositionServiceWrapper()
 filesystemSW = FilesystemServiceWrapper()
 systemSW = SystemServiceWrapper()
 vmsSW = VmsServiceWrapper()
+logSW = LogServiceWrapper()
 
 -- Gps Frontend
 require("Gps/GpsFrontend")
