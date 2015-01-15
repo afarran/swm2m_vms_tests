@@ -10,6 +10,7 @@ function suite_setup()
   -- reset of properties 
   systemSW:resetProperties({vmsSW.sin})
 
+  D:log(true)
   -- debounce
   vmsSW:setPropertiesByName({PropertyChangeDebounceTime=1})
   
