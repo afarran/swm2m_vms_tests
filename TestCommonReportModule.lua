@@ -151,7 +151,3 @@ end
 function test_CommonReport_WhenVersionMessageSendDisabled_VersionReportIsNotSent()
   assert_true(false, "Functionality not implemented?")
 end
-
-function test_CommonReport_WhenServiceStartsUp_StartupMessageIsSent()
-  assert_true(fasle, "Functionality not implemented?")
-end

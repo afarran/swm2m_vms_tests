@@ -343,5 +343,10 @@ ServiceWrapper = {}
       bitset[bit_position+1] = 1
     end
     return binaryToDecimal(bitset)
-
   end
+  
+  function ServiceWrapper:setHighWaterMark(_date)
+    gateway.setHighWaterMark(_date)    
+  end
+
+

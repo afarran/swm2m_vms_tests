@@ -18,11 +18,13 @@ require("Service/PositionServiceWrapper")
 require("Service/VmsServiceWrapper")
 require("Service/FilesystemServiceWrapper")
 require("Service/SystemServiceWrapper")
+require("Service/GeofenceServiceWrapper")
 require("Service/LogServiceWrapper")
 positionSW = PositionServiceWrapper()
 filesystemSW = FilesystemServiceWrapper()
 systemSW = SystemServiceWrapper()
 vmsSW = VmsServiceWrapper()
+geofenceSW = GeofenceServiceWrapper()
 logSW = LogServiceWrapper()
 
 -- Gps Frontend
@@ -47,6 +49,7 @@ local function setup()
   lunatest.suite("TestNormalReportsModule")
   lunatest.suite("TestCommonReportModule")
   lunatest.suite("TestAbnormalReportsModule")
+  lunatest.suite("TestGeofenceModule")
 
 end
 
