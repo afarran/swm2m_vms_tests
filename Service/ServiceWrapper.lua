@@ -1,6 +1,7 @@
 cfg, framework, gateway, lsf, device, gps = require "TestFramework"()
 require "UtilLibs/Text"
 require "UtilLibs/Array"
+require "UtilLibs/Number"
 
 
 ServiceWrapper = {}
@@ -11,7 +12,7 @@ ServiceWrapper = {}
       self:_init(...)
       return self
     end,})
-  
+
   function ServiceWrapper:__processProperties(properties)
     properties = properties or {}
     local pins = {}
@@ -28,7 +29,7 @@ ServiceWrapper = {}
     end
     return pins, pins_named, pins_types, pins_enums, pins_enums_named
   end
-  
+
   function ServiceWrapper:__processMessages(messages)
     messages = messages or {}
     local mins = {}
@@ -39,8 +40,8 @@ ServiceWrapper = {}
     end
     return mins, mins_named
   end
-  
-  -- args is a table of named arguments, 
+
+  -- args is a table of named arguments,
   -- args.sin - service SIN
   -- args.name - service name
   -- args.properties - property definition
@@ -51,7 +52,7 @@ ServiceWrapper = {}
     self.name = args.name
     -- ptype can be set to: unsignedint, signedint, string, boolean, enum, data
     self.properties = args.properties
-    
+    self.bitmaps = self:__processBitmaps(args.bitmaps)
     self.messages_to = args.messages_to or {}
     self.messages_from = args.messages_from or {}
     self.pins, self.pins_named, self.pins_types, self.pins_enums, self.pins_enums_named = self:__processProperties(self.properties)
@@ -59,7 +60,7 @@ ServiceWrapper = {}
     self.mins_from, self.mins_from_named = self:__processMessages(self.messages_from)
     printf("ServiceWrapper %s initialized. SIN %d\n", self.name, self.sin )
   end
-  
+
   function ServiceWrapper:__decodePinValue(pin, raw_value)
     local decoded_value = raw_value
     local pin_type = self.pins_types[pin]
@@ -71,22 +72,22 @@ ServiceWrapper = {}
       -- do nothing
     elseif pin_type == "boolean" then
       -- map string to boolean
-      if raw_value == "False" then 
-        decoded_value = false 
+      if raw_value == "False" then
+        decoded_value = false
       else
         decoded_value = true
       end
     else
       decoded_value = tonumber(decoded_value)
     end
-    
+
     return decoded_value
   end
-  
+
   function ServiceWrapper:__encodePinValue(pin, raw_value)
     local encoded_value = raw_value
     local pin_type = self.pins_types[pin]
-    
+
     if pin_type == "enum" then
       encoded_value = self.pins_enums_named[pin][raw_value]
     end
@@ -97,18 +98,29 @@ ServiceWrapper = {}
         encoded_value = "False"
       end
     end
-    
+
     return encoded_value
   end
-  
+
+  function ServiceWrapper:__processBitmaps(bitmaps)
+    if not bitmaps then return {} end
+    local result = {}
+    for bitmap_name, bitmap in pairs(bitmaps) do
+      result[bitmap_name] = {}
+      result[bitmap_name].names = bitmap
+      result[bitmap_name].bits = reverseMap(bitmap)
+    end
+    return result
+  end
+
   function ServiceWrapper:__processPinValues(pinValues)
     local result = {}
-    for pin, value in pairs(pinValues) do          
+    for pin, value in pairs(pinValues) do
       result[self:getPinName(pin)] = self:__decodePinValue(pin, value)
     end
     return result
   end
-  
+
   function ServiceWrapper:getProperties(pinList, raw)
     raw = raw or false
     if raw then
@@ -117,15 +129,15 @@ ServiceWrapper = {}
       return self:__processPinValues(propertiesToTable(lsf.getProperties(self.sin, pinList)))
     end
   end
-  
+
   function ServiceWrapper:getPropertiesByName(propertiesList, raw)
     local pinList = {}
     for index, propertyName in pairs(propertiesList) do
       pinList[#pinList + 1] = self:getPin(propertyName)
     end
-    return self:getProperties(pinList, raw) 
+    return self:getProperties(pinList, raw)
   end
-  
+
   -- pinValues = {pin1 = val1, pin2 = val2}
   function ServiceWrapper:setProperties(pinValues, raw, save)
     raw = raw or false
@@ -137,7 +149,7 @@ ServiceWrapper = {}
         pinValueTypes[#pinValueTypes + 1] = {pin, self:__encodePinValue(pin, value), self.pins_types[pin]}
       end
     end
-    
+
     return lsf.setProperties(self.sin, pinValueTypes, save)
   end
 
@@ -149,8 +161,8 @@ ServiceWrapper = {}
     end
     return self:setProperties(pinValues, raw, save)
   end
-  
-    
+
+
   function ServiceWrapper:getPin(name)
     local result = self.pins_named[name]
     if not result then
@@ -166,7 +178,7 @@ ServiceWrapper = {}
     end
     return result
   end
-  
+
   function ServiceWrapper:getMinTo(name)
     local min = self.mins_to_named[name]
     if not min then
@@ -182,7 +194,7 @@ ServiceWrapper = {}
     end
     return min_name
   end
-  
+
     function ServiceWrapper:getMinFrom(name)
     local min = self.mins_from_named[name]
     if not min then
@@ -198,7 +210,7 @@ ServiceWrapper = {}
     end
     return min_name
   end
-  
+
   function ServiceWrapper:sendMessage(min, fields)
     local message = {}
     message.SIN = self.sin
@@ -206,15 +218,15 @@ ServiceWrapper = {}
     message.Fields = fields
     gateway.submitForwardMessage(message)
   end
-  
+
   function ServiceWrapper:sendMessageByName(message_name, fields)
     local min = self:getMinTo(message_name)
-    self:sendMessage(min, fields)    
+    self:sendMessage(min, fields)
   end
-  
+
   --retrieved message list can be accessed via indexes - list[min] or by message name list.getByName("min_name")
   function ServiceWrapper:waitForMessages(expectedMins, timeout)
-    if type(expectedMins) ~= "table" then 
+    if type(expectedMins) ~= "table" then
       expectedMins = {expectedMins}
     end
     timeout = tonumber(timeout) or GATEWAY_TIMEOUT
@@ -234,7 +246,7 @@ ServiceWrapper = {}
         return #expectedMins == msgList.count
       end
     gateway.getReturnMessage(UpdateMsgMatchingList, nil, timeout)
-    
+
     msgList.getByMin = function(id)
         local min_name = self:getMinFromName(id)
         if min_name then
@@ -243,15 +255,15 @@ ServiceWrapper = {}
           printf("Received message has unknown min %s (missing min from mins_from?)\n", min_name)
           return nil
         end
-      end    
-    
+      end
+
     return msgList
   end
-  
+
   function ServiceWrapper:waitForMessagesByName(expectedMessages, timeout)
     local expectedMins = {}
     if type(expectedMessages) == "table" then
-      for idx, name in pairs(expectedMessages) do 
+      for idx, name in pairs(expectedMessages) do
         expectedMins[idx] = self:getMinFrom(name)
       end
     else
@@ -259,7 +271,7 @@ ServiceWrapper = {}
     end
     return self:waitForMessages(expectedMins, timeout)
   end
-  
+
   function ServiceWrapper:waitForProperties(property_values, timeout, sleep)
     sleep = sleep or 1
     timeout = timeout or DEFAULT_TIMEOUT or 60
@@ -269,7 +281,7 @@ ServiceWrapper = {}
     for property_name, property_value in pairs(property_values) do
       request_properties[#request_properties+1] = property_name
     end
-    
+
     local start_time = os.time()
     current_properties = self:getPropertiesByName(request_properties)
     while not valid do
@@ -287,4 +299,49 @@ ServiceWrapper = {}
       if (os.time() - start_time) >  timeout then break end
     end
     return valid, current_properties
+  end
+
+  function ServiceWrapper:decodeBitmap(value, bitmap)
+    local bitmap_name = "Undefined"
+    if type(bitmap) == "string" then
+      bitmap_name = bitmap
+      bitmap = self.bitmaps[bitmap_name]
+    end
+    if type(value) == "string" then
+      value = tonumber(value)
+    end
+    local bitset = decimalToBinary(value)
+    local result = {}
+
+    for index, value in pairs(bitset) do
+      if value == 1 then
+        local state = bitmap.bits[index-1]
+        if not state then
+          printf("Missing bit definition %d in bitmap %s", index-1, bitmap_name)
+        end
+        -- if adequate state cant be find in bitmap, save it as bit index inestead of state name
+        if not state then state = index-1 end
+        result[state] = true
+      end
+    end
+    return result
+  end
+
+  function ServiceWrapper:encodeBitmap(values, bitmap)
+    local bitmap_name = "Undefined"
+    if type(bitmap) == "string" then
+      bitmap_name = bitmap
+      bitmap = self.bitmaps[bitmap_name]
+    end
+    local bitset = {}
+    for idx, bit_name in pairs(values) do
+      local bit_position = bitmap.names[bit_name]
+      if not bit_position then
+        printf("Bit name %s not present in bitmap %s configuration!", bit_name, bitmap_name)
+        return nil
+      end
+      bitset[bit_position+1] = 1
+    end
+    return binaryToDecimal(bitset)
+
   end
