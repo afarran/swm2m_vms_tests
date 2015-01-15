@@ -137,7 +137,6 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeAboveGpsJammedStartDebounce
   )
   --]]
 
-  -- TODO: add checking StatusBitmap when the helper function is ready
 
   local StatusBitmap = vmsSW:decodeBitmap(ReceivedMessages["AbnormalReport"].StatusBitmap, "EventStateId")
   assert_true(StatusBitmap["GpsJammed"], "StatusBitmap has not been correctly changed when terminal detected GPS jamming")
@@ -150,7 +149,7 @@ function test_GpsJamming_ForTerminalInGpsJammedStateWhenGpsSignalIsNotJammedForT
 
   -- *** Setup
   local GPS_JAMMED_START_DEBOUNCE_TIME = 1    -- seconds
-  local GPS_JAMMED_END_DEBOUNCE_TIME = 1      -- seconds
+  local GPS_JAMMED_END_DEBOUNCE_TIME = 5      -- seconds
 
   -- terminal in different position (wrong GPS data)
   local GpsJammedPosition = {
@@ -177,7 +176,7 @@ function test_GpsJamming_ForTerminalInGpsJammedStateWhenGpsSignalIsNotJammedForT
   -- *** Execute
   -- GPS signal is jammed from now
   GPS:set(GpsJammedPosition)
-  framework.delay(GPS_JAMMED_START_DEBOUNCE_TIME)
+  framework.delay(GPS_JAMMED_START_DEBOUNCE_TIME + 2)
   gateway.setHighWaterMark() -- to get the newest messages
   -- GPS signal is good again
   GPS:set(GpsNotJammedPosition)
@@ -246,7 +245,10 @@ function test_GpsJamming_ForTerminalInGpsJammedStateWhenGpsSignalIsNotJammedForT
   )
   --]]
 
-  -- TODO: add checking StatusBitmap when the helper function is ready
+  local StatusBitmap = vmsSW:decodeBitmap(ReceivedMessages["AbnormalReport"].StatusBitmap, "EventStateId")
+  print(framework.dump(StatusBitmap))
+  assert_false(StatusBitmap["GpsJammed"], "StatusBitmap has not been correctly changed when terminal detected GPS jamming")
+
 
 end
 
