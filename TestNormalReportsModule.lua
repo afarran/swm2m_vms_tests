@@ -247,10 +247,13 @@ end
 
 function test_XLOG()
 
-  local LOGGING_POSITIONS_INTERVAL = 25     -- seconds
-  local NUMBER_OF_REPORTS = 2               -- number of expected reports received during the TC
-
-  
+  logSW:setLogFilter(
+    vmsSW.sin, {
+    vmsSW:getMinFrom("LogReport1")}, 
+    os.time()+5, 
+    os.time()+60, 
+    "True"
+   )
 
 end
 
