@@ -322,11 +322,18 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeAboveGpsJammedStartDebounce
   GPS:set(InitialPosition)
   -- GPS signal is jammed from now
   GPS:set({jammingDetect = true})
+  framework.delay(GPS_JAMMED_START_DEBOUNCE_TIME)
+
+  -- checking GpsJammedState property
+  local GpsJammedStateProperty = vmsSW:getPropertiesByName({"GpsJammedState"})
+  print(framework.dump(GpsJammedStateProperty["GpsJammedState"]))
+  assert_true(GpsJammedStateProperty["GpsJammedState"], "GpsJammedState property has not been changed correctly when GPS jamming was detected")
 
   local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
 
   -- back to not jammed signal
   GPS:set(InitialPosition)
+
 
   if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "GpsJammed" ) then
     assert_nil(1, "GpsJammed abnormal report sent but not expected")
