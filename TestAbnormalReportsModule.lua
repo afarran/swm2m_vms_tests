@@ -20,7 +20,9 @@ end
 function setup()
 
   positionSW:setPropertiesByName({continuous = GPS_READ_INTERVAL})
+  vmsSW:setPropertiesByName({GpsJammedEndDebounceTime = 1})
   GPS:set({jammingDetect = false})
+
 
 end
 
@@ -38,8 +40,8 @@ end
 function test_GpsJamming_WhenGpsSignalIsJammedForTimeAboveGpsJammedStartDebouncePeriod_GpsJammedAbnormalReportIsSent()
 
   -- *** Setup
-  local GPS_JAMMED_START_DEBOUNCE_TIME = 30   -- seconds
-  local GPS_JAMMED_END_DEBOUNCE_TIME = 1      -- seconds
+  local GPS_JAMMED_START_DEBOUNCE_TIME = 10   -- seconds
+  local GPS_JAMMED_END_DEBOUNCE_TIME = 5      -- seconds
 
   -- terminal stationary, GPS signal good initially
   local InitialPosition = {
@@ -52,8 +54,8 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeAboveGpsJammedStartDebounce
   -- terminal in different position (wrong GPS data)
   local GpsJammedPosition = {
     speed = 0,                      -- kmh
-    latitude = 2,                   -- degrees
-    longitude = 2,                  -- degrees
+    latitude = 1,                   -- degrees
+    longitude = 1,                  -- degrees
     jammingDetect = true,
   }
 
@@ -68,33 +70,40 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeAboveGpsJammedStartDebounce
   GPS:set(InitialPosition)
   gateway.setHighWaterMark() -- to get the newest messages
   -- GPS signal is jammed from now
-  timeOfEvent = os.time()  -- to get exact timestamp
-  GPS:set({jammingDetect = true})
-  framework.delay(5)                      -- wait until gps position is read
   GPS:set(GpsJammedPosition)
+
+  -- checking GpsJammedState property - this is expected to be false before GPS_JAMMED_START_DEBOUNCE_TIME period passes
+  local GpsJammedStateProperty = vmsSW:getPropertiesByName({"GpsJammedState"})
+  assert_false(GpsJammedStateProperty["GpsJammedState"], "GpsJammedState has been changed before GpsJammedStartDebounceTime has passed")
+
   framework.delay(GPS_JAMMED_START_DEBOUNCE_TIME)
+  timeOfEvent = os.time()  -- to get exact timestamp
 
+  -- AbnormalReport is expected with GpsJammed information
   local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"})
-
   -- back to initial position with no gps jamming
   GPS:set(InitialPosition)
 
   assert_not_nil(ReceivedMessages["AbnormalReport"], "AbnormalReport not received")
 
+  -- checking GpsJammedState property - this is expected to be true as GPS_JAMMED_START_DEBOUNCE_TIME period has passed
+  local GpsJammedStateProperty = vmsSW:getPropertiesByName({"GpsJammedState"})
+  assert_true(GpsJammedStateProperty["GpsJammedState"], "GpsJammedState property has not been changed correctly when GPS jamming was detected")
+
   assert_equal(
-    InitialPosition.latitude*60000,
+    GpsJammedPosition.latitude*60000,
     tonumber(ReceivedMessages["AbnormalReport"].Latitude),
     "Wrong latitude value in GpsJammed abnormal report"
   )
 
   assert_equal(
-    InitialPosition.longitude*60000,
+    GpsJammedPosition.longitude*60000,
     tonumber(ReceivedMessages["AbnormalReport"].Longitude),
     "Wrong longitude value in GpsJammed abnormal report"
   )
 
   assert_equal(
-    InitialPosition.speed,
+    GpsJammedPosition.speed,
     tonumber(ReceivedMessages["AbnormalReport"].Speed),
     "Wrong speed value in GpsJammed abnormal report"
   )
@@ -139,7 +148,10 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeAboveGpsJammedStartDebounce
   )
   --]]
 
-  -- TODO: add checking StatusBitmap when the helper function is ready
+
+  local StatusBitmap = vmsSW:decodeBitmap(ReceivedMessages["AbnormalReport"].StatusBitmap, "EventStateId")
+  assert_true(StatusBitmap["GpsJammed"], "StatusBitmap has not been correctly changed when terminal detected GPS jamming")
+
 
 end
 
@@ -148,7 +160,7 @@ function test_GpsJamming_ForTerminalInGpsJammedStateWhenGpsSignalIsNotJammedForT
 
   -- *** Setup
   local GPS_JAMMED_START_DEBOUNCE_TIME = 1    -- seconds
-  local GPS_JAMMED_END_DEBOUNCE_TIME = 1      -- seconds
+  local GPS_JAMMED_END_DEBOUNCE_TIME = 10      -- seconds
 
   -- terminal in different position (wrong GPS data)
   local GpsJammedPosition = {
@@ -175,16 +187,26 @@ function test_GpsJamming_ForTerminalInGpsJammedStateWhenGpsSignalIsNotJammedForT
   -- *** Execute
   -- GPS signal is jammed from now
   GPS:set(GpsJammedPosition)
-  framework.delay(GPS_JAMMED_START_DEBOUNCE_TIME)
+  framework.delay(GPS_JAMMED_START_DEBOUNCE_TIME + 2)
   gateway.setHighWaterMark() -- to get the newest messages
   -- GPS signal is good again
-  timeOfEvent = os.time()  -- to get exact timestamp
   GPS:set(GpsNotJammedPosition)
+
+  -- checking GpsJammedState property - this is expected to be true before GPS_JAMMED_END_DEBOUNCE_TIME period passes
+  local GpsJammedStateProperty = vmsSW:getPropertiesByName({"GpsJammedState"})
+  assert_true(GpsJammedStateProperty["GpsJammedState"], "GpsJammedState is incorrectly false for terminal in GpsJammed state")
+
   framework.delay(GPS_JAMMED_END_DEBOUNCE_TIME)
 
-  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"})
+  local timeOfEvent = os.time()  -- to get exact timestamp
 
+  -- AbnormalReport is expected with GpsJammed information
+  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"})
   assert_not_nil(ReceivedMessages["AbnormalReport"], "AbnormalReport not received")
+
+  -- checking GpsJammedState property - this is expected to be false as GPS_JAMMED_END_DEBOUNCE_TIME period had passed
+  local GpsJammedStateProperty = vmsSW:getPropertiesByName({"GpsJammedState"})
+  assert_false(GpsJammedStateProperty["GpsJammedState"], "GpsJammedState property has not been changed correctly gps signal is not jammed and terminal left GpsJammed state")
 
   assert_equal(
     GpsNotJammedPosition.latitude*60000,
@@ -219,7 +241,7 @@ function test_GpsJamming_ForTerminalInGpsJammedStateWhenGpsSignalIsNotJammedForT
   assert_equal(
     timeOfEvent,
     tonumber(ReceivedMessages["AbnormalReport"].Timestamp),
-    5,
+    10,
     "Wrong Timestamp value in GpsJammed abnormal report"
   )
 
@@ -244,9 +266,72 @@ function test_GpsJamming_ForTerminalInGpsJammedStateWhenGpsSignalIsNotJammedForT
   )
   --]]
 
-  -- TODO: add checking StatusBitmap when the helper function is ready
+  local StatusBitmap = vmsSW:decodeBitmap(ReceivedMessages["AbnormalReport"].StatusBitmap, "EventStateId")
+  assert_false(StatusBitmap["GpsJammed"], "StatusBitmap has not been correctly changed when terminal detected GPS jamming")
+
 
 end
+
+
+
+
+function test_GpsJamming_ForTerminalInGpsJammedStateWhenGpsSignalIsNotJammedForTimeBelowGpsJammedEndDebouncePeriod_GpsJammedAbnormalReportIsNotSent()
+
+  -- *** Setup
+  local GPS_JAMMED_START_DEBOUNCE_TIME = 1    -- seconds
+  local GPS_JAMMED_END_DEBOUNCE_TIME = 30      -- seconds
+
+  -- terminal in different position (wrong GPS data)
+  local GpsJammedPosition = {
+    speed = 0,                      -- kmh
+    latitude = 2,                   -- degrees
+    longitude = 2,                  -- degrees
+    jammingDetect = true,
+  }
+
+  -- terminal in different position (wrong GPS data)
+  local GpsNotJammedPosition = {
+    speed = 0,                      -- kmh
+    latitude = 2,                   -- degrees
+    longitude = 2,                  -- degrees
+    jammingDetect = false,
+  }
+
+  vmsSW:setPropertiesByName({GpsJammedStartDebounceTime = GPS_JAMMED_START_DEBOUNCE_TIME,
+                             GpsJammedEndDebounceTime = GPS_JAMMED_END_DEBOUNCE_TIME,
+                             GpsJammedSendReport = true
+                             }
+  )
+
+  -- *** Execute
+  -- GPS signal is jammed from now
+  GPS:set(GpsJammedPosition)
+  framework.delay(GPS_JAMMED_START_DEBOUNCE_TIME + 2)
+  gateway.setHighWaterMark() -- to get the newest messages
+  -- GPS signal is good again
+  GPS:set(GpsNotJammedPosition)
+
+  -- checking GpsJammedState property - this is expected to be true before GPS_JAMMED_END_DEBOUNCE_TIME period passes
+  local GpsJammedStateProperty = vmsSW:getPropertiesByName({"GpsJammedState"})
+  assert_true(GpsJammedStateProperty["GpsJammedState"], "GpsJammedState is incorrectly false for terminal in GpsJammed state")
+
+  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
+
+  if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "GpsJammed" ) then
+    assert_nil(1, "GpsJammed abnormal report sent but not expected")
+  end
+
+  -- GPS signal is jammed again from now (the pause in jamming was shorter than GPS_JAMMED_END_DEBOUNCE_TIME)
+  GPS:set(GpsJammedPosition)
+
+  -- checking GpsJammedState property - this is expected to be true as signal is still jammed
+  local GpsJammedStateProperty = vmsSW:getPropertiesByName({"GpsJammedState"})
+  assert_true(GpsJammedStateProperty["GpsJammedState"], "GpsJammedState is incorrectly false for terminal in GpsJammed state")
+
+
+
+end
+
 
 
 
@@ -277,14 +362,17 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeBelowGpsJammedStartDebounce
 
   GPS:set(InitialPosition)
 
+  -- checking GpsJammedState property
+  local GpsJammedStateProperty = vmsSW:getPropertiesByName({"GpsJammedState"})
+  D:log(GpsJammedStateProperty["GpsJammedState"], "GpsJammedStateProperty")
+  assert_false(GpsJammedStateProperty["GpsJammedState"], "GpsJammedState property has not been changed correctly when GPS jamming was detected")
+
   if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "GpsJammed" ) then
     assert_nil(1, "GpsJammed abnormal report sent but not expected")
   end
 
-
-  -- TODO: add checking StatusBitmap when the helper function is ready
-
 end
+
 
 function test_GpsJamming_WhenGpsSignalIsJammedForTimeAboveGpsJammedStartDebouncePeriodButGpsJammedReportsAreDisabled_GpsJammedAbnormalReportIsNotSent()
 
@@ -308,19 +396,22 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeAboveGpsJammedStartDebounce
   GPS:set(InitialPosition)
   -- GPS signal is jammed from now
   GPS:set({jammingDetect = true})
+  framework.delay(GPS_JAMMED_START_DEBOUNCE_TIME)
+
+  -- checking GpsJammedState property
+  local GpsJammedStateProperty = vmsSW:getPropertiesByName({"GpsJammedState"})
+  print(framework.dump(GpsJammedStateProperty["GpsJammedState"]))
+  assert_true(GpsJammedStateProperty["GpsJammedState"], "GpsJammedState property has not been changed correctly when GPS jamming was detected")
 
   local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
 
   -- back to not jammed signal
   GPS:set(InitialPosition)
 
+
   if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "GpsJammed" ) then
     assert_nil(1, "GpsJammed abnormal report sent but not expected")
   end
-
-
-  -- TODO: add checking StatusBitmap when the helper function is ready
-
 
 end
 

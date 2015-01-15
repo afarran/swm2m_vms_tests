@@ -16,6 +16,10 @@ Debugger = {}
  
   -- if will be more sophisticated soon .. 
   function Debugger:log(info,tag)
+    if type(info) == "table" or type(info) == "boolean" then 
+      info = framework.dump(info) 
+    end
+    if info == nil then info = "nil" end
     if not tag then tag="info" end
     if DEBUG_MODE == 1 then
       print(tag.." | "..info)
