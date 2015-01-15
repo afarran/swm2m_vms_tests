@@ -285,9 +285,6 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeBelowGpsJammedStartDebounce
     assert_nil(1, "GpsJammed abnormal report sent but not expected")
   end
 
-
-  -- TODO: add checking StatusBitmap when the helper function is ready
-
 end
 
 function test_GpsJamming_WhenGpsSignalIsJammedForTimeAboveGpsJammedStartDebouncePeriodButGpsJammedReportsAreDisabled_GpsJammedAbnormalReportIsNotSent()
@@ -321,10 +318,6 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeAboveGpsJammedStartDebounce
   if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "GpsJammed" ) then
     assert_nil(1, "GpsJammed abnormal report sent but not expected")
   end
-
-
-  -- TODO: add checking StatusBitmap when the helper function is ready
-
 
 end
 
