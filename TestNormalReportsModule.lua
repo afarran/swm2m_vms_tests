@@ -4,6 +4,7 @@
 -- @module TestNormalReportModule
 
 module("TestNormalReportsModule", package.seeall)
+DEBUG_MODE = 1
 
 function suite_setup()
   -- reset of properties 
@@ -165,7 +166,8 @@ function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigProperti
   generic_test_ConfigChangeReportConfigChangeReportIsSent(
    "ConfigChangeReport1",
     propertiesToChange ,
-    propertiesBeforeChange
+    propertiesBeforeChange,
+    false
   )
 end
 
@@ -179,7 +181,8 @@ function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigProperti
   generic_test_ConfigChangeReportConfigChangeReportIsSent(
    "ConfigChangeReport2",
    propertiesToChange,
-   propertiesBeforeChange
+   propertiesBeforeChange,
+   false
   )
 end
 
@@ -193,7 +196,52 @@ function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigProperti
   generic_test_ConfigChangeReportConfigChangeReportIsSent(
    "ConfigChangeReport3",
    propertiesToChange ,
-   propertiesBeforeChange
+   propertiesBeforeChange,
+   false
+  )
+end
+
+function test_ConfigChangeReport_WhenSetConfigReport1MessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport2IsSent()
+  
+  -- get properties
+  local propertiesToChange = {"StandardReport1Interval", "AcceleratedReport1Rate"}
+  local propertiesBeforeChange = vmsSW:getPropertiesByName(propertiesToChange)
+
+  generic_test_ConfigChangeReportConfigChangeReportIsSent(
+   "ConfigChangeReport1",
+   propertiesToChange,
+   propertiesBeforeChange,
+   "SetConfigReport1"
+  )
+end
+
+function test_ConfigChangeReport_WhenSetConfigReport2MessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport2IsSent()
+  
+  -- get properties
+  local propertiesToChange = {"StandardReport2Interval", "AcceleratedReport2Rate"}
+  local propertiesBeforeChange = vmsSW:getPropertiesByName(propertiesToChange)
+  D:log(framework.dump(propertiesBeforeChange))
+
+  generic_test_ConfigChangeReportConfigChangeReportIsSent(
+   "ConfigChangeReport2",
+   propertiesToChange,
+   propertiesBeforeChange,
+   "SetConfigReport2"
+  )
+end
+
+function test_ConfigChangeReport_WhenSetConfigReport2MessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport2IsSent()
+  
+  -- get properties
+  local propertiesToChange = {"StandardReport3Interval", "AcceleratedReport3Rate"}
+  local propertiesBeforeChange = vmsSW:getPropertiesByName(propertiesToChange)
+  D:log(framework.dump(propertiesBeforeChange))
+
+  generic_test_ConfigChangeReportConfigChangeReportIsSent(
+   "ConfigChangeReport3",
+   propertiesToChange,
+   propertiesBeforeChange,
+   "SetConfigReport3"
   )
 end
 
@@ -229,7 +277,7 @@ function generic_test_StandardReportContent(firstReportKey,reportKey,properties,
   D:log("Waiting for first report "..firstReportKey)
   local preReportMessage = vmsSW:waitForMessagesByName(
     {firstReportKey},
-    firstReportInterval*60 + 10
+    firstReportInterval*60*2
   )
   assert_not_nil(
     preReportMessage,
@@ -253,7 +301,7 @@ function generic_test_StandardReportContent(firstReportKey,reportKey,properties,
   D:log("Waiting for second report "..reportKey)
   local reportMessage = vmsSW:waitForMessagesByName(
     {reportKey}, 
-    reportInterval*60 + 10
+    reportInterval*60*2
   )
   assert_not_nil(
     reportMessage,
@@ -320,16 +368,39 @@ function generic_test_StandardReportContent(firstReportKey,reportKey,properties,
 end
 
 -- this is generic function for testing Config Change Reports
-function generic_test_ConfigChangeReportConfigChangeReportIsSent(messageKey,propertiesToChange,propertiesBeforeChange)
+function generic_test_ConfigChangeReportConfigChangeReportIsSent(messageKey,propertiesToChange,propertiesBeforeChange,setConfigMsgKey)
   
   propertiesToChangeValues = {}
+  propertiesToChangeValues2 = {}
+  propertiesToChangeValuesForMessage = {}
 
   for i=1, #propertiesToChange do
     propertiesToChangeValues[propertiesToChange[i]] = propertiesBeforeChange[propertiesToChange[i]] + 1
+    propertiesToChangeValues2[propertiesToChange[i]] = propertiesBeforeChange[propertiesToChange[i]] + 2
+    table.insert(
+      propertiesToChangeValuesForMessage, 
+      { Name = propertiesToChange[i],  Value = (propertiesBeforeChange[propertiesToChange[i]] + 2) }
+    )
   end
 
-  -- change config to trigger ConfigChange message
+  -- properties must be changedd anyway (the same value after and before properties reset doesn't trigger report)
   vmsSW:setPropertiesByName( propertiesToChangeValues)
+
+  -- testing via message
+  if setConfigMsgKey then
+    -- raport triggered by setProperties is passed
+    vmsSW:waitForMessagesByName(
+      {messageKey},
+      30
+    )
+    -- change config to trigger ConfigChange message (SetConfigReportX used)
+    vmsSW:sendMessageByName(
+      setConfigMsgKey,
+      propertiesToChangeValuesForMessage
+    )
+  end
+ 
+  -- wait for message 
   local configChangeMessage = vmsSW:waitForMessagesByName(
     {messageKey},
     30
@@ -342,13 +413,18 @@ function generic_test_ConfigChangeReportConfigChangeReportIsSent(messageKey,prop
     configChangeMessage[messageKey],
     "No "..messageKey
   )
-  --D:log(framework.dump(configChangeMessage))
 
   -- checking if raported values are correct
   for i=1, #propertiesToChange do
+    local exp
+    if setConfigMsgKey then
+      exp = tonumber(propertiesToChangeValues2[propertiesToChange[i]])
+    else
+      exp = tonumber(propertiesToChangeValues[propertiesToChange[i]])
+    end
     assert_equal(
-      tonumber(configChangeMessage[messageKey][propertiesToChange[i]]),   
-      tonumber(propertiesToChangeValues[propertiesToChange[i]]),
+      tonumber(configChangeMessage[messageKey][propertiesToChange[i]]),
+      exp,  
       0,
       "Property " .. propertiesToChange[i] .. " has not changed!"
     )
