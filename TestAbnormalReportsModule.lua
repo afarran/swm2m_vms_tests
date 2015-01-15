@@ -71,13 +71,14 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeAboveGpsJammedStartDebounce
   gateway.setHighWaterMark() -- to get the newest messages
   -- GPS signal is jammed from now
   GPS:set(GpsJammedPosition)
+  local timeOfEvent = os.time()  -- to get exact timestamp
+  D:log(timeOfEvent)
 
   -- checking GpsJammedState property - this is expected to be false before GPS_JAMMED_START_DEBOUNCE_TIME period passes
   local GpsJammedStateProperty = vmsSW:getPropertiesByName({"GpsJammedState"})
   assert_false(GpsJammedStateProperty["GpsJammedState"], "GpsJammedState has been changed before GpsJammedStartDebounceTime has passed")
 
   framework.delay(GPS_JAMMED_START_DEBOUNCE_TIME)
-  timeOfEvent = os.time()  -- to get exact timestamp
 
   -- AbnormalReport is expected with GpsJammed information
   local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"})
@@ -123,7 +124,7 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeAboveGpsJammedStartDebounce
   assert_equal(
     timeOfEvent,
     tonumber(ReceivedMessages["AbnormalReport"].Timestamp),
-    5,
+    10,
     "Wrong Timestamp value in GpsJammed abnormal report"
   )
 
@@ -353,8 +354,11 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeBelowGpsJammedStartDebounce
     longitude = 1,                  -- degrees
     jammingDetect = false,
   }
-  gateway.setHighWaterMark() -- to get the newest messages
+
   GPS:set(InitialPosition)
+  framework.delay(GPS_JAMMED_END_DEBOUNCE_TIME)
+
+  gateway.setHighWaterMark() -- to get the newest messages
   -- GPS signal is jammed from now
   GPS:set({jammingDetect = true})
 
