@@ -10,7 +10,6 @@ function suite_setup()
   -- reset of properties 
   systemSW:resetProperties({vmsSW.sin})
 
-  D:log(true)
   -- debounce
   vmsSW:setPropertiesByName({PropertyChangeDebounceTime=1})
   
@@ -244,6 +243,15 @@ function test_ConfigChangeReport_WhenSetConfigReport2MessageIsSentAndConfigPrope
    propertiesBeforeChange,
    "SetConfigReport3"
   )
+end
+
+function test_XLOG()
+
+  local LOGGING_POSITIONS_INTERVAL = 25     -- seconds
+  local NUMBER_OF_REPORTS = 2               -- number of expected reports received during the TC
+
+  
+
 end
 
 -- This is generic function for configure and test reports (StandardReport,AcceleratedReport)
