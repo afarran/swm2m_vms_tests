@@ -1,6 +1,7 @@
 cfg, framework, gateway, lsf, device, gps = require "TestFramework"()
 require "UtilLibs/Text"
 require "UtilLibs/Array"
+require "UtilLibs/Number"
 
 
 ServiceWrapper = {}
@@ -51,7 +52,7 @@ ServiceWrapper = {}
     self.name = args.name
     -- ptype can be set to: unsignedint, signedint, string, boolean, enum, data
     self.properties = args.properties
-    
+    self.bitmaps = self:__processBitmaps(args.bitmaps)
     self.messages_to = args.messages_to or {}
     self.messages_from = args.messages_from or {}
     self.pins, self.pins_named, self.pins_types, self.pins_enums, self.pins_enums_named = self:__processProperties(self.properties)
@@ -99,6 +100,17 @@ ServiceWrapper = {}
     end
     
     return encoded_value
+  end
+  
+  function ServiceWrapper:__processBitmaps(bitmaps)
+    if not bitmaps then return {} end
+    local result = {}
+    for bitmap_name, bitmap in pairs(bitmaps) do
+      result[bitmap_name] = {}
+      result[bitmap_name].names = bitmap
+      result[bitmap_name].bits = reverseMap(bitmap)
+    end
+    return result
   end
   
   function ServiceWrapper:__processPinValues(pinValues)
@@ -287,4 +299,46 @@ ServiceWrapper = {}
       if (os.time() - start_time) >  timeout then break end
     end
     return valid, current_properties
+  end
+  
+  function ServiceWrapper:decodeBitmap(value, bitmap)
+    local bitmap_name = "Undefined"
+    if type(bitmap) == "string" then
+      bitmap_name = bitmap
+      bitmap = self.bitmaps[bitmap_name]
+    end
+    local bitset = decimalToBinary(value)
+    local result = {}
+    
+    for index, value in pairs(bitset) do
+      if value == 1 then
+        local state = bitmap.bits[index-1]
+        if not state then
+          printf("Missing bit definition %d in bitmap %s", index-1, bitmap_name)
+        end
+        -- if adequate state cant be find in bitmap, save it as bit index inestead of state name
+        if not state then state = index-1 end
+        result[state] = true
+      end
+    end
+    return result
+  end
+  
+  function ServiceWrapper:encodeBitmap(values, bitmap)
+    local bitmap_name = "Undefined"
+    if type(bitmap) == "string" then
+      bitmap_name = bitmap
+      bitmap = self.bitmaps[bitmap_name]
+    end
+    local bitset = {}
+    for idx, bit_name in pairs(values) do
+      local bit_position = bitmap.names[bit_name]
+      if not bit_position then 
+        printf("Bit name %s not present in bitmap %s configuration!", bit_name, bitmap_name)
+        return nil
+      end
+      bitset[bit_position+1] = 1
+    end
+    return binaryToDecimal(bitset)
+    
   end

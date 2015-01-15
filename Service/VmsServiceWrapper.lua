@@ -97,11 +97,23 @@ VmsServiceWrapper = {}
       {name="SetProperties", min = 13},
     }
     
+    local bitmaps = {
+      EventStateId = {GpsJammed = 0,
+                      GpsBlocked = 1,
+                      IdpBlocked = 2,
+                      HwClientDisconnected = 3,
+                      HelmPanelDisconnected = 4,
+                      ExtPowerDisconnected = 5,
+                      InsideGeofence = 6,
+                      PowerDisconnected = 7}
+    }
+    
     ServiceWrapper._init(self, {
         sin = 115, 
         name = "VMS", 
         messages_to = messages_to, 
         messages_from = messages_from, 
-        properties = properties
+        properties = properties,
+        bitmaps = bitmaps,
     })
   end
