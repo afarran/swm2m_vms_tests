@@ -67,4 +67,24 @@ GeofenceServiceWrapper = {}
         properties = properties,
         bitmaps = bitmaps,
     })
+    
+    -- default values, may be incorrect, will be overwritten if setProperties is called
+    self.interval = 300
+    self.hysteresis = 60
+  end
+    
+  function GeofenceServiceWrapper:getProcessTime()
+    return self.interval + self.hysteresis + 1
+  end
+  
+  function GeofenceServiceWrapper:setProperties(pinValues, raw, save)
+    local interval_pin = self:getPin("interval")
+    local hysteresis_pin = self:getPin("hysteresis")
+    if pinValues[interval_pin] then
+      self.interval = pinValues[interval_pin]
+    end
+    if pinValues[hysteresis_pin] then
+      self.hysteresis = pinValues[hysteresis_pin]
+    end
+    return ServiceWrapper.setProperties(self, pinValues, raw, save)
   end
