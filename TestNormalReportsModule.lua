@@ -277,7 +277,7 @@ function generic_test_StandardReportContent(firstReportKey,reportKey,properties,
   D:log("Waiting for first report "..firstReportKey)
   local preReportMessage = vmsSW:waitForMessagesByName(
     {firstReportKey},
-    firstReportInterval*60 + 10
+    firstReportInterval*60*2
   )
   assert_not_nil(
     preReportMessage,
@@ -301,7 +301,7 @@ function generic_test_StandardReportContent(firstReportKey,reportKey,properties,
   D:log("Waiting for second report "..reportKey)
   local reportMessage = vmsSW:waitForMessagesByName(
     {reportKey}, 
-    reportInterval*60 + 10
+    reportInterval*60*2
   )
   assert_not_nil(
     reportMessage,
