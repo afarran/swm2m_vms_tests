@@ -753,3 +753,61 @@ end
 
 
 
+function test_GpsBlocked_WhenGpsSignalIsBlockedForTimeBelowGpsBlockedStartDebouncePeriod_GpsBlockedAbnormalReportIsNotSent()
+
+  -- *** Setup
+  local GPS_BLOCKED_START_DEBOUNCE_TIME = 1    -- seconds
+  local GPS_BLOCKED_END_DEBOUNCE_TIME = 20     -- seconds
+  local MAX_FIX_TIMEOUT = 60                   -- seconds (60 seconds is the minimum allowed value for this property)
+
+  -- terminal stationary, GPS signal good initially
+  local InitialPosition = {
+    speed = 0,                      -- kmh
+    latitude = 1,                   -- degrees
+    longitude = 1,                  -- degrees
+    fixType = 3,                    -- valid fix
+   }
+
+  -- terminal in different position (no valid fix provided)
+  local GpsBlockedPosition = {
+    speed = 0,                      -- kmh
+    latitude = 1,                   -- degrees
+    longitude = 1,                  -- degrees
+    fixType = 1,                    -- no fix
+  }
+
+  vmsSW:setPropertiesByName({GpsBlockedStartDebounceTime = GPS_BLOCKED_START_DEBOUNCE_TIME,
+                             GpsBlockedEndDebounceTime = GPS_BLOCKED_END_DEBOUNCE_TIME,
+                             GpsBlockedSendReport = true,
+                             IdpBlockedSendReport = false,
+                             }
+  )
+
+  positionSW:setPropertiesByName({maxFixTimeout = MAX_FIX_TIMEOUT})
+
+  -- *** Execute
+  -- terminal in initial position, gps signal not blocked
+  GPS:set(InitialPosition)
+  gateway.setHighWaterMark() -- to get the newest messages
+  -- GPS signal is blocked from now
+  GPS:set(GpsBlockedPosition)
+
+  -- waiting until MAX_FIX_TIMEOUT time passes - no new fix provided during this period
+  framework.delay(MAX_FIX_TIMEOUT)
+
+  -- AbnormalReport with GpsBlocked information is not expected
+  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 10)
+
+  -- back toinitial position, gps signal not blocked
+  GPS:set(InitialPosition)
+
+  -- checking if AbnormalReport related to GpsBlocked has not been sent by terminal
+  if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "GpsBlocked" ) then
+    assert_nil(1, "GpsBlocked abnormal report sent but not expected")
+  end
+
+
+end
+
+
+
