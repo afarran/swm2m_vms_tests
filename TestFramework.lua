@@ -174,7 +174,7 @@ local function collapseFields(fields)
 	for i = 1, #fields do
 		local value = fields[i].Value
 		local elements = fields[i].Elements
-    local message = fields[i].Message
+		local message = fields[i].Message
 		t[fields[i].Name] = value and value or elements or message
 	end
 	return t
