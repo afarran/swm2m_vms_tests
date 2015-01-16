@@ -395,6 +395,27 @@ function test_ConfigChangeReport_WhenSetConfigReport1MessageIsSentAndConfigPrope
   )
 end
 
+--- TC checks if ConfigChangeReport 2 is sent and its values are correct (message SetConfigReport2 used for setup)
+  -- Initial Conditions:
+  --
+  -- * Properties: StandardReport2Interval and AcceleratedReport2Rate are requested
+  -- * Properties are received and used in TC. 
+  --
+  -- Steps:
+  --
+  -- 1. Properties are changed and sent.
+  -- 2. Waiting for message ConfigChangeReport2 is performed.
+  -- 3. Message SetConfigReport2 is sent (with changed properties)
+  -- 4. Waiting for message ConfigChangeReport2 is performed.
+  -- 5. Report values are checked.
+  --
+  -- Results:
+  --
+  -- 1. Properties are set correctly.
+  -- 2. Message ConfigChangeReport2 is received.
+  -- 3. Message SetConfigReport1 is correctly sent.
+  -- 4. Message ConfigChangeReport2 is received.
+  -- 5. Report values are correct.
 function test_ConfigChangeReport_WhenSetConfigReport2MessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport2IsSent()
   
   -- get properties
