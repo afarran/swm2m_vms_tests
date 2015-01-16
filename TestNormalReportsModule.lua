@@ -42,24 +42,34 @@ end
 -- Test Cases
 -------------------------
 
---- TC checks if StandardReport 1 is sent periodically and its values are correct.
+
+--- TC checks if StandardReport 1 is sent periodically and its values are correct (setProperties used for setup)
   -- Initial Conditions:
   --
   -- * StandardReport1Interval is set above zero.
+  -- * AcceleratedReport1Rate is set to 1
   --
   -- Steps:
   --
-  -- 1. Position "getPosition" message is sent.
-  -- 2. Test set of gps values is prepared.
-  -- 3. Waiting for Status Report is performed.
-  -- 4. Report Values are checked.
+  -- 1. Properties setup is done (via setProperties) .
+  -- 2. Current gps position is requested.
+  -- 3. Current gps position is checked.
+  -- 4. Waiting for first Standard Report is performed.
+  -- 5. New gps position is prepared and set.
+  -- 6. Waiting for second Standard Report is performed.
+  -- 7. Difference between reports is calculated.
+  -- 8. Values in report are checked.
   --
   -- Results:
   --
-  -- 1. Positon "position" message is received and its value checked
-  -- 2. GPS is set.
-  -- 3. Status Report is received
-  -- 4. Report Values are correct.
+  -- 1. Properties are set correctly.
+  -- 2. Current gps position is fetched.
+  -- 3. Current gps position is correct.
+  -- 4. Timer is synchronized.
+  -- 5. New gps position is correctly set.
+  -- 6. Standard Report is delivered.
+  -- 7. Difference between reports is correct.
+  -- 8. Values in report are correct.
 function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues()
   generic_test_StandardReportContent(
     "StandardReport1", 
@@ -396,6 +406,7 @@ function generic_test_LogReports(logReportXKey, standardReportXKey, properties, 
   end
 
 end
+
 
 -- This is generic function for configure and test reports (StandardReport,AcceleratedReport)
 function generic_test_StandardReportContent(firstReportKey,reportKey,properties,firstReportInterval,reportInterval)
