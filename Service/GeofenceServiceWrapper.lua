@@ -11,7 +11,7 @@ GeofenceServiceWrapper = {}
     end,
   })
   
-  function GeofenceServiceWrapper:_init()
+  function GeofenceServiceWrapper:_init(gpsConversion, distanceConversion)
     
     -- Possible types: "unsignedint"  "signedint"  "enum"  "string"  "boolean"  "data"
     
@@ -71,6 +71,8 @@ GeofenceServiceWrapper = {}
     -- default values, may be incorrect, will be overwritten if setProperties is called
     self.interval = 300
     self.hysteresis = 60
+    self.gpsConversion = gpsConversion or 60000
+    self.distanceConversion = distanceConversion or 1000
   end
     
   function GeofenceServiceWrapper:getProcessTime()
@@ -87,4 +89,35 @@ GeofenceServiceWrapper = {}
       self.hysteresis = pinValues[hysteresis_pin]
     end
     return ServiceWrapper.setProperties(self, pinValues, raw, save)
+  end
+  
+  function GeofenceServiceWrapper:__normalizeGPS(value)
+    return value * self.gpsConversion
+  end
+  
+  function GeofenceServiceWrapper:__normalizeDistance(value)
+    return value * self.distanceConversion
+  end
+  
+  -- in kilometers and degrees
+  -- args = {number, centerLatitude, centerLongitude, latitudeDistance, longitudeDistance, enabled, Alarm}
+  function GeofenceServiceWrapper:setRectangle(args)
+    local number = args.number or 0
+    local centerLatitude = self:__normalizeGPS(args.centerLatitude)
+    local centerLongitude = self:__normalizeGPS(args.centerLongitude)
+    local latitudeDistance = self:__normalizeDistance(args.latitudeDistance)
+    local longitudeDistance = self:__normalizeDistance(args.longitudeDistance)
+    local enabled = args.enabled or true
+    local alarm = args.alarm or "Both" --(both - on entry alarm and on exit alarm)
+    
+    local Fields = {{Name="number",Value=number},
+                    {Name="enabled",Value=enabled},
+                    {Name="alarmCondition",Value=alarm},
+                    {Name="centreLatitude",Value=centerLatitude},
+                    {Name="centreLongitude",Value=centerLongitude},
+                    {Name="latitudeDistance",Value=latitudeDistance},
+                    {Name="longitudeDistance",Value=longitudeDistance}}
+                  
+    self:sendMessageByName("setRectangle", Fields)
+	
   end
