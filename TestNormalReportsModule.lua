@@ -320,12 +320,7 @@ function generic_test_LogReports(logReportXKey, standardReportXKey, properties, 
   vmsSW:setPropertiesByName(properties)
 
   -- set position for reports
-  local gpsPosition = {
-    latitude  = 2,
-    longitude = 2,
-    speed =  9
-  }
-  GPS:set(gpsPosition)
+  gpsPosition = GPS:setRandom()
 
   --set log filter
   logSW:setLogFilter(
