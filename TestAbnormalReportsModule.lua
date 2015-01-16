@@ -21,7 +21,7 @@ function setup()
 
   positionSW:setPropertiesByName({continuous = GPS_READ_INTERVAL})
   vmsSW:setPropertiesByName({GpsJammedEndDebounceTime = 1})
-  GPS:set({jammingDetect = false})
+  GPS:set({jammingDetect = false, fixType = 3})
 
 
 end
@@ -420,30 +420,34 @@ end
 function test_GpsBlocked_WhenGpsSignalIsBlockedForTimeAboveGpsBlockedStartDebouncePeriod_GpsBlockedAbnormalReportIsSent()
 
   -- *** Setup
-  local GPS_BLOCKED_START_DEBOUNCE_TIME = 10   -- seconds
-  local GPS_BLOCKED_END_DEBOUNCE_TIME = 5      -- seconds
+  local GPS_BLOCKED_START_DEBOUNCE_TIME = 20   -- seconds
+  local GPS_BLOCKED_END_DEBOUNCE_TIME = 1      -- seconds
+  local MAX_FIX_TIMEOUT = 60                   -- seconds (60 seconds is the minimum allowed value for this property)
 
   -- terminal stationary, GPS signal good initially
   local InitialPosition = {
     speed = 0,                      -- kmh
     latitude = 1,                   -- degrees
     longitude = 1,                  -- degrees
-    blockage = false,
-  }
+    fixType = 3,                    -- valid fix
+   }
 
-  -- terminal in different position (wrong GPS data)
+  -- terminal in different position (no valid fix provided)
   local GpsBlockedPosition = {
     speed = 0,                      -- kmh
     latitude = 1,                   -- degrees
     longitude = 1,                  -- degrees
-    blockage = true,
+    fixType = 1,                    -- no fix
   }
 
   vmsSW:setPropertiesByName({GpsBlockedStartDebounceTime = GPS_BLOCKED_START_DEBOUNCE_TIME,
                              GpsBlockedEndDebounceTime = GPS_BLOCKED_END_DEBOUNCE_TIME,
-                             GpsBlockedSendReport = true
+                             GpsBlockedSendReport = true,
+                             IdpBlockedSendReport = false,
                              }
   )
+
+  positionSW:setPropertiesByName({maxFixTimeout = MAX_FIX_TIMEOUT})
 
   -- *** Execute
   -- terminal in initial position, gps signal not jammed
@@ -451,25 +455,33 @@ function test_GpsBlocked_WhenGpsSignalIsBlockedForTimeAboveGpsBlockedStartDeboun
   gateway.setHighWaterMark() -- to get the newest messages
   -- GPS signal is blocked from now
   GPS:set(GpsBlockedPosition)
-  local timeOfEvent = os.time()  -- to get exact timestamp
-  D:log(timeOfEvent)
---[[
+
+  -- waiting until MAX_FIX_TIMEOUT time passes - no new fix provided during this period
+  framework.delay(MAX_FIX_TIMEOUT)
+
   -- checking GpsBlockedState property - this is expected to be false before GPS_BLOCKED_START_DEBOUNCE_TIME period passes
   local GpsBlockedStateProperty = vmsSW:getPropertiesByName({"GpsBlockedState"})
   assert_false(GpsBlockedStateProperty["GpsBlockedState"], "GpsBlockedState has been changed before GpsBlockedStartDebounceTime has passed")
---]]
+  D:log(GpsBlockedStateProperty, "GpsBlockedStateProperty before GpsBlockedStartDebounceTime")
+
   framework.delay(GPS_BLOCKED_START_DEBOUNCE_TIME)
+
+  local timeOfEvent = os.time()  -- to get exact timestamp
+  D:log(timeOfEvent)
 
   -- AbnormalReport is expected with GpsBlocked information
   local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"})
+  local GpsBlockedStateProperty = vmsSW:getPropertiesByName({"GpsBlockedState"})
+
   -- back to initial position with no gps blockage
   GPS:set(InitialPosition)
+  framework.delay(MAX_FIX_TIMEOUT + GPS_BLOCKED_END_DEBOUNCE_TIME)   -- wait until terminal goes back to GpsBlocked = false state
 
   assert_not_nil(ReceivedMessages["AbnormalReport"], "AbnormalReport not received")
 
   -- checking GpsBlockedState property - this is expected to be true as GPS_BLOCKED_START_DEBOUNCE_TIME period has passed
-  local GpsBlockedStateProperty = vmsSW:getPropertiesByName({"GpsBlockedState"})
   assert_true(GpsBlockedStateProperty["GpsBlockedState"], "GpsBlockedState property has not been changed correctly when GPS blockage was detected")
+  D:log(GpsBlockedStateProperty, "GpsBlockedStateProperty after GpsBlockedStartDebounceTime")
 
   assert_equal(
     GpsBlockedPosition.latitude*60000,
@@ -504,7 +516,7 @@ function test_GpsBlocked_WhenGpsSignalIsBlockedForTimeAboveGpsBlockedStartDeboun
   assert_equal(
     timeOfEvent,
     tonumber(ReceivedMessages["AbnormalReport"].Timestamp),
-    10,
+    20,
     "Wrong Timestamp value in GpsBlocked abnormal report"
   )
 
@@ -532,6 +544,7 @@ function test_GpsBlocked_WhenGpsSignalIsBlockedForTimeAboveGpsBlockedStartDeboun
 
   local StatusBitmap = vmsSW:decodeBitmap(ReceivedMessages["AbnormalReport"].StatusBitmap, "EventStateId")
   assert_true(StatusBitmap["GpsBlocked"], "StatusBitmap has not been correctly changed when terminal detected GPS blockage")
+
 
 
 end
