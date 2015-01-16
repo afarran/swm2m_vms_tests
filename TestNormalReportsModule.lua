@@ -264,7 +264,7 @@ function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIn
   )
 end
 
---- TC checks if ConfigChangeReport 1 is sent  and its values are correct (setProperties used for setup)
+--- TC checks if ConfigChangeReport 1 is sent and its values are correct (setProperties used for setup)
   -- Initial Conditions:
   --
   -- * Properties: StandardReport1Interval and AcceleratedReport1Rate are requested
@@ -296,6 +296,23 @@ function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigProperti
   )
 end
 
+--- TC checks if ConfigChangeReport 2 is sent and its values are correct (setProperties used for setup)
+  -- Initial Conditions:
+  --
+  -- * Properties: StandardReport2Interval and AcceleratedReport2Rate are requested
+  -- * Properties are received and used in TC. 
+  --
+  -- Steps:
+  --
+  -- 1. Properties are changed and sent.
+  -- 2. Waiting for message ConfigChangeReport2 is performed.
+  -- 3. Report values are checked.
+  --
+  -- Results:
+  --
+  -- 1. Properties are set correctly.
+  -- 2. Message ConfigChangeReport is received.
+  -- 3. Report values are correct.
 function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport2IsSent()
   
   -- get properties
@@ -311,6 +328,23 @@ function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigProperti
   )
 end
 
+--- TC checks if ConfigChangeReport 3 is sent and its values are correct (setProperties used for setup)
+  -- Initial Conditions:
+  --
+  -- * Properties: StandardReport3Interval and AcceleratedReport3Rate are requested
+  -- * Properties are received and used in TC. 
+  --
+  -- Steps:
+  --
+  -- 1. Properties are changed and sent.
+  -- 2. Waiting for message ConfigChangeReport3 is performed.
+  -- 3. Report values are checked.
+  --
+  -- Results:
+  --
+  -- 1. Properties are set correctly.
+  -- 2. Message ConfigChangeReport is received.
+  -- 3. Report values are correct.
 function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport3IsSent()
   
   -- get properties
