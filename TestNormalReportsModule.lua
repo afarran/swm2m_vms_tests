@@ -42,24 +42,33 @@ end
 -- Test Cases
 -------------------------
 
---- TC checks if StandardReport 1 is sent periodically and its values are correct.
+--- TC checks if StandardReport 1 is sent periodically and its values are correct (setProperties used for setup)
   -- Initial Conditions:
   --
   -- * StandardReport1Interval is set above zero.
+  -- * AcceleratedReport1Rate is set to 1
   --
   -- Steps:
   --
-  -- 1. Position "getPosition" message is sent.
-  -- 2. Test set of gps values is prepared.
-  -- 3. Waiting for Status Report is performed.
-  -- 4. Report Values are checked.
+  -- 1. Properties setup is done (via setProperties) .
+  -- 2. Current gps position is requested.
+  -- 3. Current gps position is checked.
+  -- 4. Waiting for first Standard Report is performed.
+  -- 5. New gps position is prepared and set.
+  -- 6. Waiting for second Standard Report is performed.
+  -- 7. Difference between reports is calculated.
+  -- 8. Values in report are checked.
   --
   -- Results:
   --
-  -- 1. Positon "position" message is received and its value checked
-  -- 2. GPS is set.
-  -- 3. Status Report is received
-  -- 4. Report Values are correct.
+  -- 1. Properties are set correctly.
+  -- 2. Current gps position is fetched.
+  -- 3. Current gps position is correct.
+  -- 4. Timer is synchronized.
+  -- 5. New gps position is correctly set.
+  -- 6. Standard Report is delivered.
+  -- 7. Difference between reports is correct.
+  -- 8. Values in report are correct.
 function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues()
   generic_test_StandardReportContent(
     "StandardReport1", 
@@ -70,24 +79,33 @@ function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsS
   )
 end
 
---- TC checks if StandardReport 2 is sent periodically and its values are correct.
+--- TC checks if StandardReport 2 is sent periodically and its values are correct (setProperties used for setup)
   -- Initial Conditions:
   --
-  -- * StandardReport1Interval is set above zero.
+  -- * StandardReport2Interval is set above zero.
+  -- * AcceleratedReport2Rate is set to 1
   --
   -- Steps:
   --
-  -- 1. Position "getPosition" message is sent.
-  -- 2. Test set of gps values is prepared.
-  -- 3. Waiting for Status Report is performed.
-  -- 4. Report Values are checked.
+  -- 1. Properties setup is done (via setProperties) .
+  -- 2. Current gps position is requested.
+  -- 3. Current gps position is checked.
+  -- 4. Waiting for first Standard Report is performed.
+  -- 5. New gps position is prepared and set.
+  -- 6. Waiting for second Standard Report is performed.
+  -- 7. Difference between reports is calculated.
+  -- 8. Values in report are checked.
   --
   -- Results:
   --
-  -- 1. Positon "position" message is received and its value checked
-  -- 2. GPS is set.
-  -- 3. Status Report is received
-  -- 4. Report Values are correct.
+  -- 1. Properties are set correctly.
+  -- 2. Current gps position is fetched.
+  -- 3. Current gps position is correct.
+  -- 4. Timer is synchronized.
+  -- 5. New gps position is correctly set.
+  -- 6. Standard Report is delivered.
+  -- 7. Difference between reports is correct.
+  -- 8. Values in report are correct.
 function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues()
   generic_test_StandardReportContent(
     "StandardReport2", 
@@ -98,24 +116,33 @@ function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport2IsS
   )
 end
 
---- TC checks if StandardReport 3 is sent periodically and its values are correct.
+--- TC checks if StandardReport 3 is sent periodically and its values are correct (setProperties used for setup)
   -- Initial Conditions:
   --
-  -- * StandardReport1Interval is set above zero.
+  -- * StandardReport3Interval is set above zero.
+  -- * AcceleratedReport3Rate is set to 1
   --
   -- Steps:
   --
-  -- 1. Position "getPosition" message is sent.
-  -- 2. Test set of gps values is prepared.
-  -- 3. Waiting for Status Report is performed.
-  -- 4. Report Values are checked.
+  -- 1. Properties setup is done (via setProperties) .
+  -- 2. Current gps position is requested.
+  -- 3. Current gps position is checked.
+  -- 4. Waiting for first Standard Report is performed.
+  -- 5. New gps position is prepared and set.
+  -- 6. Waiting for second Standard Report is performed.
+  -- 7. Difference between reports is calculated.
+  -- 8. Values in report are checked.
   --
   -- Results:
   --
-  -- 1. Positon "position" message is received and its value checked
-  -- 2. GPS is set.
-  -- 3. Status Report is received
-  -- 4. Report Values are correct.
+  -- 1. Properties are set correctly.
+  -- 2. Current gps position is fetched.
+  -- 3. Current gps position is correct.
+  -- 4. Timer is synchronized.
+  -- 5. New gps position is correctly set.
+  -- 6. Standard Report is delivered.
+  -- 7. Difference between reports is correct.
+  -- 8. Values in report are correct.
 function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues()
   generic_test_StandardReportContent(
     "StandardReport3", 
@@ -126,6 +153,33 @@ function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport3IsS
   )
 end
 
+--- TC checks if AcceleratedReport 1 is sent periodically and its values are correct (setProperties used for setup)
+  -- Initial Conditions:
+  --
+  -- * StandardReport1Interval is set above zero.
+  -- * AcceleratedReport1Rate is set to 2
+  --
+  -- Steps:
+  --
+  -- 1. Properties setup is done (via setProperties) .
+  -- 2. Current gps position is requested.
+  -- 3. Current gps position is checked.
+  -- 4. Waiting for Standard Report is performed.
+  -- 5. New gps position is prepared and set.
+  -- 6. Waiting for AcceleratedReport is performed.
+  -- 7. Difference between reports is calculated.
+  -- 8. Values in report are checked.
+  --
+  -- Results:
+  --
+  -- 1. Properties are set correctly.
+  -- 2. Current gps position is fetched.
+  -- 3. Current gps position is correct.
+  -- 4. Timer is synchronized.
+  -- 5. New gps position is correctly set.
+  -- 6. Accelerated Report is delivered.
+  -- 7. Difference between reports is correct.
+  -- 8. Values in report are correct.
 function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport1IsSentWithCorrectValues()
   generic_test_StandardReportContent(
     "StandardReport1", 
@@ -136,6 +190,33 @@ function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIn
   )
 end
 
+--- TC checks if AcceleratedReport 2 is sent periodically and its values are correct (setProperties used for setup)
+  -- Initial Conditions:
+  --
+  -- * StandardReport2Interval is set above zero.
+  -- * AcceleratedReport2Rate is set to 2
+  --
+  -- Steps:
+  --
+  -- 1. Properties setup is done (via setProperties) .
+  -- 2. Current gps position is requested.
+  -- 3. Current gps position is checked.
+  -- 4. Waiting for Standard Report is performed.
+  -- 5. New gps position is prepared and set.
+  -- 6. Waiting for AcceleratedReport is performed.
+  -- 7. Difference between reports is calculated.
+  -- 8. Values in report are checked.
+  --
+  -- Results:
+  --
+  -- 1. Properties are set correctly.
+  -- 2. Current gps position is fetched.
+  -- 3. Current gps position is correct.
+  -- 4. Timer is synchronized.
+  -- 5. New gps position is correctly set.
+  -- 6. Accelerated Report is delivered.
+  -- 7. Difference between reports is correct.
+  -- 8. Values in report are correct.
 function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport2IsSentWithCorrectValues()
   generic_test_StandardReportContent(
     "StandardReport2", 
@@ -146,6 +227,33 @@ function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIn
   )
 end
 
+--- TC checks if AcceleratedReport 3 is sent periodically and its values are correct (setProperties used for setup)
+  -- Initial Conditions:
+  --
+  -- * StandardReport3Interval is set above zero.
+  -- * AcceleratedReport3Rate is set to 2
+  --
+  -- Steps:
+  --
+  -- 1. Properties setup is done (via setProperties) .
+  -- 2. Current gps position is requested.
+  -- 3. Current gps position is checked.
+  -- 4. Waiting for Standard Report is performed.
+  -- 5. New gps position is prepared and set.
+  -- 6. Waiting for AcceleratedReport is performed.
+  -- 7. Difference between reports is calculated.
+  -- 8. Values in report are checked.
+  --
+  -- Results:
+  --
+  -- 1. Properties are set correctly.
+  -- 2. Current gps position is fetched.
+  -- 3. Current gps position is correct.
+  -- 4. Timer is synchronized.
+  -- 5. New gps position is correctly set.
+  -- 6. Accelerated Report is delivered.
+  -- 7. Difference between reports is correct.
+  -- 8. Values in report are correct.
 function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport3IsSentWithCorrectValues()
   generic_test_StandardReportContent(
     "StandardReport3", 
@@ -156,6 +264,23 @@ function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIn
   )
 end
 
+--- TC checks if ConfigChangeReport 1 is sent and its values are correct (setProperties used for setup)
+  -- Initial Conditions:
+  --
+  -- * Properties: StandardReport1Interval and AcceleratedReport1Rate are requested
+  -- * Properties are received and used in TC. 
+  --
+  -- Steps:
+  --
+  -- 1. Properties are changed and sent.
+  -- 2. Waiting for message ConfigChangeReport1 is performed.
+  -- 3. Report values are checked.
+  --
+  -- Results:
+  --
+  -- 1. Properties are set correctly.
+  -- 2. Message ConfigChangeReport is received.
+  -- 3. Report values are correct.
 function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport1IsSent()
 
   -- get properties
@@ -171,6 +296,23 @@ function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigProperti
   )
 end
 
+--- TC checks if ConfigChangeReport 2 is sent and its values are correct (setProperties used for setup)
+  -- Initial Conditions:
+  --
+  -- * Properties: StandardReport2Interval and AcceleratedReport2Rate are requested
+  -- * Properties are received and used in TC. 
+  --
+  -- Steps:
+  --
+  -- 1. Properties are changed and sent.
+  -- 2. Waiting for message ConfigChangeReport2 is performed.
+  -- 3. Report values are checked.
+  --
+  -- Results:
+  --
+  -- 1. Properties are set correctly.
+  -- 2. Message ConfigChangeReport is received.
+  -- 3. Report values are correct.
 function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport2IsSent()
   
   -- get properties
@@ -186,6 +328,23 @@ function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigProperti
   )
 end
 
+--- TC checks if ConfigChangeReport 3 is sent and its values are correct (setProperties used for setup)
+  -- Initial Conditions:
+  --
+  -- * Properties: StandardReport3Interval and AcceleratedReport3Rate are requested
+  -- * Properties are received and used in TC. 
+  --
+  -- Steps:
+  --
+  -- 1. Properties are changed and sent.
+  -- 2. Waiting for message ConfigChangeReport3 is performed.
+  -- 3. Report values are checked.
+  --
+  -- Results:
+  --
+  -- 1. Properties are set correctly.
+  -- 2. Message ConfigChangeReport is received.
+  -- 3. Report values are correct.
 function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport3IsSent()
   
   -- get properties
@@ -201,6 +360,27 @@ function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigProperti
   )
 end
 
+--- TC checks if ConfigChangeReport 1 is sent and its values are correct (message SetConfigReport1 used for setup)
+  -- Initial Conditions:
+  --
+  -- * Properties: StandardReport1Interval and AcceleratedReport1Rate are requested
+  -- * Properties are received and used in TC. 
+  --
+  -- Steps:
+  --
+  -- 1. Properties are changed and sent.
+  -- 2. Waiting for message ConfigChangeReport1 is performed.
+  -- 3. Message SetConfigReport1 is sent (with changed properties)
+  -- 4. Waiting for message ConfigChangeReport1 is performed.
+  -- 5. Report values are checked.
+  --
+  -- Results:
+  --
+  -- 1. Properties are set correctly.
+  -- 2. Message ConfigChangeReport1 is received.
+  -- 3. Message SetConfigReport1 is correctly sent.
+  -- 4. Message ConfigChangeReport1 is received.
+  -- 5. Report values are correct.
 function test_ConfigChangeReport_WhenSetConfigReport1MessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport2IsSent()
   
   -- get properties
@@ -215,6 +395,27 @@ function test_ConfigChangeReport_WhenSetConfigReport1MessageIsSentAndConfigPrope
   )
 end
 
+--- TC checks if ConfigChangeReport 2 is sent and its values are correct (message SetConfigReport2 used for setup)
+  -- Initial Conditions:
+  --
+  -- * Properties: StandardReport2Interval and AcceleratedReport2Rate are requested
+  -- * Properties are received and used in TC. 
+  --
+  -- Steps:
+  --
+  -- 1. Properties are changed and sent.
+  -- 2. Waiting for message ConfigChangeReport2 is performed.
+  -- 3. Message SetConfigReport2 is sent (with changed properties)
+  -- 4. Waiting for message ConfigChangeReport2 is performed.
+  -- 5. Report values are checked.
+  --
+  -- Results:
+  --
+  -- 1. Properties are set correctly.
+  -- 2. Message ConfigChangeReport2 is received.
+  -- 3. Message SetConfigReport2 is correctly sent.
+  -- 4. Message ConfigChangeReport2 is received.
+  -- 5. Report values are correct.
 function test_ConfigChangeReport_WhenSetConfigReport2MessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport2IsSent()
   
   -- get properties
@@ -230,6 +431,27 @@ function test_ConfigChangeReport_WhenSetConfigReport2MessageIsSentAndConfigPrope
   )
 end
 
+--- TC checks if ConfigChangeReport 3 is sent and its values are correct (message SetConfigReport3 used for setup)
+  -- Initial Conditions:
+  --
+  -- * Properties: StandardReport3Interval and AcceleratedReport3Rate are requested
+  -- * Properties are received and used in TC. 
+  --
+  -- Steps:
+  --
+  -- 1. Properties are changed and sent.
+  -- 2. Waiting for message ConfigChangeReport3 is performed.
+  -- 3. Message SetConfigReport3 is sent (with changed properties)
+  -- 4. Waiting for message ConfigChangeReport3 is performed.
+  -- 5. Report values are checked.
+  --
+  -- Results:
+  --
+  -- 1. Properties are set correctly.
+  -- 2. Message ConfigChangeReport3 is received.
+  -- 3. Message SetConfigReport3 is correctly sent.
+  -- 4. Message ConfigChangeReport3 is received.
+  -- 5. Report values are correct.
 function test_ConfigChangeReport_WhenSetConfigReport2MessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport2IsSent()
   
   -- get properties
@@ -245,38 +467,158 @@ function test_ConfigChangeReport_WhenSetConfigReport2MessageIsSentAndConfigPrope
   )
 end
 
--- in development...
-function test_XLOG()
-
+function test_LogReport1_WhenGpsPositionIsSetAndLogFilterEstablished_LogEntriesShouldCollectCorrectDataInCorrectInterval()
   local LOG_REPORT_RATE = 4
   local STANDARD_REPORT_INTERVAL = 4
   local LOG_REPORT_INTERVAL = STANDARD_REPORT_INTERVAL / LOG_REPORT_RATE
   local ITEMS_IN_LOG = 2
 
-  vmsSW:setPropertiesByName({
+  local logReportXKey = "LogReport1"
+  local standardReportXKey = "StandardReport1"
+  local properties = {}
+
+  local properties = {
     LogReport1Rate = LOG_REPORT_RATE,
     StandardReport1Interval = STANDARD_REPORT_INTERVAL
-  })
-  
+  }
+
+  local filterTimeout = LOG_REPORT_INTERVAL*60+60
+  local timeForLogging = ITEMS_IN_LOG*LOG_REPORT_INTERVAL*60+20
+  local itemsInLog = ITEMS_IN_LOG
+
+  generic_test_LogReports(logReportXKey, standardReportXKey, properties, filterTimeout, timeForLogging, itemsInLog, LOG_REPORT_INTERVAL)
+end
+
+function test_LogReport2_WhenGpsPositionIsSetAndLogFilterEstablished_LogEntriesShouldCollectCorrectDataInCorrectInterval()
+  local LOG_REPORT_RATE = 4
+  local STANDARD_REPORT_INTERVAL = 4
+  local LOG_REPORT_INTERVAL = STANDARD_REPORT_INTERVAL / LOG_REPORT_RATE
+  local ITEMS_IN_LOG = 2
+
+  local logReportXKey = "LogReport2"
+  local standardReportXKey = "StandardReport2"
+  local properties = {}
+
+  local properties = {
+    LogReport2Rate = LOG_REPORT_RATE,
+    StandardReport2Interval = STANDARD_REPORT_INTERVAL
+  }
+
+  local filterTimeout = LOG_REPORT_INTERVAL*60+60
+  local timeForLogging = ITEMS_IN_LOG*LOG_REPORT_INTERVAL*60+20
+  local itemsInLog = ITEMS_IN_LOG
+
+  generic_test_LogReports(logReportXKey, standardReportXKey, properties, filterTimeout, timeForLogging, itemsInLog, LOG_REPORT_INTERVAL)
+end
+
+function test_LogReport3_WhenGpsPositionIsSetAndLogFilterEstablished_LogEntriesShouldCollectCorrectDataInCorrectInterval()
+  local LOG_REPORT_RATE = 4
+  local STANDARD_REPORT_INTERVAL = 4
+  local LOG_REPORT_INTERVAL = STANDARD_REPORT_INTERVAL / LOG_REPORT_RATE
+  local ITEMS_IN_LOG = 2
+
+  local logReportXKey = "LogReport3"
+  local standardReportXKey = "StandardReport3"
+  local properties = {}
+
+  local properties = {
+    LogReport3Rate = LOG_REPORT_RATE,
+    StandardReport3Interval = STANDARD_REPORT_INTERVAL
+  }
+
+  local filterTimeout = LOG_REPORT_INTERVAL*60+60
+  local timeForLogging = ITEMS_IN_LOG*LOG_REPORT_INTERVAL*60+20
+  local itemsInLog = ITEMS_IN_LOG
+
+  generic_test_LogReports(logReportXKey, standardReportXKey, properties, filterTimeout, timeForLogging, itemsInLog, LOG_REPORT_INTERVAL)
+end
+
+function generic_test_LogReports(logReportXKey, standardReportXKey, properties, filterTimeout, timeForLogging, itemsInLog, logReportInterval)
+
+  -- prerequisites
+  assert_lt(3,itemsInLog,0,"There should be min 2 log items! Configure TC!")
+
+  -- set properties for log interval
+  vmsSW:setPropertiesByName(properties)
+
+  -- set position for reports
+  gpsPosition = GPS:setRandom()
+
+  --set log filter
   logSW:setLogFilter(
     vmsSW.sin, {
-    vmsSW:getMinFrom("LogReport1")}, 
+    vmsSW:getMinFrom(logReportXKey)}, 
     os.time()+5, 
-    os.time()+LOG_REPORT_INTERVAL*60+60, 
+    os.time()+filterTimeout, 
     "True"
   )
 
   --synchronize first standard report
-  vmsSW:waitForMessagesByName({"StandardReport1"})
+  vmsSW:waitForMessagesByName(standardReportXKey)
 
-  framework.delay(ITEMS_IN_LOG*LOG_REPORT_INTERVAL*60+20)
+  -- wait for log reports
+  framework.delay(timeForLogging)
 
-  logEntries = logSW:getLogEntries(ITEMS_IN_LOG)
+  -- get reports from log
+  logEntries = logSW:getLogEntries(itemsInLog)
 
-  D:log(logEntries[1],"TC 1")
-  D:log(logEntries[1].log,"TC 2")
+  -- check if data is correct
+  for i=1, #logEntries do
+    D:log(logEntries[i].log,"entry "..i)
+    -- latitude
+    assert_equal(
+      GPS:denormalize(gpsPosition.latitude),
+      tonumber(logEntries[i].log.Latitude),
+      0,
+      "Wrong latitude in Log Report, entry: "..i
+    )
+    assert_equal(
+      GPS:denormalize(gpsPosition.longitude),
+      tonumber(logEntries[i].log.Longitude),
+      0,
+      "Wrong longitude in Log Report, entry: "..i
+    )
+    assert_equal(
+      GPS:denormalizeSpeed(gpsPosition.speed),
+      tonumber(logEntries[i].log.Speed),
+      1,
+      "Wrong speed in Log Report, entry: "..i
+    )
+    -- some of values are being checked just for their existance
+    assert_not_nil(
+      logEntries[i].log.Timestamp,
+      "No timestamp in Log Report, entry: " .. i
+    )
+    assert_not_nil(
+      logEntries[i].log.Course,
+      "No Course in Log Report, entry: " .. i
+    )
+    assert_not_nil(
+      logEntries[i].log.Hdop,
+      "No Hdop in Log Report, entry: " .. i
+    )
+    assert_not_nil(
+      logEntries[i].log.NumSats,
+      "No NumSats in Log Report, entry: " .. i
+    )
+    assert_not_nil(
+      logEntries[i].log.IdpCnr,
+      "No IdpCnr in Log Entry, entry: " .. i
+    )
+    if i>1 then
+      -- check if timeout between log entries is correct
+      local timeDiff = tonumber(logEntries[i-1].log.Timestamp) - tonumber(logEntries[i].log.Timestamp)
+      assert_equal(
+        logReportInterval*60, 
+        timeDiff, 
+        5, 
+        "Log Report Interval should be "..(logReportInterval*60)
+      )
+    end
+  end
 
 end
+
 
 -- This is generic function for configure and test reports (StandardReport,AcceleratedReport)
 function generic_test_StandardReportContent(firstReportKey,reportKey,properties,firstReportInterval,reportInterval)
@@ -399,6 +741,7 @@ function generic_test_StandardReportContent(firstReportKey,reportKey,properties,
     "No StatusBitmap in " .. reportKey
   )
 end
+
 
 -- this is generic function for testing Config Change Reports
 function generic_test_ConfigChangeReportConfigChangeReportIsSent(messageKey,propertiesToChange,propertiesBeforeChange,setConfigMsgKey)

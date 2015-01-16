@@ -37,6 +37,16 @@ GpsFrontend = {}
       framework.delay(self.GPS_PROCESS_TIME + self.GPS_READ_INTERVAL)
     end
   end
+
+  function GpsFrontend:setRandom(delay)
+    local gpsPosition = {
+      latitude  = lunatest.random_int (1, 9),
+      longitude = lunatest.random_int (1, 9),
+      speed =  lunatest.random_int (1, 9)
+    }
+    self:set(gpsPosition,delay)
+    return gpsPosition
+  end
   
   function GpsFrontend:simulateTrack(trackInfo)
     --TODO
