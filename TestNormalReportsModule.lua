@@ -533,6 +533,30 @@ function test_LogReport3_WhenGpsPositionIsSetAndLogFilterEstablished_LogEntriesS
   generic_test_LogReports(logReportXKey, standardReportXKey, properties, filterTimeout, timeForLogging, itemsInLog, LOG_REPORT_INTERVAL)
 end
 
+--- TC checks if Log Report X is sent periodically  and its values are correct.
+  -- Initial Conditions:
+  --
+  -- * There should be min 2 items configured in TC setup.
+  --
+  -- Steps:
+  --
+  -- 1. Properties are set (XXXXXX).
+  -- 2. Random gps position is requested via GpsFrontend.
+  -- 3. Log filter is configured.
+  -- 4. Waiting for first standard report is performed.
+  -- 5. Delay is performed for gathering logs.
+  -- 6. Logs values are checked.
+  -- 7. Timeouts between logs are checked.
+  --
+  -- Results:
+  --
+  -- 1. Properties are set correctly.
+  -- 2. Gps position is set.
+  -- 3. Log filter is set.
+  -- 4. Timer is synchronized.
+  -- 5. Logs are gathered.
+  -- 6. Logs values are correct.
+  -- 7. Timeouts between logs are correct.
 function generic_test_LogReports(logReportXKey, standardReportXKey, properties, filterTimeout, timeForLogging, itemsInLog, logReportInterval)
 
   -- prerequisites
