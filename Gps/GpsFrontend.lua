@@ -37,6 +37,16 @@ GpsFrontend = {}
       framework.delay(self.GPS_PROCESS_TIME + self.GPS_READ_INTERVAL)
     end
   end
+
+  function GpsFrontend:setRandom(delay)
+    local gpsPosition = {
+      latitude  = lunatest.random_int (1, 9),
+      longitude = lunatest.random_int (1, 9),
+      speed =  lunatest.random_int (1, 9)
+    }
+    self:set(gpsPosition,delay)
+    return gpsPosition
+  end
   
   function GpsFrontend:simulateTrack(trackInfo)
     --TODO
@@ -58,4 +68,19 @@ GpsFrontend = {}
   -- from knots to km/h
   function GpsFrontend:normalizeSpeed(value)
     return tonumber(value) * 0.1852
+  end
+  
+  function GpsFrontend:geoDistance(lat1, lon1, lat2, lon2)
+    if lat1 == nil or lon1 == nil or lat2 == nil or lon2 == nil then
+      return nil
+    end
+    local dlat = math.rad(lat2-lat1)
+    local dlon = math.rad(lon2-lon1)
+    local sin_dlat = math.sin(dlat/2)
+    local sin_dlon = math.sin(dlon/2)
+    local a = sin_dlat * sin_dlat + math.cos(math.rad(lat1)) * math.cos(math.rad(lat2)) * sin_dlon * sin_dlon
+    local c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+    -- To get miles, use 3963 as the constant (equator again)
+    local d = 6378 * c
+    return d
   end

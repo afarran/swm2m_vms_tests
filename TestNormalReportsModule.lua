@@ -245,36 +245,155 @@ function test_ConfigChangeReport_WhenSetConfigReport2MessageIsSentAndConfigPrope
   )
 end
 
--- in development...
-function test_XLOG()
-
+function test_LogReport1_WhenGpsPositionIsSetAndLogFilterEstablished_LogEntriesShouldCollectCorrectDataInCorrectInterval()
   local LOG_REPORT_RATE = 4
   local STANDARD_REPORT_INTERVAL = 4
   local LOG_REPORT_INTERVAL = STANDARD_REPORT_INTERVAL / LOG_REPORT_RATE
   local ITEMS_IN_LOG = 2
 
-  vmsSW:setPropertiesByName({
+  local logReportXKey = "LogReport1"
+  local standardReportXKey = "StandardReport1"
+  local properties = {}
+
+  local properties = {
     LogReport1Rate = LOG_REPORT_RATE,
     StandardReport1Interval = STANDARD_REPORT_INTERVAL
-  })
-  
+  }
+
+  local filterTimeout = LOG_REPORT_INTERVAL*60+60
+  local timeForLogging = ITEMS_IN_LOG*LOG_REPORT_INTERVAL*60+20
+  local itemsInLog = ITEMS_IN_LOG
+
+  generic_test_LogReports(logReportXKey, standardReportXKey, properties, filterTimeout, timeForLogging, itemsInLog, LOG_REPORT_INTERVAL)
+end
+
+function test_LogReport2_WhenGpsPositionIsSetAndLogFilterEstablished_LogEntriesShouldCollectCorrectDataInCorrectInterval()
+  local LOG_REPORT_RATE = 4
+  local STANDARD_REPORT_INTERVAL = 4
+  local LOG_REPORT_INTERVAL = STANDARD_REPORT_INTERVAL / LOG_REPORT_RATE
+  local ITEMS_IN_LOG = 2
+
+  local logReportXKey = "LogReport2"
+  local standardReportXKey = "StandardReport2"
+  local properties = {}
+
+  local properties = {
+    LogReport2Rate = LOG_REPORT_RATE,
+    StandardReport2Interval = STANDARD_REPORT_INTERVAL
+  }
+
+  local filterTimeout = LOG_REPORT_INTERVAL*60+60
+  local timeForLogging = ITEMS_IN_LOG*LOG_REPORT_INTERVAL*60+20
+  local itemsInLog = ITEMS_IN_LOG
+
+  generic_test_LogReports(logReportXKey, standardReportXKey, properties, filterTimeout, timeForLogging, itemsInLog, LOG_REPORT_INTERVAL)
+end
+
+function test_LogReport3_WhenGpsPositionIsSetAndLogFilterEstablished_LogEntriesShouldCollectCorrectDataInCorrectInterval()
+  local LOG_REPORT_RATE = 4
+  local STANDARD_REPORT_INTERVAL = 4
+  local LOG_REPORT_INTERVAL = STANDARD_REPORT_INTERVAL / LOG_REPORT_RATE
+  local ITEMS_IN_LOG = 2
+
+  local logReportXKey = "LogReport3"
+  local standardReportXKey = "StandardReport3"
+  local properties = {}
+
+  local properties = {
+    LogReport3Rate = LOG_REPORT_RATE,
+    StandardReport3Interval = STANDARD_REPORT_INTERVAL
+  }
+
+  local filterTimeout = LOG_REPORT_INTERVAL*60+60
+  local timeForLogging = ITEMS_IN_LOG*LOG_REPORT_INTERVAL*60+20
+  local itemsInLog = ITEMS_IN_LOG
+
+  generic_test_LogReports(logReportXKey, standardReportXKey, properties, filterTimeout, timeForLogging, itemsInLog, LOG_REPORT_INTERVAL)
+end
+
+function generic_test_LogReports(logReportXKey, standardReportXKey, properties, filterTimeout, timeForLogging, itemsInLog, logReportInterval)
+
+  -- prerequisites
+  assert_lt(3,itemsInLog,0,"There should be min 2 log items! Configure TC!")
+
+  -- set properties for log interval
+  vmsSW:setPropertiesByName(properties)
+
+  -- set position for reports
+  gpsPosition = GPS:setRandom()
+
+  --set log filter
   logSW:setLogFilter(
     vmsSW.sin, {
-    vmsSW:getMinFrom("LogReport1")}, 
+    vmsSW:getMinFrom(logReportXKey)}, 
     os.time()+5, 
-    os.time()+LOG_REPORT_INTERVAL*60+60, 
+    os.time()+filterTimeout, 
     "True"
   )
 
   --synchronize first standard report
-  vmsSW:waitForMessagesByName({"StandardReport1"})
+  vmsSW:waitForMessagesByName(standardReportXKey)
 
-  framework.delay(ITEMS_IN_LOG*LOG_REPORT_INTERVAL*60+20)
+  -- wait for log reports
+  framework.delay(timeForLogging)
 
-  logEntries = logSW:getLogEntries(ITEMS_IN_LOG)
+  -- get reports from log
+  logEntries = logSW:getLogEntries(itemsInLog)
 
-  D:log(logEntries[1],"TC 1")
-  D:log(logEntries[1].log,"TC 2")
+  -- check if data is correct
+  for i=1, #logEntries do
+    D:log(logEntries[i].log,"entry "..i)
+    -- latitude
+    assert_equal(
+      GPS:denormalize(gpsPosition.latitude),
+      tonumber(logEntries[i].log.Latitude),
+      0,
+      "Wrong latitude in Log Report, entry: "..i
+    )
+    assert_equal(
+      GPS:denormalize(gpsPosition.longitude),
+      tonumber(logEntries[i].log.Longitude),
+      0,
+      "Wrong longitude in Log Report, entry: "..i
+    )
+    assert_equal(
+      GPS:denormalizeSpeed(gpsPosition.speed),
+      tonumber(logEntries[i].log.Speed),
+      1,
+      "Wrong speed in Log Report, entry: "..i
+    )
+    -- some of values are being checked just for their existance
+    assert_not_nil(
+      logEntries[i].log.Timestamp,
+      "No timestamp in Log Report, entry: " .. i
+    )
+    assert_not_nil(
+      logEntries[i].log.Course,
+      "No Course in Log Report, entry: " .. i
+    )
+    assert_not_nil(
+      logEntries[i].log.Hdop,
+      "No Hdop in Log Report, entry: " .. i
+    )
+    assert_not_nil(
+      logEntries[i].log.NumSats,
+      "No NumSats in Log Report, entry: " .. i
+    )
+    assert_not_nil(
+      logEntries[i].log.IdpCnr,
+      "No IdpCnr in Log Entry, entry: " .. i
+    )
+    if i>1 then
+      -- check if timeout between log entries is correct
+      local timeDiff = tonumber(logEntries[i-1].log.Timestamp) - tonumber(logEntries[i].log.Timestamp)
+      assert_equal(
+        logReportInterval*60, 
+        timeDiff, 
+        5, 
+        "Log Report Interval should be "..(logReportInterval*60)
+      )
+    end
+  end
 
 end
 
