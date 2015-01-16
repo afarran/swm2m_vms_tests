@@ -127,7 +127,6 @@ LogServiceWrapper = {}
       )
 
       local dataLogEntries = self:waitForMessagesByName({"dataLogEntries"})
-      D:log(dataLogEntries,"getLogEntries")
       if dataLogEntries and dataLogEntries.dataLogEntries and dataLogEntries.dataLogEntries.entryList then
         return dataLogEntries.dataLogEntries.entryList
       end
