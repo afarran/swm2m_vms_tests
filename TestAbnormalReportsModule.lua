@@ -933,7 +933,7 @@ function test_IdpBlocked_WhenSatelliteControlStateIsNotActiveForTimeAboveIdpBloc
 
   -- AbnormalReport is expected with IdpBlocked information
   local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"})
-  local GpsBlockedStateProperty = vmsSW:getPropertiesByName({"IdpBlockedState"})
+  local IdpBlockedStateProperty = vmsSW:getPropertiesByName({"IdpBlockedState"})
 
   -- Back to Satellite Control State = Active
   -- TODO: uncomment this section when the funtions are implemented
@@ -943,8 +943,8 @@ function test_IdpBlocked_WhenSatelliteControlStateIsNotActiveForTimeAboveIdpBloc
   assert_not_nil(ReceivedMessages["AbnormalReport"], "AbnormalReport not received")
 
   -- checking IdpBlockedState property - this is expected to be true as IDP_BLOCKED_START_DEBOUNCE_TIME period has passed
-  assert_true(GpsBlockedStateProperty["IdpBlockedState"], "IdpBlockedState property has not been changed correctly when ")
-  D:log(GpsBlockedStateProperty, "GpsBlockedStateProperty after GpsBlockedStartDebounceTime")
+  assert_true(IdpBlockedStateProperty["IdpBlockedState"], "IdpBlockedState property has not been changed correctly when ")
+  D:log(IdpBlockedStateProperty, "IdpBlockedStateProperty after IdpBlockedStartDebounceTime")
 
   assert_equal(
     InitialPosition.latitude*60000,
@@ -971,7 +971,7 @@ function test_IdpBlocked_WhenSatelliteControlStateIsNotActiveForTimeAboveIdpBloc
   )
 
   assert_equal(
-    "GpsBlocked",
+    "IdpBlocked",
     ReceivedMessages["AbnormalReport"].EventType,
     "Wrong name of the received EventType in IdpBlocked abnormal report"
   )
