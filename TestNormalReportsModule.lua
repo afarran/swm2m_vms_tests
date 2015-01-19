@@ -157,7 +157,7 @@ end
   -- Initial Conditions:
   --
   -- * StandardReport1Interval is set above zero.
-  -- * AcceleratedReport1Rate is set to 2
+  -- * AcceleratedReport1Rate is set to 2 - this will trigger accelerated report.
   --
   -- Steps:
   --
@@ -175,7 +175,7 @@ end
   -- 1. Properties are set correctly.
   -- 2. Current gps position is fetched.
   -- 3. Current gps position is correct.
-  -- 4. Timer is synchronized.
+  -- 4. Timer is synchronized to the first standard report.
   -- 5. New gps position is correctly set.
   -- 6. Accelerated Report is delivered.
   -- 7. Difference between reports is correct.
@@ -194,7 +194,7 @@ end
   -- Initial Conditions:
   --
   -- * StandardReport2Interval is set above zero.
-  -- * AcceleratedReport2Rate is set to 2
+  -- * AcceleratedReport2Rate is set to 2 - this will trigger accelerated report.
   --
   -- Steps:
   --
@@ -212,7 +212,7 @@ end
   -- 1. Properties are set correctly.
   -- 2. Current gps position is fetched.
   -- 3. Current gps position is correct.
-  -- 4. Timer is synchronized.
+  -- 4. Timer is synchronized to the first standard report.
   -- 5. New gps position is correctly set.
   -- 6. Accelerated Report is delivered.
   -- 7. Difference between reports is correct.
@@ -231,7 +231,7 @@ end
   -- Initial Conditions:
   --
   -- * StandardReport3Interval is set above zero.
-  -- * AcceleratedReport3Rate is set to 2
+  -- * AcceleratedReport3Rate is set to 2 - this will trigger accelerated report.
   --
   -- Steps:
   --
@@ -249,7 +249,7 @@ end
   -- 1. Properties are set correctly.
   -- 2. Current gps position is fetched.
   -- 3. Current gps position is correct.
-  -- 4. Timer is synchronized.
+  -- 4. Timer is synchronized to the first standard report.
   -- 5. New gps position is correctly set.
   -- 6. Accelerated Report is delivered.
   -- 7. Difference between reports is correct.
