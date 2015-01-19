@@ -310,6 +310,7 @@ function test_StandardReportDisabled_WhenStandardReport3IntervalIsSetToZero_Stan
   )
 end
 
+
 -----------------------------------------------------------------------------------------------
 -- Test Cases for ACCELERATED REPORTS
 -----------------------------------------------------------------------------------------------
@@ -422,6 +423,33 @@ function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIn
     {StandardReport3Interval=2, AcceleratedReport3Rate=2},
     2, 
     1
+  )
+end
+
+function test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardReport1IntervalIsSetAboveZeroAndAcceleratedReportInterval1DisablesFeature_StandardReportIsSentAndAcceleratedReportNotSent()
+  generic_test_AcceleratedReportDisabledAndStandardReportEnabled(
+    "StandardReport1",
+    "AcceleratedReport1",
+    {StandardReport1Interval=1, AcceleratedReport1Rate=1},
+    70 -- waiting until report not come
+  )
+end
+
+function test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardReport2IntervalIsSetAboveZeroAndAcceleratedReportInterval2DisablesFeature_StandardReportIsSentAndAcceleratedReportNotSent()
+  generic_test_AcceleratedReportDisabledAndStandardReportEnabled(
+    "StandardReport2",
+    "AcceleratedReport2",
+    {StandardReport2Interval=1, AcceleratedReport2Rate=1},
+    70 -- waiting until report not come
+  )
+end
+
+function test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardReport3IntervalIsSetAboveZeroAndAcceleratedReportInterval3DisablesFeature_StandardReportIsSentAndAcceleratedReportNotSent()
+  generic_test_AcceleratedReportDisabledAndStandardReportEnabled(
+    "StandardReport3",
+    "AcceleratedReport3",
+    {StandardReport3Interval=1, AcceleratedReport3Rate=1},
+    70 -- waiting until report not come
   )
 end
 
@@ -1066,7 +1094,7 @@ function generic_test_ConfigChangeReportConfigChangeReportIsSent(messageKey,prop
   end
 end
 
--- This is generic function for disabled reports test
+-- This is generic function for disabled standard reports test
 function generic_test_StandardReportDisabled(reportKey,properties,reportInterval,setConfigMsgKey,configChangeMsgKey,fields)
   
   -- setup
@@ -1091,4 +1119,50 @@ function generic_test_StandardReportDisabled(reportKey,properties,reportInterval
     {reportKey},
     reportInterval
   )
+  D:log(reportMessage,"reportMessage")
+  assert_equal(0,tonumber(reportMessage.count),"Message"..reportKey.." should not come!")
 end
+
+-- This is generic function for disabled accelerated reports test (and standard reports enabled)
+function generic_test_AcceleratedReportDisabledAndStandardReportEnabled(standardReportKey, reportKey,properties,reportInterval,setConfigMsgKey,configChangeMsgKey,fields)
+
+  -- setup
+  if setConfigMsgKey then
+    D:log(setConfigMsgKey,"X1")
+    D:log(fields,"X2")
+    -- change config to trigger ConfigChange message (SetConfigReportX used)
+    vmsSW:sendMessageByName(
+      setConfigMsgKey,
+      fields
+    )
+    vmsSW:waitForMessagesByName(
+      {configChangeMsgKey},
+      30
+    )
+  else
+    vmsSW:setPropertiesByName(properties)
+  end
+
+  local reportMessageStandard = vmsSW:waitForMessagesByName(
+    {standardReportKey},
+    reportInterval
+  )
+
+  assert_not_nil(
+    reportMessageStandard,
+    "Standard Report not received"
+  )
+  assert_not_nil(
+    reportMessageStandard[standardReportKey],
+    "Standard Report not received!"
+  )
+
+  D:log("Waiting for report - should not come - "..reportKey)
+  local reportMessage = vmsSW:waitForMessagesByName(
+    {reportKey},
+    reportInterval
+  )
+  D:log(reportMessage,"reportMessage")
+  assert_equal(0,tonumber(reportMessage.count),"Message"..reportKey.." should not come!")
+end
+
