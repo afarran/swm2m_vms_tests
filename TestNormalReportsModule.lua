@@ -88,7 +88,11 @@ function test_INDEVStandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfig_S
     1, 
     1,
     "SetConfigReport1",
-    "ConfigChangeReport1"
+    "ConfigChangeReport1",
+    {
+      {Name = "StandardReport1Interval" , Value = 1},
+      {Name = "AcceleratedReport1Rate" , Value = 1}
+    }
   )
 end
 
@@ -709,16 +713,18 @@ end
 
 
 -- This is generic function for configure and test reports (StandardReport,AcceleratedReport)
-function generic_test_StandardReportContent(firstReportKey,reportKey,properties,firstReportInterval,reportInterval,setConfigMsgKey,configChangeMsgKey)
+function generic_test_StandardReportContent(firstReportKey,reportKey,properties,firstReportInterval,reportInterval,setConfigMsgKey,configChangeMsgKey,fields)
 
   --TODO: setHighWaterMark
 
    -- testing via message
   if setConfigMsgKey then
+    D:log(setConfigMsgKey,"X1")
+    D:log(fields,"X2")
     -- change config to trigger ConfigChange message (SetConfigReportX used)
     vmsSW:sendMessageByName(
       setConfigMsgKey,
-      properties
+      fields
     )
     vmsSW:waitForMessagesByName(
       {configChangeMsgKey},
