@@ -27,22 +27,18 @@ function teardown()
   gateway.setHighWaterMark()
   -- if some data has to be restored then handle it
   if restoreData then
-    local Fields = {
-      {Name="path",Value=restoreData.path},
-      {Name="offset",Value=restoreData.offset or 0},
-      {Name="flags",Value="Overwrite"},
-      {Name="data",Value=restoreData.data}
-    }
-    filesystemSW:sendMessageByName("write", Fields)
-    filesystemSW:waitForMessagesByName({"writeResult"})
+    local writeOK, writeMsg = filesystemSW:write(restoreData.path, restoreData.offset or 0, restoreData.data, nil, true)
+    assert_true(writeOK, "Failed to restore file data in teardown! Path: " .. restoreData.path)
+    
     if restoreData.restartVMS then
       systemSW:restartService(vmsSW.sin)
+      vmsSW:waitForMessagesByName({"Version"})
     end
     if restoreData.restartFramework then
       systemSW:restartFramework()
+      vmsSW:waitForMessagesByName({"Version"})
     end
     
-    vmsSW:waitForMessagesByName({"Version"})
     restoreData = nil
   end
 end
@@ -72,20 +68,11 @@ end
 
 function test_CommonReport_WhenSourceCodeHashChanged_SendVersionInfoMessage()
   -- Read 1st char of source code file - 
-  local Fields = {}
+  
   local sourceCodeFile = "/act/svc/VMS/Smtp.lua"
-  Fields = {
-    {Name="path",Value=sourceCodeFile},
-    {Name="offset",Value=0},
-    {Name="size",Value=2},
-  }
-    
-  filesystemSW:sendMessageByName("read", Fields)
-  --wait till wait message is received
-  local receivedMessages = filesystemSW:waitForMessagesByName({"readResult"})
+  local readData, readResult = filesystemSW:read(sourceCodeFile, 0, 2)
   
   --verify that read went OK
-  local readResult = receivedMessages.readResult
   assert_not_nil(
     readResult, 
     "Could not save data into version info file"
@@ -101,14 +88,10 @@ function test_CommonReport_WhenSourceCodeHashChanged_SendVersionInfoMessage()
   restoreData.offset = 0
   restoreData.restartVMS = true
   
-  Fields = {
-    {Name="path",Value=sourceCodeFile},
-    {Name="offset",Value=0},
-    {Name="flags",Value="Overwrite"},
-    {Name="data",Value=framework.base64Encode(":)")}
-  }
-  filesystemSW:sendMessageByName("write", Fields)
-  receivedMessages = filesystemSW:waitForMessagesByName({"writeResult"})
+  local writeOK, writeResult = filesystemSW:write(sourceCodeFile, 0, ":)")
+  
+  assert_true(writeOK, "Writing to source code file failed")
+  
   --restart VMS service
   systemSW:restartService(vmsSW.sin)
   
@@ -153,19 +136,10 @@ end
 function test_CommonReport_WhenFirmwarePackageHasChanged_VersionReportIsSent()
   -- Read 1st char of source code file - 
   local Fields = {}
-  local sourceCodeFile = "/act/info/PackageVersion.txt"
-  Fields = {
-    {Name="path",Value=sourceCodeFile},
-    {Name="offset",Value=0},
-    {Name="size",Value=1},
-  }
-    
-  filesystemSW:sendMessageByName("read", Fields)
-  --wait till wait message is received
-  local receivedMessages = filesystemSW:waitForMessagesByName({"readResult"})
+  local path = "/act/info/PackageVersion.txt"
   
+  local readData, readResult = filesystemSW:read(path, 0, 1)
   --verify that read went OK
-  local readResult = receivedMessages.readResult
   assert_not_nil(
     readResult, 
     "Could not save data into version info file"
@@ -176,19 +150,14 @@ function test_CommonReport_WhenFirmwarePackageHasChanged_VersionReportIsSent()
     "Error during write into service version file"
   )
   restoreData = {}
-  restoreData.path = sourceCodeFile
+  restoreData.path = path
   restoreData.data = readResult.data
   restoreData.offset = 0
   restoreData.restartFramework = true
   
-  Fields = {
-    {Name="path",Value=sourceCodeFile},
-    {Name="offset",Value=0},
-    {Name="flags",Value="Overwrite"},
-    {Name="data",Value=framework.base64Encode("1")}
-  }
-  filesystemSW:sendMessageByName("write", Fields)
-  receivedMessages = filesystemSW:waitForMessagesByName({"writeResult"})
+  local writeOK, writeResult = filesystemSW:write(path, 0, "1")
+  assert_true(writeOK, "Couldn't write data to PackageVersion file")
+    
   --restart Framework
   systemSW:restartFramework()
   
@@ -261,6 +230,7 @@ function test_CommonReport_WhenVmsVersionHasChanged_VersionReportIsSent()
   restoreData.data = framework.base64Encode(currentVersion)
   restoreData.restartFramework = true
   
+  vmsSW:setHighWaterMark()
   systemSW:restartFramework()
   receivedMessages = vmsSW:waitForMessagesByName({"Version"})
   versionMessage = receivedMessages.Version
