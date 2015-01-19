@@ -470,27 +470,27 @@ end
 --- TC checks if Log Report 1 is sent periodically  and its values are correct.
   -- Initial Conditions:
   --
-  -- * There should be min 2 items configured in TC setup.
+  -- * There should be min 2 log items configured in TC setup.
   --
   -- Steps:
   --
   -- 1. Properties are set (LogReport1,StandardReport1).
   -- 2. Random gps position is requested via GpsFrontend.
-  -- 3. Log filter is configured.
+  -- 3. Log filter is configured (Log agent)
   -- 4. Waiting for first standard report is performed.
-  -- 5. Delay is performed for gathering logs.
+  -- 5. Delay is performed for collecting logs.
   -- 6. Logs values are checked.
-  -- 7. Timeouts between logs are checked.
+  -- 7. Spacer times between logs are checked.
   --
   -- Results:
   --
   -- 1. Properties are set correctly.
   -- 2. Gps position is set.
   -- 3. Log filter is set.
-  -- 4. Timer is synchronized.
-  -- 5. Logs are gathered.
+  -- 4. Timer is synchronized to the first standard report
+  -- 5. Logs are collected.
   -- 6. Logs values are correct.
-  -- 7. Timeouts between logs are correct.
+  -- 7. Spacer times between logs are correct.
 function test_LogReport1_WhenGpsPositionIsSetAndLogFilterEstablished_LogEntriesShouldCollectCorrectDataInCorrectInterval()
   local LOG_REPORT_RATE = 4
   local STANDARD_REPORT_INTERVAL = 4
@@ -516,27 +516,27 @@ end
 --- TC checks if Log Report 2 is sent periodically  and its values are correct.
   -- Initial Conditions:
   --
-  -- * There should be min 2 items configured in TC setup.
+  -- * There should be min 2 log items configured in TC setup.
   --
   -- Steps:
   --
-  -- 1. Properties are set (LogReport2, StandardReport2).
+  -- 1. Properties are set (LogReport2,StandardReport2).
   -- 2. Random gps position is requested via GpsFrontend.
-  -- 3. Log filter is configured.
+  -- 3. Log filter is configured (Log agent)
   -- 4. Waiting for first standard report is performed.
-  -- 5. Delay is performed for gathering logs.
+  -- 5. Delay is performed for collecting logs.
   -- 6. Logs values are checked.
-  -- 7. Timeouts between logs are checked.
+  -- 7. Spacer times between logs are checked.
   --
   -- Results:
   --
   -- 1. Properties are set correctly.
   -- 2. Gps position is set.
   -- 3. Log filter is set.
-  -- 4. Timer is synchronized.
-  -- 5. Logs are gathered.
+  -- 4. Timer is synchronized to the first standard report
+  -- 5. Logs are collected.
   -- 6. Logs values are correct.
-  -- 7. Timeouts between logs are correct.
+  -- 7. Spacer times between logs are correct.
 function test_LogReport2_WhenGpsPositionIsSetAndLogFilterEstablished_LogEntriesShouldCollectCorrectDataInCorrectInterval()
   local LOG_REPORT_RATE = 4
   local STANDARD_REPORT_INTERVAL = 4
@@ -562,27 +562,27 @@ end
 --- TC checks if Log Report 3 is sent periodically  and its values are correct.
   -- Initial Conditions:
   --
-  -- * There should be min 2 items configured in TC setup.
+  -- * There should be min 2 log items configured in TC setup.
   --
   -- Steps:
   --
   -- 1. Properties are set (LogReport3,StandardReport3).
   -- 2. Random gps position is requested via GpsFrontend.
-  -- 3. Log filter is configured.
+  -- 3. Log filter is configured (Log agent)
   -- 4. Waiting for first standard report is performed.
-  -- 5. Delay is performed for gathering logs.
+  -- 5. Delay is performed for collecting logs.
   -- 6. Logs values are checked.
-  -- 7. Timeouts between logs are checked.
+  -- 7. Spacer times between logs are checked.
   --
   -- Results:
   --
   -- 1. Properties are set correctly.
   -- 2. Gps position is set.
   -- 3. Log filter is set.
-  -- 4. Timer is synchronized.
-  -- 5. Logs are gathered.
+  -- 4. Timer is synchronized to the first standard report
+  -- 5. Logs are collected.
   -- 6. Logs values are correct.
-  -- 7. Timeouts between logs are correct.
+  -- 7. Spacer times between logs are correct.
 function test_LogReport3_WhenGpsPositionIsSetAndLogFilterEstablished_LogEntriesShouldCollectCorrectDataInCorrectInterval()
   local LOG_REPORT_RATE = 4
   local STANDARD_REPORT_INTERVAL = 4
@@ -604,6 +604,8 @@ function test_LogReport3_WhenGpsPositionIsSetAndLogFilterEstablished_LogEntriesS
 
   generic_test_LogReports(logReportXKey, standardReportXKey, properties, filterTimeout, timeForLogging, itemsInLog, LOG_REPORT_INTERVAL)
 end
+
+-- GENERIC TEST LOGIC
 
 -- generic logic for Log Reports TCs
 function generic_test_LogReports(logReportXKey, standardReportXKey, properties, filterTimeout, timeForLogging, itemsInLog, logReportInterval)
