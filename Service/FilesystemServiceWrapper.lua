@@ -34,3 +34,66 @@ FilesystemServiceWrapper = {}
         properties = properties
     })
   end
+  
+  -- returns two values
+  -- 1. data read
+  -- 2. data readResult message
+  function FilesystemServiceWrapper:read(path, offset, size, raw)
+    raw = raw or false
+    local readResult = nil
+    local readData
+    local Fields = {}
+    Fields = {
+      {Name="path",Value=path},
+      {Name="offset",Value=offset},
+      {Name="size",Value=size},
+    }
+    local previousWaterMark = self:getHighWaterMark()
+    self:sendMessageByName("read", Fields)
+    self:setHighWaterMark()
+    readResult = self:waitForMessagesByName({"readResult"}).readResult
+    -- restore previous watermark
+    self:setHighWaterMark(previousWaterMark)
+    if not readResult then return nil end
+    if not raw then
+      readData = framework.base64Decode(readResult.data)
+    else
+      readData = readResult.data
+    end
+    return readData, readResult
+  end
+  
+  -- returns two values
+  -- 1. if write succeded
+  -- 2. writeResult message
+  function FilesystemServiceWrapper:write(path, offset, data, mode, raw)
+    mode = mode or "Overwrite"
+    raw = raw or false
+    local dataToSend
+    local Fields = {}
+    if not raw then 
+      dataToSend = framework.base64Encode(data)
+    else
+      dataToSend = data
+    end
+    
+    Fields = {
+      {Name="path",Value=path},
+      {Name="offset",Value=offset},
+      {Name="data",Value=dataToSend},
+      {Name="flags",Value=mode},
+    }
+    local previousWaterMark = self:getHighWaterMark()
+    self:sendMessageByName("write", Fields)
+    self:setHighWaterMark()
+    local writeResult = self:waitForMessagesByName({"writeResult"}).writeResult
+    self:setHighWaterMark(previousWaterMark)
+    if not writeResult then return nil end
+    
+    if writeResult.result == "OK" then
+      return true, writeResult
+    else
+      return false, writeResult
+    end
+  end
+
