@@ -310,6 +310,7 @@ function test_StandardReportDisabled_WhenStandardReport3IntervalIsSetToZero_Stan
   )
 end
 
+
 -----------------------------------------------------------------------------------------------
 -- Test Cases for ACCELERATED REPORTS
 -----------------------------------------------------------------------------------------------
@@ -422,6 +423,33 @@ function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIn
     {StandardReport3Interval=2, AcceleratedReport3Rate=2},
     2, 
     1
+  )
+end
+
+function test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardReport1IntervalIsSetAboveZeroAndAcceleratedReportInterval1DisablesFeature_StandardReportIsSentAndAcceleratedReportNotSent()
+  generic_test_AcceleratedReportDisabledAndStandardReportEnabled(
+    "StandardReport1",
+    "AcceleratedReport1",
+    {StandardReport1Interval=1, AcceleratedReport1Rate=1},
+    70 -- waiting until report not come
+  )
+end
+
+function test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardReport2IntervalIsSetAboveZeroAndAcceleratedReportInterval2DisablesFeature_StandardReportIsSentAndAcceleratedReportNotSent()
+  generic_test_AcceleratedReportDisabledAndStandardReportEnabled(
+    "StandardReport2",
+    "AcceleratedReport2",
+    {StandardReport2Interval=1, AcceleratedReport2Rate=1},
+    70 -- waiting until report not come
+  )
+end
+
+function test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardReport3IntervalIsSetAboveZeroAndAcceleratedReportInterval3DisablesFeature_StandardReportIsSentAndAcceleratedReportNotSent()
+  generic_test_AcceleratedReportDisabledAndStandardReportEnabled(
+    "StandardReport3",
+    "AcceleratedReport3",
+    {StandardReport3Interval=1, AcceleratedReport3Rate=1},
+    70 -- waiting until report not come
   )
 end
 
