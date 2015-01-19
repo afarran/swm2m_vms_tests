@@ -233,7 +233,41 @@ function test_CommonReport_WhenFirmwarePackageHasChanged_VersionReportIsSent()
 end
 
 function test_CommonReport_WhenVmsVersionHasChanged_VersionReportIsSent()
-  assert_true(false, "TC not implemented yet")
+  local path = "/act/svc/VMS/main.lua"    
+  vmsSW:sendMessageByName("GetVersion")
+  local receivedMessages = vmsSW:waitForMessagesByName({"Version"})
+  local versionMessage = receivedMessages.Version
+  assert_not_nil(versionMessage, "Can't get current VMS version, Version message not received when GetVersion message was sent")
+  assert_not_nil(versionMessage.VmsAgent, "Version message does not containt VmsAgent field!")
+  
+  local currentVersion = versionMessage.VmsAgent
+  
+  -- search for version info in main.lua between 800 and 1000 chars
+  local data, readResult = filesystemSW:read(path, 800, 200)
+  local strData = string.char(unpack(data))
+  local vmsVersionOffset = string.find(strData, currentVersion)
+  local vmsVersionConstantOffset = string.find(strData, "_VERSION")
+  
+  assert_not_nil(vmsVersionOffset, "Can't find VMS version in main.lua")
+  assert_not_nil(vmsVersionConstantOffset, "Can't find VMS version declaration in main.lua")
+  
+  vmsVersionOffset = 800 + vmsVersionOffset - 1
+  
+  local writeOK = filesystemSW:write(path, vmsVersionOffset, "0")
+  assert_true(writeOK, "Could not write version to VMS main.lua")
+  restoreData = {}
+  restoreData.path = path
+  restoreData.offset = vmsVersionOffset
+  restoreData.data = framework.base64Encode(currentVersion)
+  restoreData.restartFramework = true
+  
+  systemSW:restartFramework()
+  receivedMessages = vmsSW:waitForMessagesByName({"Version"})
+  versionMessage = receivedMessages.Version
+  
+  assert_not_nil(versionMessage, "Version message not received afer VMS version changed")
+  assert_not_equal(currentVersion, versionMessage.VmsAgent, "Reported VMS agent version is incorrect")
+  
 end
 
 function test_CommonReport_WhenVersionMessageSendDisabled_VersionReportIsNotSent()

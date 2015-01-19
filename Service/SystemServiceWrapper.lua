@@ -83,6 +83,10 @@ SystemServiceWrapper = {}
     local Fields = {{Name="sin",Value=sin}}
     self:sendMessageByName("restartService", Fields)
   end
+  
+  function SystemServiceWrapper:restartFramework()
+    self:sendMessageByName("restartFramework")
+  end
 
   function SystemServiceWrapper:getTerminalHardwareVersion(resolveHW)
 
