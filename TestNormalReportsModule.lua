@@ -88,7 +88,7 @@ function test_INDEVStandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfig_S
     1, 
     1,
     "SetConfigReport1",
-    "ConfigChangeReport1",
+    "ConfigChangeReport1"
   )
 end
 
