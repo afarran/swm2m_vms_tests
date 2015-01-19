@@ -286,6 +286,16 @@ function test_StandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport3
   )
 end
 
+-- in dev
+function test_StandardReportDisabled_WhenStandardReport1IntervalIsSetToZero_StandardReport1IsNotSent()
+  generic_test_StandardReportDisabled(
+    "StandardReport1",
+    {StandardReport1Interval=0, AcceleratedReport1Rate=1},
+    70 -- waiting until report not come
+  )
+end
+
+
 -----------------------------------------------------------------------------------------------
 -- Test Cases for ACCELERATED REPORTS
 -----------------------------------------------------------------------------------------------
@@ -1065,6 +1075,6 @@ function generic_test_StandardReportDisabled(reportKey,properties,reportInterval
   D:log("Waiting for report - should not come - "..reportKey)
   local reportMessage = vmsSW:waitForMessagesByName(
     {reportKey},
-    reportInterval*60*2
+    reportInterval
   )
 end
