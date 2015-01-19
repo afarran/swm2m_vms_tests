@@ -79,6 +79,19 @@ function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsS
   )
 end
 
+--in dev
+function test_INDEVStandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfig_StandardReport1IsSentPeriodicallyWithCorrectValues()
+  generic_test_StandardReportContent(
+    "StandardReport1", 
+    "StandardReport1", 
+    {StandardReport1Interval=1, AcceleratedReport1Rate=1},
+    1, 
+    1,
+    "SetConfigReport1",
+    "ConfigChangeReport1",
+  )
+end
+
 --- TC checks if StandardReport 2 is sent periodically and its values are correct (setProperties used for report setup)
   -- Initial Conditions:
   --
@@ -696,10 +709,24 @@ end
 
 
 -- This is generic function for configure and test reports (StandardReport,AcceleratedReport)
-function generic_test_StandardReportContent(firstReportKey,reportKey,properties,firstReportInterval,reportInterval)
- 
-  -- reports setup 
-  vmsSW:setPropertiesByName(properties)
+function generic_test_StandardReportContent(firstReportKey,reportKey,properties,firstReportInterval,reportInterval,setConfigMsgKey,configChangeMsgKey)
+
+  --TODO: setHighWaterMark
+
+   -- testing via message
+  if setConfigMsgKey then
+    -- change config to trigger ConfigChange message (SetConfigReportX used)
+    vmsSW:sendMessageByName(
+      setConfigMsgKey,
+      properties
+    )
+    vmsSW:waitForMessagesByName(
+      {configChangeMsgKey},
+      30
+    )
+  else
+    vmsSW:setPropertiesByName(properties)
+  end
   
   -- fetching current position info 
   positionSW:sendMessageByName(
