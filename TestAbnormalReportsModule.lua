@@ -935,9 +935,9 @@ function test_IdpBlocked_WhenSatelliteControlStateIsNotActiveForTimeAboveIdpBloc
   local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"})
   local GpsBlockedStateProperty = vmsSW:getPropertiesByName({"IdpBlockedState"})
 
-  -- Satellite Control State = Active
+  -- Back to Satellite Control State = Active
   -- TODO: uncomment this section when the funtions are implemented
-  -- SatelliteControlState("NotActive")
+  -- SatelliteControlState("Active")
   framework.delay(IDP_BLOCKED_END_DEBOUNCE_TIME)   -- wait until terminal goes back to IdpBlocked = false state
 
   assert_not_nil(ReceivedMessages["AbnormalReport"], "AbnormalReport not received")
