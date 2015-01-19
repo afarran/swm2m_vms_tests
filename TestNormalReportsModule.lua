@@ -42,11 +42,11 @@ end
 -- Test Cases
 -------------------------
 
---- TC checks if StandardReport 1 is sent periodically and its values are correct (setProperties used for setup)
+--- TC checks if StandardReport 1 is sent periodically and its values are correct (setProperties used for report setup)
   -- Initial Conditions:
   --
   -- * StandardReport1Interval is set above zero.
-  -- * AcceleratedReport1Rate is set to 1
+  -- * AcceleratedReport1Rate is set to 1 - accelerated reports are not triggered
   --
   -- Steps:
   --
@@ -64,7 +64,7 @@ end
   -- 1. Properties are set correctly.
   -- 2. Current gps position is fetched.
   -- 3. Current gps position is correct.
-  -- 4. Timer is synchronized.
+  -- 4. Timer is synchronized to the first standard report
   -- 5. New gps position is correctly set.
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
@@ -79,11 +79,11 @@ function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsS
   )
 end
 
---- TC checks if StandardReport 2 is sent periodically and its values are correct (setProperties used for setup)
+--- TC checks if StandardReport 2 is sent periodically and its values are correct (setProperties used for report setup)
   -- Initial Conditions:
   --
   -- * StandardReport2Interval is set above zero.
-  -- * AcceleratedReport2Rate is set to 1
+  -- * AcceleratedReport2Rate is set to 1 - accelerated reports are not triggered
   --
   -- Steps:
   --
@@ -101,7 +101,7 @@ end
   -- 1. Properties are set correctly.
   -- 2. Current gps position is fetched.
   -- 3. Current gps position is correct.
-  -- 4. Timer is synchronized.
+  -- 4. Timer is synchronized to the first standard report
   -- 5. New gps position is correctly set.
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
@@ -116,11 +116,11 @@ function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport2IsS
   )
 end
 
---- TC checks if StandardReport 3 is sent periodically and its values are correct (setProperties used for setup)
+--- TC checks if StandardReport 3 is sent periodically and its values are correct (setProperties used for report setup)
   -- Initial Conditions:
   --
   -- * StandardReport3Interval is set above zero.
-  -- * AcceleratedReport3Rate is set to 1
+  -- * AcceleratedReport3Rate is set to 1 - accelerated reports are not triggered
   --
   -- Steps:
   --
@@ -138,7 +138,7 @@ end
   -- 1. Properties are set correctly.
   -- 2. Current gps position is fetched.
   -- 3. Current gps position is correct.
-  -- 4. Timer is synchronized.
+  -- 4. Timer is synchronized to the first standard report
   -- 5. New gps position is correctly set.
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
