@@ -50,7 +50,6 @@ local function setup()
   lunatest.suite("TestCommonReportModule")
   lunatest.suite("TestAbnormalReportsModule")
   lunatest.suite("TestGeofenceModule")
-
 end
 
 local function teardown()

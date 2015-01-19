@@ -286,6 +286,30 @@ function test_StandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport3
   )
 end
 
+function test_StandardReportDisabled_WhenStandardReport1IntervalIsSetToZero_StandardReport1IsNotSent()
+  generic_test_StandardReportDisabled(
+    "StandardReport1",
+    {StandardReport1Interval=0, AcceleratedReport1Rate=1},
+    70 -- waiting until report not come
+  )
+end
+
+function test_StandardReportDisabled_WhenStandardReport2IntervalIsSetToZero_StandardReport2IsNotSent()
+  generic_test_StandardReportDisabled(
+    "StandardReport2",
+    {StandardReport2Interval=0, AcceleratedReport2Rate=1},
+    70 -- waiting until report not come
+  )
+end
+
+function test_StandardReportDisabled_WhenStandardReport3IntervalIsSetToZero_StandardReport3IsNotSent()
+  generic_test_StandardReportDisabled(
+    "StandardReport3",
+    {StandardReport3Interval=0, AcceleratedReport3Rate=1},
+    70 -- waiting until report not come
+  )
+end
+
 -----------------------------------------------------------------------------------------------
 -- Test Cases for ACCELERATED REPORTS
 -----------------------------------------------------------------------------------------------
@@ -1040,4 +1064,31 @@ function generic_test_ConfigChangeReportConfigChangeReportIsSent(messageKey,prop
       "Property " .. propertiesToChange[i] .. " has not changed!"
     )
   end
+end
+
+-- This is generic function for disabled reports test
+function generic_test_StandardReportDisabled(reportKey,properties,reportInterval,setConfigMsgKey,configChangeMsgKey,fields)
+  
+  -- setup
+  if setConfigMsgKey then
+    D:log(setConfigMsgKey,"X1")
+    D:log(fields,"X2")
+    -- change config to trigger ConfigChange message (SetConfigReportX used)
+    vmsSW:sendMessageByName(
+      setConfigMsgKey,
+      fields
+    )
+    vmsSW:waitForMessagesByName(
+      {configChangeMsgKey},
+      30
+    )
+  else
+    vmsSW:setPropertiesByName(properties)
+  end
+  
+  D:log("Waiting for report - should not come - "..reportKey)
+  local reportMessage = vmsSW:waitForMessagesByName(
+    {reportKey},
+    reportInterval
+  )
 end
