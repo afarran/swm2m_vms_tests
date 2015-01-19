@@ -79,55 +79,6 @@ function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsS
   )
 end
 
-
-function test_XStandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport1MessageIsSent_StandardReport1IsSentPeriodicallyWithCorrectValues()
-  generic_test_StandardReportContent(
-    "StandardReport1", 
-    "StandardReport1", 
-    {StandardReport1Interval=1, AcceleratedReport1Rate=1},
-    1, 
-    1,
-    "SetConfigReport1",
-    "ConfigChangeReport1",
-    {
-      {Name = "StandardReport1Interval" , Value = 1},
-      {Name = "AcceleratedReport1Rate" , Value = 1}
-    }
-  )
-end
-
-function test_XStandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport2MessageIsSent_StandardReport2IsSentPeriodicallyWithCorrectValues()
-  generic_test_StandardReportContent(
-    "StandardReport2",
-    "StandardReport2",
-    {StandardReport2Interval=1, AcceleratedReport2Rate=1},
-    1,
-    1,
-    "SetConfigReport2",
-    "ConfigChangeReport2",
-    {
-      {Name = "StandardReport2Interval" , Value = 1},
-      {Name = "AcceleratedReport2Rate" , Value = 1}
-    }
-  )
-end
-
-function test_XStandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport3MessageIsSent_StandardReport3IsSentPeriodicallyWithCorrectValues()
-  generic_test_StandardReportContent(
-    "StandardReport3",
-    "StandardReport3",
-    {StandardReport3Interval=1, AcceleratedReport3Rate=1},
-    1,
-    1,
-    "SetConfigReport3",
-    "ConfigChangeReport3",
-    {
-      {Name = "StandardReport3Interval" , Value = 1},
-      {Name = "AcceleratedReport3Rate" , Value = 1}
-    }
-  )
-end
-
 --- TC checks if StandardReport 2 is sent periodically and its values are correct (setProperties used for report setup)
   -- Initial Conditions:
   --
@@ -201,6 +152,136 @@ function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport3IsS
     1
   )
 end
+
+--- TC checks if StandardReport 1 is sent periodically and its values are correct (SetConfigReport1 used for report setup)
+  -- Initial Conditions:
+  --
+  -- * StandardReport1Interval is set above zero.
+  -- * AcceleratedReport1Rate is set to 1 - accelerated reports are not triggered
+  --
+  -- Steps:
+  --
+  -- 1. SetConfigReport1 message is sent .
+  -- 2. Current gps position is requested.
+  -- 3. Current gps position is checked.
+  -- 4. Waiting for first Standard Report is performed.
+  -- 5. New gps position is prepared and set.
+  -- 6. Waiting for second Standard Report is performed.
+  -- 7. Difference between reports is calculated.
+  -- 8. Values in report are checked.
+  --
+  -- Results:
+  --
+  -- 1. ConfigChangeReport1 is received.
+  -- 2. Current gps position is fetched.
+  -- 3. Current gps position is correct.
+  -- 4. Timer is synchronized to the first standard report
+  -- 5. New gps position is correctly set.
+  -- 6. Standard Report is delivered.
+  -- 7. Difference between reports is correct.
+  -- 8. Values in report are correct.
+function test_StandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport1MessageIsSent_StandardReport1IsSentPeriodicallyWithCorrectValues()
+  generic_test_StandardReportContent(
+    "StandardReport1",
+    "StandardReport1",
+    {StandardReport1Interval=1, AcceleratedReport1Rate=1},
+    1,
+    1,
+    "SetConfigReport1",
+    "ConfigChangeReport1",
+    {
+      {Name = "StandardReport1Interval" , Value = 1},
+      {Name = "AcceleratedReport1Rate" , Value = 1}
+    }
+  )
+end
+
+--- TC checks if StandardReport 2 is sent periodically and its values are correct (SetConfigReport2 used for report setup)
+  -- Initial Conditions:
+  --
+  -- * StandardReport2Interval is set above zero.
+  -- * AcceleratedReport2Rate is set to 1 - accelerated reports are not triggered
+  --
+  -- Steps:
+  --
+  -- 1. SetConfigReport2 message is sent .
+  -- 2. Current gps position is requested.
+  -- 3. Current gps position is checked.
+  -- 4. Waiting for first Standard Report is performed.
+  -- 5. New gps position is prepared and set.
+  -- 6. Waiting for second Standard Report is performed.
+  -- 7. Difference between reports is calculated.
+  -- 8. Values in report are checked.
+  --
+  -- Results:
+  --
+  -- 1. ConfigChangeReport2 is received.
+  -- 2. Current gps position is fetched.
+  -- 3. Current gps position is correct.
+  -- 4. Timer is synchronized to the first standard report
+  -- 5. New gps position is correctly set.
+  -- 6. Standard Report is delivered.
+  -- 7. Difference between reports is correct.
+  -- 8. Values in report are correct.
+function test_StandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport2MessageIsSent_StandardReport2IsSentPeriodicallyWithCorrectValues()
+  generic_test_StandardReportContent(
+    "StandardReport2",
+    "StandardReport2",
+    {StandardReport2Interval=1, AcceleratedReport2Rate=1},
+    1,
+    1,
+    "SetConfigReport2",
+    "ConfigChangeReport2",
+    {
+      {Name = "StandardReport2Interval" , Value = 1},
+      {Name = "AcceleratedReport2Rate" , Value = 1}
+    }
+  )
+end
+
+--- TC checks if StandardReport 3 is sent periodically and its values are correct (SetConfigReport3 used for report setup)
+  -- Initial Conditions:
+  --
+  -- * StandardReport3Interval is set above zero.
+  -- * AcceleratedReport3Rate is set to 1 - accelerated reports are not triggered
+  --
+  -- Steps:
+  --
+  -- 1. SetConfigReport3 message is sent .
+  -- 2. Current gps position is requested.
+  -- 3. Current gps position is checked.
+  -- 4. Waiting for first Standard Report is performed.
+  -- 5. New gps position is prepared and set.
+  -- 6. Waiting for second Standard Report is performed.
+  -- 7. Difference between reports is calculated.
+  -- 8. Values in report are checked.
+  --
+  -- Results:
+  --
+  -- 1. ConfigChangeReport3 is received.
+  -- 2. Current gps position is fetched.
+  -- 3. Current gps position is correct.
+  -- 4. Timer is synchronized to the first standard report
+  -- 5. New gps position is correctly set.
+  -- 6. Standard Report is delivered.
+  -- 7. Difference between reports is correct.
+  -- 8. Values in report are correct.
+function test_StandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport3MessageIsSent_StandardReport3IsSentPeriodicallyWithCorrectValues()
+  generic_test_StandardReportContent(
+    "StandardReport3",
+    "StandardReport3",
+    {StandardReport3Interval=1, AcceleratedReport3Rate=1},
+    1,
+    1,
+    "SetConfigReport3",
+    "ConfigChangeReport3",
+    {
+      {Name = "StandardReport3Interval" , Value = 1},
+      {Name = "AcceleratedReport3Rate" , Value = 1}
+    }
+  )
+end
+
 
 --- TC checks if AcceleratedReport 1 is sent periodically and its values are correct (setProperties used for setup)
   -- Initial Conditions:
