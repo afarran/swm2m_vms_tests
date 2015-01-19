@@ -1,11 +1,17 @@
------------
--- Reporting test module
--- - contains VMS reporting features
+-----------------------------------------------------------------------------------------------
+-- VMS Normal Reporting test module
+-----------------------------------------------------------------------------------------------
+-- Contains VMS reporting features (Standard, Accelerated , Log , ConfigChange reports)
+-----------------------------------------------------------------------------------------------
 -- @module TestNormalReportModule
+-----------------------------------------------------------------------------------------------
 
 module("TestNormalReportsModule", package.seeall)
 DEBUG_MODE = 1
 
+-----------------------------------------------------------------------------------------------
+-- SETUP
+-----------------------------------------------------------------------------------------------
 function suite_setup()
   -- reset of properties 
   systemSW:resetProperties({vmsSW.sin})
@@ -29,18 +35,16 @@ end
 
 --- setup function
 function setup()
-  
+  vmsSW:setHighWaterMark()
 end
 
------------------------------------------------------------------------------------------------
 --- teardown function executed after each unit test
 function teardown()
   
 end
-
--------------------------
--- Test Cases
--------------------------
+-----------------------------------------------------------------------------------------------
+-- Test Cases for STANDARD REPORTS
+-----------------------------------------------------------------------------------------------
 
 --- TC checks if StandardReport 1 is sent periodically and its values are correct (setProperties used for report setup)
   -- Initial Conditions:
@@ -282,6 +286,9 @@ function test_StandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport3
   )
 end
 
+-----------------------------------------------------------------------------------------------
+-- Test Cases for ACCELERATED REPORTS
+-----------------------------------------------------------------------------------------------
 
 --- TC checks if AcceleratedReport 1 is sent periodically and its values are correct (setProperties used for setup)
   -- Initial Conditions:
@@ -393,6 +400,10 @@ function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIn
     1
   )
 end
+
+-----------------------------------------------------------------------------------------------
+-- Test Cases for CONFIG CHANGE REPORTS
+-----------------------------------------------------------------------------------------------
 
 --- TC checks if ConfigChangeReport 1 is sent and its values are correct (setProperties used for setup)
   -- Initial Conditions:
@@ -597,6 +608,10 @@ function test_ConfigChangeReport_WhenSetConfigReport3MessageIsSentAndConfigPrope
   )
 end
 
+-----------------------------------------------------------------------------------------------
+-- Test Cases for LOG REPORTS
+-----------------------------------------------------------------------------------------------
+
 --- TC checks if Log Report 1 is sent periodically  and its values are correct.
   -- Initial Conditions:
   --
@@ -735,7 +750,9 @@ function test_LogReport3_WhenGpsPositionIsSetAndLogFilterEstablished_LogEntriesS
   generic_test_LogReports(logReportXKey, standardReportXKey, properties, filterTimeout, timeForLogging, itemsInLog, LOG_REPORT_INTERVAL)
 end
 
--- GENERIC TEST LOGIC
+-----------------------------------------------------------------------------------------------
+-- GENERIC LOGIC for test cases
+-----------------------------------------------------------------------------------------------
 
 -- generic logic for Log Reports TCs
 function generic_test_LogReports(logReportXKey, standardReportXKey, properties, filterTimeout, timeForLogging, itemsInLog, logReportInterval)
@@ -824,13 +841,10 @@ function generic_test_LogReports(logReportXKey, standardReportXKey, properties, 
 
 end
 
-
 -- This is generic function for configure and test reports (StandardReport,AcceleratedReport)
 function generic_test_StandardReportContent(firstReportKey,reportKey,properties,firstReportInterval,reportInterval,setConfigMsgKey,configChangeMsgKey,fields)
-
-  --TODO: setHighWaterMark
-
-   -- testing via message
+  
+  -- testing via message
   if setConfigMsgKey then
     D:log(setConfigMsgKey,"X1")
     D:log(fields,"X2")
