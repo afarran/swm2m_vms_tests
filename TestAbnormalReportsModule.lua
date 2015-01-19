@@ -5,6 +5,9 @@
 
 module("TestAbnormalReportsModule", package.seeall)
 
+-- global variable, to be removed
+IDPBlockageFeaturesImplemented = false
+
 
 function suite_setup()
   -- reset of properties
@@ -881,4 +884,190 @@ end
 
 
 
+
+
+function test_IdpBlocked_WhenSatelliteControlStateIsNotActiveForTimeAboveIdpBlockedStartDebouncePeriod_IdpBlockedAbnormalReportIsSent()
+
+  -- device profile application
+  if IDPBlockageFeaturesImplemented == false then skip("API for setting Satellite Control State has not been implemented yet - no use to perform TC") end
+
+  -- *** Setup
+  local IDP_BLOCKED_START_DEBOUNCE_TIME = 20   -- seconds
+  local IDP_BLOCKED_END_DEBOUNCE_TIME = 1      -- seconds
+
+  -- terminal stationary
+  local InitialPosition = {
+    speed = 0,                      -- kmh
+    latitude = 1,                   -- degrees
+    longitude = 1,                  -- degrees
+  }
+
+  vmsSW:setPropertiesByName({IdpBlockedStartDebounceTime = IDP_BLOCKED_START_DEBOUNCE_TIME,
+                             IdpBlockedEndDebounceTime = IDP_BLOCKED_END_DEBOUNCE_TIME,
+                             IdpBlockedSendReport = true,
+                             }
+  )
+
+  -- *** Execute
+
+  -- TODO: uncomment this section when the funtions are implemented
+  -- SatelliteControlState("NotActive")
+
+
+  -- terminal in initial position, Satellite Control State is Active now (IDP not blocked)
+  GPS:set(InitialPosition)
+  gateway.setHighWaterMark() -- to get the newest messages
+  -- Satellite Control State is not Active now - IDP blockage starts
+  -- TODO: uncomment this section when the funtions are implemented
+  -- SatelliteControlState("NotActive")
+
+  -- checking IdpBlockedState property - this is expected to be false before IDP_BLOCKED_START_DEBOUNCE_TIME period passes
+  local IdpBlockedStateProperty = vmsSW:getPropertiesByName({"IdpBlockedState"})
+  assert_false(IdpBlockedStateProperty["IdpBlockedState"], "IdpBlockedState has been changed before IdpBlockedStartDebounceTime has passed")
+  D:log(IdpBlockedStateProperty, "IdpBlockedStateProperty before IdpBlockedStartDebounceTime")
+
+  framework.delay(IDP_BLOCKED_START_DEBOUNCE_TIME)
+
+  local timeOfEvent = os.time()  -- to get exact timestamp
+  D:log(timeOfEvent)
+
+  -- AbnormalReport is expected with IdpBlocked information
+  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"})
+  local IdpBlockedStateProperty = vmsSW:getPropertiesByName({"IdpBlockedState"})
+
+  -- Back to Satellite Control State = Active
+  -- TODO: uncomment this section when the funtions are implemented
+  -- SatelliteControlState("Active")
+  framework.delay(IDP_BLOCKED_END_DEBOUNCE_TIME)   -- wait until terminal goes back to IdpBlocked = false state
+
+  assert_not_nil(ReceivedMessages["AbnormalReport"], "AbnormalReport not received")
+
+  -- checking IdpBlockedState property - this is expected to be true as IDP_BLOCKED_START_DEBOUNCE_TIME period has passed
+  assert_true(IdpBlockedStateProperty["IdpBlockedState"], "IdpBlockedState property has not been changed correctly when ")
+  D:log(IdpBlockedStateProperty, "IdpBlockedStateProperty after IdpBlockedStartDebounceTime")
+
+  assert_equal(
+    InitialPosition.latitude*60000,
+    tonumber(ReceivedMessages["AbnormalReport"].Latitude),
+    "Wrong latitude value in IdpBlocked abnormal report"
+  )
+
+  assert_equal(
+    InitialPosition.longitude*60000,
+    tonumber(ReceivedMessages["AbnormalReport"].Longitude),
+    "Wrong longitude value in IdpBlocked abnormal report"
+  )
+
+  assert_equal(
+    InitialPosition.speed,
+    tonumber(ReceivedMessages["AbnormalReport"].Speed),
+    "Wrong speed value in IdpBlocked abnormal report"
+  )
+
+  assert_equal(
+    361,
+    tonumber(ReceivedMessages["AbnormalReport"].Course),
+    "Wrong course value in IdpBlocked abnormal report"
+  )
+
+  assert_equal(
+    "IdpBlocked",
+    ReceivedMessages["AbnormalReport"].EventType,
+    "Wrong name of the received EventType in IdpBlocked abnormal report"
+  )
+
+  assert_equal(
+    timeOfEvent,
+    tonumber(ReceivedMessages["AbnormalReport"].Timestamp),
+    20,
+    "Wrong Timestamp value in IdpBlocked abnormal report"
+  )
+
+  -- TODO: update this after implementation in TestFramework file
+  --[[
+  assert_equal(
+    InitialPosition.hdop,
+    ReceivedMessages["AbnormalReport"].Hdop,
+    "Wrong HDOP value in IdpBlocked abnormal report"
+  )
+
+  assert_equal(
+    InitialPosition.idpsnr,
+    ReceivedMessages["AbnormalReport"].IdpSnr,
+    "Wrong IdpSnr value in IdpBlocked abnormal report"
+  )
+
+  assert_equal(
+    InitialPosition.numsats,
+    ReceivedMessages["AbnormalReport"].NumSats,
+    "Wrong NumSats value in IdpBlocked abnormal report"
+  )
+  --]]
+
+
+  local StatusBitmap = vmsSW:decodeBitmap(ReceivedMessages["AbnormalReport"].StatusBitmap, "EventStateId")
+  assert_true(StatusBitmap["IdpBlocked"], "StatusBitmap has not been correctly changed when terminal detected IDP blockage")
+
+end
+
+
+
+function test_IdpBlocked_WhenSatelliteControlStateIsNotActiveForTimeAboveIdpBlockedStartDebouncePeriodButIdpBlockedReportsAreDisabled_IdpBlockedAbnormalReportIsNotSent()
+
+  -- device profile application
+  if IDPBlockageFeaturesImplemented == false then skip("API for setting Satellite Control State has not been implemented yet - no use to perform TC") end
+
+  -- *** Setup
+  local IDP_BLOCKED_START_DEBOUNCE_TIME = 1    -- seconds
+  local IDP_BLOCKED_END_DEBOUNCE_TIME = 1      -- seconds
+
+  -- terminal stationary
+  local InitialPosition = {
+    speed = 0,                      -- kmh
+    latitude = 1,                   -- degrees
+    longitude = 1,                  -- degrees
+  }
+
+  vmsSW:setPropertiesByName({IdpBlockedStartDebounceTime = IDP_BLOCKED_START_DEBOUNCE_TIME,
+                             IdpBlockedEndDebounceTime = IDP_BLOCKED_END_DEBOUNCE_TIME,
+                             IdpBlockedSendReport = false,
+                             }
+  )
+
+  -- *** Execute
+
+  -- TODO: uncomment this section when the funtions are implemented
+  -- SatelliteControlState("NotActive")
+  framework.delay(IDP_BLOCKED_END_DEBOUNCE_TIME)   -- wait until terminal goes back to IdpBlocked = false state
+
+  gateway.setHighWaterMark() -- to get the newest messages
+  -- Satellite Control State is not Active now - IDP blockage starts
+  -- TODO: uncomment this section when the funtions are implemented
+  -- SatelliteControlState("NotActive")
+
+  framework.delay(IDP_BLOCKED_START_DEBOUNCE_TIME)
+
+  -- AbnormalReport is not expected with IdpBlocked information
+  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
+  local IdpBlockedStateProperty = vmsSW:getPropertiesByName({"IdpBlockedState"})
+
+  -- Back to Satellite Control State = Active
+  -- TODO: uncomment this section when the funtions are implemented
+  -- SatelliteControlState("Active")
+  framework.delay(IDP_BLOCKED_END_DEBOUNCE_TIME)   -- wait until terminal goes back to IdpBlocked = false state
+
+
+  if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "IdpBlocked" ) then
+    assert_nil(1, "IdpBlocked abnormal report sent but not expected")
+  end
+
+  assert__nil(ReceivedMessages["AbnormalReport"], "AbnormalReport not received")
+
+  -- checking IdpBlockedState property - this is expected to be true as IDP_BLOCKED_START_DEBOUNCE_TIME period has passed
+  assert_true(IdpBlockedStateProperty["IdpBlockedState"], "IdpBlockedState property has not been changed correctly when ")
+  D:log(IdpBlockedStateProperty, "IdpBlockedStateProperty after IdpBlockedStartDebounceTime")
+
+
+
+end
 
