@@ -4,8 +4,7 @@
 -- @module TestCommonReportModule
 
 module("TestCommonReportModule", package.seeall)
-local restoreSourcecode = false
-local SourcecodeData = ""
+local restoreData = nil
 
 function suite_setup()
   -- reset of properties 
@@ -26,18 +25,25 @@ end
 --- teardown function executed after each unit test
 function teardown()
   gateway.setHighWaterMark()
-  if restoreSourcecode then
+  -- if some data has to be restored then handle it
+  if restoreData then
     local Fields = {
-      {Name="path",Value="/act/svc/VMS/Smtp.lua"},
-      {Name="offset",Value=0},
+      {Name="path",Value=restoreData.path},
+      {Name="offset",Value=restoreData.offset or 0},
       {Name="flags",Value="Overwrite"},
-      {Name="data",Value=SourcecodeData}
+      {Name="data",Value=restoreData.data}
     }
     filesystemSW:sendMessageByName("write", Fields)
     filesystemSW:waitForMessagesByName({"writeResult"})
-    systemSW:restartService(vmsSW.sin)
+    if restoreData.restartVMS then
+      systemSW:restartService(vmsSW.sin)
+    end
+    if restoreData.restartFramework then
+      systemSW:restartFramework()
+    end
+    
     vmsSW:waitForMessagesByName({"Version"})
-    restoreSourcecode = false
+    restoreData = nil
   end
 end
 
@@ -67,8 +73,9 @@ end
 function test_CommonReport_WhenSourceCodeHashChanged_SendVersionInfoMessage()
   -- Read 1st char of source code file - 
   local Fields = {}
+  local sourceCodeFile = "/act/svc/VMS/Smtp.lua"
   Fields = {
-    {Name="path",Value="/act/svc/VMS/Smtp.lua"},
+    {Name="path",Value=sourceCodeFile},
     {Name="offset",Value=0},
     {Name="size",Value=2},
   }
@@ -88,11 +95,14 @@ function test_CommonReport_WhenSourceCodeHashChanged_SendVersionInfoMessage()
     readResult.result, 
     "Error during write into service version file"
   )
-  restoreSourcecode = true
-  SourcecodeData = readResult.data
+  restoreData = {}
+  restoreData.path = sourceCodeFile
+  restoreData.data = readResult.data
+  restoreData.offset = 0
+  restoreData.restartVMS = true
   
   Fields = {
-    {Name="path",Value="/act/svc/VMS/Smtp.lua"},
+    {Name="path",Value=sourceCodeFile},
     {Name="offset",Value=0},
     {Name="flags",Value="Overwrite"},
     {Name="data",Value=framework.base64Encode(":)")}
@@ -118,7 +128,7 @@ function test_CommonReport_WhenSourceCodeHashChanged_SendVersionInfoMessage()
     "Version message does not contain VmsAgent (version) field"
   )
   
-  --check if message contains 
+  --check if message contains Framework version
   assert_not_nil(
     versionMessage.IdpPackage, 
     "Version message does not contain IdpPackage (LSF version) field"
@@ -141,7 +151,85 @@ function test_CommonReport_WhenSourceCodeHasNotChange_VersionReportIsNotSent()
 end
 
 function test_CommonReport_WhenFirmwarePackageHasChanged_VersionReportIsSent()
-  assert_true(false, "TC not implemented yet")
+  -- Read 1st char of source code file - 
+  local Fields = {}
+  local sourceCodeFile = "/act/info/PackageVersion.txt"
+  Fields = {
+    {Name="path",Value=sourceCodeFile},
+    {Name="offset",Value=0},
+    {Name="size",Value=1},
+  }
+    
+  filesystemSW:sendMessageByName("read", Fields)
+  --wait till wait message is received
+  local receivedMessages = filesystemSW:waitForMessagesByName({"readResult"})
+  
+  --verify that read went OK
+  local readResult = receivedMessages.readResult
+  assert_not_nil(
+    readResult, 
+    "Could not save data into version info file"
+  )
+  assert_equal(
+    "OK", 
+    readResult.result, 
+    "Error during write into service version file"
+  )
+  restoreData = {}
+  restoreData.path = sourceCodeFile
+  restoreData.data = readResult.data
+  restoreData.offset = 0
+  restoreData.restartFramework = true
+  
+  Fields = {
+    {Name="path",Value=sourceCodeFile},
+    {Name="offset",Value=0},
+    {Name="flags",Value="Overwrite"},
+    {Name="data",Value=framework.base64Encode("1")}
+  }
+  filesystemSW:sendMessageByName("write", Fields)
+  receivedMessages = filesystemSW:waitForMessagesByName({"writeResult"})
+  --restart Framework
+  systemSW:restartFramework()
+  
+  --wait for Version message
+  receivedMessages = vmsSW:waitForMessagesByName({"Version"})
+  
+  --verify Version message
+  local versionMessage = receivedMessages.Version
+  assert_not_nil(
+    versionMessage, 
+    "Version message not received"
+  )
+  
+  --check if message contains agent version
+  assert_not_nil(
+    versionMessage.VmsAgent, 
+    "Version message does not contain VmsAgent (version) field"
+  )
+  
+  systemSW:sendMessageByName("getTerminalInfo")
+  receivedMessages = systemSW:waitForMessagesByName({"terminalInfo"})
+  local terminalInfo = receivedMessages.terminalInfo
+  
+  --check if message contains Framework version
+  assert_not_nil(
+    versionMessage.IdpPackage, 
+    "Version message does not contain IdpPackage (LSF version) field"
+  )
+  
+  -- check if Framework version is reported correctly
+  assert_equal(
+    terminalInfo.packageVersion,
+    versionMessage.IdpPackage,
+    "IdpPackage from versionMessage is not equal to packageVersion from terminalInfo message"
+  )
+  
+  --check if message contains source code hash
+  assert_not_nil(
+    versionMessage.SourceCodeHash, 
+    "Version message does not contain SourceCodeHash (Source verification) field"
+  )
 end
 
 function test_CommonReport_WhenVmsVersionHasChanged_VersionReportIsSent()
