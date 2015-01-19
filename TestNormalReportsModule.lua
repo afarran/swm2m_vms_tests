@@ -1091,4 +1091,6 @@ function generic_test_StandardReportDisabled(reportKey,properties,reportInterval
     {reportKey},
     reportInterval
   )
+  D:log(reportMessage,"reportMessage")
+  assert_equal(0,tonumber(reportMessage.count),"Message"..reportKey.." should not come!")
 end
