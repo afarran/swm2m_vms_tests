@@ -346,7 +346,11 @@ ServiceWrapper = {}
   end
   
   function ServiceWrapper:setHighWaterMark(_date)
-    gateway.setHighWaterMark(_date)    
+    return gateway.setHighWaterMark(_date)    
+  end
+  
+  function ServiceWrapper:getHighWaterMark()
+    return gateway.getHighWaterMark()
   end
 
 
