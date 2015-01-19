@@ -79,8 +79,8 @@ function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsS
   )
 end
 
---in dev
-function test_INDEVStandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfig_StandardReport1IsSentPeriodicallyWithCorrectValues()
+
+function test_XStandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport1MessageIsSent_StandardReport1IsSentPeriodicallyWithCorrectValues()
   generic_test_StandardReportContent(
     "StandardReport1", 
     "StandardReport1", 
@@ -92,6 +92,38 @@ function test_INDEVStandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfig_S
     {
       {Name = "StandardReport1Interval" , Value = 1},
       {Name = "AcceleratedReport1Rate" , Value = 1}
+    }
+  )
+end
+
+function test_XStandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport2MessageIsSent_StandardReport2IsSentPeriodicallyWithCorrectValues()
+  generic_test_StandardReportContent(
+    "StandardReport2",
+    "StandardReport2",
+    {StandardReport2Interval=1, AcceleratedReport2Rate=1},
+    1,
+    1,
+    "SetConfigReport2",
+    "ConfigChangeReport2",
+    {
+      {Name = "StandardReport2Interval" , Value = 1},
+      {Name = "AcceleratedReport2Rate" , Value = 1}
+    }
+  )
+end
+
+function test_XStandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport3MessageIsSent_StandardReport3IsSentPeriodicallyWithCorrectValues()
+  generic_test_StandardReportContent(
+    "StandardReport3",
+    "StandardReport3",
+    {StandardReport3Interval=1, AcceleratedReport3Rate=1},
+    1,
+    1,
+    "SetConfigReport3",
+    "ConfigChangeReport3",
+    {
+      {Name = "StandardReport3Interval" , Value = 1},
+      {Name = "AcceleratedReport3Rate" , Value = 1}
     }
   )
 end
