@@ -37,7 +37,7 @@ end
 -- Test Cases
 -------------------------
 
-function test_WhenInsideGeofenceZone_StandardReportStatusBitmapInsideGeofenceBitIsSet()
+function test_GeofenceFeatures_WhenInsideGeofenceZone_StandardReportStatusBitmapInsideGeofenceBitIsSet()
   local currentReport1Interval = vmsSW:getPropertiesByName({"StandardReport1Interval"})["StandardReport1Interval"]
   vmsSW:setPropertiesByName({StandardReport1Interval = 1})
   local receivedMessages = vmsSW:waitForMessagesByName("StandardReport1", currentReport1Interval*60)
@@ -58,7 +58,7 @@ function test_WhenInsideGeofenceZone_StandardReportStatusBitmapInsideGeofenceBit
   assert_true(state.InsideGeofence, "Terminal incorrectly repored as NOT inside geofence zone")  
 end
 
-function test_WhenInsideGeofenceZone_VMSPropertyInsideGeofenceIsSetToTrue()
+function test_GeofenceFeatures_WhenInsideGeofenceZone_VMSPropertyInsideGeofenceIsSetToTrue()
   GPS:set({latitude = 0, longitude = 0})
   local status, properties = vmsSW:waitForProperties({InsideGeofenceState = false})
   assert_false(properties.InsideGeofenceState, "Property InsideGeofenceState incorreclty remains set to true while terminal is not in geofence zone")
