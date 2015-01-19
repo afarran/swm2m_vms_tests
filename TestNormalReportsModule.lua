@@ -272,7 +272,7 @@ end
   --
   -- Steps:
   --
-  -- 1. Properties are changed and sent.
+  -- 1. Modified properties are changed and sent.
   -- 2. Waiting for message ConfigChangeReport1 is performed.
   -- 3. Report values are checked.
   --
@@ -304,7 +304,7 @@ end
   --
   -- Steps:
   --
-  -- 1. Properties are changed and sent.
+  -- 1. Modified properties are changed and sent.
   -- 2. Waiting for message ConfigChangeReport2 is performed.
   -- 3. Report values are checked.
   --
@@ -336,7 +336,7 @@ end
   --
   -- Steps:
   --
-  -- 1. Properties are changed and sent.
+  -- 1. Modified properties are changed and sent.
   -- 2. Waiting for message ConfigChangeReport3 is performed.
   -- 3. Report values are checked.
   --
@@ -381,7 +381,7 @@ end
   -- 3. Message SetConfigReport1 is correctly sent.
   -- 4. Message ConfigChangeReport1 is received.
   -- 5. Report values are correct.
-function test_ConfigChangeReport_WhenSetConfigReport1MessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport2IsSent()
+function test_ConfigChangeReport_WhenSetConfigReport1MessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport1IsSent()
   
   -- get properties
   local propertiesToChange = {"StandardReport1Interval", "AcceleratedReport1Rate"}
@@ -452,7 +452,7 @@ end
   -- 3. Message SetConfigReport3 is correctly sent.
   -- 4. Message ConfigChangeReport3 is received.
   -- 5. Report values are correct.
-function test_ConfigChangeReport_WhenSetConfigReport2MessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport2IsSent()
+function test_ConfigChangeReport_WhenSetConfigReport3MessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport3IsSent()
   
   -- get properties
   local propertiesToChange = {"StandardReport3Interval", "AcceleratedReport3Rate"}
