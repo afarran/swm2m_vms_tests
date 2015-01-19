@@ -1011,3 +1011,63 @@ function test_IdpBlocked_WhenSatelliteControlStateIsNotActiveForTimeAboveIdpBloc
 end
 
 
+
+function test_IdpBlocked_WhenSatelliteControlStateIsNotActiveForTimeAboveIdpBlockedStartDebouncePeriodButIdpBlockedReportsAreDisabled_IdpBlockedAbnormalReportIsNotSent()
+
+  -- device profile application
+  if IDPBlockageFeaturesImplemented == false then skip("API for setting Satellite Control State has not been implemented yet - no use to perform TC") end
+
+  -- *** Setup
+  local IDP_BLOCKED_START_DEBOUNCE_TIME = 1    -- seconds
+  local IDP_BLOCKED_END_DEBOUNCE_TIME = 1      -- seconds
+
+  -- terminal stationary
+  local InitialPosition = {
+    speed = 0,                      -- kmh
+    latitude = 1,                   -- degrees
+    longitude = 1,                  -- degrees
+  }
+
+  vmsSW:setPropertiesByName({IdpBlockedStartDebounceTime = IDP_BLOCKED_START_DEBOUNCE_TIME,
+                             IdpBlockedEndDebounceTime = IDP_BLOCKED_END_DEBOUNCE_TIME,
+                             IdpBlockedSendReport = false,
+                             }
+  )
+
+  -- *** Execute
+
+  -- TODO: uncomment this section when the funtions are implemented
+  -- SatelliteControlState("NotActive")
+  framework.delay(IDP_BLOCKED_END_DEBOUNCE_TIME)   -- wait until terminal goes back to IdpBlocked = false state
+
+  gateway.setHighWaterMark() -- to get the newest messages
+  -- Satellite Control State is not Active now - IDP blockage starts
+  -- TODO: uncomment this section when the funtions are implemented
+  -- SatelliteControlState("NotActive")
+
+  framework.delay(IDP_BLOCKED_START_DEBOUNCE_TIME)
+
+  -- AbnormalReport is not expected with IdpBlocked information
+  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
+  local IdpBlockedStateProperty = vmsSW:getPropertiesByName({"IdpBlockedState"})
+
+  -- Back to Satellite Control State = Active
+  -- TODO: uncomment this section when the funtions are implemented
+  -- SatelliteControlState("Active")
+  framework.delay(IDP_BLOCKED_END_DEBOUNCE_TIME)   -- wait until terminal goes back to IdpBlocked = false state
+
+
+  if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "IdpBlocked" ) then
+    assert_nil(1, "IdpBlocked abnormal report sent but not expected")
+  end
+
+  assert__nil(ReceivedMessages["AbnormalReport"], "AbnormalReport not received")
+
+  -- checking IdpBlockedState property - this is expected to be true as IDP_BLOCKED_START_DEBOUNCE_TIME period has passed
+  assert_true(IdpBlockedStateProperty["IdpBlockedState"], "IdpBlockedState property has not been changed correctly when ")
+  D:log(IdpBlockedStateProperty, "IdpBlockedStateProperty after IdpBlockedStartDebounceTime")
+
+
+
+end
+
