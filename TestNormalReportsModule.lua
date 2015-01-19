@@ -286,7 +286,6 @@ function test_StandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport3
   )
 end
 
--- in dev
 function test_StandardReportDisabled_WhenStandardReport1IntervalIsSetToZero_StandardReport1IsNotSent()
   generic_test_StandardReportDisabled(
     "StandardReport1",
@@ -295,6 +294,21 @@ function test_StandardReportDisabled_WhenStandardReport1IntervalIsSetToZero_Stan
   )
 end
 
+function test_StandardReportDisabled_WhenStandardReport2IntervalIsSetToZero_StandardReport2IsNotSent()
+  generic_test_StandardReportDisabled(
+    "StandardReport2",
+    {StandardReport2Interval=0, AcceleratedReport2Rate=1},
+    70 -- waiting until report not come
+  )
+end
+
+function test_StandardReportDisabled_WhenStandardReport3IntervalIsSetToZero_StandardReport3IsNotSent()
+  generic_test_StandardReportDisabled(
+    "StandardReport3",
+    {StandardReport3Interval=0, AcceleratedReport3Rate=1},
+    70 -- waiting until report not come
+  )
+end
 
 -----------------------------------------------------------------------------------------------
 -- Test Cases for ACCELERATED REPORTS
