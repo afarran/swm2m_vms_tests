@@ -1041,3 +1041,30 @@ function generic_test_ConfigChangeReportConfigChangeReportIsSent(messageKey,prop
     )
   end
 end
+
+-- This is generic function for disabled reports test
+function generic_test_StandardReportDisabled(reportKey,properties,reportInterval,setConfigMsgKey,configChangeMsgKey,fields)
+  
+  -- setup
+  if setConfigMsgKey then
+    D:log(setConfigMsgKey,"X1")
+    D:log(fields,"X2")
+    -- change config to trigger ConfigChange message (SetConfigReportX used)
+    vmsSW:sendMessageByName(
+      setConfigMsgKey,
+      fields
+    )
+    vmsSW:waitForMessagesByName(
+      {configChangeMsgKey},
+      30
+    )
+  else
+    vmsSW:setPropertiesByName(properties)
+  end
+  
+  D:log("Waiting for report - should not come - "..reportKey)
+  local reportMessage = vmsSW:waitForMessagesByName(
+    {reportKey},
+    reportInterval*60*2
+  )
+end
