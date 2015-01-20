@@ -898,6 +898,32 @@ function test_LogReport3_WhenGpsPositionIsSetAndLogFilterEstablished_LogEntriesS
 end
 
 -----------------------------------------------------------------------------------------------
+-- DEFAULT VALUES tests
+-----------------------------------------------------------------------------------------------
+
+function test_DefaultValues_WhenPropertiesAreRequestedAfterPropertiesReset_CorrectDefaultValuesAreGiven()
+  -- reset of properties 
+  systemSW:resetProperties({vmsSW.sin})
+
+   -- get properties
+  local propertiesToCheck = {
+    "StandardReport1Interval" 
+  }
+
+  local propertiesValues = {
+    StandardReport1Interval = 60
+  }
+
+  local propertiesFetched = vmsSW:getPropertiesByName(propertiesToCheck)
+
+  for key,value in pairs(propertiesValues) do
+    assert_not_nil(propertiesFetched[key],"Property "..key.." not found!")
+    assert_equal(value,tonumber(propertiesFetched[key]),"Property "..key.." - wrong default ")
+  end
+end
+
+
+-----------------------------------------------------------------------------------------------
 -- GENERIC LOGIC for test cases
 -----------------------------------------------------------------------------------------------
 
