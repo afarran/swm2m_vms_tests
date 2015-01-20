@@ -1352,7 +1352,6 @@ function test_PowerDisconnected_WhenTerminalIsOffForTimeAbovePowerDisconnectedSt
 
   local timeOfEvent = os.time()  -- to get exact timestamp
 
-
   -- receiving all from mobile messages sent after setHighWaterMark()
   local receivedMessages = gateway.getReturnMessages()
   -- look for StationaryIntervalSat messages
@@ -1429,6 +1428,68 @@ function test_PowerDisconnected_WhenTerminalIsOffForTimeAbovePowerDisconnectedSt
   assert_true(StatusBitmap["PowerDisconnected"], "PowerDisconnected bit in StatusBitmap has not been correctly changed when terminal was power-cycled")
 
 end
+
+
+
+function test_PowerDisconnected_WhenTerminalIsOffForTimeBelowPowerDisconnectedStartDebouncePeriod_PowerDisconnectedAbnormalReportIsNotSentWhenTerminalIsOnAgain()
+
+  -- *** Setup
+  local POWER_DISCONNECTED_START_DEBOUNCE_TIME = 100   -- seconds
+  local POWER_DISCONNECTED_END_DEBOUNCE_TIME = 1      -- seconds
+
+  -- terminal stationary
+  local InitialPosition = {
+    speed = 0,                      -- kmh
+    latitude = 1,                   -- degrees
+    longitude = 1,                  -- degrees
+  }
+
+  vmsSW:setPropertiesByName({PowerDisconnectedStartDebounceTime = POWER_DISCONNECTED_START_DEBOUNCE_TIME,
+                             PowerDisconnectedEndDebounceTime = POWER_DISCONNECTED_END_DEBOUNCE_TIME,
+                             PowerDisconnectedSendReport = true,
+                             }, false, true
+  )
+
+  -- *** Execute
+  -- terminal in initial position
+  GPS:set(InitialPosition)
+  gateway.setHighWaterMark() -- to get the newest messages
+
+  framework.delay(POWER_DISCONNECTED_END_DEBOUNCE_TIME)
+
+  -- checking PowerDisconnectedState property - this is expected to be false - terminal is powered on for time longer than
+  local PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
+  assert_false(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState is incorrectly true")
+  D:log(PowerDisconnectedStateProperty, "PowerDisconnectedStateProperty in the start of TC")
+
+  systemSW:restartFramework()
+
+  local timeOfEvent = os.time()  -- to get exact timestamp
+
+
+  -- receiving all from mobile messages sent after setHighWaterMark()
+  local receivedMessages = gateway.getReturnMessages()
+  -- look for StationaryIntervalSat messages
+  local AllReceivedAbnormalReports = framework.filterMessages(receivedMessages, framework.checkMessageType(115, 50)) -- TODO: service wrapper functions need to be modified
+
+
+  local PowerDisconnectedAbnormalReport = nil
+  for index = 1 , #AllReceivedAbnormalReports, 1 do
+    if AllReceivedAbnormalReports[index].Payload.EventType == "PowerDisconnected" then
+        PowerDisconnectedAbnormalReport = AllReceivedAbnormalReports[index]
+        break
+    end
+  end
+
+
+  D:log(PowerDisconnectedAbnormalReport)
+
+  assert_nil(PowerDisconnectedAbnormalReport, "AbnormalReport with PowerDisconnected information received but not expected")
+
+
+end
+
+
 
 
 
