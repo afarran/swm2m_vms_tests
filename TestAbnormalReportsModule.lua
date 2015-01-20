@@ -1300,7 +1300,7 @@ function test_IdpBlocked_ForTerminalInIdpBlockedStateWhenSatelliteControlStateIs
 
   framework.delay(IDP_BLOCKED_END_DEBOUNCE_TIME)   -- wait until terminal goes back to IdpBlocked = false state
   -- checking IdpBlockedState property - this is expected to be true as IDP_BLOCKED_END_DEBOUNCE_TIME period has not passed
-  assert_true(IdpBlockedStateProperty["IdpBlockedState"], "IdpBlockedState property has not been changed before IDP_BLOCKED_END_DEBOUNCE_TIME has passed")
+  assert_true(IdpBlockedStateProperty["IdpBlockedState"], "IdpBlockedState property has been changed before IDP_BLOCKED_END_DEBOUNCE_TIME has passed")
 
   if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "IdpBlocked" ) then
     assert_nil(1, "IdpBlocked abnormal report sent but not expected")
@@ -1310,6 +1310,123 @@ function test_IdpBlocked_ForTerminalInIdpBlockedStateWhenSatelliteControlStateIs
   -- checking IdpBlockedState property - this is expected to be false as IDP_BLOCKED_END_DEBOUNCE_TIME period has passed
   assert_false(IdpBlockedStateProperty["IdpBlockedState"], "IdpBlockedState property has not been changed before IDP_BLOCKED_END_DEBOUNCE_TIME has passed")
 
+  device.setIO(31, ext_voltage)    -- setting external power voltage (in eio service)
+
+end
+
+
+
+
+function test_PowerDisconnected_WhenTerminalIsOffForTimeAbovePowerDisconnectedStartDebouncePeriod_PowerDisconnectedAbnormalReportIsSent()
+
+  -- *** Setup
+  local POWER_DISCONNECTED_START_DEBOUNCE_TIME = 20   -- seconds
+  local POWER_DISCONNECTED_END_DEBOUNCE_TIME = 1      -- seconds
+
+  -- terminal stationary
+  local InitialPosition = {
+    speed = 0,                      -- kmh
+    latitude = 1,                   -- degrees
+    longitude = 1,                  -- degrees
+  }
+
+  vmsSW:setPropertiesByName({PowerDisconnectedStartDebounceTime = POWER_DISCONNECTED_START_DEBOUNCE_TIME,
+                             PowerDisconnectedEndDebounceTime = POWER_DISCONNECTED_END_DEBOUNCE_TIME,
+                             PowerDisconnectedSendReport = true,
+                             }, false, true
+  )
+
+  -- *** Execute
+  -- terminal in initial position
+  GPS:set(InitialPosition)
+  gateway.setHighWaterMark() -- to get the newest messages
+
+  framework.delay(POWER_DISCONNECTED_END_DEBOUNCE_TIME)
+
+  -- checking PowerDisconnectedState property - this is expected to be false - terminal is powered on for time longer than
+  local PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
+  assert_false(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState is incorrectly true")
+  D:log(PowerDisconnectedStateProperty, "PowerDisconnectedStateProperty in the start of TC")
+
+  systemSW:restartFramework()
+
+  local timeOfEvent = os.time()  -- to get exact timestamp
+
+
+  -- receiving all from mobile messages sent after setHighWaterMark()
+  local receivedMessages = gateway.getReturnMessages()
+  -- look for StationaryIntervalSat messages
+  local AllReceivedAbnormalReports = framework.filterMessages(receivedMessages, framework.checkMessageType(115, 50)) -- TODO: service wrapper functions need to be modified
+
+
+  local PowerDisconnectedAbnormalReport = nil
+  for index = 1 , #AllReceivedAbnormalReports, 1 do
+    if AllReceivedAbnormalReports[index].Payload.EventType == "PowerDisconnected" then
+        PowerDisconnectedAbnormalReport = AllReceivedAbnormalReports[index]
+        break
+    end
+  end
+
+
+  D:log(PowerDisconnectedAbnormalReport)
+
+  assert_not_nil(PowerDisconnectedAbnormalReport, "AbnormalReport  with PowerDisconnected information not received")
+
+  assert_equal(
+    InitialPosition.latitude*60000,
+    tonumber(PowerDisconnectedAbnormalReport.Payload.Latitude),
+    "Wrong latitude value in PowerDisconnected abnormal report"
+  )
+
+  assert_equal(
+    InitialPosition.longitude*60000,
+    tonumber(PowerDisconnectedAbnormalReport.Payload.Longitude),
+    "Wrong longitude value in PowerDisconnected abnormal report"
+  )
+
+  assert_equal(
+    InitialPosition.speed,
+    tonumber(PowerDisconnectedAbnormalReport.Payload.Speed),
+    "Wrong speed value in PowerDisconnected abnormal report"
+  )
+
+  assert_equal(
+    361,
+    tonumber(PowerDisconnectedAbnormalReport.Payload.Course),
+    "Wrong course value in PowerDisconnected abnormal report"
+  )
+
+  assert_equal(
+    timeOfEvent,
+    tonumber(PowerDisconnectedAbnormalReport.Payload.Timestamp),
+    20,
+    "Wrong Timestamp value in PowerDisconnected abnormal report"
+  )
+--]]
+  -- TODO: update this after implementation in TestFramework file
+  --[[
+  assert_equal(
+    InitialPosition.hdop,
+    PowerDisconnectedAbnormalReport.Payload.Hdop,
+    "Wrong HDOP value in IdpBlocked abnormal report"
+  )
+
+  assert_equal(
+    InitialPosition.idpsnr,
+    PowerDisconnectedAbnormalReport.Payload.IdpSnr,
+    "Wrong IdpSnr value in IdpBlocked abnormal report"
+  )
+
+  assert_equal(
+    InitialPosition.numsats,
+    PowerDisconnectedAbnormalReport.Payload.NumSats,
+    "Wrong NumSats value in IdpBlocked abnormal report"
+  )
+  --]]
+
+
+  local StatusBitmap = vmsSW:decodeBitmap(PowerDisconnectedAbnormalReport.Payload.StatusBitmap, "EventStateId")
+  assert_true(StatusBitmap["PowerDisconnected"], "PowerDisconnected bit in StatusBitmap has not been correctly changed when terminal was power-cycled")
 
 end
 
