@@ -1434,8 +1434,9 @@ end
 function test_PowerDisconnected_WhenTerminalIsOffForTimeBelowPowerDisconnectedStartDebouncePeriod_PowerDisconnectedAbnormalReportIsNotSentWhenTerminalIsOnAgain()
 
   -- *** Setup
-  local POWER_DISCONNECTED_START_DEBOUNCE_TIME = 100   -- seconds
-  local POWER_DISCONNECTED_END_DEBOUNCE_TIME = 1      -- seconds
+  local POWER_DISCONNECTED_START_DEBOUNCE_TIME = 1200   -- seconds
+  local POWER_DISCONNECTED_END_DEBOUNCE_TIME = 1        -- seconds
+  local PROPERTIES_SAVE_INTERVAL = 600                  -- seconds
 
   -- terminal stationary
   local InitialPosition = {
@@ -1461,6 +1462,10 @@ function test_PowerDisconnected_WhenTerminalIsOffForTimeBelowPowerDisconnectedSt
   local PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
   assert_false(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState is incorrectly true")
   D:log(PowerDisconnectedStateProperty, "PowerDisconnectedStateProperty in the start of TC")
+
+  D:log(os.time(), "timestamp before saving properties")
+  framework.delay(PROPERTIES_SAVE_INTERVAL + 5) -- wait until previous SysTime is saved in non volatile memory
+  D:log(os.time(), "timestamp after saving properties")
 
   systemSW:restartFramework()
 
