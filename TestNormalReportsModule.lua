@@ -953,6 +953,7 @@ function generic_test_DriftOverTime_StandardAndAccelerated()
   local ARInterval = 1 --min
   local tolerance = 10 --secs
   local ARItems = 3
+  local lastTimestamp = 0
 
   -- 666
 
@@ -976,6 +977,12 @@ function generic_test_DriftOverTime_StandardAndAccelerated()
     message[SRKey],
     "First Standard Report not received!"
   )
+  assert_not_nil(
+    message[SRKey].Timestamp,
+    "Timestamp in Standard Report not received! "..SRKey
+  )
+
+  lastTimestamp = tonumber(message[SRKey].Timestamp)
 
   for i=1,ARItems do 
     D:log("Waiting for accelerated report "..ARKey)
@@ -991,8 +998,16 @@ function generic_test_DriftOverTime_StandardAndAccelerated()
       message[ARKey],
       "Accelerated Report not received! Number in sequence: "..i
     )
-
+    assert_not_nil(
+      message[ARKey].Timestamp,
+      "Timestamp in Accelerated Report not received!"
+    )
+    local diff = tonumber(message[ARKey].Timestamp) - lastTimestamp
+    D:log(diff,"time diff")
+    assert_equal(ARInterval, diff, 0, "Wrong difference between timestamps. Processed report "..ARKey)
+    lastTimestamp = tonumber(message[ARKey].Timestamp)
   end
+
  
   D:log("Waiting for last standard report "..SRKey)
   local message = vmsSW:waitForMessagesByName(
@@ -1007,6 +1022,14 @@ function generic_test_DriftOverTime_StandardAndAccelerated()
     message[SRKey],
     "Lat Standard Report not received!"
   )
+  assert_not_nil(
+    message[SRKey].Timestamp,
+    "Timestamp in Standard Report not received!"
+  )
+  local diff = tonumber(message[SRKey].Timestamp) - lastTimestamp
+  D:log(diff,"time diff")
+  assert_equal(ARInterval, diff, 0, "Wrong difference between timestamps. Processed report "..ARKey)
+  lastTimestamp = tonumber(message[SRKey].Timestamp)
 
 end
 
