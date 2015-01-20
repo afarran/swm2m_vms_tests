@@ -286,6 +286,21 @@ function test_StandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport3
   )
 end
 
+--- TC checks if StandardReport 1 is not sent
+  -- Initial Conditions:
+  --
+  -- * StandardReport1Interval is set to 0.
+  -- * AcceleratedReport1Rate is set to 1 - accelerated reports are not triggered
+  --
+  -- Steps:
+  --
+  -- 1. Properties are sent.
+  -- 2. Waiting for Standard Report is performed.
+  --
+  -- Results:
+  --
+  -- 1. Properties are correctly set.
+  -- 2. Standard Report doesn't come and that is correct.
 function test_StandardReportDisabled_WhenStandardReport1IntervalIsSetToZero_StandardReport1IsNotSent()
   generic_test_StandardReportDisabled(
     "StandardReport1",
@@ -294,6 +309,21 @@ function test_StandardReportDisabled_WhenStandardReport1IntervalIsSetToZero_Stan
   )
 end
 
+-- TC checks if StandardReport 2 is not sent
+  -- Initial Conditions:
+  --
+  -- * StandardReport2Interval is set to 0.
+  -- * AcceleratedReport2Rate is set to 1 - accelerated reports are not triggered
+  --
+  -- Steps:
+  --
+  -- 1. Properties are sent.
+  -- 2. Waiting for Standard Report is performed.
+  --
+  -- Results:
+  --
+  -- 1. Properties are correctly set.
+  -- 2. Standard Report doesn't come and that is correct.
 function test_StandardReportDisabled_WhenStandardReport2IntervalIsSetToZero_StandardReport2IsNotSent()
   generic_test_StandardReportDisabled(
     "StandardReport2",
@@ -302,14 +332,28 @@ function test_StandardReportDisabled_WhenStandardReport2IntervalIsSetToZero_Stan
   )
 end
 
+-- TC checks if StandardReport 3 is not sent
+  -- Initial Conditions:
+  --
+  -- * StandardReport3Interval is set to 0.
+  -- * AcceleratedReport3Rate is set to 1 - accelerated reports are not triggered
+  --
+  -- Steps:
+  --
+  -- 1. Properties are sent.
+  -- 2. Waiting for Standard Report is performed.
+  --
+  -- Results:
+  --
+  -- 1. Properties are correctly set.
+  -- 2. Standard Report doesn't come and that is correct.
 function test_StandardReportDisabled_WhenStandardReport3IntervalIsSetToZero_StandardReport3IsNotSent()
   generic_test_StandardReportDisabled(
     "StandardReport3",
     {StandardReport3Interval=0, AcceleratedReport3Rate=1},
-    70 -- waiting until report not come
+    70 
   )
 end
-
 
 -----------------------------------------------------------------------------------------------
 -- Test Cases for ACCELERATED REPORTS
@@ -426,6 +470,23 @@ function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIn
   )
 end
 
+--- TC checks if StandardReport 1 is sent and accelerated report is not sent.
+  -- Initial Conditions:
+  --
+  -- * StandardReport1Interval is set to 1.
+  -- * AcceleratedReport1Rate is set to 1 - accelerated reports are not triggered
+  --
+  -- Steps:
+  --
+  -- 1. Properties are sent.
+  -- 2. Waiting for Standard Report is performed.
+  -- 3. Waiting for Accelerated Report is performed.
+  --
+  -- Results:
+  --
+  -- 1. Properties are correctly set.
+  -- 2. Standard Report is sent correctly.
+  -- 3. Accelerated Report is not sent and that is correct.
 function test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardReport1IntervalIsSetAboveZeroAndAcceleratedReportInterval1DisablesFeature_StandardReportIsSentAndAcceleratedReportNotSent()
   generic_test_AcceleratedReportDisabledAndStandardReportEnabled(
     "StandardReport1",
@@ -435,6 +496,23 @@ function test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardRepo
   )
 end
 
+--- TC checks if StandardReport 2 is sent and accelerated report is not sent.
+  -- Initial Conditions:
+  --
+  -- * StandardReport2Interval is set to 1.
+  -- * AcceleratedReport2Rate is set to 1 - accelerated reports are not triggered
+  --
+  -- Steps:
+  --
+  -- 1. Properties are sent.
+  -- 2. Waiting for Standard Report is performed.
+  -- 3. Waiting for Accelerated Report is performed.
+  --
+  -- Results:
+  --
+  -- 1. Properties are correctly set.
+  -- 2. Standard Report is sent correctly.
+  -- 3. Accelerated Report is not sent and that is correct.
 function test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardReport2IntervalIsSetAboveZeroAndAcceleratedReportInterval2DisablesFeature_StandardReportIsSentAndAcceleratedReportNotSent()
   generic_test_AcceleratedReportDisabledAndStandardReportEnabled(
     "StandardReport2",
@@ -444,6 +522,23 @@ function test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardRepo
   )
 end
 
+--- TC checks if StandardReport 3 is sent and accelerated report is not sent.
+  -- Initial Conditions:
+  --
+  -- * StandardRepor3Interval is set to 1.
+  -- * AcceleratedReport3Rate is set to 1 - accelerated reports are not triggered
+  --
+  -- Steps:
+  --
+  -- 1. Properties are sent.
+  -- 2. Waiting for Standard Report is performed.
+  -- 3. Waiting for Accelerated Report is performed.
+  --
+  -- Results:
+  --
+  -- 1. Properties are correctly set.
+  -- 2. Standard Report is sent correctly.
+  -- 3. Accelerated Report is not sent and that is correct.
 function test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardReport3IntervalIsSetAboveZeroAndAcceleratedReportInterval3DisablesFeature_StandardReportIsSentAndAcceleratedReportNotSent()
   generic_test_AcceleratedReportDisabledAndStandardReportEnabled(
     "StandardReport3",
@@ -803,6 +898,48 @@ function test_LogReport3_WhenGpsPositionIsSetAndLogFilterEstablished_LogEntriesS
 end
 
 -----------------------------------------------------------------------------------------------
+-- DEFAULT VALUES tests
+-----------------------------------------------------------------------------------------------
+
+function test_DefaultValues_WhenPropertiesAreRequestedAfterPropertiesReset_CorrectDefaultValuesAreGiven()
+  -- reset of properties 
+  systemSW:resetProperties({vmsSW.sin})
+
+   -- get properties
+  local propertiesToCheck = {
+    "StandardReport1Interval",
+    "AcceleratedReport1Rate", 
+    "LogReport1Rate", 
+    "StandardReport2Interval",
+    "AcceleratedReport2Rate", 
+    "LogReport2Rate", 
+    "StandardReport3Interval",
+    "AcceleratedReport3Rate", 
+    "LogReport3Rate", 
+  }
+
+  local propertiesValues = {
+    StandardReport1Interval = 60,
+    AcceleratedReport1Rate = 1,
+    LogReport1Rate = 1,
+    StandardReport2Interval = 60,
+    AcceleratedReport2Rate = 1,
+    LogReport2Rate = 1, 
+    StandardReport3Interval = 60,
+    AcceleratedReport3Rate = 1,
+    LogReport3Rate = 1 
+  }
+
+  local propertiesFetched = vmsSW:getPropertiesByName(propertiesToCheck)
+
+  for key,value in pairs(propertiesValues) do
+    assert_not_nil(propertiesFetched[key],"Property "..key.." not found!")
+    assert_equal(value,tonumber(propertiesFetched[key]),"Property "..key.." - wrong default ")
+  end
+end
+
+
+-----------------------------------------------------------------------------------------------
 -- GENERIC LOGIC for test cases
 -----------------------------------------------------------------------------------------------
 
@@ -1101,7 +1238,7 @@ function generic_test_StandardReportDisabled(reportKey,properties,reportInterval
   if setConfigMsgKey then
     D:log(setConfigMsgKey,"X1")
     D:log(fields,"X2")
-    -- change config to trigger ConfigChange message (SetConfigReportX used)
+    -- change config
     vmsSW:sendMessageByName(
       setConfigMsgKey,
       fields
@@ -1166,3 +1303,10 @@ function generic_test_AcceleratedReportDisabledAndStandardReportEnabled(standard
   assert_equal(0,tonumber(reportMessage.count),"Message"..reportKey.." should not come!")
 end
 
+--TODO: test 24hour interval ? (8.5.3.4 / 4.2) - ask Amjad
+--TODO: test default 60minutes interval (just get properties after reset) (4.4, 4.8)
+--TODO: when SR is disabled AR is disabled too (4.13)
+--TODO: getConfig message (4.15)
+--TODO: inhibit AR when it coincides with SR (5.4)
+--TODO: drift over time (5.5)
+--TODO: PollRequest/Response (6.1-6.3)
