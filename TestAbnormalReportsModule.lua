@@ -1317,7 +1317,7 @@ end
 
 
 
-function test_PowerDisconnected_WhenTerminalIsOffForTimeAbovePowerDisconnectedStartDebouncePeriod_PowerDisconnectedAbnormalReportIsSent()
+function test_PowerDisconnected_WhenTerminalIsOffForTimeAbovePowerDisconnectedStartDebouncePeriod_PowerDisconnectedAbnormalReportIsSentWhenTerminalIsOnAgain()
 
   -- *** Setup
   local POWER_DISCONNECTED_START_DEBOUNCE_TIME = 20   -- seconds
@@ -1429,6 +1429,8 @@ function test_PowerDisconnected_WhenTerminalIsOffForTimeAbovePowerDisconnectedSt
   assert_true(StatusBitmap["PowerDisconnected"], "PowerDisconnected bit in StatusBitmap has not been correctly changed when terminal was power-cycled")
 
 end
+
+
 
 
 
