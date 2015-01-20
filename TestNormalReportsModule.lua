@@ -943,19 +943,48 @@ end
 -- The Report Capability shall ensure that periodic reports do not drift over time.
 -----------------------------------------------------------------------------------------------
 
-function generic_test_DriftOverTime_StandardAndAccelerated()
+ 
+function test_DriftOverTime_Standard1AndAccelerated()
+  generic_test_DriftOverTime_StandardAndAccelerated(
+    {StandardReport1Interval=4, AcceleratedReport1Rate=4},
+    "ConfigChangeReport1",
+    "StandardReport1",
+    "AcceleratedReport1",
+    4, --min
+    1, --min
+    3
+  )
+end
 
-  local properties =  {StandardReport1Interval=4, AcceleratedReport1Rate=4}
-  local configChangeMsgKey = "ConfigChangeReport1"
-  local SRKey = "StandardReport1"
-  local ARKey = "AcceleratedReport1"
-  local SRInterval = 4 --min
-  local ARInterval = 1 --min
+function test_DriftOverTime_Standard2AndAccelerated()
+  generic_test_DriftOverTime_StandardAndAccelerated(
+    {StandardReport2Interval=4, AcceleratedReport2Rate=4},
+    "ConfigChangeReport2",
+    "StandardReport2",
+    "AcceleratedReport2",
+    4, --min
+    1, --min
+    3
+  )
+end
+
+function test_DriftOverTime_Standard3AndAccelerated()
+  generic_test_DriftOverTime_StandardAndAccelerated(
+    {StandardReport3Interval=4, AcceleratedReport3Rate=4},
+    "ConfigChangeReport3",
+    "StandardReport3",
+    "AcceleratedReport3",
+    4, --min
+    1, --min
+    3
+  )
+end
+
+function generic_test_DriftOverTime_StandardAndAccelerated(properties,configChangeMsgKey,SRKey,ARKey,SRInterval,ARInterval,ARItems)
+  
   local tolerance = 10 --secs
-  local ARItems = 3
+  local toleranceForTimestampDiff = 5 --secs
   local lastTimestamp = 0
-
-  -- 666
 
   vmsSW:setPropertiesByName(properties)
 
@@ -1004,7 +1033,7 @@ function generic_test_DriftOverTime_StandardAndAccelerated()
     )
     local diff = tonumber(message[ARKey].Timestamp) - lastTimestamp
     D:log(diff,"time diff")
-    assert_equal(ARInterval, diff, 0, "Wrong difference between timestamps. Processed report "..ARKey)
+    assert_equal(ARInterval*60, diff, toleranceForTimestampDiff, "Wrong difference between timestamps. Processed report "..ARKey)
     lastTimestamp = tonumber(message[ARKey].Timestamp)
   end
 
@@ -1028,7 +1057,7 @@ function generic_test_DriftOverTime_StandardAndAccelerated()
   )
   local diff = tonumber(message[SRKey].Timestamp) - lastTimestamp
   D:log(diff,"time diff")
-  assert_equal(ARInterval, diff, 0, "Wrong difference between timestamps. Processed report "..ARKey)
+  assert_equal(ARInterval*60, diff, toleranceForTimestampDiff, "Wrong difference between timestamps. Processed report "..SRKey)
   lastTimestamp = tonumber(message[SRKey].Timestamp)
 
 end
