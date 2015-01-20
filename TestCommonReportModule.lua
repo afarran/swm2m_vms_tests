@@ -149,14 +149,16 @@ function test_CommonReport_WhenFirmwarePackageHasChanged_VersionReportIsSent()
     readResult.result, 
     "Error during write into service version file"
   )
+  
+  local versionNow = tonumber(string.char(unpack(readData)))
+  local versionNext = versionNow + 1
+  local writeOK, writeResult = filesystemSW:write(path, 0, "" .. versionNext)
+  assert_true(writeOK, "Couldn't write data to PackageVersion file")
   restoreData = {}
   restoreData.path = path
   restoreData.data = readResult.data
   restoreData.offset = 0
   restoreData.restartFramework = true
-  
-  local writeOK, writeResult = filesystemSW:write(path, 0, "1")
-  assert_true(writeOK, "Couldn't write data to PackageVersion file")
     
   --restart Framework
   systemSW:restartFramework()
