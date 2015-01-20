@@ -907,11 +907,27 @@ function test_DefaultValues_WhenPropertiesAreRequestedAfterPropertiesReset_Corre
 
    -- get properties
   local propertiesToCheck = {
-    "StandardReport1Interval" 
+    "StandardReport1Interval",
+    "AcceleratedReport1Rate", 
+    "LogReport1Rate", 
+    "StandardReport2Interval",
+    "AcceleratedReport2Rate", 
+    "LogReport2Rate", 
+    "StandardReport3Interval",
+    "AcceleratedReport3Rate", 
+    "LogReport3Rate", 
   }
 
   local propertiesValues = {
-    StandardReport1Interval = 60
+    StandardReport1Interval = 60,
+    AcceleratedReport1Rate = 1,
+    LogReport1Rate = 1,
+    StandardReport2Interval = 60,
+    AcceleratedReport2Rate = 1,
+    LogReport2Rate = 1, 
+    StandardReport3Interval = 60,
+    AcceleratedReport3Rate = 1,
+    LogReport3Rate = 1 
   }
 
   local propertiesFetched = vmsSW:getPropertiesByName(propertiesToCheck)
