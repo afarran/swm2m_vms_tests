@@ -67,9 +67,17 @@ function test_CommonReport_WhenGetVersionMessageReceived_SendVersionInfoMessage(
 end
 
 function test_CommonReport_WhenSourceCodeHashChanged_SendVersionInfoMessage()
-  -- Read 1st char of source code file - 
   
-  local sourceCodeFile = "/act/svc/VMS/Smtp.lua"
+  local sourceCodeFile = "/act/svc/VMS/main.lua"
+  vmsSW:sendMessageByName("GetVersion")
+  local receivedMessages = vmsSW:waitForMessagesByName({"Version"})
+  local versionMessage = receivedMessages.Version
+  assert_not_nil(versionMessage, "Can't get current VMS version, Version message not received when GetVersion message was sent")
+  assert_not_nil(versionMessage.VmsAgent, "Version message does not containt VmsAgent field!")
+  
+  local currentHash = versionMessage.SourceCodeHash
+  
+  -- read two chars
   local readData, readResult = filesystemSW:read(sourceCodeFile, 0, 2)
   
   --verify that read went OK
@@ -91,7 +99,7 @@ function test_CommonReport_WhenSourceCodeHashChanged_SendVersionInfoMessage()
   local writeOK, writeResult = filesystemSW:write(sourceCodeFile, 0, ":)")
   
   assert_true(writeOK, "Writing to source code file failed")
-  
+  vmsSW:setHighWaterMark()
   --restart VMS service
   systemSW:restartService(vmsSW.sin)
   
@@ -99,7 +107,7 @@ function test_CommonReport_WhenSourceCodeHashChanged_SendVersionInfoMessage()
   receivedMessages = vmsSW:waitForMessagesByName({"Version"})
   
   --verify Version message
-  local versionMessage = receivedMessages.Version
+  versionMessage = receivedMessages.Version
   assert_not_nil(
     versionMessage, 
     "Version message not received"
@@ -123,6 +131,12 @@ function test_CommonReport_WhenSourceCodeHashChanged_SendVersionInfoMessage()
     "Version message does not contain SourceCodeHash (Source verification) field"
   )
   
+  -- check if new hash is different thatn original one
+  assert_not_equal(
+    currentHash, 
+    versionMessage.SourceCodeHash,
+    "Changed source code hash is exactly the same as original hash code!"
+  )
 end
 
 function test_CommonReport_WhenSourceCodeHasNotChange_VersionReportIsNotSent()
@@ -152,6 +166,7 @@ function test_CommonReport_WhenFirmwarePackageHasChanged_VersionReportIsSent()
   
   local versionNow = tonumber(string.char(unpack(readData)))
   local versionNext = versionNow + 1
+  if (versionNext >= 10) then versionNext = 0 end
   local writeOK, writeResult = filesystemSW:write(path, 0, "" .. versionNext)
   assert_true(writeOK, "Couldn't write data to PackageVersion file")
   restoreData = {}
@@ -224,7 +239,9 @@ function test_CommonReport_WhenVmsVersionHasChanged_VersionReportIsSent()
   
   vmsVersionOffset = 800 + vmsVersionOffset - 1
   
-  local writeOK = filesystemSW:write(path, vmsVersionOffset, "0")
+  local nextVersion = tonumber(string.sub(currentVersion, 1, 1)) + 1 -- increase version by 1
+  if (nextVersion >= 10) then nextVersion = 0 end
+  local writeOK = filesystemSW:write(path, vmsVersionOffset, "" .. nextVersion)
   assert_true(writeOK, "Could not write version to VMS main.lua")
   restoreData = {}
   restoreData.path = path
@@ -240,8 +257,4 @@ function test_CommonReport_WhenVmsVersionHasChanged_VersionReportIsSent()
   assert_not_nil(versionMessage, "Version message not received afer VMS version changed")
   assert_not_equal(currentVersion, versionMessage.VmsAgent, "Reported VMS agent version is incorrect")
   
-end
-
-function test_CommonReport_WhenVersionMessageSendDisabled_VersionReportIsNotSent()
-  assert_true(false, "Functionality not implemented?")
 end
