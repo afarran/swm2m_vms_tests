@@ -1354,7 +1354,7 @@ function test_PowerDisconnected_WhenTerminalIsOffForTimeAbovePowerDisconnectedSt
 
   -- receiving all from mobile messages sent after setHighWaterMark()
   local receivedMessages = gateway.getReturnMessages()
-  -- look for StationaryIntervalSat messages
+ -- look for AbnormalReport messages
   local AllReceivedAbnormalReports = framework.filterMessages(receivedMessages, framework.checkMessageType(115, 50)) -- TODO: service wrapper functions need to be modified
 
   D:log(AllReceivedAbnormalReports)
@@ -1477,7 +1477,7 @@ function test_PowerDisconnected_WhenTerminalIsOffForTimeBelowPowerDisconnectedSt
 
   -- receiving all from mobile messages sent after setHighWaterMark()
   local receivedMessages = gateway.getReturnMessages()
-  -- look for StationaryIntervalSat messages
+ -- look for AbnormalReport messages
   local AllReceivedAbnormalReports = framework.filterMessages(receivedMessages, framework.checkMessageType(115, 50)) -- TODO: service wrapper functions need to be modified
 
 
@@ -1527,19 +1527,19 @@ function test_PowerDisconnected_ForTerminalInPowerDisconnectedStateWhenTerminalI
   systemSW:restartFramework()
 
   framework.delay(2) -- wait until the VMS is up again
---[[
+  --[[
   -- checking PowerDisconnectedState property - this is expected to be true - terminal has been off for time longer than PowerDisconnectedStartDebounceTime
   local PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
   assert_true(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState is incorrectly false")
   D:log(PowerDisconnectedStateProperty, "PowerDisconnectedStateProperty in the start of TC")
---]]
+  --]]
   framework.delay(POWER_DISCONNECTED_START_DEBOUNCE_TIME)
 
   local timeOfEvent = os.time()  -- to get exact timestamp
 
   -- receiving all from mobile messages sent after setHighWaterMark()
   local receivedMessages = gateway.getReturnMessages()
-  -- look for StationaryIntervalSat messages
+ -- look for AbnormalReport messages
   local AllReceivedAbnormalReports = framework.filterMessages(receivedMessages, framework.checkMessageType(115, 50)) -- TODO: service wrapper functions need to be modified
 
   -- checking PowerDisconnectedState property - this is expected to be false - terminal is powered on for time longer than
@@ -1618,6 +1618,65 @@ function test_PowerDisconnected_ForTerminalInPowerDisconnectedStateWhenTerminalI
 
   local StatusBitmap = vmsSW:decodeBitmap(PowerDisconnectedAbnormalReport.Payload.StatusBitmap, "EventStateId")
   assert_false(StatusBitmap["PowerDisconnected"], "PowerDisconnected bit in StatusBitmap has not been correctly changed when terminal was power-cycled")
+
+end
+
+
+
+
+function test_PowerDisconnected_WhenTerminalIsOffForTimeAbovePowerDisconnectedStartDebouncePeriodButPowerDisconnectedReportsAreDisabled_PowerDisconnectedAbnormalReportAreNotSentWhenTerminalIsOnAgain()
+
+  -- *** Setup
+  local POWER_DISCONNECTED_START_DEBOUNCE_TIME = 1   -- seconds
+  local POWER_DISCONNECTED_END_DEBOUNCE_TIME = 1      -- seconds
+
+  -- terminal stationary
+  local InitialPosition = {
+    speed = 0,                      -- kmh
+    latitude = 1,                   -- degrees
+    longitude = 1,                  -- degrees
+  }
+
+  vmsSW:setPropertiesByName({PowerDisconnectedStartDebounceTime = POWER_DISCONNECTED_START_DEBOUNCE_TIME,
+                             PowerDisconnectedEndDebounceTime = POWER_DISCONNECTED_END_DEBOUNCE_TIME,
+                             PowerDisconnectedSendReport = false,
+                             }, false, true
+  )
+
+  -- *** Execute
+  -- terminal in initial position
+  GPS:set(InitialPosition)
+  gateway.setHighWaterMark() -- to get the newest messages
+
+  framework.delay(POWER_DISCONNECTED_START_DEBOUNCE_TIME)
+
+
+  systemSW:restartFramework()
+
+  local timeOfEvent = os.time()  -- to get exact timestamp
+
+  -- receiving all from mobile messages sent after setHighWaterMark()
+  local receivedMessages = gateway.getReturnMessages()
+ -- look for AbnormalReport messages
+  local AllReceivedAbnormalReports = framework.filterMessages(receivedMessages, framework.checkMessageType(115, 50)) -- TODO: service wrapper functions need to be modified
+
+  D:log(AllReceivedAbnormalReports)
+
+  local PowerDisconnectedAbnormalReport = nil
+  for index = 1 , #AllReceivedAbnormalReports, 1 do
+    local StatusBitmap = vmsSW:decodeBitmap(AllReceivedAbnormalReports[index].Payload.StatusBitmap, "EventStateId")
+    D:log(StatusBitmap["PowerDisconnected"] )
+    if AllReceivedAbnormalReports[index].Payload.EventType == "PowerDisconnected" then
+        PowerDisconnectedAbnormalReport = AllReceivedAbnormalReports[index]
+        break
+    end
+  end
+
+
+  D:log(PowerDisconnectedAbnormalReport)
+
+  assert_nil(PowerDisconnectedAbnormalReport, "AbnormalReport  with PowerDisconnected information received when sending reports is disabled")
+
 
 end
 
