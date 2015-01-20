@@ -938,6 +938,129 @@ function test_DefaultValues_WhenPropertiesAreRequestedAfterPropertiesReset_Corre
   end
 end
 
+-----------------------------------------------------------------------------------------------
+-- DRIFT OVER TIME 
+-- The Report Capability shall ensure that periodic reports do not drift over time.
+-----------------------------------------------------------------------------------------------
+
+ 
+function test_DriftOverTime_Standard1AndAccelerated()
+  generic_test_DriftOverTime_StandardAndAccelerated(
+    {StandardReport1Interval=4, AcceleratedReport1Rate=4},
+    "ConfigChangeReport1",
+    "StandardReport1",
+    "AcceleratedReport1",
+    4, --min
+    1, --min
+    3
+  )
+end
+
+function test_DriftOverTime_Standard2AndAccelerated()
+  generic_test_DriftOverTime_StandardAndAccelerated(
+    {StandardReport2Interval=4, AcceleratedReport2Rate=4},
+    "ConfigChangeReport2",
+    "StandardReport2",
+    "AcceleratedReport2",
+    4, --min
+    1, --min
+    3
+  )
+end
+
+function test_DriftOverTime_Standard3AndAccelerated()
+  generic_test_DriftOverTime_StandardAndAccelerated(
+    {StandardReport3Interval=4, AcceleratedReport3Rate=4},
+    "ConfigChangeReport3",
+    "StandardReport3",
+    "AcceleratedReport3",
+    4, --min
+    1, --min
+    3
+  )
+end
+
+function generic_test_DriftOverTime_StandardAndAccelerated(properties,configChangeMsgKey,SRKey,ARKey,SRInterval,ARInterval,ARItems)
+  
+  local tolerance = 10 --secs
+  local toleranceForTimestampDiff = 5 --secs
+  local lastTimestamp = 0
+
+  vmsSW:setPropertiesByName(properties)
+
+  vmsSW:waitForMessagesByName(
+    {configChangeMsgKey},
+    30
+  )
+
+  D:log("Waiting for first standard report "..SRKey)
+  local message = vmsSW:waitForMessagesByName(
+    {SRKey},
+    SRInterval*60 + 2 * tolerance
+  )
+  assert_not_nil(
+    message,
+    "First Standard Report not received"
+  )
+  assert_not_nil(
+    message[SRKey],
+    "First Standard Report not received!"
+  )
+  assert_not_nil(
+    message[SRKey].Timestamp,
+    "Timestamp in Standard Report not received! "..SRKey
+  )
+
+  lastTimestamp = tonumber(message[SRKey].Timestamp)
+
+  for i=1,ARItems do 
+    D:log("Waiting for accelerated report "..ARKey)
+    local message = vmsSW:waitForMessagesByName(
+      {ARKey},
+      ARInterval*60 + tolerance
+    )
+    assert_not_nil(
+      message,
+      "Accelerated Report not received! Number in sequence: "..i
+    )
+    assert_not_nil(
+      message[ARKey],
+      "Accelerated Report not received! Number in sequence: "..i
+    )
+    assert_not_nil(
+      message[ARKey].Timestamp,
+      "Timestamp in Accelerated Report not received!"
+    )
+    local diff = tonumber(message[ARKey].Timestamp) - lastTimestamp
+    D:log(diff,"time diff")
+    assert_equal(ARInterval*60, diff, toleranceForTimestampDiff, "Wrong difference between timestamps. Processed report "..ARKey)
+    lastTimestamp = tonumber(message[ARKey].Timestamp)
+  end
+
+ 
+  D:log("Waiting for last standard report "..SRKey)
+  local message = vmsSW:waitForMessagesByName(
+    {SRKey},
+    ARInterval*60 + tolerance -- last report with AR interval!
+  )
+  assert_not_nil(
+    message,
+    "Last Standard Report not received"
+  )
+  assert_not_nil(
+    message[SRKey],
+    "Lat Standard Report not received!"
+  )
+  assert_not_nil(
+    message[SRKey].Timestamp,
+    "Timestamp in Standard Report not received!"
+  )
+  local diff = tonumber(message[SRKey].Timestamp) - lastTimestamp
+  D:log(diff,"time diff")
+  assert_equal(ARInterval*60, diff, toleranceForTimestampDiff, "Wrong difference between timestamps. Processed report "..SRKey)
+  lastTimestamp = tonumber(message[SRKey].Timestamp)
+
+end
 
 -----------------------------------------------------------------------------------------------
 -- GENERIC LOGIC for test cases
@@ -1032,7 +1155,8 @@ end
 
 -- This is generic function for configure and test reports (StandardReport,AcceleratedReport)
 function generic_test_StandardReportContent(firstReportKey,reportKey,properties,firstReportInterval,reportInterval,setConfigMsgKey,configChangeMsgKey,fields)
-  
+ 
+  -- 666 
   -- testing via message
   if setConfigMsgKey then
     D:log(setConfigMsgKey,"X1")
@@ -1303,10 +1427,6 @@ function generic_test_AcceleratedReportDisabledAndStandardReportEnabled(standard
   assert_equal(0,tonumber(reportMessage.count),"Message"..reportKey.." should not come!")
 end
 
---TODO: test 24hour interval ? (8.5.3.4 / 4.2) - ask Amjad
---TODO: test default 60minutes interval (just get properties after reset) (4.4, 4.8)
 --TODO: when SR is disabled AR is disabled too (4.13)
 --TODO: getConfig message (4.15)
---TODO: inhibit AR when it coincides with SR (5.4)
---TODO: drift over time (5.5)
 --TODO: PollRequest/Response (6.1-6.3)
