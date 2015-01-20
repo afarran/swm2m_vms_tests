@@ -1261,3 +1261,10 @@ function generic_test_AcceleratedReportDisabledAndStandardReportEnabled(standard
   assert_equal(0,tonumber(reportMessage.count),"Message"..reportKey.." should not come!")
 end
 
+--TODO: test 24hour interval ? (8.5.3.4 / 4.2) - ask Amjad
+--TODO: test default 60minutes interval (just get properties after reset) (4.4, 4.8)
+--TODO: when SR is disabled AR is disabled too (4.13)
+--TODO: getConfig message (4.15)
+--TODO: inhibit AR when it coincides with SR (5.4)
+--TODO: drift over time (5.5)
+--TODO: PollRequest/Response (6.1-6.3)
