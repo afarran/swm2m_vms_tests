@@ -1430,6 +1430,4 @@ end
 --TODO: test 24hour interval ? (8.5.3.4 / 4.2) - ask Amjad
 --TODO: when SR is disabled AR is disabled too (4.13)
 --TODO: getConfig message (4.15)
---TODO: inhibit AR when it coincides with SR (5.4)
---TODO: drift over time (5.5)
 --TODO: PollRequest/Response (6.1-6.3)
