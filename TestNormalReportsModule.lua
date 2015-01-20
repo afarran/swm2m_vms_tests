@@ -983,6 +983,7 @@ end
 function generic_test_DriftOverTime_StandardAndAccelerated(properties,configChangeMsgKey,SRKey,ARKey,SRInterval,ARInterval,ARItems)
   
   local tolerance = 10 --secs
+  local toleranceForTimestampDiff = 5 --secs
   local lastTimestamp = 0
 
   vmsSW:setPropertiesByName(properties)
@@ -1032,7 +1033,7 @@ function generic_test_DriftOverTime_StandardAndAccelerated(properties,configChan
     )
     local diff = tonumber(message[ARKey].Timestamp) - lastTimestamp
     D:log(diff,"time diff")
-    assert_equal(ARInterval*60, diff, 0, "Wrong difference between timestamps. Processed report "..ARKey)
+    assert_equal(ARInterval*60, diff, toleranceForTimestampDiff, "Wrong difference between timestamps. Processed report "..ARKey)
     lastTimestamp = tonumber(message[ARKey].Timestamp)
   end
 
@@ -1056,7 +1057,7 @@ function generic_test_DriftOverTime_StandardAndAccelerated(properties,configChan
   )
   local diff = tonumber(message[SRKey].Timestamp) - lastTimestamp
   D:log(diff,"time diff")
-  assert_equal(ARInterval*60, diff, 0, "Wrong difference between timestamps. Processed report "..SRKey)
+  assert_equal(ARInterval*60, diff, toleranceForTimestampDiff, "Wrong difference between timestamps. Processed report "..SRKey)
   lastTimestamp = tonumber(message[SRKey].Timestamp)
 
 end
