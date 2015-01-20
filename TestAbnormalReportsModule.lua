@@ -1357,10 +1357,13 @@ function test_PowerDisconnected_WhenTerminalIsOffForTimeAbovePowerDisconnectedSt
   -- look for StationaryIntervalSat messages
   local AllReceivedAbnormalReports = framework.filterMessages(receivedMessages, framework.checkMessageType(115, 50)) -- TODO: service wrapper functions need to be modified
 
+  D:log(AllReceivedAbnormalReports)
 
   local PowerDisconnectedAbnormalReport = nil
   for index = 1 , #AllReceivedAbnormalReports, 1 do
-    if AllReceivedAbnormalReports[index].Payload.EventType == "PowerDisconnected" then
+    local StatusBitmap = vmsSW:decodeBitmap(AllReceivedAbnormalReports[index].Payload.StatusBitmap, "EventStateId")
+    D:log(StatusBitmap["PowerDisconnected"] )
+    if AllReceivedAbnormalReports[index].Payload.EventType == "PowerDisconnected" and StatusBitmap["PowerDisconnected"] == true then
         PowerDisconnectedAbnormalReport = AllReceivedAbnormalReports[index]
         break
     end
@@ -1530,7 +1533,7 @@ function test_PowerDisconnected_ForTerminalInPowerDisconnectedStateWhenTerminalI
   assert_true(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState is incorrectly false")
   D:log(PowerDisconnectedStateProperty, "PowerDisconnectedStateProperty in the start of TC")
 --]]
-  framework.delay(POWER_DISCONNECTED_END_DEBOUNCE_TIME)
+  framework.delay(POWER_DISCONNECTED_START_DEBOUNCE_TIME)
 
   local timeOfEvent = os.time()  -- to get exact timestamp
 
@@ -1548,7 +1551,8 @@ function test_PowerDisconnected_ForTerminalInPowerDisconnectedStateWhenTerminalI
   for index = 1 , #AllReceivedAbnormalReports, 1 do
 
     local StatusBitmap = vmsSW:decodeBitmap(AllReceivedAbnormalReports[index].Payload.StatusBitmap, "EventStateId")
-    if AllReceivedAbnormalReports[index].Payload.EventType == "PowerDisconnected" and StatusBitmap["PowerDisconnected"] ~= 1 then
+    D:log(StatusBitmap["PowerDisconnected"])
+    if AllReceivedAbnormalReports[index].Payload.EventType == "PowerDisconnected" and StatusBitmap["PowerDisconnected"] ~= true then
         PowerDisconnectedAbnormalReport = AllReceivedAbnormalReports[index]
         break
     end
@@ -1613,7 +1617,7 @@ function test_PowerDisconnected_ForTerminalInPowerDisconnectedStateWhenTerminalI
 
 
   local StatusBitmap = vmsSW:decodeBitmap(PowerDisconnectedAbnormalReport.Payload.StatusBitmap, "EventStateId")
-  assert_true(StatusBitmap["PowerDisconnected"], "PowerDisconnected bit in StatusBitmap has not been correctly changed when terminal was power-cycled")
+  assert_false(StatusBitmap["PowerDisconnected"], "PowerDisconnected bit in StatusBitmap has not been correctly changed when terminal was power-cycled")
 
 end
 
