@@ -898,6 +898,48 @@ function test_LogReport3_WhenGpsPositionIsSetAndLogFilterEstablished_LogEntriesS
 end
 
 -----------------------------------------------------------------------------------------------
+-- DEFAULT VALUES tests
+-----------------------------------------------------------------------------------------------
+
+function test_DefaultValues_WhenPropertiesAreRequestedAfterPropertiesReset_CorrectDefaultValuesAreGiven()
+  -- reset of properties 
+  systemSW:resetProperties({vmsSW.sin})
+
+   -- get properties
+  local propertiesToCheck = {
+    "StandardReport1Interval",
+    "AcceleratedReport1Rate", 
+    "LogReport1Rate", 
+    "StandardReport2Interval",
+    "AcceleratedReport2Rate", 
+    "LogReport2Rate", 
+    "StandardReport3Interval",
+    "AcceleratedReport3Rate", 
+    "LogReport3Rate", 
+  }
+
+  local propertiesValues = {
+    StandardReport1Interval = 60,
+    AcceleratedReport1Rate = 1,
+    LogReport1Rate = 1,
+    StandardReport2Interval = 60,
+    AcceleratedReport2Rate = 1,
+    LogReport2Rate = 1, 
+    StandardReport3Interval = 60,
+    AcceleratedReport3Rate = 1,
+    LogReport3Rate = 1 
+  }
+
+  local propertiesFetched = vmsSW:getPropertiesByName(propertiesToCheck)
+
+  for key,value in pairs(propertiesValues) do
+    assert_not_nil(propertiesFetched[key],"Property "..key.." not found!")
+    assert_equal(value,tonumber(propertiesFetched[key]),"Property "..key.." - wrong default ")
+  end
+end
+
+
+-----------------------------------------------------------------------------------------------
 -- GENERIC LOGIC for test cases
 -----------------------------------------------------------------------------------------------
 
@@ -1261,3 +1303,10 @@ function generic_test_AcceleratedReportDisabledAndStandardReportEnabled(standard
   assert_equal(0,tonumber(reportMessage.count),"Message"..reportKey.." should not come!")
 end
 
+--TODO: test 24hour interval ? (8.5.3.4 / 4.2) - ask Amjad
+--TODO: test default 60minutes interval (just get properties after reset) (4.4, 4.8)
+--TODO: when SR is disabled AR is disabled too (4.13)
+--TODO: getConfig message (4.15)
+--TODO: inhibit AR when it coincides with SR (5.4)
+--TODO: drift over time (5.5)
+--TODO: PollRequest/Response (6.1-6.3)
