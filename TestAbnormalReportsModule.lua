@@ -1127,8 +1127,6 @@ function test_IdpBlocked_WhenSatelliteControlStateIsNotActiveForTimeBelowIdpBloc
 end
 
 
-
-
 function test_IdpBlocked_ForTerminalInIdpBlockedStateWhenSatelliteControlStateIsActiveForTimeAboveIdpBlockedEndDebouncePeriod_IdpBlockedAbnormalReportIsSent()
 
   -- device profile application
@@ -1323,6 +1321,7 @@ function test_PowerDisconnected_WhenTerminalIsOffForTimeAbovePowerDisconnectedSt
   -- *** Setup
   local POWER_DISCONNECTED_START_DEBOUNCE_TIME = 1   -- seconds
   local POWER_DISCONNECTED_END_DEBOUNCE_TIME = 1      -- seconds
+  local PROPERTIES_SAVE_INTERVAL = 600                      -- seconds
 
   -- terminal stationary
   local InitialPosition = {
@@ -1330,6 +1329,14 @@ function test_PowerDisconnected_WhenTerminalIsOffForTimeAbovePowerDisconnectedSt
     latitude = 1,                   -- degrees
     longitude = 1,                  -- degrees
   }
+
+  -- terminal stationary
+  local AfterRebootPosition = {
+    speed = 7,                      -- kmh
+    latitude = 5,                   -- degrees
+    longitude = 5,                  -- degrees
+  }
+
 
   vmsSW:setPropertiesByName({PowerDisconnectedStartDebounceTime = POWER_DISCONNECTED_START_DEBOUNCE_TIME,
                              PowerDisconnectedEndDebounceTime = POWER_DISCONNECTED_END_DEBOUNCE_TIME,
@@ -1340,8 +1347,8 @@ function test_PowerDisconnected_WhenTerminalIsOffForTimeAbovePowerDisconnectedSt
   -- *** Execute
   -- terminal in initial position
   GPS:set(InitialPosition)
+  framework.delay(PROPERTIES_SAVE_INTERVAL)
   gateway.setHighWaterMark() -- to get the newest messages
-
   framework.delay(POWER_DISCONNECTED_START_DEBOUNCE_TIME)
 
   -- checking PowerDisconnectedState property - this is expected to be false - terminal is powered on for time longer than
@@ -1350,6 +1357,8 @@ function test_PowerDisconnected_WhenTerminalIsOffForTimeAbovePowerDisconnectedSt
   D:log(PowerDisconnectedStateProperty, "PowerDisconnectedStateProperty in the start of TC")
 
   systemSW:restartFramework()
+
+  GPS:set(AfterRebootPosition)
 
   local timeOfEvent = os.time()  -- to get exact timestamp
 
