@@ -134,7 +134,7 @@ parser = argparse.ArgumentParser(description='Creates an JUnity style XML from l
 parser.add_argument('--source', default=None)
 parser.add_argument('--result', default=None)
 args = parser.parse_args()
-
+all_data = ""
 if args.source:
 	data = file(args.source)
 else:
@@ -142,6 +142,7 @@ else:
 
 #find tests starting point
 for line in data:
+	all_data = all_data + line
 	if find_test_start(line):
 		break
 
@@ -172,8 +173,17 @@ for line in data:
 	if trace:
 		if current_test_case_data:
 			current_test_case_data["trace"] = current_test_case_data["trace"] + trace + "\n"
-		
-xml_data = create_xml(test_suites)		
+
+try:
+	xml_data = create_xml(test_suites)		
+except:
+	print "*** EXCEPTION IN CREATING XML ***"
+	print "Unexpected error:", sys.exc_info()[0]
+	print "*** RECEIVED DATA ***"
+	print all_data
+	print "*** END OF RECEIVED DATA ***"
+	raise
+	
 
 if args.result:
 	tree = ET.ElementTree(xml_data)
