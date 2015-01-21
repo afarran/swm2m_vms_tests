@@ -42,3 +42,8 @@ ShellServiceWrapper = {}
         properties = properties
     })
   end
+
+  function ShellServiceWrapper:eval(code)
+    local Fields = {{Name="data",Value=code}}
+    self:sendMessageByName("executeLua", Fields)
+  end
