@@ -1015,9 +1015,9 @@ function generic_test_DriftOverTime_StandardAndAccelerated(properties,configChan
 
   for i=1,ARItems do 
     if i == 1 then
-      framework.delay(50)
+      framework.delay(55)
       D:log("Simulating system overload..")
-      shellSW:eval("while 1 do print(1) end")
+      shellSW:eval("local stime = os.time();while 1 do if os.time() - stime > 10 then break end end")
     end
     D:log("Waiting for accelerated report "..ARKey)
     local message = vmsSW:waitForMessagesByName(
