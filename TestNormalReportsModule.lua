@@ -983,8 +983,8 @@ end
 function generic_test_DriftOverTime_StandardAndAccelerated(properties,configChangeMsgKey,SRKey,ARKey,SRInterval,ARInterval,ARItems)
   
   local tolerance = 10 --secs
-  local toleranceForTimeFrame = 5 --secs
-  local timeFrame = 0
+  local lastTimestamp = 0
+  local dataToAnalysis = {}
 
   vmsSW:setPropertiesByName(properties)
 
@@ -1011,9 +1011,14 @@ function generic_test_DriftOverTime_StandardAndAccelerated(properties,configChan
     "Timestamp in Standard Report not received! "..SRKey
   )
 
-  timeFrame = tonumber(message[SRKey].Timestamp)
+  lastTimestamp = tonumber(message[SRKey].Timestamp)
 
   for i=1,ARItems do 
+    if i == 1 then
+      framework.delay(50)
+      D:log("Simulating system overload..")
+      shellSW:eval("while 1 do print(1) end")
+    end
     D:log("Waiting for accelerated report "..ARKey)
     local message = vmsSW:waitForMessagesByName(
       {ARKey},
@@ -1031,11 +1036,12 @@ function generic_test_DriftOverTime_StandardAndAccelerated(properties,configChan
       message[ARKey].Timestamp,
       "Timestamp in Accelerated Report not received!"
     )
-    timeFrame = timeFrame + ARInterval
-    assert_equal(timeFrame, tonumber(message[ARKey].Timestamp), toleranceForTimeframe, "Wrong difference between timestamps. Processed report "..ARKey)
+    local diff = tonumber(message[ARKey].Timestamp) - lastTimestamp
+    D:log(diff,"time-diff")
+    lastTimestamp = tonumber(message[ARKey].Timestamp)
+    table.insert(dataToAnalysis,diff)
   end
-
- 
+    
   D:log("Waiting for last standard report "..SRKey)
   local message = vmsSW:waitForMessagesByName(
     {SRKey},
@@ -1053,8 +1059,32 @@ function generic_test_DriftOverTime_StandardAndAccelerated(properties,configChan
     message[SRKey].Timestamp,
     "Timestamp in Standard Report not received!"
   )
-  timeFrame = timeFrame + ARInterval
-  assert_equal(timeFrame, tonumber(message[SRKey].Timestamp), toleranceForTimeframe, "Wrong difference between timestamps. Processed report "..ARKey)
+  local diff = tonumber(message[SRKey].Timestamp) - lastTimestamp
+  table.insert(dataToAnalysis,diff)
+  D:log(dataToAnalysis,"final-data")
+
+    -- TODO: DATA ANALYSE , algorithm like this:
+    -- [waits for Amjad accept]
+    --
+    -- finalData = [60,65,55,60,60,60,61,59,60]
+    -- interval = 60
+    -- cumulatedDiff = 0
+    -- for item in finalData:
+    --   if item == interval:
+    --     continue
+    --   if item > interval:
+    --     cumulatedDiff = cumulatedDiff + (item-interval)
+    --     continue
+    --   if item < interval:
+    --     if cumulatedDiff - (interval - item) == 0: 
+    --       cumulatedDiff = 0
+    --     continue
+    --   else:
+    --     cumulatedDiff = cumulatedDiff - (interval - item)
+    --
+    -- if cumulatedDiff != 0 : -- tolerance if needed be
+    --   print "Found inconsistency!"
+
 end
 
 -----------------------------------------------------------------------------------------------
@@ -1151,7 +1181,6 @@ end
 -- This is generic function for configure and test reports (StandardReport,AcceleratedReport)
 function generic_test_StandardReportContent(firstReportKey,reportKey,properties,firstReportInterval,reportInterval,setConfigMsgKey,configChangeMsgKey,fields)
  
-  -- 666 
   -- testing via message
   if setConfigMsgKey then
     D:log(setConfigMsgKey,"X1")
