@@ -33,6 +33,7 @@ end
 --- teardown function executed after each unit test
 function teardown()
 
+  GPS:set({jammingDetect = false, fixType = 3})
 
 end
 
@@ -1437,9 +1438,9 @@ end
 function test_PowerDisconnected_WhenTerminalIsOffForTimeBelowPowerDisconnectedStartDebouncePeriod_PowerDisconnectedAbnormalReportIsNotSentWhenTerminalIsOnAgain()
 
   -- *** Setup
-  local POWER_DISCONNECTED_START_DEBOUNCE_TIME = 1   -- seconds
-  local POWER_DISCONNECTED_END_DEBOUNCE_TIME = 1200        -- seconds
-  local PROPERTIES_SAVE_INTERVAL = 600                  -- seconds
+  local POWER_DISCONNECTED_START_DEBOUNCE_TIME = 1          -- seconds
+  local POWER_DISCONNECTED_END_DEBOUNCE_TIME = 4000         -- seconds
+  local PROPERTIES_SAVE_INTERVAL = 600                      -- seconds
 
   -- terminal stationary
   local InitialPosition = {
@@ -1676,6 +1677,83 @@ function test_PowerDisconnected_WhenTerminalIsOffForTimeAbovePowerDisconnectedSt
   D:log(PowerDisconnectedAbnormalReport)
 
   assert_nil(PowerDisconnectedAbnormalReport, "AbnormalReport  with PowerDisconnected information received when sending reports is disabled")
+
+
+end
+
+
+function test_GpsBlocked_WhenGpsSignalIsBlocked_TimeStampsReportedInPeriodicReportsAreTheSame()
+
+  -- *** Setup
+  local GPS_BLOCKED_START_DEBOUNCE_TIME = 400   -- seconds
+  local GPS_BLOCKED_END_DEBOUNCE_TIME = 1       -- seconds
+  local MAX_FIX_TIMEOUT = 60                    -- seconds (60 seconds is the minimum allowed value for this property)
+
+  -- terminal stationary, GPS signal good initially
+  local InitialPosition = {
+    speed = 0,                      -- kmh
+    latitude = 1,                   -- degrees
+    longitude = 1,                  -- degrees
+    fixType = 3,                    -- valid fix
+   }
+
+  -- terminal in different position (no valid fix provided)
+  local GpsBlockedPosition = {
+    speed = 0,                      -- kmh
+    latitude = 1,                   -- degrees
+    longitude = 1,                  -- degrees
+    fixType = 1,                    -- no fix
+  }
+
+  vmsSW:setPropertiesByName({GpsBlockedStartDebounceTime = GPS_BLOCKED_START_DEBOUNCE_TIME,
+                             GpsBlockedEndDebounceTime = GPS_BLOCKED_END_DEBOUNCE_TIME,
+                             GpsBlockedSendReport = true,
+                             IdpBlockedSendReport = false,
+                             StandardReport1Interval = 2,
+                             AcceleratedReport1Rate = 2,
+                             }
+  )
+
+  positionSW:setPropertiesByName({maxFixTimeout = MAX_FIX_TIMEOUT})
+
+  -- *** Execute
+  -- terminal in initial position, gps signal not blocked
+  GPS:set(InitialPosition)
+  gateway.setHighWaterMark() -- to get the newest messages
+  -- GPS signal is blocked from now
+  GPS:set(GpsBlockedPosition)
+
+  -- waiting until MAX_FIX_TIMEOUT time passes - no new fix provided during this period
+  framework.delay(MAX_FIX_TIMEOUT + 10)
+
+  -- Standard Reports and Accelerated Reports are sent periodically
+  local ReceivedMessages = vmsSW:waitForMessagesByName({"StandardReport1"})
+  local StandardReportTimestamp1 = tonumber(ReceivedMessages["StandardReport1"].Timestamp)
+
+  ReceivedMessages = vmsSW:waitForMessagesByName({"AcceleratedReport1"})
+
+  local AcceleratedReportTimestamp1 = tonumber(ReceivedMessages["AcceleratedReport1"].Timestamp)
+
+  D:log({StandardReportTimestamp1, AcceleratedReportTimestamp1})
+
+  framework.delay(65)
+
+  gateway.setHighWaterMark() -- to get the newest messages
+
+  ReceivedMessages = vmsSW:waitForMessagesByName({"StandardReport1"}, 125)
+  local StandardReportTimestamp2 = tonumber(ReceivedMessages["StandardReport1"].Timestamp)
+
+  ReceivedMessages = vmsSW:waitForMessagesByName({"AcceleratedReport1"}, 125)
+
+  local AcceleratedReportTimestamp2 = tonumber(ReceivedMessages["AcceleratedReport1"].Timestamp)
+
+  D:log({StandardReportTimestamp2, AcceleratedReportTimestamp2})
+
+  -- back to good GPS quality
+  GPS:set(InitialPosition)
+
+  assert_equal(StandardReportTimestamp1, StandardReportTimestamp2, "When GPS is blocked StandardReports does not contain the same timestamps")
+  assert_equal(AcceleratedReportTimestamp1, AcceleratedReportTimestamp2, "When GPS is blocked AcceleratedReports does not contain the same timestamps")
 
 
 end
