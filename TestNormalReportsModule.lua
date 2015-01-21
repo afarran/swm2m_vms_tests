@@ -983,8 +983,8 @@ end
 function generic_test_DriftOverTime_StandardAndAccelerated(properties,configChangeMsgKey,SRKey,ARKey,SRInterval,ARInterval,ARItems)
   
   local tolerance = 10 --secs
-  local toleranceForTimestampDiff = 5 --secs
-  local lastTimestamp = 0
+  local toleranceForTimeFrame = 5 --secs
+  local timeFrame = 0
 
   vmsSW:setPropertiesByName(properties)
 
@@ -1011,7 +1011,7 @@ function generic_test_DriftOverTime_StandardAndAccelerated(properties,configChan
     "Timestamp in Standard Report not received! "..SRKey
   )
 
-  lastTimestamp = tonumber(message[SRKey].Timestamp)
+  timeFrame = tonumber(message[SRKey].Timestamp)
 
   for i=1,ARItems do 
     D:log("Waiting for accelerated report "..ARKey)
@@ -1031,10 +1031,8 @@ function generic_test_DriftOverTime_StandardAndAccelerated(properties,configChan
       message[ARKey].Timestamp,
       "Timestamp in Accelerated Report not received!"
     )
-    local diff = tonumber(message[ARKey].Timestamp) - lastTimestamp
-    D:log(diff,"time diff")
-    assert_equal(ARInterval*60, diff, toleranceForTimestampDiff, "Wrong difference between timestamps. Processed report "..ARKey)
-    lastTimestamp = tonumber(message[ARKey].Timestamp)
+    timeFrame = timeFrame + ARInterval
+    assert_equal(timeFrame, tonumber(message[ARKey].Timestamp), toleranceForTimeframe, "Wrong difference between timestamps. Processed report "..ARKey)
   end
 
  
@@ -1055,11 +1053,8 @@ function generic_test_DriftOverTime_StandardAndAccelerated(properties,configChan
     message[SRKey].Timestamp,
     "Timestamp in Standard Report not received!"
   )
-  local diff = tonumber(message[SRKey].Timestamp) - lastTimestamp
-  D:log(diff,"time diff")
-  assert_equal(ARInterval*60, diff, toleranceForTimestampDiff, "Wrong difference between timestamps. Processed report "..SRKey)
-  lastTimestamp = tonumber(message[SRKey].Timestamp)
-
+  timeFrame = timeFrame + ARInterval
+  assert_equal(timeFrame, tonumber(message[SRKey].Timestamp), toleranceForTimeframe, "Wrong difference between timestamps. Processed report "..ARKey)
 end
 
 -----------------------------------------------------------------------------------------------
