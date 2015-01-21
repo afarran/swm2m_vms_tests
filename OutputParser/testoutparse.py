@@ -98,7 +98,15 @@ def create_xml(data):
 		
 		for test_case in test_suite_data:
 			xml_test_case = ET.SubElement(xml_test_suite, "testcase")
-			xml_test_case.set("name", test_case["name"])
+			try:
+				tokens = test_case["name"].split("_")
+				test_group = tokens[1]
+				test_condition = " ".join(re.findall("[A-Z][^A-Z]*", tokens[2]))
+				test_expected_result = " ".join(re.findall("[A-Z][^A-Z]*", tokens[3]))
+				test_case_name = "%s: %s - %s" % (test_group, test_condition, test_expected_result)
+			except:
+				test_case_name = test_case["name"]
+			xml_test_case.set("name", test_case_name)	
 			xml_test_case.set("time", test_case["time"])
 			
 			if test_case["result"] == "FAIL":
