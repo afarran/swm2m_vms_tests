@@ -16,7 +16,7 @@ function suite_setup()
 end
 
 -- executed after each test suite
-function suite_teardown()
+function suite_teardown();
 end
 
 --- setup function
@@ -587,7 +587,6 @@ function test_GpsBlocked_ForTerminalInGpsBlockedStateWhenGpsSignalIsNotBlockedFo
   vmsSW:setPropertiesByName({GpsBlockedStartDebounceTime = GPS_BLOCKED_START_DEBOUNCE_TIME,
                              GpsBlockedEndDebounceTime = GPS_BLOCKED_END_DEBOUNCE_TIME,
                              GpsBlockedSendReport = true,
-                             IdpBlockedSendReport = false,
                              }
   )
 
@@ -730,7 +729,6 @@ function test_GpsBlocked_WhenGpsSignalIsBlockedForTimeAboveGpsBlockedStartDeboun
   vmsSW:setPropertiesByName({GpsBlockedStartDebounceTime = GPS_BLOCKED_START_DEBOUNCE_TIME,
                              GpsBlockedEndDebounceTime = GPS_BLOCKED_END_DEBOUNCE_TIME,
                              GpsBlockedSendReport = false,
-                             IdpBlockedSendReport = false,
                              }
   )
 
@@ -793,7 +791,6 @@ function test_GpsBlocked_WhenGpsSignalIsBlockedForTimeBelowGpsBlockedStartDeboun
   vmsSW:setPropertiesByName({GpsBlockedStartDebounceTime = GPS_BLOCKED_START_DEBOUNCE_TIME,
                              GpsBlockedEndDebounceTime = GPS_BLOCKED_END_DEBOUNCE_TIME,
                              GpsBlockedSendReport = true,
-                             IdpBlockedSendReport = false,
                              }
   )
 
@@ -849,7 +846,6 @@ function test_GpsBlocked_ForTerminalInGpsBlockedStateWhenGpsSignalIsNotBlockedFo
   vmsSW:setPropertiesByName({GpsBlockedStartDebounceTime = GPS_BLOCKED_START_DEBOUNCE_TIME,
                              GpsBlockedEndDebounceTime = GPS_BLOCKED_END_DEBOUNCE_TIME,
                              GpsBlockedSendReport = true,
-                             IdpBlockedSendReport = false,
                              }
   )
 
