@@ -36,7 +36,8 @@ UniboxServiceWrapper = {}
       { name ="uniboxStatus", min=2},
     }
     self.events = {
-      connected = "UNIBOX_CONNECTED"
+      connected = "UNIBOX_CONNECTED",
+      external_power_connected = "EXTERNAL_POWER_CONNECTED"
     }
 
     self.handleName = "user.UniboxInOut._NAME"
