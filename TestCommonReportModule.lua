@@ -303,3 +303,45 @@ function test_CommonReport_WhenMessageDefinitionChanged_VersionMessageIsSent()
   assert_equal(currentVmsAgent, versionMessage.VmsAgent, "Vms agent has not changed but VmsAgent field is different!")
   
 end
+
+function test_CommonReport_WhenPropertyDefinitionChanged_VersionMessageIsSent()
+  local path = "/act/svc/VMS/properties.lua"    
+  vmsSW:sendMessageByName("GetVersion")
+  local receivedMessages = vmsSW:waitForMessagesByName({"Version"})
+  local versionMessage = receivedMessages.Version
+  local currentVmsAgent = versionMessage.VmsAgent
+  
+  assert_not_nil(versionMessage, "Can't get current VMS version, Version message not received when GetVersion message was sent")
+  assert_not_nil(versionMessage.PropDefHash, "Version message does not containt MessageDefHash field!")
+  local currentMessageDefHash = versionMessage.MessageDefHash
+  local currentPropDefHash = versionMessage.PropDefHash
+  
+  local readData, readResult = filesystemSW:read(path, 0, 100)
+  local strData = string.char(unpack(readData))
+  
+  local propertyOffset, propertyOffsetEnd, currentPropertyNumber = string.find(strData, "%,(%d+)%)\n")
+
+  local currentNumber = string.sub(currentPropertyNumber, 1, 1)
+  
+  local nextNumber = (tonumber(currentNumber) + 1) % 10
+  -- propertyNameOffset = propertyNameOffset - 1 -- Offset calculation is not needed, string.find returns match with "," so it has to be shifted +1
+  local writeOK, writeResult = filesystemSW:write(path, propertyOffset, ""..nextNumber)
+  assert_true(writeOK, "Write to "..path.." failed!")
+  
+  restoreData = {}
+  restoreData.path = path
+  restoreData.offset = propertyOffset
+  restoreData.data = framework.base64Encode(currentPropertyNumber)
+  restoreData.restartVMS = true
+  
+  systemSW:restartService(vmsSW.sin)
+  
+  receivedMessages = vmsSW:waitForMessagesByName({"Version"})
+  versionMessage = receivedMessages.Version
+  assert_not_nil(versionMessage, "Version message not received")
+  assert_not_nil(versionMessage.PropDefHash, "Version message does not contain PropDefHash field")
+  assert_not_equal(currentPropDefHash, versionMessage.PropDefHash, "PropDefHash is expected to be different than original one!")
+  assert_equal(currentMessageDefHash, versionMessage.MessageDefHash, "Message definition has not changed but MessageDefHash is different!")
+  assert_equal(currentVmsAgent, versionMessage.VmsAgent, "Vms agent has not changed but VmsAgent field is different!")
+  
+end
