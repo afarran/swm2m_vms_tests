@@ -368,4 +368,11 @@ ServiceWrapper = {}
     return gateway.getHighWaterMark()
   end
 
+  function ServiceWrapper:getServicePath()
+    if self.sin > 128 then
+      return "/act/user/" .. self.name .. "/"
+    else
+      return "/act/svc/" .. self.name .. "/"
+    end
+  end
 
