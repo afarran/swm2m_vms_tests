@@ -946,43 +946,43 @@ end
  
 function test_DriftOverTime_Standard1AndAccelerated()
   generic_test_DriftOverTime_StandardAndAccelerated(
-    {StandardReport1Interval=4, AcceleratedReport1Rate=4},
+    {StandardReport1Interval=8, AcceleratedReport1Rate=8},
     "ConfigChangeReport1",
     "StandardReport1",
     "AcceleratedReport1",
-    4, --min
+    8, --min
     1, --min
-    3
+    7
   )
 end
 
 function test_DriftOverTime_Standard2AndAccelerated()
   generic_test_DriftOverTime_StandardAndAccelerated(
-    {StandardReport2Interval=4, AcceleratedReport2Rate=4},
+    {StandardReport2Interval=8, AcceleratedReport2Rate=8},
     "ConfigChangeReport2",
     "StandardReport2",
     "AcceleratedReport2",
-    4, --min
+    8, --min
     1, --min
-    3
+    7
   )
 end
 
 function test_DriftOverTime_Standard3AndAccelerated()
   generic_test_DriftOverTime_StandardAndAccelerated(
-    {StandardReport3Interval=4, AcceleratedReport3Rate=4},
+    {StandardReport3Interval=8, AcceleratedReport3Rate=8},
     "ConfigChangeReport3",
     "StandardReport3",
     "AcceleratedReport3",
-    4, --min
+    8, --min
     1, --min
-    3
+    7
   )
 end
 
 function generic_test_DriftOverTime_StandardAndAccelerated(properties,configChangeMsgKey,SRKey,ARKey,SRInterval,ARInterval,ARItems)
   
-  local tolerance = 10 --secs
+  local tolerance = 40 --secs
   local lastTimestamp = 0
   local dataToAnalysis = {}
 
@@ -1015,11 +1015,10 @@ function generic_test_DriftOverTime_StandardAndAccelerated(properties,configChan
 
   for i=1,ARItems do 
     if i == 1 then
-      framework.delay(55)
       D:log("Simulating system overload..")
       local overloadThread = coroutine.create(
         function()
-          shellSW:eval("local stime = os.time();while 1 do if os.time() - stime > 10 then break end end")
+          shellSW:eval("local stime = os.time();while 1 do if os.time() - stime > 90 then break end end")
         end
       )
       coroutine.resume(overloadThread)
