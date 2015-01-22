@@ -1700,7 +1700,7 @@ end
 function test_GpsBlocked_WhenGpsSignalIsBlocked_TimeStampsReportedInPeriodicReportsAreTheSame()
 
   -- *** Setup
-  local GPS_BLOCKED_START_DEBOUNCE_TIME = 350   -- seconds
+  local GPS_BLOCKED_START_DEBOUNCE_TIME = 400   -- seconds
   local GPS_BLOCKED_END_DEBOUNCE_TIME = 1       -- seconds
   local MAX_FIX_TIMEOUT = 60                    -- seconds (60 seconds is the minimum allowed value for this property)
 
@@ -1743,16 +1743,14 @@ function test_GpsBlocked_WhenGpsSignalIsBlocked_TimeStampsReportedInPeriodicRepo
   -----------------------------------------------------------------------------------------------------
   gateway.setHighWaterMark() -- to get the newest messages
   -- Waiting for StandardReport
-  local ReceivedMessages = vmsSW:waitForMessagesByName({"StandardReport1"})
+  local ReceivedMessages = vmsSW:waitForMessagesByName({"StandardReport1"}, 125)
   -- getting timestamp from first StandardReport
   local StandardReportTimestamp1 = tonumber(ReceivedMessages["StandardReport1"].Timestamp)
   -- waiting for AcceleratedReport
-  ReceivedMessages = vmsSW:waitForMessagesByName({"AcceleratedReport1"})
+  ReceivedMessages = vmsSW:waitForMessagesByName({"AcceleratedReport1"}, 125)
   -- getting timestamp from first AcceleratedReport
   local AcceleratedReportTimestamp1 = tonumber(ReceivedMessages["AcceleratedReport1"].Timestamp)
   D:log({StandardReportTimestamp1, AcceleratedReportTimestamp1})
-
-  framework.delay(65) -- wait for "next series" of Accelerated and Standard Reports
 
   gateway.setHighWaterMark() -- to get the newest messages
   ReceivedMessages = vmsSW:waitForMessagesByName({"StandardReport1"}, 125)
