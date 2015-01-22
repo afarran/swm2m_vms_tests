@@ -1699,6 +1699,8 @@ end
 
 function test_GpsBlocked_WhenGpsSignalIsBlocked_TimeStampsReportedInPeriodicReportsAreTheSame()
 
+  -- TODO: random selection of number of Accelerated and Standard report may be added in the future - for now it runs on report number 1
+
   -- *** Setup
   local GPS_BLOCKED_START_DEBOUNCE_TIME = 400   -- seconds
   local GPS_BLOCKED_END_DEBOUNCE_TIME = 1       -- seconds
