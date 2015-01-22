@@ -227,6 +227,8 @@ function test_CommonReport_WhenVmsVersionHasChanged_VersionReportIsSent()
   assert_not_nil(versionMessage.VmsAgent, "Version message does not containt VmsAgent field!")
   
   local currentVersion = versionMessage.VmsAgent
+  local currentMessageDefHash = versionMessage.MessageDefHash
+  local currentPropDefHash = versionMessage.PropDefHash
   
   -- search for version info in main.lua between 800 and 1000 chars
   local data, readResult = filesystemSW:read(path, 800, 200)
@@ -256,6 +258,8 @@ function test_CommonReport_WhenVmsVersionHasChanged_VersionReportIsSent()
   
   assert_not_nil(versionMessage, "Version message not received afer VMS version changed")
   assert_not_equal(currentVersion, versionMessage.VmsAgent, "Reported VMS agent version is incorrect")
+  assert_equal(currentMessageDefHash, versionMessage.MessageDefHash, "Message definition was not changed but MessageDefHash is different")
+  assert_equal(currentPropDefHash, versionMessage.PropDefHash, "Property definition was not changed but PropDefHash is different")
   
 end
 
@@ -264,6 +268,7 @@ function test_CommonReport_WhenMessageDefinitionChanged_VersionMessageIsSent()
   vmsSW:sendMessageByName("GetVersion")
   local receivedMessages = vmsSW:waitForMessagesByName({"Version"})
   local versionMessage = receivedMessages.Version
+  local currentVmsAgent = versionMessage.VmsAgent
   
   assert_not_nil(versionMessage, "Can't get current VMS version, Version message not received when GetVersion message was sent")
   assert_not_nil(versionMessage.MessageDefHash, "Version message does not containt MessageDefHash field!")
@@ -295,5 +300,6 @@ function test_CommonReport_WhenMessageDefinitionChanged_VersionMessageIsSent()
   assert_not_nil(versionMessage.MessageDefHash, "Version message does not contain MessageDefHash field")
   assert_not_equal(currentMessageDefHash, versionMessage.MessageDefHash, "MessageDefHash is expected to be different than original one!")
   assert_equal(currentPropDefHash, versionMessage.PropDefHash, "Property definition has not changed but PropDefHash is different!")
+  assert_equal(currentVmsAgent, versionMessage.VmsAgent, "Vms agent has not changed but VmsAgent field is different!")
   
 end
