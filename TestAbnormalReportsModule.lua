@@ -17,6 +17,10 @@ end
 
 -- executed after each test suite
 function suite_teardown()
+
+  GPS:set({jammingDetect = false, fixType = 3}) -- not to interrupt other suits
+
+
 end
 
 --- setup function
