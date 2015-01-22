@@ -35,7 +35,12 @@ UniboxServiceWrapper = {}
       { name ="uniboxEvent", min=1},
       { name ="uniboxStatus", min=2},
     }
-    
+    self.events = {
+      connected = "UNIBOX_CONNECTED"
+    }
+
+    self.handleName = "user.UniboxInOut._NAME"
+
     ServiceWrapper._init(self, {
         sin = 162, 
         name = "Unibox", 
@@ -43,4 +48,6 @@ UniboxServiceWrapper = {}
         messages_from = messages_from, 
         properties = properties
     })
+
+
   end

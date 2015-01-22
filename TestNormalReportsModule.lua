@@ -946,37 +946,37 @@ end
  
 function test_DriftOverTime_Standard1AndAccelerated()
   generic_test_DriftOverTime_StandardAndAccelerated(
-    {StandardReport1Interval=8, AcceleratedReport1Rate=8},
+    {StandardReport1Interval=4, AcceleratedReport1Rate=4},
     "ConfigChangeReport1",
     "StandardReport1",
     "AcceleratedReport1",
-    8, --min
+    4, --min
     1, --min
-    7
+    3
   )
 end
 
 function test_DriftOverTime_Standard2AndAccelerated()
   generic_test_DriftOverTime_StandardAndAccelerated(
-    {StandardReport2Interval=8, AcceleratedReport2Rate=8},
+    {StandardReport2Interval=4, AcceleratedReport2Rate=4},
     "ConfigChangeReport2",
     "StandardReport2",
     "AcceleratedReport2",
-    8, --min
+    4, --min
     1, --min
-    7
+    3
   )
 end
 
 function test_DriftOverTime_Standard3AndAccelerated()
   generic_test_DriftOverTime_StandardAndAccelerated(
-    {StandardReport3Interval=8, AcceleratedReport3Rate=8},
+    {StandardReport3Interval=4, AcceleratedReport3Rate=4},
     "ConfigChangeReport3",
     "StandardReport3",
     "AcceleratedReport3",
-    8, --min
+    4, --min
     1, --min
-    7
+    3
   )
 end
 

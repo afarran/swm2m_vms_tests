@@ -47,3 +47,8 @@ ShellServiceWrapper = {}
     local Fields = {{Name="data",Value=code}}
     self:sendMessageByName("executeLua", Fields)
   end
+
+  function ShellServiceWrapper:postEvent(handleName,eventName,data)
+    local code = "sched.post("..handleName..",\""..eventName.."\","..data..")"
+    self:eval(code)
+  end
