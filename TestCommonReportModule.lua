@@ -291,7 +291,7 @@ function test_CommonReport_WhenMessageDefinitionChanged_VersionMessageIsSent()
   restoreData.offset = messageNameOffset
   restoreData.data = framework.base64Encode("Message")
   restoreData.restartVMS = true
-  
+  vmsSW:setHighWaterMark()
   systemSW:restartService(vmsSW.sin)
   
   receivedMessages = vmsSW:waitForMessagesByName({"Version"})
@@ -334,8 +334,8 @@ function test_CommonReport_WhenPropertyDefinitionChanged_VersionMessageIsSent()
   restoreData.data = framework.base64Encode(currentPropertyNumber)
   restoreData.restartVMS = true
   
+  vmsSW:setHighWaterMark()
   systemSW:restartService(vmsSW.sin)
-  
   receivedMessages = vmsSW:waitForMessagesByName({"Version"})
   versionMessage = receivedMessages.Version
   assert_not_nil(versionMessage, "Version message not received")
