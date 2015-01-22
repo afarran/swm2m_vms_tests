@@ -981,7 +981,7 @@ function test_DriftOverTime_Standard3AndAccelerated()
 end
 
 function generic_test_DriftOverTime_StandardAndAccelerated(properties,configChangeMsgKey,SRKey,ARKey,SRInterval,ARInterval,ARItems)
-  
+
   local tolerance = 40 --secs
   local lastTimestamp = 0
   local dataToAnalysis = {}
@@ -1069,9 +1069,6 @@ function generic_test_DriftOverTime_StandardAndAccelerated(properties,configChan
   table.insert(dataToAnalysis,diff)
   D:log(dataToAnalysis,"final-data")
 
-  -- perform data analysis
-  require("Infrastructure/DataAnalyse/DriftAnalyse")
-  driftAnalyse = DriftAnalyse()
   assert_true(
     driftAnalyse:perform(dataToAnalysis,60,2,-2),
     "Found inconsistency in scheduling reports! Reports: "..SRKey .. " / "..ARKey
