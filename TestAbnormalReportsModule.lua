@@ -21,6 +21,8 @@ function suite_teardown()
   GPS:set({jammingDetect = false, fixType = 3}) -- not to interrupt other suits
 
 
+
+
 end
 
 --- setup function
@@ -40,7 +42,6 @@ function setup()
   )
 
 
-
 end
 
 -----------------------------------------------------------------------------------------------
@@ -48,6 +49,24 @@ end
 function teardown()
 
   GPS:set({jammingDetect = false, fixType = 3})
+
+  -- not to get periodic reports
+  vmsSW:setPropertiesByName({
+                             StandardReport1Interval = 0,
+                             ExtPowerDisconnectedStartDebounceTime = 1,
+                             ExtPowerDisconnectedEndDebounceTime = 1,
+                            }
+  )
+
+  shellSW:postEvent(
+                    uniboxSW.handleName,
+                    uniboxSW.events.external_power_connected,
+                    "false"
+  )
+
+
+
+
 
 end
 
@@ -1856,10 +1875,7 @@ function test_GpsBlocked_WhenGpsSignalIsBlockedAndNoFixWasEverObtainedByTerminal
                             }
   )
 
-  positionSW:setPropertiesByName({maxFixTimeout = MAX_FIX_TIMEOUT})
-
   -- *** Execute
-
   gateway.setHighWaterMark() -- to get the newest messages
   -- Waiting for StandardReport
   local ReceivedMessages = vmsSW:waitForMessagesByName({"StandardReport1"}, 125)
@@ -1894,6 +1910,81 @@ function test_GpsBlocked_WhenGpsSignalIsBlockedAndNoFixWasEverObtainedByTerminal
     "Wrong longitude value in AcceleratedReport received when no fix has been obtained by terminal"
   )
 
+
+end
+
+function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerForTimeAboveExtPowerDisconnectedEndDebounceTime_ExtPowerDisconnectedAbnormalReportIsSent()
+
+  local EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME = 100
+  local EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME = 1
+
+  -- *** Setup
+  -- terminal in some position but no valid fix provided
+  local InitialPosition = {
+                              speed = 0,                      -- kmh
+                              latitude = 1,                   -- degrees
+                              longitude = 1,                  -- degrees
+                              fixType = 3,                    -- valid fix
+  }
+
+  vmsSW:setPropertiesByName({
+                             ExtPowerDisconnectedStartDebounceTime = EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME,
+                             ExtPowerDisconnectedEndDebounceTime = EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME,
+                             ExtPowerDisconnectedSendReport = true,
+                            }
+  )
+
+  -- *** Execute
+  GPS:set(InitialPosition)
+  gateway.setHighWaterMark() -- to get the newest messages
+  shellSW:postEvent(
+                    uniboxSW.handleName,
+                    uniboxSW.events.external_power_connected,
+                    "true"
+  )
+  timeOfEvent = os.time()
+
+  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"})
+  D:log(ReceivedMessages["AbnormalReport"])
+
+  assert_not_nil(ReceivedMessages["AbnormalReport"], "AbnormalReport not received")
+
+  assert_equal(
+    InitialPosition.latitude*60000,
+    tonumber(ReceivedMessages["AbnormalReport"].Latitude),
+    "Wrong latitude value in ExtPowerDisconnected abnormal report"
+  )
+
+  assert_equal(
+    InitialPosition.longitude*60000,
+    tonumber(ReceivedMessages["AbnormalReport"].Longitude),
+    "Wrong longitude value in ExtPowerDisconnected abnormal report"
+  )
+
+  assert_equal(
+    InitialPosition.speed,
+    tonumber(ReceivedMessages["AbnormalReport"].Speed),
+    "Wrong speed value in ExtPowerDisconnected abnormal report"
+  )
+
+  assert_equal(
+    361,
+    tonumber(ReceivedMessages["AbnormalReport"].Course),
+    "Wrong course value in ExtPowerDisconnected abnormal report"
+  )
+
+  assert_equal(
+    "GpsJammed",
+    ReceivedMessages["AbnormalReport"].EventType,
+    "Wrong name of the received EventType in ExtPowerDisconnected abnormal report"
+  )
+
+  assert_equal(
+    timeOfEvent,
+    tonumber(ReceivedMessages["AbnormalReport"].Timestamp),
+    10,
+    "Wrong Timestamp value in ExtPowerDisconnected abnormal report"
+  )
 
 
 
