@@ -1834,6 +1834,74 @@ function test_GpsBlocked_WhenGpsSignalIsBlocked_TimeStampsReportedInPeriodicRepo
 end
 
 
+function test_GpsBlocked_WhenGpsSignalIsBlockedAndNoFixWasEverObtainedByTerminal_DefaultValuesOfLattitudeAndLongitudeAreSentInReports()
+
+  -- TODO: THIS need to be a first TC to be run - just after formatting terminal!
+
+  -- *** Setup
+  -- terminal in some position but no valid fix provided
+  local GpsBlockedPosition = {
+                              speed = 0,                      -- kmh
+                              latitude = 1,                   -- degrees
+                              longitude = 1,                  -- degrees
+                              fixType = 1,                    -- no fix
+  }
+
+  -- GPS signal is blocked from now - no fix provided
+  GPS:set(GpsBlockedPosition)
+
+  vmsSW:setPropertiesByName({
+                             StandardReport1Interval = 2,
+                             AcceleratedReport1Rate = 2,
+                            }
+  )
+
+  positionSW:setPropertiesByName({maxFixTimeout = MAX_FIX_TIMEOUT})
+
+  -- *** Execute
+
+  gateway.setHighWaterMark() -- to get the newest messages
+  -- Waiting for StandardReport
+  local ReceivedMessages = vmsSW:waitForMessagesByName({"StandardReport1"}, 125)
+  D:log(ReceivedMessages["StandardReport1"])
+
+  ReceivedMessages = vmsSW:waitForMessagesByName({"AcceleratedReport1"}, 125)
+  D:log(ReceivedMessages["AcceleratedReport1"])
+
+
+  assert_equal(
+    5460000,
+    tonumber(ReceivedMessages["StandardReport1"].Latitude),
+    "Wrong latitude value in StandardReport received when no fix has been obtained by terminal"
+  )
+
+  assert_equal(
+    10860000,
+    tonumber(ReceivedMessages["StandardReport1"].Longitude),
+    "Wrong longitude value in StandardReport received when no fix has been obtained by terminal"
+  )
+
+
+  assert_equal(
+    5460000,
+    tonumber(ReceivedMessages["AcceleratedReport1"].Latitude),
+    "Wrong latitude value in AcceleratedReport received when no fix has been obtained by terminal"
+  )
+
+  assert_equal(
+    10860000,
+    tonumber(ReceivedMessages["AcceleratedReport1"].Longitude),
+    "Wrong longitude value in AcceleratedReport received when no fix has been obtained by terminal"
+  )
+
+
+
+
+end
+
+
+
+
 
 
 
