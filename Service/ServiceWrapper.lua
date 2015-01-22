@@ -224,6 +224,21 @@ ServiceWrapper = {}
     self:sendMessage(min, fields)
   end
 
+  -- e.g. usage ("PollRequest1", nil, "PollResponse1")
+  function ServiceWrapper:requestMessageByName(request_message_name, fields, response_message_names, timeout)
+    local previous_watermark = self:getHighWaterMark()
+    
+    self:sendMessageByName(request_message_name, fields)
+    self:setHighWaterMark()
+    local response
+    if type(response_message_names) ~= "table" then
+      response_message_names = {response_message_names}
+    end
+    response = self:waitForMessagesByName(response_message_names, timeout)
+    self:setHighWaterMark(previous_watermark)
+    return response
+  end
+
   --retrieved message list can be accessed via indexes - list[min] or by message name list.getByName("min_name")
   function ServiceWrapper:waitForMessages(expectedMins, timeout)
     if type(expectedMins) ~= "table" then
