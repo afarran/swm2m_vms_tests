@@ -1013,7 +1013,8 @@ function generic_test_DriftOverTime_StandardAndAccelerated(properties,configChan
 
   lastTimestamp = tonumber(message[SRKey].Timestamp)
 
-  for i=1,ARItems do 
+  for i=1,ARItems do
+    -- simulate system overload to trigger drift 
     if i == 1 then
       D:log("Simulating system overload..")
       local overloadThread = coroutine.create(
@@ -1064,30 +1065,17 @@ function generic_test_DriftOverTime_StandardAndAccelerated(properties,configChan
     "Timestamp in Standard Report not received!"
   )
   local diff = tonumber(message[SRKey].Timestamp) - lastTimestamp
+
   table.insert(dataToAnalysis,diff)
   D:log(dataToAnalysis,"final-data")
 
-    -- TODO: DATA ANALYSE , algorithm like this:
-    -- [waits for Amjad accept]
-    --
-    -- finalData = [60,65,55,60,60,60,61,59,60]
-    -- interval = 60
-    -- cumulatedDiff = 0
-    -- for item in finalData:
-    --   if item == interval:
-    --     continue
-    --   if item > interval:
-    --     cumulatedDiff = cumulatedDiff + (item-interval)
-    --     continue
-    --   if item < interval:
-    --     if cumulatedDiff - (interval - item) == 0: 
-    --       cumulatedDiff = 0
-    --     continue
-    --   else:
-    --     cumulatedDiff = cumulatedDiff - (interval - item)
-    --
-    -- if cumulatedDiff != 0 : -- tolerance if needed be
-    --   print "Found inconsistency!"
+  -- perform data analysis
+  require("Infrastructure/DataAnalyse/DriftAnalyse")
+  driftAnalyse = DriftAnalyse()
+  assert_true(
+    driftAnalyse:perform(dataToAnalysis,60,2,-2),
+    "Found inconsistency in scheduling reports! Reports: "..SRKey .. " / "..ARKey
+  )
 
 end
 
