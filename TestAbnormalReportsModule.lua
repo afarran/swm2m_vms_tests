@@ -26,6 +26,16 @@ function setup()
   vmsSW:setPropertiesByName({GpsJammedEndDebounceTime = 1})
   GPS:set({jammingDetect = false, fixType = 3})
 
+    vmsSW:setPropertiesByName({GpsJammedStartDebounceTime = GPS_JAMMED_START_DEBOUNCE_TIME,
+                               GpsJammedEndDebounceTime = GPS_JAMMED_END_DEBOUNCE_TIME,
+                               GpsJammedSendReport = false,
+                               GpsBlockedSendReport = false,
+                               IdpBlockedSendReport = false,
+                               PowerDisconnectedSendReport = false,
+                            }
+  )
+
+
 
 end
 
@@ -65,8 +75,8 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeAboveGpsJammedStartDebounce
 
   vmsSW:setPropertiesByName({GpsJammedStartDebounceTime = GPS_JAMMED_START_DEBOUNCE_TIME,
                              GpsJammedEndDebounceTime = GPS_JAMMED_END_DEBOUNCE_TIME,
-                             GpsJammedSendReport = true
-                             }
+                             GpsJammedSendReport = true,
+                            }
   )
 
   -- *** Execute
