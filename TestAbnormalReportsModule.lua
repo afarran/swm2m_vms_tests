@@ -65,9 +65,6 @@ function teardown()
   )
 
 
-
-
-
 end
 
 -------------------------
@@ -1915,6 +1912,7 @@ end
 
 function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerForTimeAboveExtPowerDisconnectedEndDebounceTime_ExtPowerDisconnectedAbnormalReportIsSent()
 
+  -- THIS IS A DRAFT VERSION - NOT FINISHED
   local EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME = 1
   local EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME = 1
 
