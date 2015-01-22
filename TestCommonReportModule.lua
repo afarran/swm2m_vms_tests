@@ -462,6 +462,8 @@ function test_CommonReport_WhenMessageDefintionAndPropertyDefinitionChanged_Sing
   vmsSW:setHighWaterMark()
   systemSW:restartService(vmsSW.sin)
   receivedMessages = vmsSW:waitForMessagesByName({"Version"})
+  local duplicatedReceivedMessages = vmsSW:waitForMessagesByName({"Version"}, 20)
+  assert_nil(duplicatedReceivedMessages.Version, "Version Message received twice!")
   versionMessage = receivedMessages.Version
   assert_not_nil(versionMessage, "Version message not received")
   assert_not_nil(versionMessage.PropDefHash, "Version message does not contain PropDefHash field")

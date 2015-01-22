@@ -65,9 +65,6 @@ function teardown()
   )
 
 
-
-
-
 end
 
 -------------------------
@@ -1915,7 +1912,8 @@ end
 
 function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerForTimeAboveExtPowerDisconnectedEndDebounceTime_ExtPowerDisconnectedAbnormalReportIsSent()
 
-  local EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME = 100
+  -- THIS IS A DRAFT VERSION - NOT FINISHED
+  local EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME = 1
   local EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME = 1
 
   -- *** Setup
@@ -1974,7 +1972,7 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerForTim
   )
 
   assert_equal(
-    "GpsJammed",
+    "ExtPowerDisconnected",
     ReceivedMessages["AbnormalReport"].EventType,
     "Wrong name of the received EventType in ExtPowerDisconnected abnormal report"
   )
@@ -1986,6 +1984,9 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerForTim
     "Wrong Timestamp value in ExtPowerDisconnected abnormal report"
   )
 
+
+  local StatusBitmap = vmsSW:decodeBitmap(ReceivedMessages["AbnormalReport"].StatusBitmap, "EventStateId")
+  assert_false(StatusBitmap["ExtPowerDisconnected"], "StatusBitmap has not been correctly changed when terminal detected GPS blockage")
 
 
 end

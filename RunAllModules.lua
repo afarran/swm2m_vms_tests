@@ -61,6 +61,7 @@ local function setup()
   lunatest.suite("TestAbnormalReportsModule")
   lunatest.suite("TestGeofenceModule")
   lunatest.suite("TestHelmPanelModule")
+  lunatest.suite("TestSmtpModule")
 end
 
 local function teardown()
