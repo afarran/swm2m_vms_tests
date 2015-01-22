@@ -345,3 +345,51 @@ function test_CommonReport_WhenPropertyDefinitionChanged_VersionMessageIsSent()
   assert_equal(currentVmsAgent, versionMessage.VmsAgent, "Vms agent has not changed but VmsAgent field is different!")
   
 end
+
+function test_CommonReport_WhenHelmPanelVersionHasChanged_VersionReportIsSent()
+  local path = "/act/user/UniboxInOut/main.lua"    
+  vmsSW:sendMessageByName("GetVersion")
+  local receivedMessages = vmsSW:waitForMessagesByName({"Version"})
+  local versionMessage = receivedMessages.Version
+  assert_not_nil(versionMessage, "Can't get current VMS version, Version message not received when GetVersion message was sent")
+  assert_not_nil(versionMessage.HelmPanelInterface, "Version message does not containt HelmPanelInterface field!")
+  
+  local currentHelmPanelInterface = versionMessage.HelmPanelInterface
+  local currentPropDefHash = versionMessage.PropDefHash
+  local currentMessageDefHash = versionMessage.MessageDefHash
+  local currentVmsAgent = versionMessage.VmsAgent
+  
+  -- search for version info in main.lua between 800 and 1000 chars
+  local data, readResult = filesystemSW:read(path, 800, 300)
+  local strData = string.char(unpack(data))
+  local helmPanelVersionOffset = string.find(strData, currentHelmPanelInterface)
+  local helmPanelVersionConstantOffset = string.find(strData, "_VERSION")
+  
+  assert_not_nil(helmPanelVersionOffset, "Can't find HelmPanelInterface version in "..path)
+  assert_not_nil(helmPanelVersionConstantOffset, "Can't find HelmPanelInterface version declaration in "..path)
+  
+  helmPanelVersionOffset = 800 + helmPanelVersionOffset - 1
+  
+  local nextVersion = tonumber(string.sub(currentHelmPanelInterface, 1, 1)) + 1 -- increase version by 1
+  if (nextVersion >= 10) then nextVersion = 0 end
+  local writeOK = filesystemSW:write(path, helmPanelVersionOffset, "" .. nextVersion)
+  assert_true(writeOK, "Could not write version to UniboxInOut main.lua")
+  restoreData = {}
+  restoreData.path = path
+  restoreData.offset = helmPanelVersionOffset
+  restoreData.data = framework.base64Encode(currentHelmPanelInterface)
+  restoreData.restartFramework = true
+  
+  vmsSW:setHighWaterMark()
+  systemSW:restartFramework()
+  receivedMessages = vmsSW:waitForMessagesByName({"Version"})
+  versionMessage = receivedMessages.Version
+  
+  assert_not_nil(versionMessage, "Version message not received afer VMS version changed")
+  assert_not_equal(currentHelmPanelInterface, versionMessage.HelmPanelInterface, "Reported VMS agent version is incorrect")
+  assert_equal(currentPropDefHash, versionMessage.PropDefHash, "PropDefHash is expected to be different than original one!")
+  assert_equal(currentMessageDefHash, versionMessage.MessageDefHash, "Message definition has not changed but MessageDefHash is different!")
+  assert_equal(currentVmsAgent, versionMessage.VmsAgent, "Vms agent has not changed but VmsAgent field is different!")
+  
+end
+
