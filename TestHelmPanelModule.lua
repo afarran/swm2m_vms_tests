@@ -40,25 +40,48 @@ end
 -- Test Cases 
 -----------------------------------------------------------------------------------------------
 
-function test_HelmPanelConnected_X()
+function test_HelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAndTheStateToggles_HelmPanelDisconnectedStateChangesCorrectly()
 
   local properties = vmsSW:getPropertiesByName({"HelmPanelDisconnectedState"})
-
   local isDisconnected = properties.HelmPanelDisconnectedState
 
-  local change = "true"
-
+  local change = ""
   if isDisconnected then
+    change = "true"
+  else
     change = "false"
   end
-
-  D:log("Helm")
-  D:log(properties)
 
   shellSW:postEvent(
     uniboxSW.handleName, 
     uniboxSW.events.connected, 
     change
   )
+
+  framework.delay(2)
+
+  local propertiesAfterChange = vmsSW:getPropertiesByName({"HelmPanelDisconnectedState"})
+  local isDisconnectedAfterChange = propertiesAfterChange.HelmPanelDisconnectedState
+  assert_not_equal(isDisconnectedAfterChange, isDisconnected, "There should be change in disconnected state.")
+
+  framework.delay(2)
+    
+  if isDisconnectedAfterChange then
+    change = "true"
+  else
+    change = "false"
+  end
+
+  shellSW:postEvent(
+    uniboxSW.handleName, 
+    uniboxSW.events.connected, 
+    change
+  )
+
+  framework.delay(2)
+
+  local propertiesAfterSecondChange = vmsSW:getPropertiesByName({"HelmPanelDisconnectedState"})
+  local isDisconnectedAfterSecondChange = propertiesAfterSecondChange.HelmPanelDisconnectedState
+  assert_not_equal(isDisconnectedAfterChange, isDisconnectedAfterSecondChange, "There should be change in disconnected state.")
 
 end
