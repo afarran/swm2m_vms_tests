@@ -27,19 +27,29 @@ function teardown()
   gateway.setHighWaterMark()
   -- if some data has to be restored then handle it
   if restoreData then
-    local writeOK, writeMsg = filesystemSW:write(restoreData.path, restoreData.offset or 0, restoreData.data, nil, true)
-    assert_true(writeOK, "Failed to restore file data in teardown! Path: " .. restoreData.path)
-    
-    if restoreData.restartVMS then
-      systemSW:restartService(vmsSW.sin)
-      vmsSW:waitForMessagesByName({"Version"})
-    end
-    if restoreData.restartFramework then
+    if not restoreData.multiple then
+      
+      
+      if restoreData.restartVMS then
+        systemSW:restartService(vmsSW.sin)
+        vmsSW:waitForMessagesByName({"Version"})
+      end
+      if restoreData.restartFramework then
+        systemSW:restartFramework()
+        vmsSW:waitForMessagesByName({"Version"})
+      end
+      
+      restoreData = nil
+      
+    else
+      for idx, data in pairs(restoreData.data) do
+        local writeOK, writeMsg = filesystemSW:write(data.path, data.offset or 0, data.data, nil, true)
+        assert_true(writeOK, "Failed to restore file data in teardown! Path: " .. data.path)
+      end
       systemSW:restartFramework()
       vmsSW:waitForMessagesByName({"Version"})
+      restoreData = nil
     end
-    
-    restoreData = nil
   end
 end
 
@@ -312,7 +322,7 @@ function test_CommonReport_WhenPropertyDefinitionChanged_VersionMessageIsSent()
   local currentVmsAgent = versionMessage.VmsAgent
   
   assert_not_nil(versionMessage, "Can't get current VMS version, Version message not received when GetVersion message was sent")
-  assert_not_nil(versionMessage.PropDefHash, "Version message does not containt MessageDefHash field!")
+  assert_not_nil(versionMessage.PropDefHash, "Version message does not containt PropDefHash field!")
   local currentMessageDefHash = versionMessage.MessageDefHash
   local currentPropDefHash = versionMessage.PropDefHash
   
@@ -393,3 +403,70 @@ function test_CommonReport_WhenHelmPanelVersionHasChanged_VersionReportIsSent()
   
 end
 
+function test_CommonReport_WhenMessageDefintionAndPropertyDefinitionChanged_SingleVersionReportIsSent()
+  local path_properties = "/act/svc/VMS/properties.lua"
+  local path_messages = "/act/svc/VMS/messages.lua"    
+
+  
+  local receivedMessages = vmsSW:requestMessageByName("GetVersion", nil, "Version")
+  local versionMessage = receivedMessages.Version
+  local currentVmsAgent = versionMessage.VmsAgent
+  
+  assert_not_nil(versionMessage, "Can't get current VMS version, Version message not received when GetVersion message was sent")
+  assert_not_nil(versionMessage.PropDefHash, "Version message does not containt PropDefHash field!")
+  assert_not_nil(versionMessage.MessageDefHash, "Version message does not containt MessageDefHash field!")
+  local currentMessageDefHash = versionMessage.MessageDefHash
+  local currentPropDefHash = versionMessage.PropDefHash
+  
+  -- Change property definition
+  local readData, readResult = filesystemSW:read(path_properties, 0, 100)
+  local strData = string.char(unpack(readData))
+  
+  local propertyOffset, propertyOffsetEnd, currentPropertyNumber = string.find(strData, "%,(%d+)%)\n")
+
+  local currentNumber = string.sub(currentPropertyNumber, 1, 1)
+  
+  local nextNumber = (tonumber(currentNumber) + 1) % 10
+  -- propertyNameOffset = propertyNameOffset - 1 -- Offset calculation is not needed, string.find returns match with "," so it has to be shifted +1
+  local writeOK, writeResult = filesystemSW:write(path_properties, propertyOffset, ""..nextNumber)
+  assert_true(writeOK, "Write to "..path_properties.." failed!")
+  
+  restoreData = {}
+  restoreData.multiple = true
+  restoreData.data = {}
+  restoreData.data[1] = {
+    path = path_properties,
+    offset = propertyOffset,
+    data = framework.base64Encode(currentPropertyNumber),
+  }
+  
+  -- Change message definition
+  readData, readResult = filesystemSW:read(path_messages, 0, 100)
+  strData = string.char(unpack(readData))
+  
+  local messageNameOffset = string.find(strData, "Message")
+  assert_not_nil(messageNameOffset, "Message string not found in message definition file")
+  
+  messageNameOffset = messageNameOffset - 1 -- calculate real offset
+  
+  writeOK, writeResult = filesystemSW:write(path_messages, messageNameOffset, "xxasdf")
+  assert_true(writeOK, "Writing to "..path_messages.." failed!")
+  
+  restoreData.data[2] = {
+    path = path_messages,
+    offset = messageNameOffset,
+    data = framework.base64Encode("Message"),
+  }
+  
+  -- get version message and process assertions
+  vmsSW:setHighWaterMark()
+  systemSW:restartService(vmsSW.sin)
+  receivedMessages = vmsSW:waitForMessagesByName({"Version"})
+  versionMessage = receivedMessages.Version
+  assert_not_nil(versionMessage, "Version message not received")
+  assert_not_nil(versionMessage.PropDefHash, "Version message does not contain PropDefHash field")
+  assert_not_nil(versionMessage.MessageDefHash, "Version message does not contain MessageDefHash field")
+  assert_not_equal(currentPropDefHash, versionMessage.PropDefHash, "PropDefHash is expected to be different than original one!")
+  assert_not_equal(currentMessageDefHash, versionMessage.MessageDefHash, "MessageDefHash is expected to be different than original one!")
+  assert_equal(currentVmsAgent, versionMessage.VmsAgent, "Vms agent has not changed but VmsAgent field is different!")
+end
