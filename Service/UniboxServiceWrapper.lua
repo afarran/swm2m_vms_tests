@@ -37,7 +37,9 @@ UniboxServiceWrapper = {}
     }
     self.events = {
       connected = "UNIBOX_CONNECTED",
-      external_power_connected = "EXTERNAL_POWER_CONNECTED"
+      external_power_connected = "EXTERNAL_POWER_CONNECTED",
+      button_pressed = "BUTTON_PRESSED",
+      service_active = "SERVICE_ACTIVE"
     }
 
     self.handleName = "user.UniboxInOut._NAME"

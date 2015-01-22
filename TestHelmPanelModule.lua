@@ -85,3 +85,21 @@ function test_HelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAn
   assert_not_equal(isDisconnectedAfterChange, isDisconnectedAfterSecondChange, "There should be change in disconnected state.")
 
 end
+
+-- TODO: nothing happends after posting BUTTON_PRESSED event, not implemented yet or .. ?
+function test_ButtonPressed()
+  shellSW:postEvent(
+    uniboxSW.handleName,
+    uniboxSW.events.button_pressed,
+    "true"
+  )
+end
+
+-- TODO: nothing happends after posting SERVICE_ACTIVE event, not implemented yet or .. ?
+function test_ServiceActive()
+  shellSW:postEvent(
+    uniboxSW.handleName,
+    uniboxSW.events.service_active,
+    "true"
+  )
+end
