@@ -17,6 +17,10 @@ end
 
 -- executed after each test suite
 function suite_teardown()
+
+  GPS:set({jammingDetect = false, fixType = 3}) -- not to interrupt other suits
+
+
 end
 
 --- setup function
@@ -1699,6 +1703,8 @@ end
 
 function test_GpsBlocked_WhenGpsSignalIsBlocked_TimeStampsReportedInPeriodicReportsAreTheSame()
 
+  -- TODO: random selection of number of Accelerated and Standard report may be added in the future - for now it runs on report number 1
+
   -- *** Setup
   local GPS_BLOCKED_START_DEBOUNCE_TIME = 400   -- seconds
   local GPS_BLOCKED_END_DEBOUNCE_TIME = 1       -- seconds
@@ -1783,11 +1789,11 @@ function test_GpsBlocked_WhenGpsSignalIsBlocked_TimeStampsReportedInPeriodicRepo
   -- GPS is blocked and GPS_BLOCKED_START_DEBOUNCE_TIME has passed
   -----------------------------------------------------------------------------------------------------
   -- Waiting for StandardReport
-  ReceivedMessages = vmsSW:waitForMessagesByName({"StandardReport1"})
+  ReceivedMessages = vmsSW:waitForMessagesByName({"StandardReport1"}, 125)
   -- getting timestamp from first StandardReport
   StandardReportTimestamp1 = tonumber(ReceivedMessages["StandardReport1"].Timestamp)
   -- waiting for AcceleratedReport
-  ReceivedMessages = vmsSW:waitForMessagesByName({"AcceleratedReport1"})
+  ReceivedMessages = vmsSW:waitForMessagesByName({"AcceleratedReport1"}, 125)
   -- getting timestamp from first AcceleratedReport
   AcceleratedReportTimestamp1 = tonumber(ReceivedMessages["AcceleratedReport1"].Timestamp)
   D:log({StandardReportTimestamp1, AcceleratedReportTimestamp1})
@@ -1797,8 +1803,16 @@ function test_GpsBlocked_WhenGpsSignalIsBlocked_TimeStampsReportedInPeriodicRepo
   gateway.setHighWaterMark() -- to get the newest messages
   ReceivedMessages = vmsSW:waitForMessagesByName({"StandardReport1"}, 125)
   StandardReportTimestamp2 = tonumber(ReceivedMessages["StandardReport1"].Timestamp)
+
+  StatusBitmap = vmsSW:decodeBitmap(ReceivedMessages["StandardReport1"].StatusBitmap, "EventStateId")
+  assert_true(StatusBitmap["GpsBlocked"], "StatusBitmap in StandardReport has not been correctly changed when terminal detected GPS blockage")
+
   ReceivedMessages = vmsSW:waitForMessagesByName({"AcceleratedReport1"}, 125)
   AcceleratedReportTimestamp2 = tonumber(ReceivedMessages["AcceleratedReport1"].Timestamp)
+
+  StatusBitmap = vmsSW:decodeBitmap(ReceivedMessages["AcceleratedReport1"].StatusBitmap, "EventStateId")
+  assert_true(StatusBitmap["GpsBlocked"], "StatusBitmap in AcceleratedReport has not been correctly changed when terminal detected GPS blockage")
+
   D:log({StandardReportTimestamp2, AcceleratedReportTimestamp2})
 
   -- timestamps are expected to be the same
@@ -1806,6 +1820,7 @@ function test_GpsBlocked_WhenGpsSignalIsBlocked_TimeStampsReportedInPeriodicRepo
                    StandardReportTimestamp2,
                   "When GPS is blocked and GPS_BLOCKED_START_DEBOUNCE_TIME has passed StandardReports still contain the same timestamps"
   )
+
 
   assert_not_equal(AcceleratedReportTimestamp1,
                    AcceleratedReportTimestamp2,
