@@ -1067,7 +1067,7 @@ function generic_test_DriftOverTime_StandardAndAccelerated(properties,configChan
   table.insert(dataToAnalysis,diff)
   D:log(dataToAnalysis,"final-data")
 
-    -- TODO: DATA ANALYSE , algorithm like this:
+    -- xTODO: DATA ANALYSE , algorithm like this:
     -- [waits for Amjad accept]
     --
     -- finalData = [60,65,55,60,60,60,61,59,60]
