@@ -258,3 +258,42 @@ function test_CommonReport_WhenVmsVersionHasChanged_VersionReportIsSent()
   assert_not_equal(currentVersion, versionMessage.VmsAgent, "Reported VMS agent version is incorrect")
   
 end
+
+function test_CommonReport_WhenMessageDefinitionChanged_VersionMessageIsSent()
+  local path = "/act/svc/VMS/messages.lua"    
+  vmsSW:sendMessageByName("GetVersion")
+  local receivedMessages = vmsSW:waitForMessagesByName({"Version"})
+  local versionMessage = receivedMessages.Version
+  
+  assert_not_nil(versionMessage, "Can't get current VMS version, Version message not received when GetVersion message was sent")
+  assert_not_nil(versionMessage.MessageDefHash, "Version message does not containt MessageDefHash field!")
+  local currentMessageDefHash = versionMessage.MessageDefHash
+  local currentPropDefHash = versionMessage.PropDefHash
+  
+  local readData, readResult = filesystemSW:read(path, 0, 100)
+  local strData = string.char(unpack(readData))
+  
+  local messageNameOffset = string.find(strData, "Message")
+  assert_not_nil(messageNameOffset, "Message string not found in message definition file")
+  
+  messageNameOffset = messageNameOffset - 1 -- calculate real offset
+  
+  local writeOK, writeResult = filesystemSW:write(path, messageNameOffset, "xxasdf")
+  assert_true(writeOK, "Writing to "..path.." failed!")
+  
+  restoreData = {}
+  restoreData.path = path
+  restoreData.offset = messageNameOffset
+  restoreData.data = framework.base64Encode("Message")
+  restoreData.restartVMS = true
+  
+  systemSW:restartService(vmsSW.sin)
+  
+  receivedMessages = vmsSW:waitForMessagesByName({"Version"})
+  versionMessage = receivedMessages.Version
+  assert_not_nil(versionMessage, "Version message not received")
+  assert_not_nil(versionMessage.MessageDefHash, "Version message does not contain MessageDefHash field")
+  assert_not_equal(currentMessageDefHash, versionMessage.MessageDefHash, "MessageDefHash is expected to be different than original one!")
+  assert_equal(currentPropDefHash, versionMessage.PropDefHash, "Property definition has not changed but PropDefHash is different!")
+  
+end
