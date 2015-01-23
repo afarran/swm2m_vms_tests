@@ -2138,6 +2138,64 @@ end
 
 
 
+function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSourceForTimeBelowExtPowerDisconnectedEndDebounceTime_ExtPowerDisconnectedAbnormalReportIsNotSent()
+
+  local EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME = 1
+  local EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME = 30
+
+  -- *** Setup
+  -- terminal in some position but no valid fix provided
+  local InitialPosition = {
+                              speed = 0,                      -- kmh
+                              latitude = 1,                   -- degrees
+                              longitude = 1,                  -- degrees
+                              fixType = 3,                    -- valid fix
+  }
+
+  vmsSW:setPropertiesByName({
+                             ExtPowerDisconnectedStartDebounceTime = EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME,
+                             ExtPowerDisconnectedEndDebounceTime = EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME,
+                             ExtPowerDisconnectedSendReport = true,
+                            }
+  )
+
+  -- *** Execute
+  GPS:set(InitialPosition)
+
+  -- checking ExtPowerDisconnectedState property
+  local ExtPowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"ExtPowerDisconnectedState"})
+  D:log(framework.dump(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"]), "ExtPowerDisconnectedState")
+  assert_true(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"], "ExtPowerDisconnectedState property is incorrectly false")
+
+  gateway.setHighWaterMark() -- to get the newest messages
+  D:log("HELM PANEL CONNECTED")
+  -- Helm Panel is connected to external power from now
+  shellSW:postEvent(
+                    uniboxSW.handleName,
+                    uniboxSW.events.external_power_connected,
+                    "true"
+  )
+
+  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
+  D:log(ReceivedMessages["AbnormalReport"])
+
+  if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "ExtPowerDisconnected" ) then
+    assert_nil(1, "ExtPowerDisconnected abnormal report sent but not expected")
+  end
+
+  D:log("HELM PANEL DISCONNECTED")
+  -- back to exernal power disconnected
+  shellSW:postEvent(
+                    uniboxSW.handleName,
+                    uniboxSW.events.external_power_connected,
+                    "false"
+  )
+
+
+end
+
+
+
 
 
 
