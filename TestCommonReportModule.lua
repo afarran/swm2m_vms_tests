@@ -356,18 +356,8 @@ function test_CommonReport_WhenPropertyDefinitionChanged_VersionMessageIsSent()
   
 end
 
-function test_CommonReport_WhenHelmPanelVersionHasChanged_VersionReportIsSent()
+function changeHelmPanelVersion(currentHelmPanelInterface)
   local path = uniboxSW:getServicePath() .. "main.lua"
-  vmsSW:sendMessageByName("GetVersion")
-  local receivedMessages = vmsSW:waitForMessagesByName({"Version"})
-  local versionMessage = receivedMessages.Version
-  assert_not_nil(versionMessage, "Can't get current VMS version, Version message not received when GetVersion message was sent")
-  assert_not_nil(versionMessage.HelmPanelInterface, "Version message does not containt HelmPanelInterface field!")
-  
-  local currentHelmPanelInterface = versionMessage.HelmPanelInterface
-  local currentPropDefHash = versionMessage.PropDefHash
-  local currentMessageDefHash = versionMessage.MessageDefHash
-  local currentVmsAgent = versionMessage.VmsAgent
   
   -- search for version info in main.lua between 800 and 1000 chars
   local data, readResult = filesystemSW:read(path, 800, 300)
@@ -389,6 +379,22 @@ function test_CommonReport_WhenHelmPanelVersionHasChanged_VersionReportIsSent()
   restoreData.offset = helmPanelVersionOffset
   restoreData.data = framework.base64Encode(currentHelmPanelInterface)
   restoreData.restartFramework = true
+  
+end
+
+function test_CommonReport_WhenHelmPanelVersionHasChanged_VersionReportIsSent()
+  local path = uniboxSW:getServicePath() .. "main.lua"
+  local receivedMessages = vmsSW:requestMessageByName("GetVersion", nil, "Version")
+  local versionMessage = receivedMessages.Version
+  assert_not_nil(versionMessage, "Can't get current VMS version, Version message not received when GetVersion message was sent")
+  assert_not_nil(versionMessage.HelmPanelInterface, "Version message does not containt HelmPanelInterface field!")
+  
+  local currentHelmPanelInterface = versionMessage.HelmPanelInterface
+  local currentPropDefHash = versionMessage.PropDefHash
+  local currentMessageDefHash = versionMessage.MessageDefHash
+  local currentVmsAgent = versionMessage.VmsAgent
+  
+  changeHelmPanelVersion(currentHelmPanelInterface)
   
   vmsSW:setHighWaterMark()
   systemSW:restartFramework()
