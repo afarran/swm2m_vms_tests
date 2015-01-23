@@ -2467,8 +2467,6 @@ function test_HelmPanelDisconnected_WhenHelmPanelIsConnectedForTimeAboveHelmPane
 end
 
 
-
-
 function test_HelmPanelDisconnected_WhenHelmPanelIsDisconnectedForTimeAboveHelmPanelDisconnectedStartDebounceTime_HelmPanelDisconnectedAbnormalReportIsSent()
 
   local HELM_PANEL_DISCONNECTED_START_DEBOUNCE_TIME = 30
@@ -2654,6 +2652,152 @@ function test_HelmPanelDisconnected_WhenHelmPanelIsConnectedForTimeBelowHelmPane
 
 end
 
+
+function test_HelmPanelDisconnected_WhenHelmPanelIsDisconnectedForTimeBelowHelmPanelDisconnectedStartDebounceTime_HelmPanelDisconnectedAbnormalReportIsNotSent()
+
+  local HELM_PANEL_DISCONNECTED_START_DEBOUNCE_TIME = 30
+  local HELM_PANEL_DISCONNECTED_END_DEBOUNCE_TIME = 1
+
+  -- *** Setup
+  -- terminal in some position but no valid fix provided
+  local InitialPosition = {
+                             speed = 0,                      -- kmh
+                             latitude = 1,                   -- degrees
+                             longitude = 1,                  -- degrees
+                             fixType = 3,                    -- valid fix
+  }
+
+  vmsSW:setPropertiesByName({
+                             HelmPanelDisconnectedStartDebounceTime = HELM_PANEL_DISCONNECTED_START_DEBOUNCE_TIME,
+                             HelmPanelDisconnectedEndDebounceTime = HELM_PANEL_DISCONNECTED_END_DEBOUNCE_TIME,
+                             HelmPanelDisconnectedSendReport = true,
+                            }
+  )
+
+  -- *** Execute
+  GPS:set(InitialPosition)
+
+  -- checking HelmPanelDisconnectedState property
+  local HelmPanelDisconnectedStateProperty = vmsSW:getPropertiesByName({"HelmPanelDisconnectedState"})
+  D:log(framework.dump(HelmPanelDisconnectedStateProperty["HelmPanelDisconnectedState"]), "HelmPanelDisconnectedState")
+  assert_true(HelmPanelDisconnectedStateProperty["HelmPanelDisconnectedState"], "HelmPanelDisconnectedState property is incorrectly false")
+
+  D:log("HELM PANEL CONNECTED TO TERMINAL")
+  -- Helm Panel is connected to terminal from now
+  shellSW:postEvent(
+                    uniboxSW.handleName,
+                    uniboxSW.events.connected,
+                    "true"
+  )
+
+  framework.delay(HELM_PANEL_DISCONNECTED_END_DEBOUNCE_TIME)
+
+  -- checking HelmPanelDisconnectedState property
+  HelmPanelDisconnectedStateProperty = vmsSW:getPropertiesByName({"HelmPanelDisconnectedState"})
+  D:log(framework.dump(HelmPanelDisconnectedStateProperty["HelmPanelDisconnectedState"]), "HelmPanelDisconnectedState")
+  assert_false(HelmPanelDisconnectedStateProperty["HelmPanelDisconnectedState"], "HelmPanelDisconnectedState property has not been changed after HelmPanelDisconnectedEndDebounceTime has passed")
+
+  gateway.setHighWaterMark() -- to get the newest messages
+
+  D:log("HELM PANEL DISCONNECTED FROM TERMINAL")
+  -- Helm Panel is diconnected to terminal from now
+  shellSW:postEvent(
+                    uniboxSW.handleName,
+                    uniboxSW.events.connected,
+                    "false"
+  )
+
+  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
+  D:log(ReceivedMessages["AbnormalReport"])
+
+  framework.delay(HELM_PANEL_DISCONNECTED_START_DEBOUNCE_TIME)
+
+  if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "HelmPanelDisconnected" ) then
+    assert_nil(1, "HelmPanelDisconnected abnormal report sent but not expected - sending reports disabled")
+  end
+
+  -- checking HelmPanelDisconnectedState property
+  HelmPanelDisconnectedStateProperty = vmsSW:getPropertiesByName({"HelmPanelDisconnectedState"})
+  D:log(framework.dump(HelmPanelDisconnectedStateProperty["HelmPanelDisconnectedState"]), "HelmPanelDisconnectedState")
+  assert_true(HelmPanelDisconnectedStateProperty["HelmPanelDisconnectedState"], "HelmPanelDisconnectedState property has not been changed after HelmPanelDisconnectedEndDebounceTime has passed")
+
+
+end
+
+
+function test_HelmPanelDisconnected_WhenHelmPanelIsDisconnectedAndConnectedForTimeAboveThresholdAndHelmPanelDisconnectedReportsAreDisabled_HelmPanelDisconnectedAbnormalReportIsNotSent()
+
+  local HELM_PANEL_DISCONNECTED_START_DEBOUNCE_TIME = 1
+  local HELM_PANEL_DISCONNECTED_END_DEBOUNCE_TIME = 1
+
+  -- *** Setup
+  -- terminal in some position but no valid fix provided
+  local InitialPosition = {
+                             speed = 0,                      -- kmh
+                             latitude = 1,                   -- degrees
+                             longitude = 1,                  -- degrees
+                             fixType = 3,                    -- valid fix
+  }
+
+  vmsSW:setPropertiesByName({
+                             HelmPanelDisconnectedStartDebounceTime = HELM_PANEL_DISCONNECTED_START_DEBOUNCE_TIME,
+                             HelmPanelDisconnectedEndDebounceTime = HELM_PANEL_DISCONNECTED_END_DEBOUNCE_TIME,
+                             HelmPanelDisconnectedSendReport = false,
+                            }
+  )
+
+  -- *** Execute
+  GPS:set(InitialPosition)
+
+  -- checking HelmPanelDisconnectedState property
+  local HelmPanelDisconnectedStateProperty = vmsSW:getPropertiesByName({"HelmPanelDisconnectedState"})
+  D:log(framework.dump(HelmPanelDisconnectedStateProperty["HelmPanelDisconnectedState"]), "HelmPanelDisconnectedState")
+  assert_true(HelmPanelDisconnectedStateProperty["HelmPanelDisconnectedState"], "HelmPanelDisconnectedState property is incorrectly false")
+
+  D:log("HELM PANEL CONNECTED TO TERMINAL")
+  -- Helm Panel is connected to terminal from now
+  shellSW:postEvent(
+                    uniboxSW.handleName,
+                    uniboxSW.events.connected,
+                    "true"
+  )
+
+  framework.delay(HELM_PANEL_DISCONNECTED_END_DEBOUNCE_TIME)
+
+  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
+  D:log(ReceivedMessages["AbnormalReport"])
+
+  -- checking HelmPanelDisconnectedState property
+  HelmPanelDisconnectedStateProperty = vmsSW:getPropertiesByName({"HelmPanelDisconnectedState"})
+  D:log(framework.dump(HelmPanelDisconnectedStateProperty["HelmPanelDisconnectedState"]), "HelmPanelDisconnectedState")
+  assert_false(HelmPanelDisconnectedStateProperty["HelmPanelDisconnectedState"], "HelmPanelDisconnectedState property has not been changed after HelmPanelDisconnectedEndDebounceTime has passed")
+
+  gateway.setHighWaterMark() -- to get the newest messages
+
+  D:log("HELM PANEL DISCONNECTED FROM TERMINAL")
+  -- Helm Panel is diconnected to terminal from now
+  shellSW:postEvent(
+                    uniboxSW.handleName,
+                    uniboxSW.events.connected,
+                    "false"
+  )
+
+  framework.delay(HELM_PANEL_DISCONNECTED_START_DEBOUNCE_TIME)
+
+  ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
+  D:log(ReceivedMessages["AbnormalReport"])
+
+  if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "HelmPanelDisconnected" ) then
+    assert_nil(1, "HelmPanelDisconnected abnormal report sent but not expected - sending reports disabled")
+  end
+
+  -- checking HelmPanelDisconnectedState property
+  HelmPanelDisconnectedStateProperty = vmsSW:getPropertiesByName({"HelmPanelDisconnectedState"})
+  D:log(framework.dump(HelmPanelDisconnectedStateProperty["HelmPanelDisconnectedState"]), "HelmPanelDisconnectedState")
+  assert_true(HelmPanelDisconnectedStateProperty["HelmPanelDisconnectedState"], "HelmPanelDisconnectedState property has not been changed after HelmPanelDisconnectedEndDebounceTime has passed")
+
+
+end
 
 
 
