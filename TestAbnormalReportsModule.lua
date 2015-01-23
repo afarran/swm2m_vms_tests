@@ -1936,7 +1936,7 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSource
 
   -- checking ExtPowerDisconnectedState property
   local ExtPowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"ExtPowerDisconnectedState"})
-  D:log(framework.dump(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"]))
+  D:log(framework.dump(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"]), "ExtPowerDisconnectedState")
   assert_true(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"], "ExtPowerDisconnectedState property is incorrectly false")
 
 
@@ -1952,8 +1952,8 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSource
 
   -- checking ExtPowerDisconnectedState property
   local ExtPowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"ExtPowerDisconnectedState"})
-  D:log(framework.dump(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"]))
-  assert_false(ExtPowerDisconnectedStateProperty["ExtPowerDisconnected"], "ExtPowerDisconnectedState has changed to false before ExtPowerDisconnectedEndDebounceTime time has passed")
+  D:log(framework.dump(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"]), "ExtPowerDisconnectedState")
+  assert_true(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"], "ExtPowerDisconnectedState has changed to false before ExtPowerDisconnectedEndDebounceTime time has passed")
 
   framework.delay(EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME)
 
@@ -2003,7 +2003,10 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSource
   )
 
   local StatusBitmap = vmsSW:decodeBitmap(ReceivedMessages["AbnormalReport"].StatusBitmap, "EventStateId")
-  assert_false(StatusBitmap["ExtPowerDisconnected"], "StatusBitmap has not been correctly changed to false when external power of helm panel wa connected")
+  assert_false(StatusBitmap["ExtPowerDisconnected"], "StatusBitmap has not been correctly changed to false when external power source of helm panel was connected")
+
+
+  D:log("HELM PANEL DISCONNECTED")
 
   -- back to exernal power disconnected
   shellSW:postEvent(
@@ -2014,6 +2017,125 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSource
 
 
 end
+
+
+
+function test_ExtPowerDisconnected_WhenHelmPanelIsDisonnectedFromExternalPowerSourceForTimeAboveExtPowerDisconnectedStartDebounceTime_ExtPowerDisconnectedAbnormalReportIsSent()
+
+  local EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME = 30
+  local EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME = 1
+
+  -- *** Setup
+  -- terminal in some position but no valid fix provided
+  local InitialPosition = {
+                              speed = 0,                      -- kmh
+                              latitude = 1,                   -- degrees
+                              longitude = 1,                  -- degrees
+                              fixType = 3,                    -- valid fix
+  }
+
+  vmsSW:setPropertiesByName({
+                             ExtPowerDisconnectedStartDebounceTime = EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME,
+                             ExtPowerDisconnectedEndDebounceTime = EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME,
+                             ExtPowerDisconnectedSendReport = true,
+                            }
+  )
+
+  -- *** Execute
+  GPS:set(InitialPosition)
+
+  -- checking ExtPowerDisconnectedState property
+  local ExtPowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"ExtPowerDisconnectedState"})
+  D:log(framework.dump(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"]), "ExtPowerDisconnectedState")
+  assert_true(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"], "ExtPowerDisconnectedState property is incorrectly false")
+
+  D:log("HELM PANEL CONNECTED")
+  -- Helm Panel is connected to external power from now
+  shellSW:postEvent(
+                    uniboxSW.handleName,
+                    uniboxSW.events.external_power_connected,
+                    "true"
+  )
+
+  framework.delay(EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME)
+
+
+  -- checking ExtPowerDisconnectedState property
+  local ExtPowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"ExtPowerDisconnectedState"})
+  D:log(framework.dump(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"]), "ExtPowerDisconnectedStateProperty" )
+  assert_false(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"], "ExtPowerDisconnectedState property is incorrectly true")
+
+  gateway.setHighWaterMark() -- to get the newest messages
+
+  D:log("HELM PANEL DISCONNECTED")
+  -- Helm Panel is connected to external power from now
+  shellSW:postEvent(
+                    uniboxSW.handleName,
+                    uniboxSW.events.external_power_connected,
+                    "false"
+  )
+
+  -- checking ExtPowerDisconnectedState property
+  local ExtPowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"ExtPowerDisconnectedState"})
+  D:log(framework.dump(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"]), "ExtPowerDisconnectedStateProperty")
+  assert_false(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"], "ExtPowerDisconnectedState has changed to true before ExtPowerDisconnectedStartDebounceTime time has passed")
+
+  framework.delay(EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME)
+  timeOfEvent = os.time()
+
+  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"})
+  D:log(ReceivedMessages["AbnormalReport"])
+
+  -- checking ExtPowerDisconnectedState property
+  local ExtPowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"ExtPowerDisconnectedState"})
+  D:log(framework.dump(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"]), "ExtPowerDisconnectedState")
+  assert_true(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"], "ExtPowerDisconnectedState property is incorrectly false after ExtPowerDisconnectedStartDebounceTime")
+
+  assert_not_nil(ReceivedMessages["AbnormalReport"], "AbnormalReport not received")
+
+  assert_equal(
+    InitialPosition.latitude*60000,
+    tonumber(ReceivedMessages["AbnormalReport"].Latitude),
+    "Wrong latitude value in ExtPowerDisconnected abnormal report"
+  )
+
+  assert_equal(
+    InitialPosition.longitude*60000,
+    tonumber(ReceivedMessages["AbnormalReport"].Longitude),
+    "Wrong longitude value in ExtPowerDisconnected abnormal report"
+  )
+
+  assert_equal(
+    InitialPosition.speed,
+    tonumber(ReceivedMessages["AbnormalReport"].Speed),
+    "Wrong speed value in ExtPowerDisconnected abnormal report"
+  )
+
+  assert_equal(
+    361,
+    tonumber(ReceivedMessages["AbnormalReport"].Course),
+    "Wrong course value in ExtPowerDisconnected abnormal report"
+  )
+
+  assert_equal(
+    "ExtPowerDisconnected",
+    ReceivedMessages["AbnormalReport"].EventType,
+    "Wrong name of the received EventType in ExtPowerDisconnected abnormal report"
+  )
+
+  assert_equal(
+    timeOfEvent,
+    tonumber(ReceivedMessages["AbnormalReport"].Timestamp),
+    10,
+    "Wrong Timestamp value in ExtPowerDisconnected abnormal report"
+  )
+
+  local StatusBitmap = vmsSW:decodeBitmap(ReceivedMessages["AbnormalReport"].StatusBitmap, "EventStateId")
+  assert_true(StatusBitmap["ExtPowerDisconnected"], "StatusBitmap has not been correctly changed to true when external power source of helm panel was disconnected")
+
+
+end
+
 
 
 
