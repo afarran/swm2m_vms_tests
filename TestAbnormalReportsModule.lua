@@ -1959,7 +1959,7 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSource
                     "true"
   )
 
-  D:log("HELM PANEL CONNECTED")
+  D:log("EXTERNAL POWER SOURCE OF HELM PANEL CONNECTED")
 
   -- checking ExtPowerDisconnectedState property
   local ExtPowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"ExtPowerDisconnectedState"})
@@ -2017,7 +2017,7 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSource
   assert_false(StatusBitmap["ExtPowerDisconnected"], "StatusBitmap has not been correctly changed to false when external power source of helm panel was connected")
 
 
-  D:log("HELM PANEL DISCONNECTED")
+  D:log("EXTERNAL POWER SOURCE OF HELM PANEL DISCONNECTED")
 
   -- back to exernal power disconnected
   shellSW:postEvent(
@@ -2060,7 +2060,7 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsDisconnectedFromExternalPowerS
   D:log(framework.dump(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"]), "ExtPowerDisconnectedState")
   assert_true(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"], "ExtPowerDisconnectedState property is incorrectly false")
 
-  D:log("HELM PANEL CONNECTED")
+  D:log("EXTERNAL POWER SOURCE OF HELM PANEL CONNECTED")
   -- Helm Panel is connected to external power from now
   shellSW:postEvent(
                     uniboxSW.handleName,
@@ -2078,7 +2078,7 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsDisconnectedFromExternalPowerS
 
   gateway.setHighWaterMark() -- to get the newest messages
 
-  D:log("HELM PANEL DISCONNECTED")
+  D:log("EXTERNAL POWER SOURCE OF HELM PANEL DISCONNECTED")
   -- Helm Panel is connected to external power from now
   shellSW:postEvent(
                     uniboxSW.handleName,
@@ -2178,7 +2178,7 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSource
   assert_true(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"], "ExtPowerDisconnectedState property is incorrectly false")
 
   gateway.setHighWaterMark() -- to get the newest messages
-  D:log("HELM PANEL CONNECTED")
+  D:log("EXTERNAL POWER SOURCE OF HELM PANEL CONNECTED")
   -- Helm Panel is connected to external power from now
   shellSW:postEvent(
                     uniboxSW.handleName,
@@ -2193,7 +2193,7 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSource
     assert_nil(1, "ExtPowerDisconnected abnormal report sent but not expected")
   end
 
-  D:log("HELM PANEL DISCONNECTED")
+  D:log("EXTERNAL POWER SOURCE OF  HELM PANEL DISCONNECTED")
   -- back to exernal power disconnected
   shellSW:postEvent(
                     uniboxSW.handleName,
@@ -2252,7 +2252,7 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsDisonnectedFromExternalPowerSo
   assert_false(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"], "ExtPowerDisconnectedState property is incorrectly true")
 
   gateway.setHighWaterMark() -- to get the newest messages
-  D:log("HELM PANEL DISCONNECTED")
+  D:log("EXTERNAL POWER SOURCE OF HELM PANEL DISCONNECTED")
   -- Helm Panel is connected to external power from now
   shellSW:postEvent(
                     uniboxSW.handleName,
@@ -2303,7 +2303,7 @@ function test_ExtPowerDisconnected_WhenExternalPowerIsConnectedAndDisconnectedFo
   D:log(framework.dump(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"]), "ExtPowerDisconnectedState")
   assert_true(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"], "ExtPowerDisconnectedState property is incorrectly false")
 
-  D:log("HELM PANEL CONNECTED")
+  D:log("EXTERNAL POWER SOURCE OF HELM PANEL CONNECTED")
   -- Helm Panel is connected to external power from now
   shellSW:postEvent(
                     uniboxSW.handleName,
@@ -2327,7 +2327,7 @@ function test_ExtPowerDisconnected_WhenExternalPowerIsConnectedAndDisconnectedFo
 
   gateway.setHighWaterMark() -- to get the newest messages
 
-  D:log("HELM PANEL DISCONNECTED")
+  D:log("EXTERNAL POWER SOURCE OF  HELM PANEL DISCONNECTED")
   -- Helm Panel is connected to external power from now
   shellSW:postEvent(
                     uniboxSW.handleName,
