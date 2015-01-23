@@ -357,7 +357,7 @@ function test_CommonReport_WhenPropertyDefinitionChanged_VersionMessageIsSent()
 end
 
 function test_CommonReport_WhenHelmPanelVersionHasChanged_VersionReportIsSent()
-  local path = "/act/user/UniboxInOut/main.lua"    
+  local path = uniboxSW:getServicePath() .. "main.lua"
   vmsSW:sendMessageByName("GetVersion")
   local receivedMessages = vmsSW:waitForMessagesByName({"Version"})
   local versionMessage = receivedMessages.Version
@@ -383,7 +383,7 @@ function test_CommonReport_WhenHelmPanelVersionHasChanged_VersionReportIsSent()
   local nextVersion = tonumber(string.sub(currentHelmPanelInterface, 1, 1)) + 1 -- increase version by 1
   if (nextVersion >= 10) then nextVersion = 0 end
   local writeOK = filesystemSW:write(path, helmPanelVersionOffset, "" .. nextVersion)
-  assert_true(writeOK, "Could not write version to UniboxInOut main.lua")
+  assert_true(writeOK, "Could not write version to "..path)
   restoreData = {}
   restoreData.path = path
   restoreData.offset = helmPanelVersionOffset

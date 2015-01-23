@@ -46,7 +46,7 @@ UniboxServiceWrapper = {}
 
     ServiceWrapper._init(self, {
         sin = 162, 
-        name = "Unibox", 
+        name = "UniboxInOut", 
         messages_to = messages_to, 
         messages_from = messages_from, 
         properties = properties

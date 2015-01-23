@@ -1,7 +1,7 @@
 -- DriftAnalyse 
 -- Implementation of algorithm for analyze anti-drift feature
 -- Delays are cumulated and even then final balance is checked (with tolerance if needed)
-local DriftAnalyse = {}
+DriftAnalyse = {}
   DriftAnalyse.__index = DriftAnalyse
   setmetatable(DriftAnalyse, {
     __call = function(cls, ...)

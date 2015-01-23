@@ -22,6 +22,7 @@ require("Service/GeofenceServiceWrapper")
 require("Service/LogServiceWrapper")
 require("Service/ShellServiceWrapper")
 require("Service/UniboxServiceWrapper")
+
 positionSW = PositionServiceWrapper()
 filesystemSW = FilesystemServiceWrapper()
 systemSW = SystemServiceWrapper()
@@ -34,6 +35,11 @@ uniboxSW = UniboxServiceWrapper()
 -- Gps Frontend
 require("Gps/GpsFrontend")
 GPS = GpsFrontend()
+
+-- perform data analysis
+require("Infrastructure/DataAnalyse/DriftAnalyse")
+driftAnalyse = DriftAnalyse()
+
 
 -- Randomizer
 FORCE_ALL_TESTCASES = false                                  -- determines whether to run all TCs or to use random TC for similar features -
@@ -55,6 +61,7 @@ local function setup()
   lunatest.suite("TestAbnormalReportsModule")
   lunatest.suite("TestGeofenceModule")
   lunatest.suite("TestHelmPanelModule")
+  lunatest.suite("TestSmtpModule")
 end
 
 local function teardown()
