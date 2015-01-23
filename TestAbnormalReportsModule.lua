@@ -1912,9 +1912,8 @@ end
 
 function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerForTimeAboveExtPowerDisconnectedEndDebounceTime_ExtPowerDisconnectedAbnormalReportIsSent()
 
-  -- THIS IS A DRAFT VERSION - NOT FINISHED
   local EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME = 1
-  local EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME = 1
+  local EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME = 30
 
   -- *** Setup
   -- terminal in some position but no valid fix provided
@@ -1934,12 +1933,31 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerForTim
 
   -- *** Execute
   GPS:set(InitialPosition)
+
+  -- checking ExtPowerDisconnectedState property
+  local ExtPowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"ExtPowerDisconnectedState"})
+  D:log(framework.dump(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"]))
+  assert_true(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"], "ExtPowerDisconnectedState property is incorrectly false")
+
+
   gateway.setHighWaterMark() -- to get the newest messages
+  -- Helm Panel is connected to external power from now
   shellSW:postEvent(
                     uniboxSW.handleName,
                     uniboxSW.events.external_power_connected,
                     "true"
   )
+
+  D:log("HELM PANEL CONNECTED")
+
+  -- checking ExtPowerDisconnectedState property
+  local ExtPowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"ExtPowerDisconnectedState"})
+  D:log(framework.dump(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"]))
+  assert_false(ExtPowerDisconnectedStateProperty["ExtPowerDisconnected"], "ExtPowerDisconnectedState has changed to false before ExtPowerDisconnectedEndDebounceTime time has passed")
+
+  framework.delay(EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME)
+
+
   timeOfEvent = os.time()
 
   local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"})
@@ -1984,9 +2002,15 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerForTim
     "Wrong Timestamp value in ExtPowerDisconnected abnormal report"
   )
 
-
   local StatusBitmap = vmsSW:decodeBitmap(ReceivedMessages["AbnormalReport"].StatusBitmap, "EventStateId")
-  assert_false(StatusBitmap["ExtPowerDisconnected"], "StatusBitmap has not been correctly changed when terminal detected GPS blockage")
+  assert_false(StatusBitmap["ExtPowerDisconnected"], "StatusBitmap has not been correctly changed to false when external power of helm panel wa connected")
+
+  -- back to exernal power disconnected
+  shellSW:postEvent(
+                    uniboxSW.handleName,
+                    uniboxSW.events.external_power_connected,
+                    "false"
+  )
 
 
 end
