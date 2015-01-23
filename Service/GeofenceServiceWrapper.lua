@@ -121,3 +121,13 @@ GeofenceServiceWrapper = {}
     self:sendMessageByName("setRectangle", Fields)
 	
   end
+
+  function GeofenceServiceWrapper:enableFence(number)
+    local Fields = {{Name="number",Value=number},{Name="enable",Value=true}}
+    self:sendMessageByName("enableFence", Fields)
+  end
+
+  function GeofenceServiceWrapper:disableFence(number)
+    local Fields = {{Name="number",Value=number},{Name="enable",Value=false}}
+    self:sendMessageByName("enableFence", Fields)
+  end
