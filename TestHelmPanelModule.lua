@@ -50,7 +50,7 @@ end
 -- Test Cases 
 -----------------------------------------------------------------------------------------------
 
-function test_HelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAndTheStateToggles_HelmPanelDisconnectedStateChangesCorrectly()
+function test_HelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAndTheStateToggles_HelmPanelDisconnectedStateChangesCorrectlyAndLEDTransitionsAreCorrect()
 
   local properties = vmsSW:getPropertiesByName({"HelmPanelDisconnectedState"})
   local isDisconnected = properties.HelmPanelDisconnectedState
@@ -111,8 +111,47 @@ function test_HelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAn
 
 end
 
+function test_GpsLED_WhenGpsIsBlocked_GpsLedIsOff()
 
-function test_SateliteLED()
+  -- No fix 
+  local blockedPosition = {
+    speed = 0,                      -- kmh
+    latitude = 1,                   -- degrees
+    longitude = 1,                  -- degrees
+    fixType = 1,                    -- no fix
+  }
+   
+  positionSW:setPropertiesByName({continuous = 1, maxFixTimeout = MAX_FIX_TIMEOUT})
+  GPS:set(blockedPosition)
+
+  framework.delay(MAX_FIX_TIMEOUT + GPS_BLOCKED_START_DEBOUNCE_TIME)
+
+  local ledState = helmPanel:isGpsLedOn()
+  assert_false(ledState,"The GPS LED should be off!")
+
+end
+
+function test_GpsLED_WhenGpsIsSetWithCorrectFix_GpsLedIsOn()
+
+  -- Fix
+  local position = {
+    speed = 0,                      -- kmh
+    latitude = 1,                   -- degrees
+    longitude = 1,                  -- degrees
+    fixType = 3,                    -- fix
+  }
+   
+  positionSW:setPropertiesByName({continuous = 1, maxFixTimeout = MAX_FIX_TIMEOUT})
+  GPS:set(position)
+
+  framework.delay(MAX_FIX_TIMEOUT + GPS_BLOCKED_START_DEBOUNCE_TIME)
+
+  local ledState = helmPanel:isGpsLedOn()
+  assert_true(ledState,"The GPS LED should be on!")
+
+end
+
+function test_SateliteLED_WhenSateliteIsBlockedOrUnblocked_SateliteLedIsInCorrectState()
 
   raiseNotImpl()
 
@@ -137,46 +176,7 @@ function test_SateliteLED()
   assert_true(ledState,"The satelite LED should be on!")
 
 end
-
-function test_GpsLEDIsOff()
-
-  -- No fix 
-  local blockedPosition = {
-    speed = 0,                      -- kmh
-    latitude = 1,                   -- degrees
-    longitude = 1,                  -- degrees
-    fixType = 1,                    -- no fix
-  }
-   
-  positionSW:setPropertiesByName({continuous = 1, maxFixTimeout = MAX_FIX_TIMEOUT})
-  GPS:set(blockedPosition)
-
-  framework.delay(MAX_FIX_TIMEOUT + GPS_BLOCKED_START_DEBOUNCE_TIME)
-
-  local ledState = helmPanel:isGpsLedOn()
-  assert_false(ledState,"The GPS LED should be off!")
-
-end
-
-function test_GpsLEDIsOn()
-
-  -- Fix
-  local position = {
-    speed = 0,                      -- kmh
-    latitude = 1,                   -- degrees
-    longitude = 1,                  -- degrees
-    fixType = 3,                    -- fix
-  }
-   
-  positionSW:setPropertiesByName({continuous = 1, maxFixTimeout = MAX_FIX_TIMEOUT})
-  GPS:set(position)
-
-  framework.delay(MAX_FIX_TIMEOUT + GPS_BLOCKED_START_DEBOUNCE_TIME)
-
-  local ledState = helmPanel:isGpsLedOn()
-  assert_true(ledState,"The GPS LED should be on!")
-
-end
+---------------------------------------------------------------------------------
 
 function raiseNotImpl()
   assert_nil(1,"Not implemented yet!")
