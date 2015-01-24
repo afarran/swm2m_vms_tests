@@ -52,12 +52,7 @@ function test_HelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAn
     change = "false"
   end
 
-  --TODO: abstract 
-  shellSW:postEvent(
-    uniboxSW.handleName, 
-    uniboxSW.events.connected, 
-    change
-  )
+  helmPanel:setConnected(change) 
 
   framework.delay(2)
 
@@ -73,13 +68,8 @@ function test_HelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAn
     change = "false"
   end
 
-  --TODO: abstract
-  shellSW:postEvent(
-    uniboxSW.handleName, 
-    uniboxSW.events.connected, 
-    change
-  )
-
+  helmPanel:setConnected(change)
+ 
   framework.delay(2)
 
   local propertiesAfterSecondChange = vmsSW:getPropertiesByName({"HelmPanelDisconnectedState"})
