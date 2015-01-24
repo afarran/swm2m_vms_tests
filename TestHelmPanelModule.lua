@@ -54,12 +54,15 @@ function test_HelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAn
 
   local properties = vmsSW:getPropertiesByName({"HelmPanelDisconnectedState"})
   local isDisconnected = properties.HelmPanelDisconnectedState
+  local ledState = helmPanel:isConnectLedOn()
 
   local change = ""
   if isDisconnected then
     change = "true"
+    assert_false(ledState,"The IDP connect LED should be off!")
   else
     change = "false"
+    assert_true(ledState,"The IDP connect LED should be on!")
   end
 
   helmPanel:setConnected(change) 
@@ -74,8 +77,10 @@ function test_HelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAn
     
   if isDisconnectedAfterChange then
     change = "true"
+    assert_false(ledState,"The IDP connect LED should be off!")
   else
     change = "false"
+    assert_true(ledState,"The IDP connect LED should be on!")
   end
 
   helmPanel:setConnected(change)
@@ -101,7 +106,7 @@ function test_SateliteLED()
 
   -- check satelite led
   local ledState = helmPanel:isSateliteLedOn()
-  assert_false(ledState,"The satelite led should not be off!")
+  assert_false(ledState,"The satelite LED should not be off!")
   
   -- unblock satelite
   -- TODO: where is satalite blockage in TF API ?
@@ -111,7 +116,7 @@ function test_SateliteLED()
 
   -- check satelite led
   local ledState = helmPanel:isSateliteLedOn()
-  assert_true(ledState,"The satelite led should be on!")
+  assert_true(ledState,"The satelite LED should be on!")
 
 end
 
@@ -131,7 +136,7 @@ function test_GpsLEDIsOff()
   framework.delay(MAX_FIX_TIMEOUT + GPS_BLOCKED_START_DEBOUNCE_TIME)
 
   local ledState = helmPanel:isGpsLedOn()
-  assert_false(ledState,"The satelite led should be off!")
+  assert_false(ledState,"The GPS LED should be off!")
 
 end
 
@@ -151,7 +156,7 @@ function test_GpsLEDIsOn()
   framework.delay(MAX_FIX_TIMEOUT + GPS_BLOCKED_START_DEBOUNCE_TIME)
 
   local ledState = helmPanel:isGpsLedOn()
-  assert_true(ledState,"The satelite led should be on!")
+  assert_true(ledState,"The GPS LED should be on!")
 
 end
 

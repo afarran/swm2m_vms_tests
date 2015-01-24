@@ -31,3 +31,13 @@ HelmPanelUnibox = {}
     return true
   end
 
+  function HelmPanelUnibox:isConnectLedOn()
+    local properties = self.device:getPropertiesByName({"led1State"})
+    local state = properties.led1State
+    D:log("GPS LED state is "..state)
+    if state == 'OFF' then 
+      return false
+    end
+    return true
+  end
+
