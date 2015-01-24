@@ -12,10 +12,19 @@ HelmPanelUnibox = {}
   })
 
   function HelmPanelUnibox:isSateliteLedOn()
-    --TODO: is it realy LED 2 ?
+    local properties = self.device:getPropertiesByName({"led3State"})
+    local state = properties.led3State
+    D:log("Sat LED state is "..state)
+    if state == 'OFF' then 
+      return false
+    end
+    return true
+  end
+
+  function HelmPanelUnibox:isGpsLedOn()
     local properties = self.device:getPropertiesByName({"led2State"})
     local state = properties.led2State
-    D:log("LED 2 state is "..state)
+    D:log("GPS LED state is "..state)
     if state == 'OFF' then 
       return false
     end
