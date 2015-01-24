@@ -52,6 +52,7 @@ function test_HelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAn
     change = "false"
   end
 
+  --TODO: abstract 
   shellSW:postEvent(
     uniboxSW.handleName, 
     uniboxSW.events.connected, 
@@ -72,6 +73,7 @@ function test_HelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAn
     change = "false"
   end
 
+  --TODO: abstract
   shellSW:postEvent(
     uniboxSW.handleName, 
     uniboxSW.events.connected, 
@@ -86,20 +88,9 @@ function test_HelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAn
 
 end
 
--- TODO: nothing happends after posting BUTTON_PRESSED event, not implemented yet or .. ?
-function test_ButtonPressed()
-  shellSW:postEvent(
-    uniboxSW.handleName,
-    uniboxSW.events.button_pressed,
-    "true"
-  )
-end
+-- TODO: Investigate. 
+-- TODO: turned external power button manually in simulator 
+-- TODO: but it does not change external power property in unibox neither vms.. 
+function test_ExternalPower()
 
--- TODO: nothing happends after posting SERVICE_ACTIVE event, not implemented yet or .. ?
-function test_ServiceActive()
-  shellSW:postEvent(
-    uniboxSW.handleName,
-    uniboxSW.events.service_active,
-    "true"
-  )
 end
