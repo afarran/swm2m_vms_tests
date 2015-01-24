@@ -7,6 +7,9 @@
 module("TestHelmPanelModule", package.seeall)
 DEBUG_MODE = 1
 
+local SATELITE_BLOCKAGE_DEBOUNCE = 1
+local SATELITE_BLOCKAGE_DEBOUNCE_TOLERANCE = 5
+
 -----------------------------------------------------------------------------------------------
 -- SETUP
 -----------------------------------------------------------------------------------------------
@@ -18,7 +21,9 @@ function suite_setup()
   vmsSW:setPropertiesByName({
     PropertyChangeDebounceTime=1,
     HelmPanelDisconnectedStartDebounceTime=1,
-    HelmPanelDisconnectedEndDebounceTime=1
+    HelmPanelDisconnectedEndDebounceTime=1,
+    IdpBlockedStartDebounceTime = SATELITE_BLOCKAGE_DEBOUNCE ,
+    IdpBlockedEndDebounceTime = SATELITE_BLOCKAGE_DEBOUNCE 
   })
 
 end
@@ -82,5 +87,22 @@ end
 -- TODO: turned external power button manually in simulator 
 -- TODO: but it does not change external power property in unibox neither vms.. 
 function test_ExternalPower()
+
+end
+
+function test_SateliteBlockage()
+
+  -- block satelite
+  -- TODO: where is satalite blockage in TF API ?
+  print "You have 10 seconds to block satelite by GUI click"
+  framework.delay(10)
+  
+  -- wait debounce time
+  framework.delay(SATELITE_BLOCKAGE_DEBOUNCE+SATELITE_BLOCKAGE_DEBOUNCE_TOLERANCE)
+
+  -- check satelite led
+  local ledState = helmPanel:isSateliteLedOn()
+
+  assert_false(ledState,"The satelite led should not be on!")
 
 end
