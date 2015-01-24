@@ -34,7 +34,7 @@ HelmPanelUnibox = {}
   function HelmPanelUnibox:isConnectLedOn()
     local properties = self.device:getPropertiesByName({"led1State"})
     local state = properties.led1State
-    D:log("GPS LED state is "..state)
+    D:log("IDP connect LED state is "..state)
     if state == 'OFF' then 
       return false
     end

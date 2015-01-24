@@ -54,9 +54,48 @@ function test_HelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAn
 
   local properties = vmsSW:getPropertiesByName({"HelmPanelDisconnectedState"})
   local isDisconnected = properties.HelmPanelDisconnectedState
-  local ledState = helmPanel:isConnectLedOn()
 
   local change = ""
+
+  -- check LED before switch
+  local ledState = helmPanel:isConnectLedOn()
+  if isDisconnected then
+    change = "true"
+    assert_false(ledState,"The IDP connect LED should be off!")
+  else
+    assert_true(ledState,"The IDP connect LED should be on!")
+    change = "false"
+  end
+
+  -- state transition
+  helmPanel:setConnected(change) 
+  framework.delay(4)
+
+  -- check LED again after switch
+  local ledState = helmPanel:isConnectLedOn()
+  if isDisconnected then
+    assert_true(ledState,"The IDP connect LED should be on!")
+  else
+    assert_false(ledState,"The IDP connect LED should be off!")
+  end
+
+  -- check transition
+  local propertiesAfterChange = vmsSW:getPropertiesByName({"HelmPanelDisconnectedState"})
+  local isDisconnectedAfterChange = propertiesAfterChange.HelmPanelDisconnectedState
+  assert_not_equal(isDisconnectedAfterChange, isDisconnected, "There should be change in disconnected state.")
+
+  if isDisconnectedAfterChange then
+    change = "true"
+  else
+    change = "false"
+  end
+
+  --second state transition
+  helmPanel:setConnected(change)
+  framework.delay(2)
+  
+  -- check LED after back to initail state
+  local ledState = helmPanel:isConnectLedOn()
   if isDisconnected then
     change = "true"
     assert_false(ledState,"The IDP connect LED should be off!")
@@ -65,28 +104,7 @@ function test_HelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAn
     assert_true(ledState,"The IDP connect LED should be on!")
   end
 
-  helmPanel:setConnected(change) 
-
-  framework.delay(2)
-
-  local propertiesAfterChange = vmsSW:getPropertiesByName({"HelmPanelDisconnectedState"})
-  local isDisconnectedAfterChange = propertiesAfterChange.HelmPanelDisconnectedState
-  assert_not_equal(isDisconnectedAfterChange, isDisconnected, "There should be change in disconnected state.")
-
-  framework.delay(2)
-    
-  if isDisconnectedAfterChange then
-    change = "true"
-    assert_false(ledState,"The IDP connect LED should be off!")
-  else
-    change = "false"
-    assert_true(ledState,"The IDP connect LED should be on!")
-  end
-
-  helmPanel:setConnected(change)
- 
-  framework.delay(2)
-
+  -- check state transition
   local propertiesAfterSecondChange = vmsSW:getPropertiesByName({"HelmPanelDisconnectedState"})
   local isDisconnectedAfterSecondChange = propertiesAfterSecondChange.HelmPanelDisconnectedState
   assert_not_equal(isDisconnectedAfterChange, isDisconnectedAfterSecondChange, "There should be change in disconnected state.")
