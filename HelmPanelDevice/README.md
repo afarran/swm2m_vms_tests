@@ -5,13 +5,13 @@ HelmPanelDevice abstraction.
 
 2. Instead example code in our TC like:
 
-  shellSW:postEvent(
--    uniboxSW.handleName, 
--    uniboxSW.events.connected, 
--    change
-- )
+   shellSW:postEvent(
+     uniboxSW.handleName, 
+     uniboxSW.events.connected, 
+     change
+   )
 
-  which rigidly and ugly binds TC logic to concrete device (unibox) ..
+   which rigidly and ugly binds TC logic to concrete device (unibox) ..
 
 3. Just think about meaningful interface for that. In this case it is:
 
