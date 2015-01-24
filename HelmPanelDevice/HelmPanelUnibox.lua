@@ -1,3 +1,5 @@
+require("HelmPanelDevice/HelmPanelDevice")
+
 HelmPanelUnibox = {}
   HelmPanelUnibox.__index = HelmPanelUnibox
   setmetatable(HelmPanelUnibox, {

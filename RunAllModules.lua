@@ -32,6 +32,10 @@ logSW = LogServiceWrapper()
 shellSW = ShellServiceWrapper()
 uniboxSW = UniboxServiceWrapper()
 
+-- Helm Panel
+helmPanelFactory = require("HelmPanelDevice/HelmPanelDeviceFactory")()
+helmPanel = helmPanelFactory.create("unibox")
+
 -- Gps Frontend
 require("Gps/GpsFrontend")
 GPS = GpsFrontend()
