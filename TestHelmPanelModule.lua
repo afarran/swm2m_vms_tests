@@ -9,9 +9,9 @@ DEBUG_MODE = 1
 
 local SATELITE_BLOCKAGE_DEBOUNCE = 1
 local SATELITE_BLOCKAGE_DEBOUNCE_TOLERANCE = 0
-local GPS_BLOCKED_START_DEBOUNCE_TIME = 20
+local GPS_BLOCKED_START_DEBOUNCE_TIME = 1
 local GPS_BLOCKED_END_DEBOUNCE_TIME = 1 
-local MAX_FIX_TIMEOUT = 60  
+local MAX_FIX_TIMEOUT = 1 
 
 -----------------------------------------------------------------------------------------------
 -- SETUP
@@ -121,10 +121,13 @@ function test_GpsLED_WhenGpsIsBlocked_GpsLedIsOff()
     fixType = 1,                    -- no fix
   }
    
-  positionSW:setPropertiesByName({continuous = 1, maxFixTimeout = MAX_FIX_TIMEOUT})
+  positionSW:setPropertiesByName({
+    continuous = 0, 
+    maxFixTimeout = MAX_FIX_TIMEOUT
+  })
   GPS:set(blockedPosition)
 
-  framework.delay(MAX_FIX_TIMEOUT + GPS_BLOCKED_START_DEBOUNCE_TIME)
+  framework.delay(MAX_FIX_TIMEOUT + GPS_BLOCKED_START_DEBOUNCE_TIME + 2)
 
   local ledState = helmPanel:isGpsLedOn()
   assert_false(ledState,"The GPS LED should be off!")
@@ -141,10 +144,13 @@ function test_GpsLED_WhenGpsIsSetWithCorrectFix_GpsLedIsOn()
     fixType = 3,                    -- fix
   }
    
-  positionSW:setPropertiesByName({continuous = 1, maxFixTimeout = MAX_FIX_TIMEOUT})
+  positionSW:setPropertiesByName({
+    continuous = 0, 
+    maxFixTimeout = MAX_FIX_TIMEOUT
+  })
   GPS:set(position)
 
-  framework.delay(MAX_FIX_TIMEOUT + GPS_BLOCKED_START_DEBOUNCE_TIME)
+  framework.delay(MAX_FIX_TIMEOUT + GPS_BLOCKED_START_DEBOUNCE_TIME + 2 )
 
   local ledState = helmPanel:isGpsLedOn()
   assert_true(ledState,"The GPS LED should be on!")

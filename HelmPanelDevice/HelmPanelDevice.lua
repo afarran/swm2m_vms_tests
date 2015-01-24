@@ -21,5 +21,7 @@ HelmPanelDevice = {}
     )
   end
 
-  -- abstract method
+  -- abstract methods
   function HelmPanelDevice:isSateliteLedOn() end 
+  function HelmPanelDevice:isGpsLedOn() end 
+  function HelmPanelDevice:isConnectLedOn() end 
