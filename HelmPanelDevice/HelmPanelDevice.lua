@@ -20,3 +20,6 @@ HelmPanelDevice = {}
       change
     )
   end
+
+  -- abstract method
+  function HelmPanelDevice:isSateliteLedOn() end 

@@ -8,7 +8,7 @@ module("TestHelmPanelModule", package.seeall)
 DEBUG_MODE = 1
 
 local SATELITE_BLOCKAGE_DEBOUNCE = 1
-local SATELITE_BLOCKAGE_DEBOUNCE_TOLERANCE = 5
+local SATELITE_BLOCKAGE_DEBOUNCE_TOLERANCE = 0
 
 -----------------------------------------------------------------------------------------------
 -- SETUP
@@ -92,17 +92,33 @@ end
 
 function test_SateliteBlockage()
 
+  raiseNotImpl()
+
   -- block satelite
   -- TODO: where is satalite blockage in TF API ?
-  print "You have 10 seconds to block satelite by GUI click"
-  framework.delay(10)
   
   -- wait debounce time
   framework.delay(SATELITE_BLOCKAGE_DEBOUNCE+SATELITE_BLOCKAGE_DEBOUNCE_TOLERANCE)
 
   -- check satelite led
   local ledState = helmPanel:isSateliteLedOn()
+  assert_false(ledState,"The satelite led should not be off!")
+  
+  -- unblock satelite
+  -- TODO: where is satalite blockage in TF API ?
 
-  assert_false(ledState,"The satelite led should not be on!")
+  -- wait debounce time
+  framework.delay(SATELITE_BLOCKAGE_DEBOUNCE+SATELITE_BLOCKAGE_DEBOUNCE_TOLERANCE)
+
+  -- check satelite led
+  local ledState = helmPanel:isSateliteLedOn()
+
+  assert_true(ledState,"The satelite led should be on!")
+
+end
+
+function raiseNotImpl()
+
+  assert_nil(1,"Not implemented yet!")
 
 end
