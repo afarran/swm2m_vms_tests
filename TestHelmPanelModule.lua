@@ -129,6 +129,8 @@ function test_GpsLED_WhenGpsIsBlocked_GpsLedIsOff()
 
   framework.delay(MAX_FIX_TIMEOUT + GPS_BLOCKED_START_DEBOUNCE_TIME + 2)
 
+  framework.delay(120)
+
   local ledState = helmPanel:isGpsLedOn()
   assert_false(ledState,"The GPS LED should be off!")
 
@@ -145,12 +147,14 @@ function test_GpsLED_WhenGpsIsSetWithCorrectFix_GpsLedIsOn()
   }
    
   positionSW:setPropertiesByName({
-    continuous = 0, 
+    continuous = 1, 
     maxFixTimeout = MAX_FIX_TIMEOUT
   })
   GPS:set(position)
 
   framework.delay(MAX_FIX_TIMEOUT + GPS_BLOCKED_START_DEBOUNCE_TIME + 2 )
+ 
+  framework.delay(65)
 
   local ledState = helmPanel:isGpsLedOn()
   assert_true(ledState,"The GPS LED should be on!")
