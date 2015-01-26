@@ -2710,7 +2710,7 @@ function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateTrueWhe
 
   -- DRAFT
   local HW_CLIENT_DISCONNECTED_START_DEBOUNCE_TIME = 1
-  local HW_CLIENT_DISCONNECTED_END_DEBOUNCE_TIME = 1
+  local HW_CLIENT_DISCONNECTED_END_DEBOUNCE_TIME = 30
 
 
   -- *** Setup
@@ -2815,7 +2815,7 @@ function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateFalseWh
 
 
   -- DRAFT
-  local HW_CLIENT_DISCONNECTED_START_DEBOUNCE_TIME = 1
+  local HW_CLIENT_DISCONNECTED_START_DEBOUNCE_TIME = 30
   local HW_CLIENT_DISCONNECTED_END_DEBOUNCE_TIME = 1
 
 
@@ -2883,11 +2883,6 @@ function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateFalseWh
 
   local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"})
   D:log(ReceivedMessages["AbnormalReport"])
-
-  -- checking HwClientDisconnectedState property
-  HwClientDisconnectedStateProperty = vmsSW:getPropertiesByName({"HwClientDisconnectedState"})
-  D:log(framework.dump(HwClientDisconnectedStateProperty["HwClientDisconnectedState"]), "HwClientDisconnectedState")
-  assert_false(HwClientDisconnectedStateProperty["HwClientDisconnectedState"], "HwClientDisconnectedState property has not been changed after HW_CLIENT_DISCONNECTED_END_DEBOUNCE_TIME has passed")
 
   assert_not_nil(ReceivedMessages["AbnormalReport"], "AbnormalReport not received")
 
