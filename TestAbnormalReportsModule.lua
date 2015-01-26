@@ -21,8 +21,6 @@ function suite_teardown()
   GPS:set({jammingDetect = false, fixType = 3}) -- not to interrupt other suits
 
 
-
-
 end
 
 --- setup function
@@ -48,21 +46,10 @@ function setup()
   GPS:set({jammingDetect = false, fixType = 3})
 
   -- External power source disconnected from Helm panel
-  shellSW:postEvent(
-                    uniboxSW.handleName,
-                    uniboxSW.events.external_power_connected,
-                    "false"
-  )
+  helmPanel:externalPowerConnected("false")
 
   -- Helm Panel disconnected from terminal
-  shellSW:postEvent(
-                    uniboxSW.handleName,
-                    uniboxSW.events.connected,
-                    "false"
-  )
-
-
-
+  helmPanel:setConnected("false")
 
 
 end
@@ -1953,11 +1940,7 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSource
 
   gateway.setHighWaterMark() -- to get the newest messages
   -- Helm Panel is connected to external power from now
-  shellSW:postEvent(
-                    uniboxSW.handleName,
-                    uniboxSW.events.external_power_connected,
-                    "true"
-  )
+  helmPanel:externalPowerConnected("true")
 
   D:log("EXTERNAL POWER SOURCE OF HELM PANEL CONNECTED")
 
@@ -2020,12 +2003,7 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSource
   D:log("EXTERNAL POWER SOURCE OF HELM PANEL DISCONNECTED")
 
   -- back to exernal power disconnected
-  shellSW:postEvent(
-                    uniboxSW.handleName,
-                    uniboxSW.events.external_power_connected,
-                    "false"
-  )
-
+  helmPanel:externalPowerConnected("false")
 
 end
 
@@ -2062,14 +2040,9 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsDisconnectedFromExternalPowerS
 
   D:log("EXTERNAL POWER SOURCE OF HELM PANEL CONNECTED")
   -- Helm Panel is connected to external power from now
-  shellSW:postEvent(
-                    uniboxSW.handleName,
-                    uniboxSW.events.external_power_connected,
-                    "true"
-  )
+  helmPanel:externalPowerConnected("true")
 
   framework.delay(EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME)
-
 
   -- checking ExtPowerDisconnectedState property
   local ExtPowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"ExtPowerDisconnectedState"})
@@ -2079,12 +2052,8 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsDisconnectedFromExternalPowerS
   gateway.setHighWaterMark() -- to get the newest messages
 
   D:log("EXTERNAL POWER SOURCE OF HELM PANEL DISCONNECTED")
-  -- Helm Panel is connected to external power from now
-  shellSW:postEvent(
-                    uniboxSW.handleName,
-                    uniboxSW.events.external_power_connected,
-                    "false"
-  )
+  -- Helm Panel is disconnected from external power from now
+  helmPanel:externalPowerConnected("false")
 
   -- checking ExtPowerDisconnectedState property
   local ExtPowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"ExtPowerDisconnectedState"})
@@ -2180,11 +2149,7 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSource
   gateway.setHighWaterMark() -- to get the newest messages
   D:log("EXTERNAL POWER SOURCE OF HELM PANEL CONNECTED")
   -- Helm Panel is connected to external power from now
-  shellSW:postEvent(
-                    uniboxSW.handleName,
-                    uniboxSW.events.external_power_connected,
-                    "true"
-  )
+  helmPanel:externalPowerConnected("true")
 
   local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
   D:log(ReceivedMessages["AbnormalReport"])
@@ -2195,16 +2160,10 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSource
 
   D:log("EXTERNAL POWER SOURCE OF  HELM PANEL DISCONNECTED")
   -- back to exernal power disconnected
-  shellSW:postEvent(
-                    uniboxSW.handleName,
-                    uniboxSW.events.external_power_connected,
-                    "false"
-  )
+  helmPanel:externalPowerConnected("false")
 
 
 end
-
-
 
 
 function test_ExtPowerDisconnected_WhenHelmPanelIsDisonnectedFromExternalPowerSourceForTimeBelowExtPowerDisconnectedStartDebounceTime_ExtPowerDisconnectedAbnormalReportIsNotSent()
@@ -2238,11 +2197,7 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsDisonnectedFromExternalPowerSo
 
   D:log("HELM PANEL CONNECTED")
   -- Helm Panel is connected to external power from now
-  shellSW:postEvent(
-                    uniboxSW.handleName,
-                    uniboxSW.events.external_power_connected,
-                    "true"
-  )
+  helmPanel:externalPowerConnected("true")
 
   framework.delay(EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME)
 
@@ -2253,12 +2208,8 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsDisonnectedFromExternalPowerSo
 
   gateway.setHighWaterMark() -- to get the newest messages
   D:log("EXTERNAL POWER SOURCE OF HELM PANEL DISCONNECTED")
-  -- Helm Panel is connected to external power from now
-  shellSW:postEvent(
-                    uniboxSW.handleName,
-                    uniboxSW.events.external_power_connected,
-                    "false"
-  )
+  -- Helm Panel is disconnected from external power from now
+  helmPanel:externalPowerConnected("false")
 
   local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
   D:log(ReceivedMessages["AbnormalReport"])
@@ -2305,11 +2256,7 @@ function test_ExtPowerDisconnected_WhenExternalPowerIsConnectedAndDisconnectedFo
 
   D:log("EXTERNAL POWER SOURCE OF HELM PANEL CONNECTED")
   -- Helm Panel is connected to external power from now
-  shellSW:postEvent(
-                    uniboxSW.handleName,
-                    uniboxSW.events.external_power_connected,
-                    "true"
-  )
+  helmPanel:externalPowerConnected("true")
 
   framework.delay(EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME)
 
@@ -2328,12 +2275,8 @@ function test_ExtPowerDisconnected_WhenExternalPowerIsConnectedAndDisconnectedFo
   gateway.setHighWaterMark() -- to get the newest messages
 
   D:log("EXTERNAL POWER SOURCE OF  HELM PANEL DISCONNECTED")
-  -- Helm Panel is connected to external power from now
-  shellSW:postEvent(
-                    uniboxSW.handleName,
-                    uniboxSW.events.external_power_connected,
-                    "false"
-  )
+  -- Helm Panel is disconnected from external power from now
+  helmPanel:externalPowerConnected("false")
 
   framework.delay(EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME)
 
@@ -2387,11 +2330,7 @@ function test_HelmPanelDisconnected_WhenHelmPanelIsConnectedForTimeAboveHelmPane
 
   gateway.setHighWaterMark() -- to get the newest messages
   -- Helm Panel is connected to terminal from now
-  shellSW:postEvent(
-                    uniboxSW.handleName,
-                    uniboxSW.events.connected,
-                    "true"
-  )
+  helmPanel:setConnected("true")
 
   D:log("HELM PANEL CONNECTED TO TERMINAL")
 
@@ -2457,11 +2396,7 @@ function test_HelmPanelDisconnected_WhenHelmPanelIsConnectedForTimeAboveHelmPane
   D:log("HELM PANEL DISCONNECTED FROM TERMINAL")
 
   -- back to helm panel disconnected
-  shellSW:postEvent(
-                    uniboxSW.handleName,
-                    uniboxSW.events.connected,
-                    "false"
-  )
+  helmPanel:setConnected("false")
 
 
 end
@@ -2497,11 +2432,7 @@ function test_HelmPanelDisconnected_WhenHelmPanelIsDisconnectedForTimeAboveHelmP
   assert_true(HelmPanelDisconnectedStateProperty["HelmPanelDisconnectedState"], "HelmPanelDisconnectedState property is incorrectly false")
 
   -- Helm Panel is connected to terminal from now
-  shellSW:postEvent(
-                    uniboxSW.handleName,
-                    uniboxSW.events.connected,
-                    "true"
-  )
+  helmPanel:setConnected("true")
 
   D:log("HELM PANEL CONNECTED TO TERMINAL")
   framework.delay(HELM_PANEL_DISCONNECTED_END_DEBOUNCE_TIME)
@@ -2511,14 +2442,10 @@ function test_HelmPanelDisconnected_WhenHelmPanelIsDisconnectedForTimeAboveHelmP
   D:log(framework.dump(HelmPanelDisconnectedStateProperty["HelmPanelDisconnectedState"]), "HelmPanelDisconnectedState")
   assert_false(HelmPanelDisconnectedStateProperty["HelmPanelDisconnectedState"], "HelmPanelDisconnectedState property has not been changed after HelmPanelDisconnectedEndDebounceTime has passed")
 
-  D:log("HELM PANEL DISCONNECTED TO TERMINAL")
+  D:log("HELM PANEL DISCONNECTED FROM TERMINAL")
   gateway.setHighWaterMark() -- to get the newest messages
-  -- Helm Panel is connected to terminal from now
-  shellSW:postEvent(
-                    uniboxSW.handleName,
-                    uniboxSW.events.connected,
-                    "false"
-  )
+  -- Helm Panel is disconnected from terminal from now
+  helmPanel:setConnected("false")
 
   -- checking HelmPanelDisconnectedState property
   HelmPanelDisconnectedStateProperty = vmsSW:getPropertiesByName({"HelmPanelDisconnectedState"})
@@ -2574,15 +2501,6 @@ function test_HelmPanelDisconnected_WhenHelmPanelIsDisconnectedForTimeAboveHelmP
   local StatusBitmap = vmsSW:decodeBitmap(ReceivedMessages["AbnormalReport"].StatusBitmap, "EventStateId")
   assert_true(StatusBitmap["HelmPanelDisconnected"], "StatusBitmap has not been correctly changed to false when Helm panel was disconnected from terminal")
 
-  D:log("HELM PANEL DISCONNECTED FROM TERMINAL")
-
-  -- back to helm panel disconnected
-  shellSW:postEvent(
-                    uniboxSW.handleName,
-                    uniboxSW.events.connected,
-                    "false"
-  )
-
 
 end
 
@@ -2623,11 +2541,7 @@ function test_HelmPanelDisconnected_ForTerminalInHelmPanelDisconnectedStateTrueW
 
   D:log("HELM PANEL CONNECTED TO TERMINAL")
   -- Helm Panel is connected to terminal from now
-  shellSW:postEvent(
-                    uniboxSW.handleName,
-                    uniboxSW.events.connected,
-                    "true"
-  )
+  helmPanel:setConnected("true")
 
   local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
   D:log(ReceivedMessages["AbnormalReport"])
@@ -2643,11 +2557,7 @@ function test_HelmPanelDisconnected_ForTerminalInHelmPanelDisconnectedStateTrueW
   assert_false(HelmPanelDisconnectedStateProperty["HelmPanelDisconnectedState"], "HelmPanelDisconnectedState property has not been changed after HelmPanelDisconnectedEndDebounceTime has passed")
 
   -- back to helm panel disconnected
-  shellSW:postEvent(
-                    uniboxSW.handleName,
-                    uniboxSW.events.connected,
-                    "false"
-  )
+  helmPanel:setConnected("false")
 
 
 end
@@ -2684,11 +2594,7 @@ function test_HelmPanelDisconnected_ForTerminalInHelmPanelDisconnectedStateFalse
 
   D:log("HELM PANEL CONNECTED TO TERMINAL")
   -- Helm Panel is connected to terminal from now
-  shellSW:postEvent(
-                    uniboxSW.handleName,
-                    uniboxSW.events.connected,
-                    "true"
-  )
+  helmPanel:setConnected("true")
 
   framework.delay(HELM_PANEL_DISCONNECTED_END_DEBOUNCE_TIME)
 
@@ -2700,12 +2606,8 @@ function test_HelmPanelDisconnected_ForTerminalInHelmPanelDisconnectedStateFalse
   gateway.setHighWaterMark() -- to get the newest messages
 
   D:log("HELM PANEL DISCONNECTED FROM TERMINAL")
-  -- Helm Panel is diconnected to terminal from now
-  shellSW:postEvent(
-                    uniboxSW.handleName,
-                    uniboxSW.events.connected,
-                    "false"
-  )
+  -- Helm Panel is disconnected from terminal from now
+  helmPanel:setConnected("false")
 
   local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
   D:log(ReceivedMessages["AbnormalReport"])
@@ -2756,11 +2658,7 @@ function test_HelmPanelDisconnected_ForTerminalInHelmPanelDisconnectedStateTrueW
 
   D:log("HELM PANEL CONNECTED TO TERMINAL")
   -- Helm Panel is connected to terminal from now
-  shellSW:postEvent(
-                    uniboxSW.handleName,
-                    uniboxSW.events.connected,
-                    "true"
-  )
+  helmPanel:setConnected("true")
 
   framework.delay(HELM_PANEL_DISCONNECTED_END_DEBOUNCE_TIME)
 
@@ -2774,13 +2672,11 @@ function test_HelmPanelDisconnected_ForTerminalInHelmPanelDisconnectedStateTrueW
 
   gateway.setHighWaterMark() -- to get the newest messages
 
+  helmPanel:setConnected("false")
+
   D:log("HELM PANEL DISCONNECTED FROM TERMINAL")
   -- Helm Panel is diconnected to terminal from now
-  shellSW:postEvent(
-                    uniboxSW.handleName,
-                    uniboxSW.events.connected,
-                    "false"
-  )
+  helmPanel:setConnected("false")
 
   framework.delay(HELM_PANEL_DISCONNECTED_START_DEBOUNCE_TIME)
 

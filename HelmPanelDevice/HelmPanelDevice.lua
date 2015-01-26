@@ -21,7 +21,15 @@ HelmPanelDevice = {}
     )
   end
 
+  function HelmPanelDevice:externalPowerConnected(change)
+    self.shell:postEvent(
+      self.device.handleName,
+      self.device.events.external_power_connected,
+      change
+    )
+  end
+
   -- abstract methods
-  function HelmPanelDevice:isSateliteLedOn() end 
-  function HelmPanelDevice:isGpsLedOn() end 
-  function HelmPanelDevice:isConnectLedOn() end 
+  function HelmPanelDevice:isSateliteLedOn() end
+  function HelmPanelDevice:isGpsLedOn() end
+  function HelmPanelDevice:isConnectLedOn() end
