@@ -32,6 +32,7 @@ end
 --- teardown function executed after each unit test
 function teardown()
   GPS:set({latitude = 0, longitude = 0})
+  framework.delay(geofenceSW.interval + geofenceSW.hysteresis)
 end
 
 -------------------------
@@ -79,19 +80,19 @@ function test_GeofenceFeatures_WhenInsideGeofenceZone_AcceleratedReportStatusBit
   vmsSW:setPropertiesByName({StandardReport1Interval = 2,
                              AcceleratedReport1Rate = newAcceleratedReport1Rate})
   
-  local receivedMessages = vmsSW:waitForMessagesByName("AcceleratedReport1", currentStandardReport1Interval*60)
+  local receivedMessages = vmsSW:waitForMessagesByName("AcceleratedReport1", 5 + currentStandardReport1Interval*60)
   local acceleratedReport = receivedMessages.AcceleratedReport1
   
-  assert_not_nil(acceleratedReport, "Accelerated report not received")
+  assert_not_nil(acceleratedReport, "First accelerated report not received")
   
   local state = vmsSW:decodeBitmap(acceleratedReport.StatusBitmap, "EventStateId")
   assert_false(state.InsigeGeofence, "Terminal incorrectly repored as inside geofence zone")
   vmsSW:setHighWaterMark()
   GPS:set({latitude = 50.50, longitude = 21.687})
-  receivedMessages = vmsSW:waitForMessagesByName("AcceleratedReport1", currentAcceleratedReport1Rate*60)
+  receivedMessages = vmsSW:waitForMessagesByName("AcceleratedReport1", 5 + newAcceleratedReport1Rate*60) -- wait
   acceleratedReport = receivedMessages.AcceleratedReport1
   
-  assert_not_nil(acceleratedReport, "Accelerated report not received")
+  assert_not_nil(acceleratedReport, "Second accelerated report not received")
   
   state = vmsSW:decodeBitmap(acceleratedReport.StatusBitmap, "EventStateId")
   assert_true(state.InsideGeofence, "Terminal incorrectly repored as NOT inside geofence zone") 
