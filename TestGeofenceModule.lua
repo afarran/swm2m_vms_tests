@@ -32,7 +32,7 @@ end
 --- teardown function executed after each unit test
 function teardown()
   GPS:set({latitude = 0, longitude = 0})
-  framework.wait(geofenceSW.interval + geofenceSW.hysteresis)
+  framework.delay(geofenceSW.interval + geofenceSW.hysteresis)
 end
 
 -------------------------
