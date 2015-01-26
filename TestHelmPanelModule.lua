@@ -126,9 +126,9 @@ function test_HelmPanelDisconnected_WhenHelmPanelIsConnected_ConnectLEDIsOn()
   assert_true(ledState,"LED should be on!")
 end
 
-function test_HelmPanelDisconnected_WhenSeveralStateChangesAreTriggered_LedWhichIndicatesConnectIsInCorrectState()
+function test_X1HelmPanelDisconnected_WhenSeveralStateChangesAreTriggered_LedWhichIndicatesConnectIsInCorrectState()
   i = 0
-  while i < 3 do
+  while i < 10 do
     helmPanel:setConnected("true")
     local ledState = helmPanel:isConnectLedOn()
     D:log(ledState,"LED-TRUE")
@@ -144,7 +144,7 @@ end
 
 -----------------------------------------------------------------------------------------------
 -- Test Cases - GPS LED on/off
------------------------------------------------------------------------------------------------
+-----------f.getProperties(self.sin, pinList)-----------------------------------------------------------------------------------
 
 function test_GpsLED_WhenGpsIsBlocked_GpsLedIsOff()
 
@@ -237,3 +237,24 @@ end
 function test_ExternalPower()
 
 end
+
+
+---------------------------------------------------------------------------------
+-- This test case if just for reporting test framework issue. REMOVE AFTER FIX!
+---------------------------------------------------------------------------------
+function test_getPropertiesBug()
+  i = 0
+  while i < 10 do
+    helmPanel:setConnected("true") -- this is posting event via shell service(lua code chunk)
+    local result = lsf.getProperties(162, {2})
+    D:log(result,"RESULT")
+    helmPanel:setConnected("false")
+    local result = lsf.getProperties(162, {2})
+    D:log(result,"RESULT")
+    framework.delay(1)
+    i = i+1
+ end
+
+end
+
+
