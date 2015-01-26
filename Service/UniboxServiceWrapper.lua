@@ -12,12 +12,20 @@ UniboxServiceWrapper = {}
   })
   
   function UniboxServiceWrapper:_init()
+
+    local statesSet1 = {
+      OFF = 0,
+      SLOW_FLASH  = 1,
+      FAST_FLASH = 2,
+      ON = 3
+    }
+
     local properties = {
       { name ="serviceActive", pin=1, ptype="boolean"},
-      { name ="led1State", pin=2, ptype="enum"},
-      { name ="led2State", pin=3, ptype="enum"},
-      { name ="led3State", pin=4, ptype="enum"},
-      { name ="led4State", pin=5, ptype="enum"},
+      { name ="led1State", pin=2, ptype="enum", enums=statesSet1},
+      { name ="led2State", pin=3, ptype="enum", enums=statesSet1},
+      { name ="led3State", pin=4, ptype="enum", enums=statesSet1},
+      { name ="led4State", pin=5, ptype="enum", enums=statesSet1},
       { name ="buzzerState", pin=6, ptype="enum"},
       { name ="sendPower", pin=7, ptype="boolean"},
       { name ="externalPower", pin=8, ptype="boolean"},
