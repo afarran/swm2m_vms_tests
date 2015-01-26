@@ -9,9 +9,9 @@ DEBUG_MODE = 1
 
 local SATELITE_BLOCKAGE_DEBOUNCE = 1
 local SATELITE_BLOCKAGE_DEBOUNCE_TOLERANCE = 0
-local GPS_BLOCKED_START_DEBOUNCE_TIME = 1
+local GPS_BLOCKED_START_DEBOUNCE_TIME = 20
 local GPS_BLOCKED_END_DEBOUNCE_TIME = 1 
-local MAX_FIX_TIMEOUT = 1 
+local MAX_FIX_TIMEOUT = 60
 
 -----------------------------------------------------------------------------------------------
 -- SETUP
@@ -112,7 +112,7 @@ function test_HelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAn
   assert_not_equal(isDisconnectedAfterChange, isDisconnectedAfterSecondChange, "There should be change in disconnected state.")
 
 end
-function test_HelmPanelDisconnected_WhenHelmPanelIsConnected_ConnectLEDIsOn()
+function test_HelmPanelDisconnected_WhenHelmPanelIsDisConnected_ConnectLEDIsOff()
   helmPanel:setConnected("false")
   local ledState = helmPanel:isConnectLedOn()
   D:log(ledState,"LED-FALSE")
@@ -126,9 +126,9 @@ function test_HelmPanelDisconnected_WhenHelmPanelIsConnected_ConnectLEDIsOn()
   assert_true(ledState,"LED should be on!")
 end
 
-function test_X1HelmPanelDisconnected_WhenSeveralStateChangesAreTriggered_LedWhichIndicatesConnectIsInCorrectState()
+function test_HelmPanelDisconnected_WhenSeveralStateChangesAreTriggered_LedWhichIndicatesConnectIsInCorrectState()
   i = 0
-  while i < 10 do
+  while i < 3 do
     helmPanel:setConnected("true")
     local ledState = helmPanel:isConnectLedOn()
     D:log(ledState,"LED-TRUE")
@@ -143,8 +143,8 @@ function test_X1HelmPanelDisconnected_WhenSeveralStateChangesAreTriggered_LedWhi
 end
 
 -----------------------------------------------------------------------------------------------
--- Test Cases - GPS LED on/off
------------f.getProperties(self.sin, pinList)-----------------------------------------------------------------------------------
+-- Test Cases - GPS LED on/off - IN DEVELOPMENT!
+----------------------------------------------------------------------------------------------
 
 function test_GpsLED_WhenGpsIsBlocked_GpsLedIsOff()
 
@@ -197,7 +197,7 @@ function test_GpsLED_WhenGpsIsSetWithCorrectFix_GpsLedIsOn()
 end
 
 -----------------------------------------------------------------------------------------------
--- Test Cases - SATELITE LED on/off
+-- Test Cases - SATELITE LED on/off - IN DEVELOPMENT
 -----------------------------------------------------------------------------------------------
 
 function xtest_SateliteLED_WhenSateliteIsBlockedOrUnblocked_SateliteLedIsInCorrectState()
@@ -256,5 +256,3 @@ function test_getPropertiesBug()
  end
 
 end
-
-
