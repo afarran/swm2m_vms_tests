@@ -13,12 +13,12 @@ DEBUG_MODE = 1
 -- SETUP
 -----------------------------------------------------------------------------------------------
 function suite_setup()
-  -- reset of properties 
+  -- reset of properties
   systemSW:resetProperties({vmsSW.sin})
 
   -- debounce
   vmsSW:setPropertiesByName({PropertyChangeDebounceTime=1})
-  
+
   -- gps setup
   pos = {
     latitude  = 0,
@@ -26,7 +26,7 @@ function suite_setup()
     speed =  0
   }
   GPS:set(pos)
-  
+
 end
 
 -- executed after each test suite
@@ -40,7 +40,7 @@ end
 
 --- teardown function executed after each unit test
 function teardown()
-  
+
 end
 -----------------------------------------------------------------------------------------------
 -- Test Cases for STANDARD REPORTS
@@ -75,10 +75,10 @@ end
   -- 8. Values in report are correct.
 function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues()
   generic_test_StandardReportContent(
-    "StandardReport1", 
-    "StandardReport1", 
+    "StandardReport1",
+    "StandardReport1",
     {StandardReport1Interval=1, AcceleratedReport1Rate=1},
-    1, 
+    1,
     1
   )
 end
@@ -112,10 +112,10 @@ end
   -- 8. Values in report are correct.
 function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues()
   generic_test_StandardReportContent(
-    "StandardReport2", 
-    "StandardReport2", 
+    "StandardReport2",
+    "StandardReport2",
     {StandardReport2Interval=1, AcceleratedReport2Rate=1},
-    1, 
+    1,
     1
   )
 end
@@ -149,10 +149,10 @@ end
   -- 8. Values in report are correct.
 function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues()
   generic_test_StandardReportContent(
-    "StandardReport3", 
-    "StandardReport3", 
+    "StandardReport3",
+    "StandardReport3",
     {StandardReport3Interval=1, AcceleratedReport3Rate=1},
-    1, 
+    1,
     1
   )
 end
@@ -305,7 +305,7 @@ function test_StandardReportDisabled_WhenStandardReport1IntervalIsSetToZero_Stan
   generic_test_StandardReportDisabled(
     "StandardReport1",
     {StandardReport1Interval=0, AcceleratedReport1Rate=1},
-    70 -- waiting until report not come
+    120 -- waiting until report not come
   )
 end
 
@@ -328,7 +328,7 @@ function test_StandardReportDisabled_WhenStandardReport2IntervalIsSetToZero_Stan
   generic_test_StandardReportDisabled(
     "StandardReport2",
     {StandardReport2Interval=0, AcceleratedReport2Rate=1},
-    70 -- waiting until report not come
+    120 -- waiting until report not come
   )
 end
 
@@ -351,7 +351,7 @@ function test_StandardReportDisabled_WhenStandardReport3IntervalIsSetToZero_Stan
   generic_test_StandardReportDisabled(
     "StandardReport3",
     {StandardReport3Interval=0, AcceleratedReport3Rate=1},
-    70 
+    120
   )
 end
 
@@ -367,7 +367,7 @@ end
   --
   -- Steps:
   --
-  -- 1. Properties setup is done (via setProperties) .
+  -- 1. Properties setup is done (via setProperties).
   -- 2. Current gps position is requested.
   -- 3. Current gps position is checked.
   -- 4. Waiting for Standard Report is performed.
@@ -388,10 +388,10 @@ end
   -- 8. Values in report are correct.
 function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport1IsSentWithCorrectValues()
   generic_test_StandardReportContent(
-    "StandardReport1", 
-    "AcceleratedReport1", 
+    "StandardReport1",
+    "AcceleratedReport1",
     {StandardReport1Interval=2, AcceleratedReport1Rate=2},
-    2, 
+    2,
     1
   )
 end
@@ -425,10 +425,10 @@ end
   -- 8. Values in report are correct.
 function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport2IsSentWithCorrectValues()
   generic_test_StandardReportContent(
-    "StandardReport2", 
-    "AcceleratedReport2", 
+    "StandardReport2",
+    "AcceleratedReport2",
     {StandardReport2Interval=2, AcceleratedReport2Rate=2},
-    2, 
+    2,
     1
   )
 end
@@ -462,10 +462,10 @@ end
   -- 8. Values in report are correct.
 function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport3IsSentWithCorrectValues()
   generic_test_StandardReportContent(
-    "StandardReport3", 
-    "AcceleratedReport3", 
+    "StandardReport3",
+    "AcceleratedReport3",
     {StandardReport3Interval=2, AcceleratedReport3Rate=2},
-    2, 
+    2,
     1
   )
 end
@@ -492,7 +492,7 @@ function test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardRepo
     "StandardReport1",
     "AcceleratedReport1",
     {StandardReport1Interval=1, AcceleratedReport1Rate=1},
-    70 -- waiting until report not come
+    80 -- waiting until report not come
   )
 end
 
@@ -518,7 +518,7 @@ function test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardRepo
     "StandardReport2",
     "AcceleratedReport2",
     {StandardReport2Interval=1, AcceleratedReport2Rate=1},
-    70 -- waiting until report not come
+    80 -- waiting until report not come
   )
 end
 
@@ -544,7 +544,7 @@ function test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardRepo
     "StandardReport3",
     "AcceleratedReport3",
     {StandardReport3Interval=1, AcceleratedReport3Rate=1},
-    70 -- waiting until report not come
+    80 -- waiting until report not come
   )
 end
 
@@ -556,7 +556,7 @@ end
   -- Initial Conditions:
   --
   -- * Properties: StandardReport1Interval and AcceleratedReport1Rate are requested
-  -- * Properties are received and used in TC. 
+  -- * Properties are received and used in TC.
   --
   -- Steps:
   --
@@ -578,7 +578,7 @@ function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigProperti
 
   generic_test_ConfigChangeReportConfigChangeReportIsSent(
    "ConfigChangeReport1",
-    propertiesToChange ,
+    propertiesToChange,
     propertiesBeforeChange,
     false
   )
@@ -588,7 +588,7 @@ end
   -- Initial Conditions:
   --
   -- * Properties: StandardReport2Interval and AcceleratedReport2Rate are requested
-  -- * Properties are received and used in TC. 
+  -- * Properties are received and used in TC.
   --
   -- Steps:
   --
@@ -602,7 +602,7 @@ end
   -- 2. Message ConfigChangeReport is received.
   -- 3. Report values are correct.
 function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport2IsSent()
-  
+
   -- get properties
   local propertiesToChange = {"StandardReport2Interval", "AcceleratedReport2Rate"}
   local propertiesBeforeChange = vmsSW:getPropertiesByName(propertiesToChange)
@@ -620,7 +620,7 @@ end
   -- Initial Conditions:
   --
   -- * Properties: StandardReport3Interval and AcceleratedReport3Rate are requested
-  -- * Properties are received and used in TC. 
+  -- * Properties are received and used in TC.
   --
   -- Steps:
   --
@@ -634,7 +634,7 @@ end
   -- 2. Message ConfigChangeReport is received.
   -- 3. Report values are correct.
 function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport3IsSent()
-  
+
   -- get properties
   local propertiesToChange = {"StandardReport3Interval", "AcceleratedReport3Rate"}
   local propertiesBeforeChange = vmsSW:getPropertiesByName(propertiesToChange)
@@ -652,7 +652,7 @@ end
   -- Initial Conditions:
   --
   -- * Properties: StandardReport1Interval and AcceleratedReport1Rate are requested
-  -- * Properties are received and used in TC. 
+  -- * Properties are received and used in TC.
   --
   -- Steps:
   --
@@ -670,7 +670,7 @@ end
   -- 4. Message ConfigChangeReport1 is received.
   -- 5. Report values are correct.
 function test_ConfigChangeReport_WhenSetConfigReport1MessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport1IsSent()
-  
+
   -- get properties
   local propertiesToChange = {"StandardReport1Interval", "AcceleratedReport1Rate"}
   local propertiesBeforeChange = vmsSW:getPropertiesByName(propertiesToChange)
@@ -687,7 +687,7 @@ end
   -- Initial Conditions:
   --
   -- * Properties: StandardReport2Interval and AcceleratedReport2Rate are requested
-  -- * Properties are received and used in TC. 
+  -- * Properties are received and used in TC.
   --
   -- Steps:
   --
@@ -705,7 +705,7 @@ end
   -- 4. Message ConfigChangeReport2 is received.
   -- 5. Report values are correct.
 function test_ConfigChangeReport_WhenSetConfigReport2MessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport2IsSent()
-  
+
   -- get properties
   local propertiesToChange = {"StandardReport2Interval", "AcceleratedReport2Rate"}
   local propertiesBeforeChange = vmsSW:getPropertiesByName(propertiesToChange)
@@ -723,7 +723,7 @@ end
   -- Initial Conditions:
   --
   -- * Properties: StandardReport3Interval and AcceleratedReport3Rate are requested
-  -- * Properties are received and used in TC. 
+  -- * Properties are received and used in TC.
   --
   -- Steps:
   --
@@ -741,7 +741,7 @@ end
   -- 4. Message ConfigChangeReport3 is received.
   -- 5. Report values are correct.
 function test_ConfigChangeReport_WhenSetConfigReport3MessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport3IsSent()
-  
+
   -- get properties
   local propertiesToChange = {"StandardReport3Interval", "AcceleratedReport3Rate"}
   local propertiesBeforeChange = vmsSW:getPropertiesByName(propertiesToChange)
@@ -902,20 +902,20 @@ end
 -----------------------------------------------------------------------------------------------
 
 function test_DefaultValues_WhenPropertiesAreRequestedAfterPropertiesReset_CorrectDefaultValuesAreGiven()
-  -- reset of properties 
+  -- reset of properties
   systemSW:resetProperties({vmsSW.sin})
 
    -- get properties
   local propertiesToCheck = {
     "StandardReport1Interval",
-    "AcceleratedReport1Rate", 
-    "LogReport1Rate", 
+    "AcceleratedReport1Rate",
+    "LogReport1Rate",
     "StandardReport2Interval",
-    "AcceleratedReport2Rate", 
-    "LogReport2Rate", 
+    "AcceleratedReport2Rate",
+    "LogReport2Rate",
     "StandardReport3Interval",
-    "AcceleratedReport3Rate", 
-    "LogReport3Rate", 
+    "AcceleratedReport3Rate",
+    "LogReport3Rate",
   }
 
   local propertiesValues = {
@@ -924,10 +924,10 @@ function test_DefaultValues_WhenPropertiesAreRequestedAfterPropertiesReset_Corre
     LogReport1Rate = 1,
     StandardReport2Interval = 60,
     AcceleratedReport2Rate = 1,
-    LogReport2Rate = 1, 
+    LogReport2Rate = 1,
     StandardReport3Interval = 60,
     AcceleratedReport3Rate = 1,
-    LogReport3Rate = 1 
+    LogReport3Rate = 1
   }
 
   local propertiesFetched = vmsSW:getPropertiesByName(propertiesToCheck)
@@ -939,11 +939,11 @@ function test_DefaultValues_WhenPropertiesAreRequestedAfterPropertiesReset_Corre
 end
 
 -----------------------------------------------------------------------------------------------
--- DRIFT OVER TIME 
+-- DRIFT OVER TIME
 -- The Report Capability shall ensure that periodic reports do not drift over time.
 -----------------------------------------------------------------------------------------------
 
- 
+
 function test_DriftOverTime_Standard1AndAccelerated()
   generic_test_DriftOverTime_StandardAndAccelerated(
     {StandardReport1Interval=4, AcceleratedReport1Rate=4},
@@ -1014,7 +1014,7 @@ function generic_test_DriftOverTime_StandardAndAccelerated(properties,configChan
   lastTimestamp = tonumber(message[SRKey].Timestamp)
 
   for i=1,ARItems do
-    -- simulate system overload to trigger drift 
+    -- simulate system overload to trigger drift
     if i == 1 then
       D:log("Simulating system overload..")
       local overloadThread = coroutine.create(
@@ -1046,7 +1046,7 @@ function generic_test_DriftOverTime_StandardAndAccelerated(properties,configChan
     lastTimestamp = tonumber(message[ARKey].Timestamp)
     table.insert(dataToAnalysis,diff)
   end
-    
+
   D:log("Waiting for last standard report "..SRKey)
   local message = vmsSW:waitForMessagesByName(
     {SRKey},
@@ -1095,9 +1095,9 @@ function generic_test_LogReports(logReportXKey, standardReportXKey, properties, 
   --set log filter
   logSW:setLogFilter(
     vmsSW.sin, {
-    vmsSW:getMinFrom(logReportXKey)}, 
-    os.time()+5, 
-    os.time()+filterTimeout, 
+    vmsSW:getMinFrom(logReportXKey)},
+    os.time()+5,
+    os.time()+filterTimeout,
     "True"
   )
 
@@ -1157,9 +1157,9 @@ function generic_test_LogReports(logReportXKey, standardReportXKey, properties, 
       -- check if timeout between log entries is correct
       local timeDiff = tonumber(logEntries[i-1].log.Timestamp) - tonumber(logEntries[i].log.Timestamp)
       assert_equal(
-        logReportInterval*60, 
-        timeDiff, 
-        5, 
+        logReportInterval*60,
+        timeDiff,
+        5,
         "Log Report Interval should be "..(logReportInterval*60)
       )
     end
@@ -1169,7 +1169,7 @@ end
 
 -- This is generic function for configure and test reports (StandardReport,AcceleratedReport)
 function generic_test_StandardReportContent(firstReportKey,reportKey,properties,firstReportInterval,reportInterval,setConfigMsgKey,configChangeMsgKey,fields)
- 
+
   -- testing via message
   if setConfigMsgKey then
     D:log(setConfigMsgKey,"X1")
@@ -1186,15 +1186,15 @@ function generic_test_StandardReportContent(firstReportKey,reportKey,properties,
   else
     vmsSW:setPropertiesByName(properties)
   end
-  
-  -- fetching current position info 
+
+  -- fetching current position info
   positionSW:sendMessageByName(
     "getPosition",
     {fixType = "3D"}
   )
-  local positionMessage = positionSW:waitForMessagesByName({"position"}) 
+  local positionMessage = positionSW:waitForMessagesByName({"position"})
   local initialPosition = positionMessage.position
-  
+
   assert_not_nil(
     initialPosition.longitude,
     "No longitude in position messsage."
@@ -1207,7 +1207,7 @@ function generic_test_StandardReportContent(firstReportKey,reportKey,properties,
     initialPosition.speed,
     "No speed in position messsage."
   )
-  
+
   -- wait for raport to ensure that values will be fetched from current gps changes
   -- and to synchronize report sequence
   D:log("Waiting for first report "..firstReportKey)
@@ -1223,20 +1223,21 @@ function generic_test_StandardReportContent(firstReportKey,reportKey,properties,
     preReportMessage[firstReportKey],
     "First Report not received!"
   )
-  local timestampStart = preReportMessage[firstReportKey].Timestamp 
-  
+  local timestampStart = preReportMessage[firstReportKey].Timestamp
+
   -- new position setup
   local newPosition = {
     latitude  = GPS:normalize(initialPosition.latitude)   + 1,
     longitude = GPS:normalize(initialPosition.longitude)  + 1,
     speed =  GPS:normalizeSpeed(initialPosition.speed) -- km/h
+    -- TODO: add Course/Heading
   }
   GPS:set(newPosition)
 
   -- wait for next report
   D:log("Waiting for second report "..reportKey)
   local reportMessage = vmsSW:waitForMessagesByName(
-    {reportKey}, 
+    {reportKey},
     reportInterval*60*2
   )
   assert_not_nil(
@@ -1249,7 +1250,7 @@ function generic_test_StandardReportContent(firstReportKey,reportKey,properties,
   )
 
   -- calculate time diff
-  local timestampEnd = reportMessage[reportKey].Timestamp 
+  local timestampEnd = reportMessage[reportKey].Timestamp
   local timestampDiff = timestampEnd - timestampStart
   assert_equal(
     reportInterval*60,
@@ -1260,23 +1261,24 @@ function generic_test_StandardReportContent(firstReportKey,reportKey,properties,
 
   -- check values
   assert_equal(
-    GPS:denormalize(newPosition.latitude), 
-    tonumber(reportMessage[reportKey].Latitude), 
+    GPS:denormalize(newPosition.latitude),
+    tonumber(reportMessage[reportKey].Latitude),
     "Wrong latitude in " .. reportKey
   )
   assert_equal(
-    GPS:denormalize(newPosition.longitude), 
-    tonumber(reportMessage[reportKey].Longitude), 
+    GPS:denormalize(newPosition.longitude),
+    tonumber(reportMessage[reportKey].Longitude),
     "Wrong longitude in " .. reportKey
   )
   assert_equal(
-    GPS:denormalizeSpeed(newPosition.speed), 
-    tonumber(reportMessage[reportKey].Speed), 
+    GPS:denormalizeSpeed(newPosition.speed),
+    tonumber(reportMessage[reportKey].Speed),
     1,
     "Wrong speed in " .. reportKey
   )
-  
+
   -- some of values are being checked just for their existance
+  -- TODO_not_implemented: add checking values of following fields when test framework functions will be implemented
   assert_not_nil(
     reportMessage[reportKey].Timestamp,
     "No timestamp in " .. reportKey
@@ -1306,7 +1308,7 @@ end
 
 -- this is generic function for testing Config Change Reports
 function generic_test_ConfigChangeReportConfigChangeReportIsSent(messageKey,propertiesToChange,propertiesBeforeChange,setConfigMsgKey)
-  
+
   propertiesToChangeValues = {}
   propertiesToChangeValues2 = {}
   propertiesToChangeValuesForMessage = {}
@@ -1315,13 +1317,13 @@ function generic_test_ConfigChangeReportConfigChangeReportIsSent(messageKey,prop
     propertiesToChangeValues[propertiesToChange[i]] = propertiesBeforeChange[propertiesToChange[i]] + 1
     propertiesToChangeValues2[propertiesToChange[i]] = propertiesBeforeChange[propertiesToChange[i]] + 2
     table.insert(
-      propertiesToChangeValuesForMessage, 
+      propertiesToChangeValuesForMessage,
       { Name = propertiesToChange[i],  Value = (propertiesBeforeChange[propertiesToChange[i]] + 2) }
     )
   end
 
-  -- properties must be changedd anyway (the same value after and before properties reset doesn't trigger report)
-  vmsSW:setPropertiesByName( propertiesToChangeValues)
+  -- properties must be changed anyway (the same value after and before properties reset doesn't trigger report)
+  vmsSW:setPropertiesByName(propertiesToChangeValues)
 
   -- testing via message
   if setConfigMsgKey then
@@ -1336,8 +1338,8 @@ function generic_test_ConfigChangeReportConfigChangeReportIsSent(messageKey,prop
       propertiesToChangeValuesForMessage
     )
   end
- 
-  -- wait for message 
+
+  -- wait for message
   local configChangeMessage = vmsSW:waitForMessagesByName(
     {messageKey},
     30
@@ -1361,16 +1363,18 @@ function generic_test_ConfigChangeReportConfigChangeReportIsSent(messageKey,prop
     end
     assert_equal(
       tonumber(configChangeMessage[messageKey][propertiesToChange[i]]),
-      exp,  
+      exp,
       0,
       "Property " .. propertiesToChange[i] .. " has not changed!"
     )
   end
+
+  -- TODO: check timestamp, source = ota message etc..
 end
 
 -- This is generic function for disabled standard reports test
 function generic_test_StandardReportDisabled(reportKey,properties,reportInterval,setConfigMsgKey,configChangeMsgKey,fields)
-  
+
   -- setup
   if setConfigMsgKey then
     D:log(setConfigMsgKey,"X1")
@@ -1387,7 +1391,7 @@ function generic_test_StandardReportDisabled(reportKey,properties,reportInterval
   else
     vmsSW:setPropertiesByName(properties)
   end
-  
+
   D:log("Waiting for report - should not come - "..reportKey)
   local reportMessage = vmsSW:waitForMessagesByName(
     {reportKey},
@@ -1443,3 +1447,11 @@ end
 --TODO: when SR is disabled AR is disabled too (4.13)
 --TODO: getConfig message (4.15)
 --TODO: PollRequest/Response (6.1-6.3)
+--TODO: add a TC to check if reports are sent when all periodic reports are generated
+--TODO: add disabling periodic reports in suite_teardown function (or teardown)
+--TODO: add a TC to check if accelerated report is sent with period 2/3
+--TODO: add a TC to check if property change for time below PropertyChangeDebounceTime is not 'noticed'
+--TODO: add a TC to check if PropertyChangeDebounceTime interval is correctly reported
+--TODO: add a TC to check if Log entries are not saved in NVM when logging is disabled
+--TODO: add a TC to check if all 3 kinds of reports are correctly sent/saved when activated
+
