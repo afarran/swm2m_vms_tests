@@ -2697,5 +2697,237 @@ end
 
 
 
+function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateTrueWhenHwClientIsConnectedForTimeAboveHwClientDisconnectedEndDebounceTime_HwClientDisconnectedAbnormalReportIsSent()
+
+
+  -- DRAFT
+  local HW_CLIENT_DISCONNECTED_START_DEBOUNCE_TIME = 1
+  local HW_CLIENT_DISCONNECTED_END_DEBOUNCE_TIME = 1
+
+
+  -- *** Setup
+  -- terminal in some position but no valid fix provided
+  local InitialPosition = {
+                             speed = 0,                      -- kmh
+                             latitude = 1,                   -- degrees
+                             longitude = 1,                  -- degrees
+                             fixType = 3,                    -- valid fix
+  }
+
+  vmsSW:setPropertiesByName({
+                             HwClientDisconnectedStartDebounceTime = HW_CLIENT_DISCONNECTED_START_DEBOUNCE_TIME,
+                             HwClientDisconnectedEndDebounceTime = HW_CLIENT_DISCONNECTED_END_DEBOUNCE_TIME,
+                             HwClientDisconnectedSendReport = true,
+                            }
+  )
+
+  -- *** Execute
+  GPS:set(InitialPosition)
+
+  -- checking HwClientDisconnectedState property
+  local HwClientDisconnectedStateProperty = vmsSW:getPropertiesByName({"HwClientDisconnectedState"})
+  D:log(framework.dump(HwClientDisconnectedStateProperty["HwClientDisconnectedState"]), "HwClientDisconnectedState")
+  assert_true(HwClientDisconnectedStateProperty["HwClientDisconnectedState"], "HwClientDisconnectedState property is incorrectly false")
+
+  gateway.setHighWaterMark() -- to get the newest messages
+
+  D:log("HW CLIENT CONNECTED TO TERMINAL")
+  -- Hw client is connected to terminal
+  shellSW:postEvent(
+                    "svc.serial._NAME",
+                    "DTECONNECTED",
+                    "true"
+  )
+
+  framework.delay(3)
+
+  -- checking HwClientDisconnectedState property
+  HwClientDisconnectedStateProperty = vmsSW:getPropertiesByName({"HwClientDisconnectedState"})
+  D:log(framework.dump(HwClientDisconnectedStateProperty["HwClientDisconnectedState"]), "HwClientDisconnectedState")
+  assert_true(HwClientDisconnectedStateProperty["HwClientDisconnectedState"], "HwClientDisconnectedState property is incorrectly false before HW_CLIENT_DISCONNECTED_END_DEBOUNCE_TIME has passed")
+
+  framework.delay(HW_CLIENT_DISCONNECTED_END_DEBOUNCE_TIME)
+  timeOfEvent = os.time()
+
+  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"})
+  D:log(ReceivedMessages["AbnormalReport"])
+
+  -- checking HwClientDisconnectedState property
+  HwClientDisconnectedStateProperty = vmsSW:getPropertiesByName({"HwClientDisconnectedState"})
+  D:log(framework.dump(HwClientDisconnectedStateProperty["HwClientDisconnectedState"]), "HwClientDisconnectedState")
+  assert_false(HwClientDisconnectedStateProperty["HwClientDisconnectedState"], "HwClientDisconnectedState property has not been changed after HW_CLIENT_DISCONNECTED_END_DEBOUNCE_TIME has passed")
+
+  assert_not_nil(ReceivedMessages["AbnormalReport"], "AbnormalReport not received")
+
+  assert_equal(
+    InitialPosition.latitude*60000,
+    tonumber(ReceivedMessages["AbnormalReport"].Latitude),
+    "Wrong latitude value in HwClientDisconnected abnormal report"
+  )
+
+  assert_equal(
+    InitialPosition.longitude*60000,
+    tonumber(ReceivedMessages["AbnormalReport"].Longitude),
+    "Wrong longitude value in HwClientDisconnected abnormal report"
+  )
+
+  assert_equal(
+    InitialPosition.speed,
+    tonumber(ReceivedMessages["AbnormalReport"].Speed),
+    "Wrong speed value in HwClientDisconnected abnormal report"
+  )
+
+  assert_equal(
+    361,
+    tonumber(ReceivedMessages["AbnormalReport"].Course),
+    "Wrong course value in HwClientDisconnected abnormal report"
+  )
+
+  assert_equal(
+    "HwClientDisconnected",
+    ReceivedMessages["AbnormalReport"].EventType,
+    "Wrong name of the received EventType in HwClientDisconnected abnormal report"
+  )
+
+  assert_equal(
+    timeOfEvent,
+    tonumber(ReceivedMessages["AbnormalReport"].Timestamp),
+    10,
+    "Wrong Timestamp value in HwClientDisconnected abnormal report"
+  )
+
+  local StatusBitmap = vmsSW:decodeBitmap(ReceivedMessages["AbnormalReport"].StatusBitmap, "EventStateId")
+  assert_false(StatusBitmap["HwClientDisconnected"], "StatusBitmap has not been correctly changed to false when Hw panel was connected from terminal")
+
+
+end
+
+
+function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateFalseWhenHwClientIsDisconnectedForTimeAboveHwClientDisconnectedStartDebounceTime_HwClientDisconnectedAbnormalReportIsSent()
+
+
+  -- DRAFT
+  local HW_CLIENT_DISCONNECTED_START_DEBOUNCE_TIME = 1
+  local HW_CLIENT_DISCONNECTED_END_DEBOUNCE_TIME = 1
+
+
+  -- *** Setup
+  -- terminal in some position but no valid fix provided
+  local InitialPosition = {
+                             speed = 0,                      -- kmh
+                             latitude = 1,                   -- degrees
+                             longitude = 1,                  -- degrees
+                             fixType = 3,                    -- valid fix
+  }
+
+  vmsSW:setPropertiesByName({
+                             HwClientDisconnectedStartDebounceTime = HW_CLIENT_DISCONNECTED_START_DEBOUNCE_TIME,
+                             HwClientDisconnectedEndDebounceTime = HW_CLIENT_DISCONNECTED_END_DEBOUNCE_TIME,
+                             HwClientDisconnectedSendReport = true,
+                            }
+  )
+
+  -- *** Execute
+  GPS:set(InitialPosition)
+
+  gateway.setHighWaterMark() -- to get the newest messages
+
+  D:log("HW CLIENT CONNECTED TO TERMINAL")
+  -- Hw client is connected to terminal
+  shellSW:postEvent(
+                    "svc.serial._NAME",
+                    "DTECONNECTED",
+                    "true"
+  )
+
+  framework.delay(3)
+
+  framework.delay(HW_CLIENT_DISCONNECTED_END_DEBOUNCE_TIME)
+
+  -- checking HwClientDisconnectedState property
+  HwClientDisconnectedStateProperty = vmsSW:getPropertiesByName({"HwClientDisconnectedState"})
+  D:log(framework.dump(HwClientDisconnectedStateProperty["HwClientDisconnectedState"]), "HwClientDisconnectedState")
+  assert_false(HwClientDisconnectedStateProperty["HwClientDisconnectedState"], "HwClientDisconnectedState property is incorrectly true after HW_CLIENT_DISCONNECTED_END_DEBOUNCE_TIME has passed")
+
+  D:log("HW CLIENT CONNECTED TO TERMINAL")
+  -- Hw client is connected to terminal
+  shellSW:postEvent(
+                    "svc.serial._NAME",
+                    "DTECONNECTED",
+                    "false"
+  )
+
+  -- checking HwClientDisconnectedState property
+  HwClientDisconnectedStateProperty = vmsSW:getPropertiesByName({"HwClientDisconnectedState"})
+  D:log(framework.dump(HwClientDisconnectedStateProperty["HwClientDisconnectedState"]), "HwClientDisconnectedState")
+  assert_false(HwClientDisconnectedStateProperty["HwClientDisconnectedState"], "HwClientDisconnectedState property is incorrectly true before HW_CLIENT_DISCONNECTED_START_DEBOUNCE_TIME has passed")
+
+
+  gateway.setHighWaterMark() -- to get the newest messages
+  framework.delay(HW_CLIENT_DISCONNECTED_START_DEBOUNCE_TIME)
+
+  timeOfEvent = os.time()
+
+  -- checking HwClientDisconnectedState property
+  HwClientDisconnectedStateProperty = vmsSW:getPropertiesByName({"HwClientDisconnectedState"})
+  D:log(framework.dump(HwClientDisconnectedStateProperty["HwClientDisconnectedState"]), "HwClientDisconnectedState")
+  assert_true(HwClientDisconnectedStateProperty["HwClientDisconnectedState"], "HwClientDisconnectedState property is incorrectly false after HW_CLIENT_DISCONNECTED_START_DEBOUNCE_TIME has passed")
+
+  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"})
+  D:log(ReceivedMessages["AbnormalReport"])
+
+  -- checking HwClientDisconnectedState property
+  HwClientDisconnectedStateProperty = vmsSW:getPropertiesByName({"HwClientDisconnectedState"})
+  D:log(framework.dump(HwClientDisconnectedStateProperty["HwClientDisconnectedState"]), "HwClientDisconnectedState")
+  assert_false(HwClientDisconnectedStateProperty["HwClientDisconnectedState"], "HwClientDisconnectedState property has not been changed after HW_CLIENT_DISCONNECTED_END_DEBOUNCE_TIME has passed")
+
+  assert_not_nil(ReceivedMessages["AbnormalReport"], "AbnormalReport not received")
+
+  assert_equal(
+    InitialPosition.latitude*60000,
+    tonumber(ReceivedMessages["AbnormalReport"].Latitude),
+    "Wrong latitude value in HwClientDisconnected abnormal report"
+  )
+
+  assert_equal(
+    InitialPosition.longitude*60000,
+    tonumber(ReceivedMessages["AbnormalReport"].Longitude),
+    "Wrong longitude value in HwClientDisconnected abnormal report"
+  )
+
+  assert_equal(
+    InitialPosition.speed,
+    tonumber(ReceivedMessages["AbnormalReport"].Speed),
+    "Wrong speed value in HwClientDisconnected abnormal report"
+  )
+
+  assert_equal(
+    361,
+    tonumber(ReceivedMessages["AbnormalReport"].Course),
+    "Wrong course value in HwClientDisconnected abnormal report"
+  )
+
+  assert_equal(
+    "HwClientDisconnected",
+    ReceivedMessages["AbnormalReport"].EventType,
+    "Wrong name of the received EventType in HwClientDisconnected abnormal report"
+  )
+
+  assert_equal(
+    timeOfEvent,
+    tonumber(ReceivedMessages["AbnormalReport"].Timestamp),
+    10,
+    "Wrong Timestamp value in HwClientDisconnected abnormal report"
+  )
+
+  local StatusBitmap = vmsSW:decodeBitmap(ReceivedMessages["AbnormalReport"].StatusBitmap, "EventStateId")
+  assert_true(StatusBitmap["HwClientDisconnected"], "StatusBitmap has not been correctly changed to true when Hw panel was disconnected from terminal")
+
+
+end
+
+
+
+
 
 
