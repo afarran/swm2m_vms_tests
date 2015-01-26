@@ -47,8 +47,9 @@ end
 function teardown()
   
 end
+
 -----------------------------------------------------------------------------------------------
--- Test Cases 
+-- Test Cases - Helm Panel connected/disconnected 
 -----------------------------------------------------------------------------------------------
 
 function test_HelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAndTheStateToggles_HelmPanelDisconnectedStateChangesCorrectlyAndLEDTransitionsAreCorrect()
@@ -58,7 +59,7 @@ function test_HelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAn
 
   local change = ""
 
-  -- check LED before switch
+  -- check LED before switch (commented out because in this way TC is unstable, LED is tested in unit test later)
   local ledState = helmPanel:isConnectLedOn()
   if isDisconnected then
     change = "true"
@@ -111,6 +112,39 @@ function test_HelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAn
   assert_not_equal(isDisconnectedAfterChange, isDisconnectedAfterSecondChange, "There should be change in disconnected state.")
 
 end
+function test_HelmPanelDisconnected_WhenHelmPanelIsConnected_ConnectLEDIsOn()
+  helmPanel:setConnected("false")
+  local ledState = helmPanel:isConnectLedOn()
+  D:log(ledState,"LED-FALSE")
+  assert_false(ledState,"LED should be off!")
+end
+
+function test_HelmPanelDisconnected_WhenHelmPanelIsConnected_ConnectLEDIsOn()
+  helmPanel:setConnected("true")
+  local ledState = helmPanel:isConnectLedOn()
+  D:log(ledState,"LED-TRUE")
+  assert_true(ledState,"LED should be on!")
+end
+
+function test_HelmPanelDisconnected_WhenSeveralStateChangesAreTriggered_LedWhichIndicatesConnectIsInCorrectState()
+  i = 0
+  while i < 3 do
+    helmPanel:setConnected("true")
+    local ledState = helmPanel:isConnectLedOn()
+    D:log(ledState,"LED-TRUE")
+    assert_true(ledState,"LED should be on!")
+    helmPanel:setConnected("false")
+    local ledState = helmPanel:isConnectLedOn()
+    D:log(ledState,"LED-FALSE")
+    assert_false(ledState,"LED should be off!")
+    framework.delay(1)
+    i = i+1
+ end
+end
+
+-----------------------------------------------------------------------------------------------
+-- Test Cases - GPS LED on/off
+-----------------------------------------------------------------------------------------------
 
 function test_GpsLED_WhenGpsIsBlocked_GpsLedIsOff()
 
@@ -162,6 +196,10 @@ function test_GpsLED_WhenGpsIsSetWithCorrectFix_GpsLedIsOn()
 
 end
 
+-----------------------------------------------------------------------------------------------
+-- Test Cases - SATELITE LED on/off
+-----------------------------------------------------------------------------------------------
+
 function xtest_SateliteLED_WhenSateliteIsBlockedOrUnblocked_SateliteLedIsInCorrectState()
 
   raiseNotImpl()
@@ -198,20 +236,4 @@ end
 -- TODO: but it does not change external power property in unibox neither vms.. 
 function test_ExternalPower()
 
-end
-
-function test_X1HelmPanelDisconnected_WhenSeveralStateChangesAreTriggered_LedWhichIndicatesConnectIsInCorrectState()
-  i = 0
-  while i < 3 do
-    helmPanel:setConnected("true")
-    local ledState = helmPanel:isConnectLedOn()
-    D:log(ledState,"LED-TRUE")
-    assert_true(ledState,"LED should be on!")
-    helmPanel:setConnected("false")
-    local ledState = helmPanel:isConnectLedOn()
-    D:log(ledState,"LED-FALSE") 
-    assert_false(ledState,"LED should be off!")
-    framework.delay(1)
-    i = i+1
- end
 end
