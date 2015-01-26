@@ -51,6 +51,14 @@ function setup()
   -- Helm Panel disconnected from terminal
   helmPanel:setConnected("false")
 
+  -- disconnecting HW Client
+  shellSW:postEvent(
+                    "\"_RS232\"",
+                    "DTECONNECTED",
+                    "false"
+  )
+
+
 
 end
 
@@ -2734,7 +2742,7 @@ function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateTrueWhe
   D:log("HW CLIENT CONNECTED TO TERMINAL")
   -- Hw client is connected to terminal
   shellSW:postEvent(
-                    "svc.serial._NAME",
+                    "\"_RS232\"",
                     "DTECONNECTED",
                     "true"
   )
@@ -2835,7 +2843,7 @@ function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateFalseWh
   D:log("HW CLIENT CONNECTED TO TERMINAL")
   -- Hw client is connected to terminal
   shellSW:postEvent(
-                    "svc.serial._NAME",
+                    "\"_RS232\"",
                     "DTECONNECTED",
                     "true"
   )
@@ -2852,7 +2860,7 @@ function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateFalseWh
   D:log("HW CLIENT CONNECTED TO TERMINAL")
   -- Hw client is connected to terminal
   shellSW:postEvent(
-                    "svc.serial._NAME",
+                    "\"_RS232\"",
                     "DTECONNECTED",
                     "false"
   )
