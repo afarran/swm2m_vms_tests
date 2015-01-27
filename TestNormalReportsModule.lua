@@ -35,11 +35,27 @@ end
 
 --- setup function
 function setup()
+  
+  -- disabling periodic reports in suite_teardown function
+  vmsSW:setPropertiesByName({
+      StandardReport1Interval = 1,
+      AcceleratedReport1Rate = 1,
+      LogReport1Rate = 1,
+      StandardReport2Interval = 1,
+      AcceleratedReport2Rate = 1,
+      LogReport2Rate = 1,
+      StandardReport3Interval = 1,
+      AcceleratedReport3Rate = 1,
+      LogReport3Rate = 1
+  })
+
   vmsSW:setHighWaterMark()
 end
 
 --- teardown function executed after each unit test
 function teardown()
+
+  D:log("teardown")
 
 end
 -----------------------------------------------------------------------------------------------
@@ -1448,7 +1464,6 @@ end
 --TODO: getConfig message (4.15)
 --TODO: PollRequest/Response (6.1-6.3)
 --TODO: add a TC to check if reports are sent when all periodic reports are generated
---TODO: add disabling periodic reports in suite_teardown function (or teardown)
 --TODO: add a TC to check if accelerated report is sent with period 2/3
 --TODO: add a TC to check if property change for time below PropertyChangeDebounceTime is not 'noticed'
 --TODO: add a TC to check if PropertyChangeDebounceTime interval is correctly reported

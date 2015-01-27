@@ -2902,8 +2902,6 @@ function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateFalseWh
   -- *** Execute
   GPS:set(InitialPosition)
 
-  gateway.setHighWaterMark() -- to get the newest messages
-
   D:log("HW CLIENT CONNECTED TO TERMINAL")
   -- Hw client is connected to terminal
   shellSW:postEvent(
@@ -2921,7 +2919,8 @@ function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateFalseWh
   D:log(framework.dump(HwClientDisconnectedStateProperty["HwClientDisconnectedState"]), "HwClientDisconnectedState")
   assert_false(HwClientDisconnectedStateProperty["HwClientDisconnectedState"], "HwClientDisconnectedState property is incorrectly true after HW_CLIENT_DISCONNECTED_END_DEBOUNCE_TIME has passed")
 
-  D:log("HW CLIENT DISCONNECTED FROM TERMINAL")
+  D:log(os.time(), "HW CLIENT DISCONNECTED FROM TERMINAL")
+
   gateway.setHighWaterMark() -- to get the newest messages
   -- Hw client is disconnected from terminal
   shellSW:postEvent(
@@ -2937,6 +2936,9 @@ function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateFalseWh
 
   framework.delay(HW_CLIENT_DISCONNECTED_START_DEBOUNCE_TIME)
 
+  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"})
+
+
   timeOfEvent = os.time()
 
   -- checking HwClientDisconnectedState property
@@ -2944,9 +2946,8 @@ function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateFalseWh
   D:log(framework.dump(HwClientDisconnectedStateProperty["HwClientDisconnectedState"]), "HwClientDisconnectedState")
   assert_true(HwClientDisconnectedStateProperty["HwClientDisconnectedState"], "HwClientDisconnectedState property is incorrectly false after HW_CLIENT_DISCONNECTED_START_DEBOUNCE_TIME has passed")
 
-  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"})
-  D:log(ReceivedMessages["AbnormalReport"])
 
+  D:log(ReceivedMessages["AbnormalReport"])
   assert_not_nil(ReceivedMessages["AbnormalReport"], "AbnormalReport not received")
 
   assert_equal(
