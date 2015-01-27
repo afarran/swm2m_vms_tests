@@ -1064,7 +1064,6 @@ function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAre
     {StandardReport3Interval = 1, AcceleratedReport3Rate = 1},
     {StandardReport3Interval = 4, AcceleratedReport3Rate = 2}
   )
-
 end
 -----------------------------------------------------------------------------------------------
 -- Test Cases for LOG REPORTS
@@ -1436,6 +1435,26 @@ end
 -- POLL REQUEST / RESPONSE Test cases
 -----------------------------------------------------------------------------------------------
 
+function test_PollRequest_WhenPollRequest1MessageIsSend_CorrectPollResponse1MessageIsReceived()
+  generic_test_PollRequest(
+    "PollRequest1", 
+    "PollResponse1"
+  )
+end
+
+function test_PollRequest_WhenPollRequest2MessageIsSend_CorrectPollResponse2MessageIsReceived()
+  generic_test_PollRequest(
+    "PollRequest2", 
+    "PollResponse2"
+  )
+end
+
+function test_PollRequest_WhenPollRequest3MessageIsSend_CorrectPollResponse3MessageIsReceived()
+  generic_test_PollRequest(
+    "PollRequest3", 
+    "PollResponse3"
+  )
+end
 
 function generic_test_PollRequest(pollRequestMsgKey, pollResponseMsgKey)
 
