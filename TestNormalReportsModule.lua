@@ -1149,6 +1149,7 @@ function test_LogReport3_WhenGpsPositionIsSetAndLogFilterEstablished_LogEntriesS
   generic_test_LogReports(logReportXKey, standardReportXKey, properties, filterTimeout, timeForLogging, itemsInLog, LOG_REPORT_INTERVAL)
 end
 
+
 -----------------------------------------------------------------------------------------------
 -- DEFAULT VALUES tests
 -----------------------------------------------------------------------------------------------
@@ -1332,6 +1333,40 @@ end
 -- GENERIC LOGIC for test cases
 -----------------------------------------------------------------------------------------------
 
+function generic_test_LogReportsNegative(logReportXKey, standardReportXKey, properties, timeForLogging)
+
+  -- set properties for log interval
+  vmsSW:setPropertiesByName(properties)
+
+  --synchronize first standard report
+  vmsSW:waitForMessagesByName(standardReportXKey)
+
+  --set log filter
+  logSW:setLogFilter(
+    vmsSW.sin, {
+    vmsSW:getMinFrom(logReportXKey)},
+    os.time()+5,
+    os.time()+timeForLogging+5,
+    "True"
+  )
+
+  -- wait for log reports
+  framework.delay(2*timeForLogging)
+
+  -- get reports from log
+  logEntries = logSW:getLogEntries(itemsInLog)
+
+  -- it must be loop here because operand '#' doesn't count dictionary items :(
+  local counter = 0
+  for key,value in pairs(logEntries) do
+    counter = counter + 1 
+  end
+
+  D:log(logEntries)
+  assert_equal(counter,0,0,"There should be not items in logs!")
+
+end
+
 -- generic logic for Log Reports TCs
 function generic_test_LogReports(logReportXKey, standardReportXKey, properties, filterTimeout, timeForLogging, itemsInLog, logReportInterval)
 
@@ -1419,7 +1454,6 @@ function generic_test_LogReports(logReportXKey, standardReportXKey, properties, 
 
 end
 
--- 666
 -- This is generic function for configure and test reports (StandardReport,AcceleratedReport)
 function generic_test_StandardReportContent(firstReportKey,reportKey,properties,firstReportInterval,reportInterval,setConfigMsgKey,configChangeMsgKey,fields)
 
@@ -1705,7 +1739,6 @@ end
 --TODO: when SR is disabled AR is disabled too (4.13)
 --TODO: getConfig message (4.15)
 --TODO: PollRequest/Response (6.1-6.3)
---TODO: add a TC to check if accelerated report is sent with period 2/3
 --TODO: add a TC to check if property change for time below PropertyChangeDebounceTime is not 'noticed'
 --TODO: add a TC to check if PropertyChangeDebounceTime interval is correctly reported
 --TODO: add a TC to check if Log entries are not saved in NVM when logging is disabled
