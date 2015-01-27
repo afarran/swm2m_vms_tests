@@ -46,7 +46,8 @@ function setup()
       LogReport2Rate = 1,
       StandardReport3Interval = 1,
       AcceleratedReport3Rate = 1,
-      LogReport3Rate = 1
+      LogReport3Rate = 1,
+      PropertyChangeDebounceTime=1
   })
 
   vmsSW:setHighWaterMark()
@@ -1456,6 +1457,47 @@ function test_PollRequest_WhenPollRequest3MessageIsSend_CorrectPollResponse3Mess
   )
 end
 
+
+--test poll request in standard/accelerated report cycle - if intervals are correct
+function generic_test_PollRequestWithOthers(pollRequestMsgKey, pollResponseMsgKey, standardReportKey, acceleratedReportKey, properties, standardInterval, acceleratedInterval)
+  
+  -- setup standard and accelerated report intervals
+  vmsSW:setPropertiesByName(properties)
+  framework.delay(5)
+
+  -- wait for first standard report
+  local standardMsg = vmsSW:waitForMessagesByName(
+    standardReportKey,
+    standardInterval*60 + 20
+  )
+  D:log(standardMsg)
+  assert_not_nil(standardMsg,"Standard report not received.")
+  assert_not_nil(standardMsg[standardReportKey],"Standard report not received.")
+  
+  -- poll request / response in the middle of accelerated interval
+  framework.delay(acceleratedInterval*60/2)
+  vmsSW:sendMessageByName(pollRequestMsgKey)
+  local pollMessage = vmsSW:waitForMessagesByName(pollResponseMsgKey)
+  D:log(pollMessage)
+  assert_not_nil(pollMessage,"There is no poll response report message!")
+  assert_not_nil(pollMessage[pollResponseMsgKey],"There is no poll response report message!")
+
+  -- wait for accelerated report
+  local acceleratedMsg = vmsSW:waitForMessagesByName(
+    acceleratedReportKey,
+    acceleratedInterval*60 + 20
+  )
+  D:log(acceleratedMsg)
+  assert_not_nil(acceleratedMsg,"Accelerated report not received.")
+  assert_not_nil(acceleratedMsg[acceleratedReportKey],"Accelerated report not received.")
+
+  -- check timestamp diff
+  local timestampDiff = tonumber(acceleratedMsg[acceleratedReportKey].Timestamp) - tonumber(standardMsg[acceleratedReportKey].Timestamp)
+  D:log(timestampDiff)
+  assert_equal(acceleratedInterval*60,timestampDiff,5,"Wrong interval of accelerated report (poll report was requested before).")
+
+end
+
 function generic_test_PollRequest(pollRequestMsgKey, pollResponseMsgKey)
 
   -- new position setup
@@ -1471,7 +1513,6 @@ function generic_test_PollRequest(pollRequestMsgKey, pollResponseMsgKey)
 
   -- wait for reponse
   local reportMessage = vmsSW:waitForMessagesByName(pollResponseMsgKey)
-
   assert_not_nil(reportMessage,"There is no poll response report message!")
   assert_not_nil(reportMessage[pollResponseMsgKey],"There is no poll response report message!")
 
