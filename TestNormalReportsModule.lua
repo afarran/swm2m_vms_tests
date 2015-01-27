@@ -1038,27 +1038,33 @@ function test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebo
 end
 
 function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport1AreCorrect()
+  
   generic_TimestampsInConfigChangeReports(
    "ConfigChangeReport1",
     {StandardReport1Interval = 1, AcceleratedReport1Rate = 1},
     {StandardReport1Interval = 4, AcceleratedReport1Rate = 2}
   )
+
 end
 
 function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport2AreCorrect()
+  
   generic_TimestampsInConfigChangeReports(
    "ConfigChangeReport2",
     {StandardReport2Interval = 1, AcceleratedReport2Rate = 1},
     {StandardReport2Interval = 4, AcceleratedReport2Rate = 2}
   )
+
 end
 
 function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport3AreCorrect()
+  
   generic_TimestampsInConfigChangeReports(
    "ConfigChangeReport3",
     {StandardReport3Interval = 1, AcceleratedReport3Rate = 1},
     {StandardReport3Interval = 4, AcceleratedReport3Rate = 2}
   )
+
 end
 -----------------------------------------------------------------------------------------------
 -- Test Cases for LOG REPORTS
