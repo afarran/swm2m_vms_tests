@@ -2846,6 +2846,27 @@ function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateTrueWhe
     "Wrong Timestamp value in HwClientDisconnected abnormal report"
   )
 
+  -- TODO: update this after implementation in TestFramework file
+  --[[
+  assert_equal(
+    GpsNotJammedPosition.hdop,
+    ReceivedMessages["AbnormalReport"].Hdop,
+    "Wrong HDOP value in GpsJammed abnormal report"
+  )
+
+  assert_equal(
+    GpsNotJammedPosition.idpsnr,
+    ReceivedMessages["AbnormalReport"].IdpSnr,
+    "Wrong IdpSnr value in GpsJammed abnormal report"
+  )
+
+  assert_equal(
+    GpsNotJammedPosition.numsats,
+    ReceivedMessages["AbnormalReport"].NumSats,
+    "Wrong NumSats value in GpsJammed abnormal report"
+  )
+  --]]
+
   local StatusBitmap = vmsSW:decodeBitmap(ReceivedMessages["AbnormalReport"].StatusBitmap, "EventStateId")
   assert_false(StatusBitmap["HwClientDisconnected"], "StatusBitmap has not been correctly changed to false when Hw panel was connected from terminal")
 
@@ -2963,6 +2984,26 @@ function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateFalseWh
     10,
     "Wrong Timestamp value in HwClientDisconnected abnormal report"
   )
+  -- TODO: update this after implementation in TestFramework file
+  --[[
+  assert_equal(
+    GpsNotJammedPosition.hdop,
+    ReceivedMessages["AbnormalReport"].Hdop,
+    "Wrong HDOP value in GpsJammed abnormal report"
+  )
+
+  assert_equal(
+    GpsNotJammedPosition.idpsnr,
+    ReceivedMessages["AbnormalReport"].IdpSnr,
+    "Wrong IdpSnr value in GpsJammed abnormal report"
+  )
+
+  assert_equal(
+    GpsNotJammedPosition.numsats,
+    ReceivedMessages["AbnormalReport"].NumSats,
+    "Wrong NumSats value in GpsJammed abnormal report"
+  )
+  --]]
 
   local StatusBitmap = vmsSW:decodeBitmap(ReceivedMessages["AbnormalReport"].StatusBitmap, "EventStateId")
   assert_true(StatusBitmap["HwClientDisconnected"], "StatusBitmap has not been correctly changed to true when Hw panel was disconnected from terminal")
