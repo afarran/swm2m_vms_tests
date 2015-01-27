@@ -371,6 +371,57 @@ function test_StandardReportDisabled_WhenStandardReport3IntervalIsSetToZero_Stan
   )
 end
 
+--- TC checks if StandardReport 1 is sent periodically and its values are correct (setProperties used for report setup)
+--- Other Standard Reports are also configured for sending. 
+  -- Initial Conditions:
+  -- 
+  -- * StandardReport2Interval = 2,
+  -- * AcceleratedReport2Rate = 2,
+  -- * StandardReport3Interval = 2,
+  -- * AcceleratedReport3Rate = 2,
+  -- * StandardReport1Interval is set above zero.
+  -- * AcceleratedReport1Rate is set to 1 - accelerated reports are not triggered
+  --
+  -- Steps:
+  --
+  -- 1. Properties setup is done (via setProperties) .
+  -- 2. Current gps position is requested.
+  -- 3. Current gps position is checked.
+  -- 4. Waiting for first Standard Report is performed.
+  -- 5. New gps position is prepared and set.
+  -- 6. Waiting for second Standard Report is performed.
+  -- 7. Difference between reports is calculated.
+  -- 8. Values in report are checked.
+  --
+  -- Results:
+  --
+  -- 1. Properties are set correctly.
+  -- 2. Current gps position is fetched.
+  -- 3. Current gps position is correct.
+  -- 4. Timer is synchronized to the first standard report
+  -- 5. New gps position is correctly set.
+  -- 6. Standard Report is delivered.
+  -- 7. Difference between reports is correct.
+  -- 8. Values in report are correct.
+function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues()
+
+  vmsSW:setPropertiesByName({
+      StandardReport2Interval = 2,
+      AcceleratedReport2Rate = 2,
+      StandardReport3Interval = 2,
+      AcceleratedReport3Rate = 2,
+  })
+
+  framework.delay(60)
+
+  generic_test_StandardReportContent(
+    "StandardReport1",
+    "StandardReport1",
+    {StandardReport1Interval=1, AcceleratedReport1Rate=1},
+    1,
+    1
+  )
+
 -----------------------------------------------------------------------------------------------
 -- Test Cases for ACCELERATED REPORTS
 -----------------------------------------------------------------------------------------------
