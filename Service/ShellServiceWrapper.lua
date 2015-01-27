@@ -10,7 +10,7 @@ ShellServiceWrapper = {}
     return self
     end,
   })
-  
+
   function ShellServiceWrapper:_init()
     local properties = {
       { name ="attach", pin=1, ptype="boolean"},
@@ -27,18 +27,18 @@ ShellServiceWrapper = {}
       { name ="setAccessLevel", min=6},
       { name ="changeAccessPassword", min=7},
     }
-    
+
     local messages_from = {
       { name ="cmdResult", min=1},
       { name ="accessInfo", min=2},
       { name ="accessSetChangeResult", min=3},
     }
-    
+
     ServiceWrapper._init(self, {
-        sin = 26, 
-        name = "Shell", 
-        messages_to = messages_to, 
-        messages_from = messages_from, 
+        sin = 26,
+        name = "Shell",
+        messages_to = messages_to,
+        messages_from = messages_from,
         properties = properties
     })
   end
@@ -50,6 +50,5 @@ ShellServiceWrapper = {}
 
   function ShellServiceWrapper:postEvent(handleName,eventName,data)
     local code = "sched.post("..handleName..",\""..eventName.."\","..data..")"
-    D:log(code,"shell-service-invoked-code")
     self:eval(code)
   end
