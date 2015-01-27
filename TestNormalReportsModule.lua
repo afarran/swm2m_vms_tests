@@ -403,7 +403,7 @@ end
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues()
+function test_StandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues()
 
   vmsSW:setPropertiesByName({
       StandardReport2Interval = 2,
@@ -421,6 +421,113 @@ function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsS
     1,
     1
   )
+end
+
+--- TC checks if StandardReport 2 is sent periodically and its values are correct (setProperties used for report setup)
+--- Other Standard Reports are also configured for sending. 
+  -- Initial Conditions:
+  -- 
+  -- * StandardReport1Interval = 2,
+  -- * AcceleratedReport1Rate = 2,
+  -- * StandardReport3Interval = 2,
+  -- * AcceleratedReport3Rate = 2,
+  -- * StandardReport2Interval is set above zero.
+  -- * AcceleratedReport2Rate is set to 1 - accelerated reports are not triggered
+  --
+  -- Steps:
+  --
+  -- 1. Properties setup is done (via setProperties) .
+  -- 2. Current gps position is requested.
+  -- 3. Current gps position is checked.
+  -- 4. Waiting for first Standard Report is performed.
+  -- 5. New gps position is prepared and set.
+  -- 6. Waiting for second Standard Report is performed.
+  -- 7. Difference between reports is calculated.
+  -- 8. Values in report are checked.
+  --
+  -- Results:
+  --
+  -- 1. Properties are set correctly.
+  -- 2. Current gps position is fetched.
+  -- 3. Current gps position is correct.
+  -- 4. Timer is synchronized to the first standard report
+  -- 5. New gps position is correctly set.
+  -- 6. Standard Report is delivered.
+  -- 7. Difference between reports is correct.
+  -- 8. Values in report are correct.
+function test_StandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues()
+
+  vmsSW:setPropertiesByName({
+      StandardReport1Interval = 2,
+      AcceleratedReport1Rate = 2,
+      StandardReport3Interval = 2,
+      AcceleratedReport3Rate = 2,
+  })
+
+  framework.delay(60)
+
+  generic_test_StandardReportContent(
+    "StandardReport2",
+    "StandardReport2",
+    {StandardReport2Interval=1, AcceleratedReport2Rate=1},
+    1,
+    1
+  )
+end
+
+--- TC checks if StandardReport 3 is sent periodically and its values are correct (setProperties used for report setup)
+--- Other Standard Reports are also configured for sending. 
+  -- Initial Conditions:
+  -- 
+  -- * StandardReport2Interval = 2,
+  -- * AcceleratedReport2Rate = 2,
+  -- * StandardReport1Interval = 2,
+  -- * AcceleratedReport1Rate = 2,
+  -- * StandardReport3Interval is set above zero.
+  -- * AcceleratedReport3Rate is set to 1 - accelerated reports are not triggered
+  --
+  -- Steps:
+  --
+  -- 1. Properties setup is done (via setProperties) .
+  -- 2. Current gps position is requested.
+  -- 3. Current gps position is checked.
+  -- 4. Waiting for first Standard Report is performed.
+  -- 5. New gps position is prepared and set.
+  -- 6. Waiting for second Standard Report is performed.
+  -- 7. Difference between reports is calculated.
+  -- 8. Values in report are checked.
+  --
+  -- Results:
+  --
+  -- 1. Properties are set correctly.
+  -- 2. Current gps position is fetched.
+  -- 3. Current gps position is correct.
+  -- 4. Timer is synchronized to the first standard report
+  -- 5. New gps position is correctly set.
+  -- 6. Standard Report is delivered.
+  -- 7. Difference between reports is correct.
+  -- 8. Values in report are correct.
+function test_StandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues()
+
+  vmsSW:setPropertiesByName({
+      StandardReport1Interval = 2,
+      AcceleratedReport1Rate = 2,
+      StandardReport2Interval = 2,
+      AcceleratedReport2Rate = 2,
+  })
+
+  framework.delay(60)
+
+  generic_test_StandardReportContent(
+    "StandardReport3",
+    "StandardReport3",
+    {StandardReport3Interval=1, AcceleratedReport3Rate=1},
+    1,
+    1
+  )
+end
+
+
 
 -----------------------------------------------------------------------------------------------
 -- Test Cases for ACCELERATED REPORTS
