@@ -50,5 +50,6 @@ ShellServiceWrapper = {}
 
   function ShellServiceWrapper:postEvent(handleName,eventName,data)
     local code = "sched.post("..handleName..",\""..eventName.."\","..data..")"
+    D:log(code,"shell-service-invoked-code")
     self:eval(code)
   end

@@ -9,9 +9,9 @@ DEBUG_MODE = 1
 
 local SATELITE_BLOCKAGE_DEBOUNCE = 1
 local SATELITE_BLOCKAGE_DEBOUNCE_TOLERANCE = 0
-local GPS_BLOCKED_START_DEBOUNCE_TIME = 1
+local GPS_BLOCKED_START_DEBOUNCE_TIME = 20
 local GPS_BLOCKED_END_DEBOUNCE_TIME = 1 
-local MAX_FIX_TIMEOUT = 1 
+local MAX_FIX_TIMEOUT = 60
 
 -----------------------------------------------------------------------------------------------
 -- SETUP
@@ -112,7 +112,7 @@ function test_HelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAn
   assert_not_equal(isDisconnectedAfterChange, isDisconnectedAfterSecondChange, "There should be change in disconnected state.")
 
 end
-function test_HelmPanelDisconnected_WhenHelmPanelIsConnected_ConnectLEDIsOn()
+function test_HelmPanelDisconnected_WhenHelmPanelIsDisConnected_ConnectLEDIsOff()
   helmPanel:setConnected("false")
   local ledState = helmPanel:isConnectLedOn()
   D:log(ledState,"LED-FALSE")
@@ -143,8 +143,8 @@ function test_HelmPanelDisconnected_WhenSeveralStateChangesAreTriggered_LedWhich
 end
 
 -----------------------------------------------------------------------------------------------
--- Test Cases - GPS LED on/off
------------------------------------------------------------------------------------------------
+-- Test Cases - GPS LED on/off - IN DEVELOPMENT!
+----------------------------------------------------------------------------------------------
 
 function test_GpsLED_WhenGpsIsBlocked_GpsLedIsOff()
 
@@ -197,7 +197,7 @@ function test_GpsLED_WhenGpsIsSetWithCorrectFix_GpsLedIsOn()
 end
 
 -----------------------------------------------------------------------------------------------
--- Test Cases - SATELITE LED on/off
+-- Test Cases - SATELITE LED on/off - IN DEVELOPMENT
 -----------------------------------------------------------------------------------------------
 
 function xtest_SateliteLED_WhenSateliteIsBlockedOrUnblocked_SateliteLedIsInCorrectState()
@@ -235,5 +235,24 @@ end
 -- TODO: turned external power button manually in simulator 
 -- TODO: but it does not change external power property in unibox neither vms.. 
 function test_ExternalPower()
+
+end
+
+
+---------------------------------------------------------------------------------
+-- This test case if just for reporting test framework issue. REMOVE AFTER FIX!
+---------------------------------------------------------------------------------
+function test_getPropertiesBug()
+  i = 0
+  while i < 10 do
+    helmPanel:setConnected("true") -- this is posting event via shell service(lua code chunk)
+    local result = lsf.getProperties(162, {2})
+    D:log(result,"RESULT")
+    helmPanel:setConnected("false")
+    local result = lsf.getProperties(162, {2})
+    D:log(result,"RESULT")
+    framework.delay(1)
+    i = i+1
+ end
 
 end
