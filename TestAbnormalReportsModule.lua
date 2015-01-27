@@ -3228,8 +3228,6 @@ function test_SetProperties_WhenSetPropertiesMessageIsSet_PropertiesIncludedInTh
           value = "False"
         end
       end
-      print(type(value))
-      print(value)
       result[row.Name] = "" .. value
     end
     return result
