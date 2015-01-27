@@ -723,7 +723,7 @@ function test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardRepo
 end
 
 --- TC checks if AcceleratedReport 1 is sent periodically and its values are correct (setProperties used for setup)
---- 4/3 Accelerated Report Interval
+--- 4/3 Accelerated Report Interval (80secs)
 --- NOT TOTAL DIVISION of Accelerated Report Interval
   -- Initial Conditions:
   --
@@ -751,13 +751,52 @@ end
   -- 6. Accelerated Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-function test_AcceleretedReportDivision_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport1IsSentWithCorrectValues()
+function test_AcceleretedReportDivisionVariant43_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport1IsSentWithCorrectValues()
   generic_test_StandardReportContent(
     "StandardReport1",
     "AcceleratedReport1",
     {StandardReport1Interval=4, AcceleratedReport1Rate=3},
     4,
     4/3
+  )
+end
+
+--- TC checks if AcceleratedReport 1 is sent periodically and its values are correct (setProperties used for setup)
+--- 2/3 Accelerated Report Interval (40secs)
+--- NOT TOTAL DIVISION of Accelerated Report Interval
+  -- Initial Conditions:
+  --
+  -- * StandardReport1Interval is set to 2
+  -- * AcceleratedReport1Rate is set to 3 - this will trigger accelerated report.
+  --
+  -- Steps:
+  --
+  -- 1. Properties setup is done (via setProperties).
+  -- 2. Current gps position is requested.
+  -- 3. Current gps position is checked.
+  -- 4. Waiting for Standard Report is performed.
+  -- 5. New gps position is prepared and set.
+  -- 6. Waiting for AcceleratedReport is performed.
+  -- 7. Difference between reports is calculated.
+  -- 8. Values in report are checked.
+  --
+  -- Results:
+  --
+  -- 1. Properties are set correctly.
+  -- 2. Current gps position is fetched.
+  -- 3. Current gps position is correct.
+  -- 4. Timer is synchronized to the first standard report.
+  -- 5. New gps position is correctly set.
+  -- 6. Accelerated Report is delivered.
+  -- 7. Difference between reports is correct.
+  -- 8. Values in report are correct.
+function test_AcceleretedReportDivisionVariant23_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport1IsSentWithCorrectValues()
+  generic_test_StandardReportContent(
+    "StandardReport1",
+    "AcceleratedReport1",
+    {StandardReport1Interval=2, AcceleratedReport1Rate=3},
+    2,
+    2/3
   )
 end
 
