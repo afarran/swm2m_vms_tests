@@ -371,6 +371,164 @@ function test_StandardReportDisabled_WhenStandardReport3IntervalIsSetToZero_Stan
   )
 end
 
+--- TC checks if StandardReport 1 is sent periodically and its values are correct (setProperties used for report setup)
+--- Other Standard Reports are also configured for sending. 
+  -- Initial Conditions:
+  -- 
+  -- * StandardReport2Interval = 2,
+  -- * AcceleratedReport2Rate = 2,
+  -- * StandardReport3Interval = 2,
+  -- * AcceleratedReport3Rate = 2,
+  -- * StandardReport1Interval is set above zero.
+  -- * AcceleratedReport1Rate is set to 1 - accelerated reports are not triggered
+  --
+  -- Steps:
+  --
+  -- 1. Properties setup is done (via setProperties) .
+  -- 2. Current gps position is requested.
+  -- 3. Current gps position is checked.
+  -- 4. Waiting for first Standard Report is performed.
+  -- 5. New gps position is prepared and set.
+  -- 6. Waiting for second Standard Report is performed.
+  -- 7. Difference between reports is calculated.
+  -- 8. Values in report are checked.
+  --
+  -- Results:
+  --
+  -- 1. Properties are set correctly.
+  -- 2. Current gps position is fetched.
+  -- 3. Current gps position is correct.
+  -- 4. Timer is synchronized to the first standard report
+  -- 5. New gps position is correctly set.
+  -- 6. Standard Report is delivered.
+  -- 7. Difference between reports is correct.
+  -- 8. Values in report are correct.
+function test_StandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues()
+
+  vmsSW:setPropertiesByName({
+      StandardReport2Interval = 2,
+      AcceleratedReport2Rate = 2,
+      StandardReport3Interval = 2,
+      AcceleratedReport3Rate = 2,
+  })
+
+  framework.delay(60)
+
+  generic_test_StandardReportContent(
+    "StandardReport1",
+    "StandardReport1",
+    {StandardReport1Interval=1, AcceleratedReport1Rate=1},
+    1,
+    1
+  )
+end
+
+--- TC checks if StandardReport 2 is sent periodically and its values are correct (setProperties used for report setup)
+--- Other Standard Reports are also configured for sending. 
+  -- Initial Conditions:
+  -- 
+  -- * StandardReport1Interval = 2,
+  -- * AcceleratedReport1Rate = 2,
+  -- * StandardReport3Interval = 2,
+  -- * AcceleratedReport3Rate = 2,
+  -- * StandardReport2Interval is set above zero.
+  -- * AcceleratedReport2Rate is set to 1 - accelerated reports are not triggered
+  --
+  -- Steps:
+  --
+  -- 1. Properties setup is done (via setProperties) .
+  -- 2. Current gps position is requested.
+  -- 3. Current gps position is checked.
+  -- 4. Waiting for first Standard Report is performed.
+  -- 5. New gps position is prepared and set.
+  -- 6. Waiting for second Standard Report is performed.
+  -- 7. Difference between reports is calculated.
+  -- 8. Values in report are checked.
+  --
+  -- Results:
+  --
+  -- 1. Properties are set correctly.
+  -- 2. Current gps position is fetched.
+  -- 3. Current gps position is correct.
+  -- 4. Timer is synchronized to the first standard report
+  -- 5. New gps position is correctly set.
+  -- 6. Standard Report is delivered.
+  -- 7. Difference between reports is correct.
+  -- 8. Values in report are correct.
+function test_StandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues()
+
+  vmsSW:setPropertiesByName({
+      StandardReport1Interval = 2,
+      AcceleratedReport1Rate = 2,
+      StandardReport3Interval = 2,
+      AcceleratedReport3Rate = 2,
+  })
+
+  framework.delay(60)
+
+  generic_test_StandardReportContent(
+    "StandardReport2",
+    "StandardReport2",
+    {StandardReport2Interval=1, AcceleratedReport2Rate=1},
+    1,
+    1
+  )
+end
+
+--- TC checks if StandardReport 3 is sent periodically and its values are correct (setProperties used for report setup)
+--- Other Standard Reports are also configured for sending. 
+  -- Initial Conditions:
+  -- 
+  -- * StandardReport2Interval = 2,
+  -- * AcceleratedReport2Rate = 2,
+  -- * StandardReport1Interval = 2,
+  -- * AcceleratedReport1Rate = 2,
+  -- * StandardReport3Interval is set above zero.
+  -- * AcceleratedReport3Rate is set to 1 - accelerated reports are not triggered
+  --
+  -- Steps:
+  --
+  -- 1. Properties setup is done (via setProperties) .
+  -- 2. Current gps position is requested.
+  -- 3. Current gps position is checked.
+  -- 4. Waiting for first Standard Report is performed.
+  -- 5. New gps position is prepared and set.
+  -- 6. Waiting for second Standard Report is performed.
+  -- 7. Difference between reports is calculated.
+  -- 8. Values in report are checked.
+  --
+  -- Results:
+  --
+  -- 1. Properties are set correctly.
+  -- 2. Current gps position is fetched.
+  -- 3. Current gps position is correct.
+  -- 4. Timer is synchronized to the first standard report
+  -- 5. New gps position is correctly set.
+  -- 6. Standard Report is delivered.
+  -- 7. Difference between reports is correct.
+  -- 8. Values in report are correct.
+function test_StandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues()
+
+  vmsSW:setPropertiesByName({
+      StandardReport1Interval = 2,
+      AcceleratedReport1Rate = 2,
+      StandardReport2Interval = 2,
+      AcceleratedReport2Rate = 2,
+  })
+
+  framework.delay(60)
+
+  generic_test_StandardReportContent(
+    "StandardReport3",
+    "StandardReport3",
+    {StandardReport3Interval=1, AcceleratedReport3Rate=1},
+    1,
+    1
+  )
+end
+
+
+
 -----------------------------------------------------------------------------------------------
 -- Test Cases for ACCELERATED REPORTS
 -----------------------------------------------------------------------------------------------
@@ -561,6 +719,84 @@ function test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardRepo
     "AcceleratedReport3",
     {StandardReport3Interval=1, AcceleratedReport3Rate=1},
     80 -- waiting until report not come
+  )
+end
+
+--- TC checks if AcceleratedReport 1 is sent periodically and its values are correct (setProperties used for setup)
+--- 4/3 Accelerated Report Interval (80secs)
+--- NOT TOTAL DIVISION of Accelerated Report Interval
+  -- Initial Conditions:
+  --
+  -- * StandardReport1Interval is set to 4
+  -- * AcceleratedReport1Rate is set to 3 - this will trigger accelerated report.
+  --
+  -- Steps:
+  --
+  -- 1. Properties setup is done (via setProperties).
+  -- 2. Current gps position is requested.
+  -- 3. Current gps position is checked.
+  -- 4. Waiting for Standard Report is performed.
+  -- 5. New gps position is prepared and set.
+  -- 6. Waiting for AcceleratedReport is performed.
+  -- 7. Difference between reports is calculated.
+  -- 8. Values in report are checked.
+  --
+  -- Results:
+  --
+  -- 1. Properties are set correctly.
+  -- 2. Current gps position is fetched.
+  -- 3. Current gps position is correct.
+  -- 4. Timer is synchronized to the first standard report.
+  -- 5. New gps position is correctly set.
+  -- 6. Accelerated Report is delivered.
+  -- 7. Difference between reports is correct.
+  -- 8. Values in report are correct.
+function test_AcceleretedReportDivisionVariant43_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport1IsSentWithCorrectValues()
+  generic_test_StandardReportContent(
+    "StandardReport1",
+    "AcceleratedReport1",
+    {StandardReport1Interval=4, AcceleratedReport1Rate=3},
+    4,
+    4/3
+  )
+end
+
+--- TC checks if AcceleratedReport 1 is sent periodically and its values are correct (setProperties used for setup)
+--- 2/3 Accelerated Report Interval (40secs)
+--- NOT TOTAL DIVISION of Accelerated Report Interval
+  -- Initial Conditions:
+  --
+  -- * StandardReport1Interval is set to 2
+  -- * AcceleratedReport1Rate is set to 3 - this will trigger accelerated report.
+  --
+  -- Steps:
+  --
+  -- 1. Properties setup is done (via setProperties).
+  -- 2. Current gps position is requested.
+  -- 3. Current gps position is checked.
+  -- 4. Waiting for Standard Report is performed.
+  -- 5. New gps position is prepared and set.
+  -- 6. Waiting for AcceleratedReport is performed.
+  -- 7. Difference between reports is calculated.
+  -- 8. Values in report are checked.
+  --
+  -- Results:
+  --
+  -- 1. Properties are set correctly.
+  -- 2. Current gps position is fetched.
+  -- 3. Current gps position is correct.
+  -- 4. Timer is synchronized to the first standard report.
+  -- 5. New gps position is correctly set.
+  -- 6. Accelerated Report is delivered.
+  -- 7. Difference between reports is correct.
+  -- 8. Values in report are correct.
+function test_AcceleretedReportDivisionVariant23_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport1IsSentWithCorrectValues()
+  generic_test_StandardReportContent(
+    "StandardReport1",
+    "AcceleratedReport1",
+    {StandardReport1Interval=2, AcceleratedReport1Rate=3},
+    2,
+    2/3
   )
 end
 
@@ -913,6 +1149,51 @@ function test_LogReport3_WhenGpsPositionIsSetAndLogFilterEstablished_LogEntriesS
   generic_test_LogReports(logReportXKey, standardReportXKey, properties, filterTimeout, timeForLogging, itemsInLog, LOG_REPORT_INTERVAL)
 end
 
+function test_LogReportNegative_WhenLogReport1IsDisabledAndLogFilterEstablished_LogEntriesShouldNotCollectData()
+
+  local logReportXKey = "LogReport1"
+  local standardReportXKey = "StandardReport1"
+
+  local properties = {
+    LogReport1Rate = 1,
+    StandardReport1Interval = 1
+  }
+
+  local timeForLogging = 60*2
+
+  generic_test_LogReportsNegative(logReportXKey, standardReportXKey, properties, timeForLogging)
+end
+
+function test_LogReportNegative_WhenLogReport2IsDisabledAndLogFilterEstablished_LogEntriesShouldNotCollectData()
+
+  local logReportXKey = "LogReport2"
+  local standardReportXKey = "StandardReport2"
+
+  local properties = {
+    LogReport2Rate = 1,
+    StandardReport2Interval = 1
+  }
+
+  local timeForLogging = 60*2
+
+  generic_test_LogReportsNegative(logReportXKey, standardReportXKey, properties, timeForLogging)
+end
+
+function test_LogReportNegative_WhenLogReports3IsDisabledAndLogFilterEstablished_LogEntriesShouldNotCollectData()
+
+  local logReportXKey = "LogReport3"
+  local standardReportXKey = "StandardReport3"
+
+  local properties = {
+    LogReport3Rate = 1,
+    StandardReport3Interval = 1
+  }
+
+  local timeForLogging = 60*2
+
+  generic_test_LogReportsNegative(logReportXKey, standardReportXKey, properties, timeForLogging)
+end
+
 -----------------------------------------------------------------------------------------------
 -- DEFAULT VALUES tests
 -----------------------------------------------------------------------------------------------
@@ -1096,6 +1377,40 @@ end
 -- GENERIC LOGIC for test cases
 -----------------------------------------------------------------------------------------------
 
+function generic_test_LogReportsNegative(logReportXKey, standardReportXKey, properties, timeForLogging)
+
+  -- set properties for log interval
+  vmsSW:setPropertiesByName(properties)
+
+  --synchronize first standard report
+  vmsSW:waitForMessagesByName(standardReportXKey)
+
+  --set log filter
+  logSW:setLogFilter(
+    vmsSW.sin, {
+    vmsSW:getMinFrom(logReportXKey)},
+    os.time()+5,
+    os.time()+timeForLogging+5,
+    "True"
+  )
+
+  -- wait for log reports
+  framework.delay(2*timeForLogging)
+
+  -- get reports from log
+  logEntries = logSW:getLogEntries(itemsInLog)
+
+  -- it must be loop here because operand '#' doesn't count dictionary items :(
+  local counter = 0
+  for key,value in pairs(logEntries) do
+    counter = counter + 1 
+  end
+
+  D:log(logEntries)
+  assert_equal(counter,0,0,"There should be not items in logs!")
+
+end
+
 -- generic logic for Log Reports TCs
 function generic_test_LogReports(logReportXKey, standardReportXKey, properties, filterTimeout, timeForLogging, itemsInLog, logReportInterval)
 
@@ -1210,6 +1525,11 @@ function generic_test_StandardReportContent(firstReportKey,reportKey,properties,
   )
   local positionMessage = positionSW:waitForMessagesByName({"position"})
   local initialPosition = positionMessage.position
+
+  assert_not_nil(
+    initialPosition,
+    "No initial position."
+  )
 
   assert_not_nil(
     initialPosition.longitude,
@@ -1463,8 +1783,6 @@ end
 --TODO: when SR is disabled AR is disabled too (4.13)
 --TODO: getConfig message (4.15)
 --TODO: PollRequest/Response (6.1-6.3)
---TODO: add a TC to check if reports are sent when all periodic reports are generated
---TODO: add a TC to check if accelerated report is sent with period 2/3
 --TODO: add a TC to check if property change for time below PropertyChangeDebounceTime is not 'noticed'
 --TODO: add a TC to check if PropertyChangeDebounceTime interval is correctly reported
 --TODO: add a TC to check if Log entries are not saved in NVM when logging is disabled
