@@ -3012,6 +3012,62 @@ end
 
 
 
+function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateTrueWhenHwClientIsConnectedForTimeBelowHwClientDisconnectedEndDebounceTime_HwClientDisconnectedAbnormalReportIsNotSent()
+
+  local HW_CLIENT_DISCONNECTED_START_DEBOUNCE_TIME = 1
+  local HW_CLIENT_DISCONNECTED_END_DEBOUNCE_TIME = 30
+
+
+  -- *** Setup
+  -- terminal in some position but no valid fix provided
+  local InitialPosition = {
+                             speed = 0,                      -- kmh
+                             latitude = 1,                   -- degrees
+                             longitude = 1,                  -- degrees
+                             fixType = 3,                    -- valid fix
+  }
+
+  vmsSW:setPropertiesByName({
+                             HwClientDisconnectedStartDebounceTime = HW_CLIENT_DISCONNECTED_START_DEBOUNCE_TIME,
+                             HwClientDisconnectedEndDebounceTime = HW_CLIENT_DISCONNECTED_END_DEBOUNCE_TIME,
+                             HwClientDisconnectedSendReport = true,
+                            }
+  )
+
+  -- *** Execute
+  GPS:set(InitialPosition)
+
+  gateway.setHighWaterMark() -- to get the newest messages
+
+  D:log("HW CLIENT CONNECTED TO TERMINAL")
+  -- Hw client is connected to terminal
+  shellSW:postEvent(
+                    "\"_RS232\"",
+                    "DTECONNECTED",
+                    "true"
+  )
+
+  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
+  D:log(ReceivedMessages["AbnormalReport"])
+
+  -- back to HW Client disconnected
+  shellSW:postEvent(
+                    "\"_RS232\"",
+                    "DTECONNECTED",
+                    "false"
+  )
+
+  if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "HwClientDisconnected" ) then
+    assert_nil(1, "HwClientDisconnected abnormal report sent but not expected")
+  end
+
+  -- checking HwClientDisconnectedState property
+  local HwClientDisconnectedStateProperty = vmsSW:getPropertiesByName({"HwClientDisconnectedState"})
+  D:log(framework.dump(HwClientDisconnectedStateProperty["HwClientDisconnectedState"]), "HwClientDisconnectedState")
+  assert_true(HwClientDisconnectedStateProperty["HwClientDisconnectedState"], "HwClientDisconnectedState property is incorrectly false - HW_CLIENT_DISCONNECTED_END_DEBOUNCE_TIME has not passed")
+
+end
+
 
 
 
