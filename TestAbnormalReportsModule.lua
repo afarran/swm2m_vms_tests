@@ -2527,6 +2527,27 @@ function test_HelmPanelDisconnected_WhenHelmPanelIsDisconnectedForTimeAboveHelmP
     "Wrong Timestamp value in HelmPanelDisconnected abnormal report"
   )
 
+  -- TODO: update this after implementation in TestFramework file
+  --[[
+  assert_equal(
+    GpsNotJammedPosition.hdop,
+    ReceivedMessages["AbnormalReport"].Hdop,
+    "Wrong HDOP value in GpsJammed abnormal report"
+  )
+
+  assert_equal(
+    GpsNotJammedPosition.idpsnr,
+    ReceivedMessages["AbnormalReport"].IdpSnr,
+    "Wrong IdpSnr value in GpsJammed abnormal report"
+  )
+
+  assert_equal(
+    GpsNotJammedPosition.numsats,
+    ReceivedMessages["AbnormalReport"].NumSats,
+    "Wrong NumSats value in GpsJammed abnormal report"
+  )
+  --]]
+
   local StatusBitmap = vmsSW:decodeBitmap(ReceivedMessages["AbnormalReport"].StatusBitmap, "EventStateId")
   assert_true(StatusBitmap["HelmPanelDisconnected"], "StatusBitmap has not been correctly changed to false when Helm panel was disconnected from terminal")
 
