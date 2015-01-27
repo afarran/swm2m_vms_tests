@@ -1457,6 +1457,57 @@ function test_PollRequest_WhenPollRequest3MessageIsSend_CorrectPollResponse3Mess
   )
 end
 
+function test_PollRequest_WhenPollRequest1IsRequestedDuringStandardAndAcceleratedReportsCycle_AcceleratedIntervalIsCorrect()
+
+   generic_test_PollRequestWithOthers(
+     "PollRequest1",
+     "PollResponse1",
+     "StandardReport1",
+     "AcceleratedReport1",
+     {
+      StandardReport1Interval = 2,
+      AcceleratedReport1Rate = 2,
+     },
+     2,
+     1
+   )
+
+end
+
+function test_PollRequest_WhenPollRequest2IsRequestedDuringStandardAndAcceleratedReportsCycle_AcceleratedIntervalIsCorrect()
+
+   generic_test_PollRequestWithOthers(
+     "PollRequest2",
+     "PollResponse2",
+     "StandardReport2",
+     "AcceleratedReport2",
+     {
+      StandardReport2Interval = 2,
+      AcceleratedReport2Rate = 2,
+     },
+     2,
+     1
+   )
+
+end
+
+function test_PollRequest_WhenPollRequest3IsRequestedDuringStandardAndAcceleratedReportsCycle_AcceleratedIntervalIsCorrect()
+
+   generic_test_PollRequestWithOthers(
+     "PollRequest3",
+     "PollResponse3",
+     "StandardReport3",
+     "AcceleratedReport3",
+     {
+      StandardReport3Interval = 2,
+      AcceleratedReport3Rate = 2,
+     },
+     2,
+     1
+   )
+
+end
+
 
 --test poll request in standard/accelerated report cycle - if intervals are correct
 function generic_test_PollRequestWithOthers(pollRequestMsgKey, pollResponseMsgKey, standardReportKey, acceleratedReportKey, properties, standardInterval, acceleratedInterval)
