@@ -35,6 +35,8 @@ function setup()
                                ExtPowerDisconnectedEndDebounceTime = 1,
                                HelmPanelDisconnectedStartDebounceTime = 1,
                                HelmPanelDisconnectedEndDebounceTime = 1,
+                               HwClientDisconnectedStartDebounceTime = 1,
+                               HwClientDisconnectedEndDebounceTime = 1,
                                GpsJammedSendReport = false,
                                GpsBlockedSendReport = false,
                                IdpBlockedSendReport = false,
@@ -2748,7 +2750,6 @@ end
 
 
 function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateTrueWhenHwClientIsConnectedForTimeAboveHwClientDisconnectedEndDebounceTime_HwClientDisconnectedAbnormalReportIsSent()
-
 
   -- DRAFT
   local HW_CLIENT_DISCONNECTED_START_DEBOUNCE_TIME = 1
