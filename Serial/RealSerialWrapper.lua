@@ -42,6 +42,7 @@ RealSerialWrapper = {}
   end
   
   function RealSerialWrapper:opened()
+    if not self.port then return false end
     return self.port.opened
   end
   
