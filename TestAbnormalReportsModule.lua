@@ -2398,6 +2398,27 @@ function test_HelmPanelDisconnected_WhenHelmPanelIsConnectedForTimeAboveHelmPane
     "Wrong Timestamp value in HelmPanelDisconnected abnormal report"
   )
 
+  -- TODO: update this after implementation in TestFramework file
+  --[[
+  assert_equal(
+    GpsNotJammedPosition.hdop,
+    ReceivedMessages["AbnormalReport"].Hdop,
+    "Wrong HDOP value in GpsJammed abnormal report"
+  )
+
+  assert_equal(
+    GpsNotJammedPosition.idpsnr,
+    ReceivedMessages["AbnormalReport"].IdpSnr,
+    "Wrong IdpSnr value in GpsJammed abnormal report"
+  )
+
+  assert_equal(
+    GpsNotJammedPosition.numsats,
+    ReceivedMessages["AbnormalReport"].NumSats,
+    "Wrong NumSats value in GpsJammed abnormal report"
+  )
+  --]]
+
   local StatusBitmap = vmsSW:decodeBitmap(ReceivedMessages["AbnormalReport"].StatusBitmap, "EventStateId")
   assert_false(StatusBitmap["HelmPanelDisconnected"], "StatusBitmap has not been correctly changed to false when Helm panel was connected to terminal")
 
@@ -2857,8 +2878,9 @@ function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateFalseWh
   D:log(framework.dump(HwClientDisconnectedStateProperty["HwClientDisconnectedState"]), "HwClientDisconnectedState")
   assert_false(HwClientDisconnectedStateProperty["HwClientDisconnectedState"], "HwClientDisconnectedState property is incorrectly true after HW_CLIENT_DISCONNECTED_END_DEBOUNCE_TIME has passed")
 
-  D:log("HW CLIENT CONNECTED TO TERMINAL")
-  -- Hw client is connected to terminal
+  D:log("HW CLIENT DISCONNECTED FROM TERMINAL")
+  gateway.setHighWaterMark() -- to get the newest messages
+  -- Hw client is disconnected from terminal
   shellSW:postEvent(
                     "\"_RS232\"",
                     "DTECONNECTED",
@@ -2870,8 +2892,6 @@ function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateFalseWh
   D:log(framework.dump(HwClientDisconnectedStateProperty["HwClientDisconnectedState"]), "HwClientDisconnectedState")
   assert_false(HwClientDisconnectedStateProperty["HwClientDisconnectedState"], "HwClientDisconnectedState property is incorrectly true before HW_CLIENT_DISCONNECTED_START_DEBOUNCE_TIME has passed")
 
-
-  gateway.setHighWaterMark() -- to get the newest messages
   framework.delay(HW_CLIENT_DISCONNECTED_START_DEBOUNCE_TIME)
 
   timeOfEvent = os.time()
