@@ -1037,6 +1037,29 @@ function test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebo
 
 end
 
+function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport1AreCorrect()
+  generic_TimestampsInConfigChangeReports(
+   "ConfigChangeReport1",
+    {StandardReport1Interval = 1, AcceleratedReport1Rate = 1},
+    {StandardReport1Interval = 4, AcceleratedReport1Rate = 2}
+  )
+end
+
+function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport2AreCorrect()
+  generic_TimestampsInConfigChangeReports(
+   "ConfigChangeReport2",
+    {StandardReport2Interval = 1, AcceleratedReport2Rate = 1},
+    {StandardReport2Interval = 4, AcceleratedReport2Rate = 2}
+  )
+end
+
+function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport3AreCorrect()
+  generic_TimestampsInConfigChangeReports(
+   "ConfigChangeReport3",
+    {StandardReport3Interval = 1, AcceleratedReport3Rate = 1},
+    {StandardReport3Interval = 4, AcceleratedReport3Rate = 2}
+  )
+end
 -----------------------------------------------------------------------------------------------
 -- Test Cases for LOG REPORTS
 -----------------------------------------------------------------------------------------------
@@ -1402,6 +1425,82 @@ function generic_test_DriftOverTime_StandardAndAccelerated(properties,configChan
   )
 
 end
+
+-----------------------------------------------------------------------------------------------
+-- POLL REQUEST / RESPONSE Test cases
+-----------------------------------------------------------------------------------------------
+
+
+function generic_test_PollRequest(pollRequestMsgKey, pollResponseMsgKey)
+
+  -- new position setup
+  local newPosition = {
+    latitude  = 1,
+    longitude = 1,
+    speed =  1 -- km/h
+  }
+  GPS:set(newPosition)
+
+  -- sent poll message
+  vmsSW:sendMessageByName(pollRequestMsgKey)
+
+  -- wait for reponse
+  local reportMessage = vmsSW:waitForMessagesByName(pollResponseMsgKey)
+
+  assert_not_nil(reportMessage,"There is no poll response report message!")
+  assert_not_nil(reportMessage[pollResponseMsgKey],"There is no poll response report message!")
+
+  -- check values of the response
+  assert_equal(
+    GPS:denormalize(newPosition.latitude),
+    tonumber(reportMessage[pollResponseMsgKey].Latitude),
+    "Wrong latitude in " .. pollResponseMsgKey
+  )
+  assert_equal(
+    GPS:denormalize(newPosition.longitude),
+    tonumber(reportMessage[pollResponseMsgKey].Longitude),
+    "Wrong longitude in " .. pollResponseMsgKey
+  )
+  assert_equal(
+    GPS:denormalizeSpeed(newPosition.speed),
+    tonumber(reportMessage[pollResponseMsgKey].Speed),
+    1,
+    "Wrong speed in " .. pollResponseMsgKey
+  )
+
+  -- some of values are being checked just for their existance
+  -- TODO_not_implemented: add checking values of following fields when test framework functions will be implemented
+  assert_not_nil(
+    reportMessage[pollResponseMsgKey].Timestamp,
+    "No timestamp in " .. pollResponseMsgKey
+  )
+  assert_not_nil(
+    reportMessage[pollResponseMsgKey].Course,
+    "No Course in " .. pollResponseMsgKey
+  )
+  assert_not_nil(
+    reportMessage[pollResponseMsgKey].Hdop,
+    "No Hdop in " .. pollResponseMsgKey
+  )
+  assert_not_nil(
+    reportMessage[pollResponseMsgKey].NumSats,
+    "No NumSats in " .. pollResponseMsgKey
+  )
+  assert_not_nil(
+    reportMessage[pollResponseMsgKey].IdpCnr,
+    "No IdpCnr in " .. pollResponseMsgKey
+  )
+  assert_not_nil(
+    reportMessage[pollResponseMsgKey].StatusBitmap,
+    "No StatusBitmap in " .. pollResponseMsgKey
+  )
+
+
+end
+
+
+
+
 
 -----------------------------------------------------------------------------------------------
 -- GENERIC LOGIC for test cases
@@ -1835,14 +1934,6 @@ function generic_test_PropertyChangeDebounceTime(configChangeMsgKey,initialPrope
 
 end
 
-function test_XC()
-  generic_TimestampsInConfigChangeReports(
-   "ConfigChangeReport2",
-    {StandardReport2Interval = 1, AcceleratedReport2Rate = 1},
-    {StandardReport2Interval = 4, AcceleratedReport2Rate = 2}
-  )
-end
-
 -- generic method to check if two ConfigChange reports have correct timestamps
 function generic_TimestampsInConfigChangeReports(configChangeMsgKey,initialProperties,changedProperties)
 
@@ -1883,6 +1974,5 @@ function generic_TimestampsInConfigChangeReports(configChangeMsgKey,initialPrope
 
 end
 
---TODO: when SR is disabled AR is disabled too (4.13)
 --TODO: getConfig message (4.15)
 --TODO: PollRequest/Response (6.1-6.3)
