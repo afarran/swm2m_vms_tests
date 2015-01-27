@@ -722,6 +722,45 @@ function test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardRepo
   )
 end
 
+--- TC checks if AcceleratedReport 1 is sent periodically and its values are correct (setProperties used for setup)
+--- 4/3 Accelerated Report Interval
+--- NOT TOTAL DIVISION of Accelerated Report Interval
+  -- Initial Conditions:
+  --
+  -- * StandardReport1Interval is set to 4
+  -- * AcceleratedReport1Rate is set to 3 - this will trigger accelerated report.
+  --
+  -- Steps:
+  --
+  -- 1. Properties setup is done (via setProperties).
+  -- 2. Current gps position is requested.
+  -- 3. Current gps position is checked.
+  -- 4. Waiting for Standard Report is performed.
+  -- 5. New gps position is prepared and set.
+  -- 6. Waiting for AcceleratedReport is performed.
+  -- 7. Difference between reports is calculated.
+  -- 8. Values in report are checked.
+  --
+  -- Results:
+  --
+  -- 1. Properties are set correctly.
+  -- 2. Current gps position is fetched.
+  -- 3. Current gps position is correct.
+  -- 4. Timer is synchronized to the first standard report.
+  -- 5. New gps position is correctly set.
+  -- 6. Accelerated Report is delivered.
+  -- 7. Difference between reports is correct.
+  -- 8. Values in report are correct.
+function test_AcceleretedReportDivision_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport1IsSentWithCorrectValues()
+  generic_test_StandardReportContent(
+    "StandardReport1",
+    "AcceleratedReport1",
+    {StandardReport1Interval=4, AcceleratedReport1Rate=3},
+    4,
+    4/3
+  )
+end
+
 -----------------------------------------------------------------------------------------------
 -- Test Cases for CONFIG CHANGE REPORTS
 -----------------------------------------------------------------------------------------------
@@ -1341,6 +1380,7 @@ function generic_test_LogReports(logReportXKey, standardReportXKey, properties, 
 
 end
 
+-- 666
 -- This is generic function for configure and test reports (StandardReport,AcceleratedReport)
 function generic_test_StandardReportContent(firstReportKey,reportKey,properties,firstReportInterval,reportInterval,setConfigMsgKey,configChangeMsgKey,fields)
 
@@ -1368,6 +1408,11 @@ function generic_test_StandardReportContent(firstReportKey,reportKey,properties,
   )
   local positionMessage = positionSW:waitForMessagesByName({"position"})
   local initialPosition = positionMessage.position
+
+  assert_not_nil(
+    initialPosition,
+    "No initial position."
+  )
 
   assert_not_nil(
     initialPosition.longitude,
@@ -1621,7 +1666,6 @@ end
 --TODO: when SR is disabled AR is disabled too (4.13)
 --TODO: getConfig message (4.15)
 --TODO: PollRequest/Response (6.1-6.3)
---TODO: add a TC to check if reports are sent when all periodic reports are generated
 --TODO: add a TC to check if accelerated report is sent with period 2/3
 --TODO: add a TC to check if property change for time below PropertyChangeDebounceTime is not 'noticed'
 --TODO: add a TC to check if PropertyChangeDebounceTime interval is correctly reported
