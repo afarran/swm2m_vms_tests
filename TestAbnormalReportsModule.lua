@@ -41,7 +41,8 @@ function setup()
                                GpsBlockedSendReport = false,
                                IdpBlockedSendReport = false,
                                PowerDisconnectedSendReport = false,
-                               HelmPanelDisconnectedSendReport = true,
+                               HelmPanelDisconnectedSendReport = false,
+                               HwClientDisconnectedSendReport = false,
                             }
   )
 
