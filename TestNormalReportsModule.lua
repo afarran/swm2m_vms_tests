@@ -1835,8 +1835,48 @@ function generic_test_PropertyChangeDebounceTime(configChangeMsgKey,initialPrope
 
 end
 
+function test_XC()
+  generic_TimestampsInConfigChangeReports(
+   "ConfigChangeReport2",
+    {StandardReport2Interval = 1, AcceleratedReport2Rate = 1},
+    {StandardReport2Interval = 4, AcceleratedReport2Rate = 2}
+  )
+end
+
+-- generic method to check if two ConfigChange reports have correct timestamps
+function generic_TimestampsInConfigChangeReports(configChangeMsgKey,initialProperties,changedProperties)
+
+  framework.delay(65)
+  vmsSW:setHighWaterMark()
+
+  vmsSW:setPropertiesByName({PropertyChangeDebounceTime=1})
+  framework.delay(2)
+  vmsSW:setPropertiesByName(changedProperties)
+  local reportMessageZero = vmsSW:waitForMessagesByName(
+    {configChangeMsgKey},
+    90
+  )
+
+  D:log(reportMessageZero)
+
+  vmsSW:setPropertiesByName({PropertyChangeDebounceTime=60})
+  framework.delay(5)
+  vmsSW:setPropertiesByName(initialProperties)
+  local reportMessageFirst = vmsSW:waitForMessagesByName(
+    {configChangeMsgKey},
+    90
+  )
+  --framework.delay(65)
+  vmsSW:setPropertiesByName(changedProperties)
+  local reportMessageSecond = vmsSW:waitForMessagesByName(
+    {configChangeMsgKey},
+    90
+  )
+  D:log(reportMessageFirst)
+  D:log(reportMessageSecond)
+
+end
+
 --TODO: when SR is disabled AR is disabled too (4.13)
 --TODO: getConfig message (4.15)
 --TODO: PollRequest/Response (6.1-6.3)
---TODO: add a TC to check if PropertyChangeDebounceTime interval is correctly reported
-
