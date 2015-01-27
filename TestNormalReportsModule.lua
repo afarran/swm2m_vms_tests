@@ -1149,6 +1149,50 @@ function test_LogReport3_WhenGpsPositionIsSetAndLogFilterEstablished_LogEntriesS
   generic_test_LogReports(logReportXKey, standardReportXKey, properties, filterTimeout, timeForLogging, itemsInLog, LOG_REPORT_INTERVAL)
 end
 
+function test_LogReportNegative_WhenLogReport1IsDisabledAndLogFilterEstablished_LogEntriesShouldNotCollectData()
+
+  local logReportXKey = "LogReport1"
+  local standardReportXKey = "StandardReport1"
+
+  local properties = {
+    LogReport1Rate = 1,
+    StandardReport1Interval = 1
+  }
+
+  local timeForLogging = 60*2
+
+  generic_test_LogReportsNegative(logReportXKey, standardReportXKey, properties, timeForLogging)
+end
+
+function test_LogReportNegative_WhenLogReport2IsDisabledAndLogFilterEstablished_LogEntriesShouldNotCollectData()
+
+  local logReportXKey = "LogReport2"
+  local standardReportXKey = "StandardReport2"
+
+  local properties = {
+    LogReport2Rate = 1,
+    StandardReport2Interval = 1
+  }
+
+  local timeForLogging = 60*2
+
+  generic_test_LogReportsNegative(logReportXKey, standardReportXKey, properties, timeForLogging)
+end
+
+function test_LogReportNegative_WhenLogReports3IsDisabledAndLogFilterEstablished_LogEntriesShouldNotCollectData()
+
+  local logReportXKey = "LogReport3"
+  local standardReportXKey = "StandardReport3"
+
+  local properties = {
+    LogReport3Rate = 1,
+    StandardReport3Interval = 1
+  }
+
+  local timeForLogging = 60*2
+
+  generic_test_LogReportsNegative(logReportXKey, standardReportXKey, properties, timeForLogging)
+end
 
 -----------------------------------------------------------------------------------------------
 -- DEFAULT VALUES tests
