@@ -1819,7 +1819,7 @@ function generic_test_PropertyChangeDebounceTime(configChangeMsgKey,initialPrope
   local reportMessage = vmsSW:waitForMessagesByName(
     {configChangeMsgKey}
   )
-  vmsSW:setPropertiesByName({PropertyChangeDebounceTime=60})
+  vmsSW:setPropertiesByName({PropertyChangeDebounceTime=60})  -- TODO: shell servicec should be used as well for changing properties
   framework.delay(2)
   vmsSW:setHighWaterMark()
   vmsSW:setPropertiesByName(changedProperties)
@@ -1874,6 +1874,12 @@ function generic_TimestampsInConfigChangeReports(configChangeMsgKey,initialPrope
   )
   D:log(reportMessageFirst)
   D:log(reportMessageSecond)
+  assert_equal(  
+    60,
+    tonumber(reportMessageSecond[configChangeMsgKey].Timestamp) - tonumber(reportMessageFirst[configChangeMsgKey].Timestamp),
+    5,
+    "Not correct difference between timestamps."
+  )
 
 end
 
