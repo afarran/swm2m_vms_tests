@@ -90,3 +90,10 @@ function test_SMTP_WhenNOOPCommandCalled_ServerReturnsOk()
   local noopResponse = smtp:getResponse()
   assert_match("^250 OK", noopResponse, "NOOP command response incorrect")
 end
+
+function test_SMTP_WhenRSETCommandCalled_ServerReturnsResetMessage()
+  startSmtp()
+  smtp:execute("RSET")
+  local rsetResponse = smtp:getResponse()
+  assert_match("^250 Reset OK", rsetResponse, "RSET command response incorrect")
+end
