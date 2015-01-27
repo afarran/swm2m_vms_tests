@@ -1780,11 +1780,33 @@ function generic_test_AcceleratedReportDisabledAndStandardReportEnabled(standard
   assert_equal(0,tonumber(reportMessage.count),"Message"..reportKey.." should not come!")
 end
 
+-- generic method to check if property change for time below PropertyChangeDebounceTime is not 'noticed'
+function generic_test_PropertyChangeDebounceTime()
+
+  vmsSW:setPropertiesByName({PropertyChangeDebounceTime=1})
+  framework.delay(2)
+  vmsSW:setPropertiesByName(initialProperties)
+  local reportMessage = vmsSW:waitForMessagesByName(
+    {configChangeMsgKey}
+  )
+  vmsSW:setPropertiesByName({PropertyChangeDebounceTime=60})
+  framework.delay(2)
+  vmsSW:setHighWaterMark()
+  vmsSW:setPropertiesByName(changedProperties)
+  framework.delay(2)
+  vmsSW:setPropertiesByName(initialProperties)
+
+  local reportMessage = vmsSW:waitForMessagesByName(
+    {configChangeMsgKey}
+  )
+
+  -- this config change message should not be sent   
+  assert_equal(0,tonumber(reportMessage.count),"Message"..reportKey.." should not come!")
+
+end
+
 --TODO: when SR is disabled AR is disabled too (4.13)
 --TODO: getConfig message (4.15)
 --TODO: PollRequest/Response (6.1-6.3)
---TODO: add a TC to check if property change for time below PropertyChangeDebounceTime is not 'noticed'
 --TODO: add a TC to check if PropertyChangeDebounceTime interval is correctly reported
---TODO: add a TC to check if Log entries are not saved in NVM when logging is disabled
---TODO: add a TC to check if all 3 kinds of reports are correctly sent/saved when activated
 
