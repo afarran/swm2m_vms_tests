@@ -92,7 +92,7 @@ def create_xml(data):
 	xml_test_suites = ET.Element("testsuites")
 	xml_test_suites.set("name", test_suites["name"])
 	
-	for test_suite_name, test_suite_data in test_suites["suites"].iteritems():
+	for test_suite_name, test_suite_data in test_suites["suites"].items():
 		xml_test_suite = ET.SubElement(xml_test_suites, "testsuite")
 		xml_test_suite.set("name", test_suite_name)
 		
@@ -136,7 +136,7 @@ parser.add_argument('--result', default=None)
 args = parser.parse_args()
 all_data = ""
 if args.source:
-	data = file(args.source)
+	data = open(args.source)
 else:
 	data = sys.stdin
 
@@ -159,7 +159,7 @@ for line in data:
 	test_case = find_test_case(line)
 	if test_case:
 		if not current_suite:
-			print "Found testcase but no testsuite detected in first place. Parser source seems malformed"
+			print("Found testcase but no testsuite detected in first place. Parser source seems malformed")
 			sys.exit(-1)
 		current_test_case_data = {	"name" : test_case["name"],
 									"result" : test_case["result"],
@@ -177,11 +177,11 @@ for line in data:
 try:
 	xml_data = create_xml(test_suites)		
 except:
-	print "*** EXCEPTION IN CREATING XML ***"
-	print "Unexpected error:", sys.exc_info()[0]
-	print "*** RECEIVED DATA ***"
-	print all_data
-	print "*** END OF RECEIVED DATA ***"
+	print("*** EXCEPTION IN CREATING XML ***")
+	print("Unexpected error:", sys.exc_info()[0])
+	print("*** RECEIVED DATA ***")
+	print(all_data)
+	print("*** END OF RECEIVED DATA ***")
 	raise
 	
 
@@ -189,5 +189,5 @@ if args.result:
 	tree = ET.ElementTree(xml_data)
 	tree.write(args.result)
 else:
-	print ET.tostring(xml_data, 'utf-8')	
+	print (ET.tostring(xml_data, 'utf-8'))
 

@@ -723,7 +723,7 @@ function test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardRepo
 end
 
 --- TC checks if AcceleratedReport 1 is sent periodically and its values are correct (setProperties used for setup)
---- 4/3 Accelerated Report Interval
+--- 4/3 Accelerated Report Interval (80secs)
 --- NOT TOTAL DIVISION of Accelerated Report Interval
   -- Initial Conditions:
   --
@@ -751,13 +751,52 @@ end
   -- 6. Accelerated Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-function test_AcceleretedReportDivision_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport1IsSentWithCorrectValues()
+function test_AcceleretedReportDivisionVariant43_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport1IsSentWithCorrectValues()
   generic_test_StandardReportContent(
     "StandardReport1",
     "AcceleratedReport1",
     {StandardReport1Interval=4, AcceleratedReport1Rate=3},
     4,
     4/3
+  )
+end
+
+--- TC checks if AcceleratedReport 1 is sent periodically and its values are correct (setProperties used for setup)
+--- 2/3 Accelerated Report Interval (40secs)
+--- NOT TOTAL DIVISION of Accelerated Report Interval
+  -- Initial Conditions:
+  --
+  -- * StandardReport1Interval is set to 2
+  -- * AcceleratedReport1Rate is set to 3 - this will trigger accelerated report.
+  --
+  -- Steps:
+  --
+  -- 1. Properties setup is done (via setProperties).
+  -- 2. Current gps position is requested.
+  -- 3. Current gps position is checked.
+  -- 4. Waiting for Standard Report is performed.
+  -- 5. New gps position is prepared and set.
+  -- 6. Waiting for AcceleratedReport is performed.
+  -- 7. Difference between reports is calculated.
+  -- 8. Values in report are checked.
+  --
+  -- Results:
+  --
+  -- 1. Properties are set correctly.
+  -- 2. Current gps position is fetched.
+  -- 3. Current gps position is correct.
+  -- 4. Timer is synchronized to the first standard report.
+  -- 5. New gps position is correctly set.
+  -- 6. Accelerated Report is delivered.
+  -- 7. Difference between reports is correct.
+  -- 8. Values in report are correct.
+function test_AcceleretedReportDivisionVariant23_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport1IsSentWithCorrectValues()
+  generic_test_StandardReportContent(
+    "StandardReport1",
+    "AcceleratedReport1",
+    {StandardReport1Interval=2, AcceleratedReport1Rate=3},
+    2,
+    2/3
   )
 end
 
@@ -968,6 +1007,36 @@ function test_ConfigChangeReport_WhenSetConfigReport3MessageIsSentAndConfigPrope
   )
 end
 
+function test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebounceTime_ConfigChangeReport1IsNotSent()
+
+ generic_test_PropertyChangeDebounceTime(
+   "ConfigChangeReport1",
+    {StandardReport1Interval = 1, AcceleratedReport1Rate = 1},
+    {StandardReport1Interval = 4, AcceleratedReport1Rate = 2}
+ )
+
+end
+
+function test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebounceTime_ConfigChangeReport2IsNotSent()
+
+ generic_test_PropertyChangeDebounceTime(
+   "ConfigChangeReport2",
+    {StandardReport2Interval = 1, AcceleratedReport2Rate = 1},
+    {StandardReport2Interval = 4, AcceleratedReport2Rate = 2}
+ )
+
+end
+
+function test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebounceTime_ConfigChangeReport3IsNotSent()
+
+ generic_test_PropertyChangeDebounceTime(
+   "ConfigChangeReport3",
+    {StandardReport3Interval = 1, AcceleratedReport3Rate = 1},
+    {StandardReport3Interval = 4, AcceleratedReport3Rate = 2}
+ )
+
+end
+
 -----------------------------------------------------------------------------------------------
 -- Test Cases for LOG REPORTS
 -----------------------------------------------------------------------------------------------
@@ -1108,6 +1177,51 @@ function test_LogReport3_WhenGpsPositionIsSetAndLogFilterEstablished_LogEntriesS
   local itemsInLog = ITEMS_IN_LOG
 
   generic_test_LogReports(logReportXKey, standardReportXKey, properties, filterTimeout, timeForLogging, itemsInLog, LOG_REPORT_INTERVAL)
+end
+
+function test_LogReportNegative_WhenLogReport1IsDisabledAndLogFilterEstablished_LogEntriesShouldNotCollectData()
+
+  local logReportXKey = "LogReport1"
+  local standardReportXKey = "StandardReport1"
+
+  local properties = {
+    LogReport1Rate = 1,
+    StandardReport1Interval = 1
+  }
+
+  local timeForLogging = 60*2
+
+  generic_test_LogReportsNegative(logReportXKey, standardReportXKey, properties, timeForLogging)
+end
+
+function test_LogReportNegative_WhenLogReport2IsDisabledAndLogFilterEstablished_LogEntriesShouldNotCollectData()
+
+  local logReportXKey = "LogReport2"
+  local standardReportXKey = "StandardReport2"
+
+  local properties = {
+    LogReport2Rate = 1,
+    StandardReport2Interval = 1
+  }
+
+  local timeForLogging = 60*2
+
+  generic_test_LogReportsNegative(logReportXKey, standardReportXKey, properties, timeForLogging)
+end
+
+function test_LogReportNegative_WhenLogReports3IsDisabledAndLogFilterEstablished_LogEntriesShouldNotCollectData()
+
+  local logReportXKey = "LogReport3"
+  local standardReportXKey = "StandardReport3"
+
+  local properties = {
+    LogReport3Rate = 1,
+    StandardReport3Interval = 1
+  }
+
+  local timeForLogging = 60*2
+
+  generic_test_LogReportsNegative(logReportXKey, standardReportXKey, properties, timeForLogging)
 end
 
 -----------------------------------------------------------------------------------------------
@@ -1293,6 +1407,40 @@ end
 -- GENERIC LOGIC for test cases
 -----------------------------------------------------------------------------------------------
 
+function generic_test_LogReportsNegative(logReportXKey, standardReportXKey, properties, timeForLogging)
+
+  -- set properties for log interval
+  vmsSW:setPropertiesByName(properties)
+
+  --synchronize first standard report
+  vmsSW:waitForMessagesByName(standardReportXKey)
+
+  --set log filter
+  logSW:setLogFilter(
+    vmsSW.sin, {
+    vmsSW:getMinFrom(logReportXKey)},
+    os.time()+5,
+    os.time()+timeForLogging+5,
+    "True"
+  )
+
+  -- wait for log reports
+  framework.delay(2*timeForLogging)
+
+  -- get reports from log
+  logEntries = logSW:getLogEntries(itemsInLog)
+
+  -- it must be loop here because operand '#' doesn't count dictionary items :(
+  local counter = 0
+  for key,value in pairs(logEntries) do
+    counter = counter + 1 
+  end
+
+  D:log(logEntries)
+  assert_equal(counter,0,0,"There should be not items in logs!")
+
+end
+
 -- generic logic for Log Reports TCs
 function generic_test_LogReports(logReportXKey, standardReportXKey, properties, filterTimeout, timeForLogging, itemsInLog, logReportInterval)
 
@@ -1380,7 +1528,6 @@ function generic_test_LogReports(logReportXKey, standardReportXKey, properties, 
 
 end
 
--- 666
 -- This is generic function for configure and test reports (StandardReport,AcceleratedReport)
 function generic_test_StandardReportContent(firstReportKey,reportKey,properties,firstReportInterval,reportInterval,setConfigMsgKey,configChangeMsgKey,fields)
 
@@ -1663,12 +1810,33 @@ function generic_test_AcceleratedReportDisabledAndStandardReportEnabled(standard
   assert_equal(0,tonumber(reportMessage.count),"Message"..reportKey.." should not come!")
 end
 
+-- generic method to check if property change for time below PropertyChangeDebounceTime is not 'noticed'
+function generic_test_PropertyChangeDebounceTime(configChangeMsgKey,initialProperties,changedProperties)
+
+  vmsSW:setPropertiesByName({PropertyChangeDebounceTime=1})
+  framework.delay(2)
+  vmsSW:setPropertiesByName(initialProperties)
+  local reportMessage = vmsSW:waitForMessagesByName(
+    {configChangeMsgKey}
+  )
+  vmsSW:setPropertiesByName({PropertyChangeDebounceTime=60})
+  framework.delay(2)
+  vmsSW:setHighWaterMark()
+  vmsSW:setPropertiesByName(changedProperties)
+  framework.delay(2)
+  vmsSW:setPropertiesByName(initialProperties)
+
+  local reportMessage = vmsSW:waitForMessagesByName(
+    {configChangeMsgKey}
+  )
+
+  -- this config change message should not be sent   
+  assert_equal(0,tonumber(reportMessage.count),"Message"..configChangeMsgKey.." should not come!")
+
+end
+
 --TODO: when SR is disabled AR is disabled too (4.13)
 --TODO: getConfig message (4.15)
 --TODO: PollRequest/Response (6.1-6.3)
---TODO: add a TC to check if accelerated report is sent with period 2/3
---TODO: add a TC to check if property change for time below PropertyChangeDebounceTime is not 'noticed'
 --TODO: add a TC to check if PropertyChangeDebounceTime interval is correctly reported
---TODO: add a TC to check if Log entries are not saved in NVM when logging is disabled
---TODO: add a TC to check if all 3 kinds of reports are correctly sent/saved when activated
 

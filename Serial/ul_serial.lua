@@ -52,7 +52,7 @@ io.Serial = {
         if not os.getenv('ComSpec') then -- Posix
             pn = {'/dev/ttyS?', '/dev/ttyUSB?', '/dev/ttyBT?', '/dev/ttyACM?'}
         else -- Windows
-            pn,pa = {'com?'}, 1
+            pn,pa = {'\\\\.\\com?'}, 1
         end
         -- try to open all ports, add existing to results array
     	for _,pp in ipairs(pn) do
@@ -60,7 +60,7 @@ io.Serial = {
                 local ps,_ = pp:gsub('?',tostring(pn))
                 local p = io._serial.open(ps)
                 if p then
-                    table.insert(ports, ps)
+                    table.insert(ports, "com"..pn)
                     io._serial.close(p)
                 end
             end
@@ -71,6 +71,7 @@ io.Serial = {
 
     -- open new port
     open = function(self, args)
+      
         local port = nil
 
         if not args then args = {} end
@@ -79,6 +80,8 @@ io.Serial = {
         if type(args.port) == 'number' or tonumber(args.port) then
             if not self.ports then self:getPorts() end
             args.port = self.ports[tonumber(args.port)]
+        else
+            args.port = "\\\\.\\" .. args.port
         end
         
         local pd = io._serial.open(args.port) -- create port structure

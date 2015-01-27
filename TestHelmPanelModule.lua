@@ -36,6 +36,16 @@ end
 
 -- executed after each test suite
 function suite_teardown()
+  -- Fix
+  local position = {
+    speed = 0,                      -- kmh
+    latitude = 1,                   -- degrees
+    longitude = 1,                  -- degrees
+    fixType = 3,                    -- fix
+  }
+
+  GPS:set(position)
+
 end
 
 --- setup function
