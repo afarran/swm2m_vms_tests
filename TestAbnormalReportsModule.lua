@@ -2751,7 +2751,6 @@ end
 
 function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateTrueWhenHwClientIsConnectedForTimeAboveHwClientDisconnectedEndDebounceTime_HwClientDisconnectedAbnormalReportIsSent()
 
-  -- DRAFT
   local HW_CLIENT_DISCONNECTED_START_DEBOUNCE_TIME = 1
   local HW_CLIENT_DISCONNECTED_END_DEBOUNCE_TIME = 30
 
@@ -2877,8 +2876,6 @@ end
 
 function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateFalseWhenHwClientIsDisconnectedForTimeAboveHwClientDisconnectedStartDebounceTime_HwClientDisconnectedAbnormalReportIsSent()
 
-
-  -- DRAFT
   local HW_CLIENT_DISCONNECTED_START_DEBOUNCE_TIME = 30
   local HW_CLIENT_DISCONNECTED_END_DEBOUNCE_TIME = 1
 
