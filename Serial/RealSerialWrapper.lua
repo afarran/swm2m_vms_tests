@@ -26,11 +26,11 @@ RealSerialWrapper = {}
   end
     
   function RealSerialWrapper:close()
-    self.port:close()
+    return self.port:close()
   end
   
-  function RealSerialWrapper:listPorts()
-    return io.Serial.getPorts()
+  function RealSerialWrapper:getPorts()
+    return io.Serial:getPorts()
   end
   
   function RealSerialWrapper:write(data)
@@ -41,7 +41,7 @@ RealSerialWrapper = {}
     return self.port:read()
   end
   
-  function RealSerialWrapper:isOpened()
+  function RealSerialWrapper:opened()
     return self.port.opened
   end
   
