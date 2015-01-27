@@ -1007,6 +1007,36 @@ function test_ConfigChangeReport_WhenSetConfigReport3MessageIsSentAndConfigPrope
   )
 end
 
+function test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebounceTime_ConfigChangeReport1IsNotSent()
+
+ generic_test_PropertyChangeDebounceTime(
+   "ConfigChangeReport1",
+    {StandardReport1Interval = 1, AcceleratedReport1Rate = 1},
+    {StandardReport1Interval = 4, AcceleratedReport1Rate = 2}
+ )
+
+end
+
+function test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebounceTime_ConfigChangeReport2IsNotSent()
+
+ generic_test_PropertyChangeDebounceTime(
+   "ConfigChangeReport2",
+    {StandardReport2Interval = 1, AcceleratedReport2Rate = 1},
+    {StandardReport2Interval = 4, AcceleratedReport2Rate = 2}
+ )
+
+end
+
+function test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebounceTime_ConfigChangeReport3IsNotSent()
+
+ generic_test_PropertyChangeDebounceTime(
+   "ConfigChangeReport3",
+    {StandardReport3Interval = 1, AcceleratedReport3Rate = 1},
+    {StandardReport3Interval = 4, AcceleratedReport3Rate = 2}
+ )
+
+end
+
 -----------------------------------------------------------------------------------------------
 -- Test Cases for LOG REPORTS
 -----------------------------------------------------------------------------------------------
@@ -1781,7 +1811,7 @@ function generic_test_AcceleratedReportDisabledAndStandardReportEnabled(standard
 end
 
 -- generic method to check if property change for time below PropertyChangeDebounceTime is not 'noticed'
-function generic_test_PropertyChangeDebounceTime()
+function generic_test_PropertyChangeDebounceTime(configChangeMsgKey,initialProperties,changedProperties)
 
   vmsSW:setPropertiesByName({PropertyChangeDebounceTime=1})
   framework.delay(2)
@@ -1801,7 +1831,7 @@ function generic_test_PropertyChangeDebounceTime()
   )
 
   -- this config change message should not be sent   
-  assert_equal(0,tonumber(reportMessage.count),"Message"..reportKey.." should not come!")
+  assert_equal(0,tonumber(reportMessage.count),"Message"..configChangeMsgKey.." should not come!")
 
 end
 
