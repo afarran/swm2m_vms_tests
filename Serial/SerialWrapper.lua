@@ -24,8 +24,10 @@ SerialWrapper = {}
     args.bits = args.bits or 8
     args.stops = args.stops or 0
     args.parity = args.parity or 'n'
+    args.newline = args.newline or "\r"
     self.args = args
     self.name = args.name
+    self.newline = args.newline
   end
   
   function SerialWrapper:open(args)
@@ -42,21 +44,25 @@ SerialWrapper = {}
     print "Not implemented"
   end
   
-  function SerialWrapper:readLine(newline, timeout)
+  function SerialWrapper:writeLine(data)
+    self:write(data .. self.newline)
+  end
+  
+  function SerialWrapper:readLine(timeout)
     
-    if not self:isOpened() then
+    if not self:opened() then
       return nil
     end
     local timeout = timeout or 60
-    local newline = newline or "\r"
     local startTime = os.time()
         
     while (os.time() - startTime) < timeout do
       if string.len(self.buffer) > 0 then
-        local newlinePosition = string.find(self.buffer, newline)
+        local newlinePosition = string.find(self.buffer, self.newline)
         if newlinePosition then
           local data = string.sub(self.buffer, 0, newlinePosition)
-          self.buffer = string.sub(self.buffer, newlinePosition+1) -- check what if newline is last
+          self.buffer = string.sub(self.buffer, newlinePosition+string.len(self.newline)) -- check what if newline is last
+          return data
         end
       end
       if self:available()>0 then

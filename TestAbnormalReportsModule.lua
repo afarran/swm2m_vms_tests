@@ -3208,3 +3208,97 @@ function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateTrueWhe
 end
 
 
+
+
+function test_SetProperties_WhenSetPropertiesMessageIsSet_PropertiesIncludedInTheMessageAreCorrectlySet()
+
+ 	local SetPropertiesMessage = {SIN = vmsSW.sin, MIN = vmsSW:getMinTo("SetProperties")}
+  D:log(SetPropertiesMessage)
+
+  local enabled =  true
+
+  local function nameValueToArray(data)
+    local result = {}
+    for index, row in pairs(data) do
+      local value = row.Value
+      if type(value) == "boolean" then
+        if value then
+          value = "True"
+        else
+          value = "False"
+        end
+      end
+      print(type(value))
+      print(value)
+      result[row.Name] = "" .. value
+    end
+    return result
+  end
+
+  for counter = 1, 3, 1 do
+
+    if counter%2 > 0 then
+      enabled = true else
+      enabled = false
+    end
+
+  D:log(enabled)
+
+    SetPropertiesMessage.Fields = {
+      {Name="GpsJammedSendReport",Value=enabled},
+      {Name="GpsJammedStartDebounceTime",Value=counter},
+      {Name="GpsJammedEndDebounceTime",Value=counter},
+      {Name="GpsBlockedSendReport",Value=enabled},
+      {Name="GpsBlockedStartDebounceTime",Value=counter},
+      {Name="GpsBlockedEndDebounceTime",Value=counter},
+      {Name="IdpBlockedSendReport",Value=enabled},
+      {Name="IdpBlockedStartDebounceTime",Value=counter},
+      {Name="IdpBlockedEndDebounceTime",Value=counter},
+      {Name="HwClientDisconnectedSendReport",Value=enabled},
+      {Name="HwClientDisconnectedStartDebounceTime",Value=counter},
+      {Name="HwClientDisconnectedEndDebounceTime",Value=counter},
+      {Name="HelmPanelDisconnectedSendReport",Value=enabled},
+      {Name="HelmPanelDisconnectedStartDebounceTime",Value=counter},
+      {Name="HelmPanelDisconnectedEndDebounceTime",Value=counter},
+      {Name="ExtPowerDisconnectedSendReport",Value=enabled},
+      {Name="ExtPowerDisconnectedStartDebounceTime",Value=counter},
+      {Name="ExtPowerDisconnectedEndDebounceTime",Value=counter},
+      {Name="PowerDisconnectedSendReport",Value=enabled},
+      {Name="PowerDisconnectedStartDebounceTime",Value=counter},
+      {Name="PowerDisconnectedEndDebounceTime",Value=counter},
+      {Name="PropertyChangeDebounceTime",Value=counter},
+      {Name="MinStandardReportLedFlashTime",Value=counter}
+    }
+    --D:log(SetPropertiesMessage)
+
+    gateway.submitForwardMessage(SetPropertiesMessage)
+    framework.delay(3) -- to allow terminal to save properties
+
+    gateway.setHighWaterMark() -- to get the newest messages
+    -- requesting Properties message
+    local GetPropertiesMessage = {SIN = vmsSW.sin, MIN = vmsSW:getMinTo("GetProperties")}
+    gateway.submitForwardMessage(GetPropertiesMessage)
+
+    -- waiting for Properties message as the response
+    ReceivedMessages = vmsSW:waitForMessagesByName({"Properties"})
+
+    assert_not_nil(ReceivedMessages["Properties"], "Properties message not received in response for GetProperties message")
+
+    local ReceivedProperties = ReceivedMessages["Properties"]
+    local SetProperties = nameValueToArray(SetPropertiesMessage.Fields)
+   -- D:log(ReceivedProperties)
+   -- D:log(SetProperties)
+
+    for name, value in pairs(ReceivedProperties) do
+          if name ~= "MIN" and name~= "SIN"  and name~= "Name" then
+          assert_equal(SetProperties[name], ReceivedProperties[name], "Property:" ..ReceivedProperties[name] .."has not been correctly set by message")
+        end
+    end
+  end
+
+
+
+
+end
+
+
