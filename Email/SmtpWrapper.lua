@@ -14,8 +14,8 @@ SmtpWrapper = {}
     self.timeout = 60 -- default SMTP timeout
   end
 
-  function SmtpWrapper:execute(command)
-    self.port:writeLine(command)
+  function SmtpWrapper:execute(command, newline)
+    self.port:writeLine(command, newline)
   end
   
   function SmtpWrapper:start()
