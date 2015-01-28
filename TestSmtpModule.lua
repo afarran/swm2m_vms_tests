@@ -62,11 +62,15 @@ local function startSmtp()
   assert_not_nil(startResponse, "SMTP module did not return start message")
 end
 
+--- Test SMTP Hello command
+--Servers MUST NOT return the extended EHLO-style response to a HELO command.
 function test_SMTP_WhenHELOCommandCalled_ServerReturns250()
   startSmtp()  
   smtp:execute("HELO")
   local heloResponse = smtp:getResponse()
-  assert_match("^250", heloResponse, "HELO command response incorrect")
+  heloResponse = string.split(heloResponse, "\r\n")
+  assert_match("^250", heloResponse[1], "HELO command response incorrect")
+  assert_nil(heloResponse[2], "HELO command responded with additional infromation")
 end
 
 function test_SMTP_WhenQUITCommandCalled_ServerReturns221()
@@ -122,3 +126,24 @@ function test_SMTP_WhenMAILFROMCommandCalledWithIncorrectEmail_ServerReturns5xx(
   local mailResponse = smtp:getResponse()
   assert_match("^5%d%d", mailResponse, "MAIL FROM response incorrect")
 end
+
+function test_SMTP_WhenMAILFROMCommandCalledWithEmptyMail_ServerReturns5xx()
+  startSmtp()
+  smtp:execute("MAIL FROM:")
+  local mailResponse = smtp:getResponse()
+  assert_match("^5%d%d", mailResponse, "MAIL FROM response incorrect")
+end
+
+function test_SMTP_WhenCorrectMAILFROMCommandCalledTwice_ServerReturns5xx()
+  startSmtp()
+  smtp:execute("MAIL FROM: <skywave1@skywave.com>")
+  local mailResponse = smtp:getResponse()
+  assert_match("^250", mailResponse, "MAIL FROM response incorrect")
+  
+  smtp:execute("MAIL FROM: <skywave1@skywave.com>")
+  mailResponse = smtp:getResponse()
+  assert_match("^5%d%d", mailResponse, "MAIL FROM second response incorrect")
+end
+
+--- Test SMTP RECPT TO
+-- RCPT TO:<forward-path> [ SP <rcpt-parameters> ] <CRLF>
