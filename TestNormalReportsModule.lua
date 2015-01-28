@@ -823,7 +823,6 @@ end
   -- 2. Message ConfigChangeReport is received.
   -- 3. Report values are correct.
 function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport1IsSent()
-
   -- get properties
   local propertiesToChange = {"StandardReport1Interval", "AcceleratedReport1Rate"}
   local propertiesBeforeChange = vmsSW:getPropertiesByName(propertiesToChange)
@@ -1743,7 +1742,7 @@ function generic_test_LogReports(logReportXKey, standardReportXKey, properties, 
 end
 
 -- This is generic function for configure and test reports (StandardReport,AcceleratedReport)
-function generic_test_StandardReportContent(firstReportKey,reportKey,properties,firstReportInterval,reportInterval,setConfigMsgKey,configChangeMsgKey,fields,lsf)
+function generic_test_StandardReportContent(firstReportKey,reportKey,properties,firstReportInterval,reportInterval,setConfigMsgKey,configChangeMsgKey,fields)
 
   -- testing via message
   if setConfigMsgKey then
@@ -1759,11 +1758,7 @@ function generic_test_StandardReportContent(firstReportKey,reportKey,properties,
       30
     )
   else
-    if lsf then 
-      vmsSW:setPropertiesByName(properties)
-    else 
-      vmsSW:setPropertiesViaShell(properties)
-    end
+    vmsSW:setPropertiesByName(properties)
   end
 
   -- fetching current position info
@@ -1894,7 +1889,6 @@ function generic_test_StandardReportContent(firstReportKey,reportKey,properties,
 
 end
 
-
 -- this is generic function for testing Config Change Reports
 function generic_test_ConfigChangeReportConfigChangeReportIsSent(messageKey,propertiesToChange,propertiesBeforeChange,setConfigMsgKey)
 
@@ -1951,8 +1945,8 @@ function generic_test_ConfigChangeReportConfigChangeReportIsSent(messageKey,prop
       exp = tonumber(propertiesToChangeValues[propertiesToChange[i]])
     end
     assert_equal(
-      tonumber(configChangeMessage[messageKey][propertiesToChange[i]]),
       exp,
+      tonumber(configChangeMessage[messageKey][propertiesToChange[i]]),
       0,
       "Property " .. propertiesToChange[i] .. " has not changed!"
     )
@@ -2108,3 +2102,55 @@ function generic_TimestampsInConfigChangeReports(configChangeMsgKey,initialPrope
 
 end
 
+
+function generic_setConfigViaShell(messageKey,propertiesToChange,propertiesBeforeChange)
+
+  propertiesToChangeValues = {}
+
+  for i=1, #propertiesToChange do
+    propertiesToChangeValues[propertiesToChange[i]] = propertiesBeforeChange[propertiesToChange[i]] + 1
+  end
+
+  -- properties must be changed anyway (the same value after and before properties reset doesn't trigger report)
+  vmsSW:setPropertiesViaShell(shellSW,propertiesToChangeValues)
+
+  -- wait for message
+  local configChangeMessage = vmsSW:waitForMessagesByName(
+    {messageKey},
+    15
+  )
+  assert_not_nil(
+    configChangeMessage,
+    "No "..messageKey
+  )
+  assert_not_nil(
+    configChangeMessage[messageKey],
+    "No "..messageKey
+  )
+
+  -- no others report should come
+  local configChangeMessageWait = vmsSW:waitForMessagesByName(
+    {messageKey},
+    10
+  )
+  assert_equal(0,tonumber(configChangeMessageWait.count),"Message"..messageKey.." should not come!")
+
+  -- checking if raported values are correct
+  for i=1, #propertiesToChange do
+    local exp = tonumber(propertiesToChangeValues[propertiesToChange[i]])
+    assert_equal(
+      exp,
+      tonumber(configChangeMessage[messageKey][propertiesToChange[i]]),
+      0,
+      "Property " .. propertiesToChange[i] .. " has not changed!"
+    )
+  end
+
+  D:log(configChangeMessage)
+  -- source console
+  assert_equal("Console",configChangeMessage[messageKey].ChangeSource,"Wrong source - should be console")
+
+  -- check timestamp
+  assert_not_nil(configChangeMessage[messageKey].Timestamp, "No timestamp in message.")
+
+end
