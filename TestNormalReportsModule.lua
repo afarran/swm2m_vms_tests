@@ -1094,7 +1094,7 @@ end
 
 function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport3IsSentImmediatelyOnlyOnce()
   -- get properties
-  local propertiesToChange = {"StandardRepor3Interval"}
+  local propertiesToChange = {"StandardReport3Interval"}
   local propertiesBeforeChange = vmsSW:getPropertiesByName(propertiesToChange)
   D:log(framework.dump(propertiesBeforeChange))
 
