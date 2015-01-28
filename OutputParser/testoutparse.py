@@ -134,6 +134,7 @@ parser = argparse.ArgumentParser(description='Creates an JUnity style XML from l
 parser.add_argument('--source', default=None)
 parser.add_argument('--result', default=None)
 parser.add_argument('--log', default=None)
+parser.add_argument('--verbose', default=False, action="store_true")
 args = parser.parse_args()
 all_data = ""
 if args.source:
@@ -143,6 +144,8 @@ else:
 
 #find tests starting point
 for line in data:
+	if args.verbose:
+		print(line.strip())
 	all_data = all_data + line
 	if find_test_start(line):
 		break
