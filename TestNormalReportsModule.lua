@@ -1514,7 +1514,7 @@ function generic_test_PollRequest(pollRequestMsgKey, pollResponseMsgKey)
   local newPosition = {
     latitude  = 1,
     longitude = 1,
-    speed =  1 -- km/h
+    speed =  0 -- km/h
   }
   GPS:set(newPosition)
 
@@ -1544,15 +1544,19 @@ function generic_test_PollRequest(pollRequestMsgKey, pollResponseMsgKey)
     "Wrong speed in " .. pollResponseMsgKey
   )
 
+  D:log(reportMessage[pollResponseMsgKey].Course)
+  assert_equal(
+    361,
+    tonumber(reportMessage[pollResponseMsgKey].Course),
+    0,
+    "Wrong course in report " .. pollResponseMsgKey
+  )
+
   -- some of values are being checked just for their existance
   -- TODO_not_implemented: add checking values of following fields when test framework functions will be implemented
   assert_not_nil(
     reportMessage[pollResponseMsgKey].Timestamp,
     "No timestamp in " .. pollResponseMsgKey
-  )
-  assert_not_nil(
-    reportMessage[pollResponseMsgKey].Course,
-    "No Course in " .. pollResponseMsgKey
   )
   assert_not_nil(
     reportMessage[pollResponseMsgKey].Hdop,
@@ -1805,12 +1809,13 @@ function generic_test_StandardReportContent(firstReportKey,reportKey,properties,
   )
   local timestampStart = preReportMessage[firstReportKey].Timestamp
 
+  initialPosition.speed = 0
+
   -- new position setup
   local newPosition = {
     latitude  = GPS:normalize(initialPosition.latitude)   + 1,
     longitude = GPS:normalize(initialPosition.longitude)  + 1,
     speed =  GPS:normalizeSpeed(initialPosition.speed) -- km/h
-    -- TODO: add Course/Heading
   }
   GPS:set(newPosition)
 
@@ -1856,16 +1861,19 @@ function generic_test_StandardReportContent(firstReportKey,reportKey,properties,
     1,
     "Wrong speed in " .. reportKey
   )
+  D:log(reportMessage[reportKey].Course)
+  assert_equal(
+    361,
+    tonumber(reportMessage[reportKey].Course),
+    0,
+    "Wrong course in report " .. reportKey
+  )
 
   -- some of values are being checked just for their existance
   -- TODO_not_implemented: add checking values of following fields when test framework functions will be implemented
   assert_not_nil(
     reportMessage[reportKey].Timestamp,
     "No timestamp in " .. reportKey
-  )
-  assert_not_nil(
-    reportMessage[reportKey].Course,
-    "No Course in " .. reportKey
   )
   assert_not_nil(
     reportMessage[reportKey].Hdop,
@@ -1883,6 +1891,7 @@ function generic_test_StandardReportContent(firstReportKey,reportKey,properties,
     reportMessage[reportKey].StatusBitmap,
     "No StatusBitmap in " .. reportKey
   )
+
 end
 
 
