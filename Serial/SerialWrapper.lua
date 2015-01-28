@@ -44,8 +44,8 @@ SerialWrapper = {}
     print "Not implemented"
   end
   
-  function SerialWrapper:writeLine(data)
-    self:write(data .. self.newline)
+  function SerialWrapper:writeLine(data, newline)
+    self:write(data .. newline or self.newline)
   end
   
   function SerialWrapper:readLine(timeout)
