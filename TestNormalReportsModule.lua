@@ -1072,7 +1072,7 @@ function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExe
   local propertiesBeforeChange = vmsSW:getPropertiesByName(propertiesToChange)
   D:log(framework.dump(propertiesBeforeChange))
 
-  --TODO: PropertyChangeDebouceTime to 60
+  vmsSW:setPropertiesByName({PropertyChangeDebounceTime=60})
 
   generic_setConfigViaShell(
    "ConfigChangeReport1",
@@ -1087,7 +1087,7 @@ function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExe
   local propertiesBeforeChange = vmsSW:getPropertiesByName(propertiesToChange)
   D:log(framework.dump(propertiesBeforeChange))
   
-  --TODO: PropertyChangeDebouceTime to 60
+  vmsSW:setPropertiesByName({PropertyChangeDebounceTime=60})
 
   generic_setConfigViaShell(
    "ConfigChangeReport2",
@@ -1102,7 +1102,7 @@ function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExe
   local propertiesBeforeChange = vmsSW:getPropertiesByName(propertiesToChange)
   D:log(framework.dump(propertiesBeforeChange))
 
-  --TODO: PropertyChangeDebouceTime to 60
+  vmsSW:setPropertiesByName({PropertyChangeDebounceTime=60})
 
   generic_setConfigViaShell(
    "ConfigChangeReport3",
