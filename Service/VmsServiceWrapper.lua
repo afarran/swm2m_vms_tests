@@ -116,4 +116,17 @@ VmsServiceWrapper = {}
         properties = properties,
         bitmaps = bitmaps,
     })
+
+    function VmsServiceWrapper:setPropertiesViaShell(shell,properties)
+      D:log("Setting properties via shell")
+      for key,value in pairs(properties) do
+        local command = "prop set VMS "..key.." "..value
+        D:log(command)
+        local Fields = {{Name="data",Value=command}}
+        local cmdResult = shell:requestMessageByName("executeCmd", Fields, "cmdResult")
+        if cmdResult.cmdResult.success ~= "True" then
+          D:log("Set properties via shell problems!!!")
+        end
+      end
+    end
   end

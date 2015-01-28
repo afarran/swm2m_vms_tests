@@ -1578,10 +1578,6 @@ function generic_test_PollRequest(pollRequestMsgKey, pollResponseMsgKey)
 
 end
 
-
-
-
-
 -----------------------------------------------------------------------------------------------
 -- GENERIC LOGIC for test cases
 -----------------------------------------------------------------------------------------------
@@ -1747,7 +1743,7 @@ function generic_test_LogReports(logReportXKey, standardReportXKey, properties, 
 end
 
 -- This is generic function for configure and test reports (StandardReport,AcceleratedReport)
-function generic_test_StandardReportContent(firstReportKey,reportKey,properties,firstReportInterval,reportInterval,setConfigMsgKey,configChangeMsgKey,fields)
+function generic_test_StandardReportContent(firstReportKey,reportKey,properties,firstReportInterval,reportInterval,setConfigMsgKey,configChangeMsgKey,fields,lsf)
 
   -- testing via message
   if setConfigMsgKey then
@@ -1763,7 +1759,11 @@ function generic_test_StandardReportContent(firstReportKey,reportKey,properties,
       30
     )
   else
-    vmsSW:setPropertiesByName(properties)
+    if lsf then 
+      vmsSW:setPropertiesByName(properties)
+    else 
+      vmsSW:setPropertiesViaShell(properties)
+    end
   end
 
   -- fetching current position info
