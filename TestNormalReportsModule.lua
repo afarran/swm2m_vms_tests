@@ -2086,7 +2086,7 @@ function generic_test_PropertyChangeDebounceTime(configChangeMsgKey,initialPrope
   local reportMessage = vmsSW:waitForMessagesByName(
     {configChangeMsgKey}
   )
-  vmsSW:setPropertiesByName({PropertyChangeDebounceTime=60})  -- TODO: shell service should be used as well for changing properties
+  vmsSW:setPropertiesByName({PropertyChangeDebounceTime=60}) 
   framework.delay(2)
   vmsSW:setHighWaterMark()
   vmsSW:setPropertiesByName(changedProperties)
