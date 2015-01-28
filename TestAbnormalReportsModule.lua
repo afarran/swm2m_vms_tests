@@ -3210,7 +3210,7 @@ end
 
 
 
-function test_SetProperties_WhenSetPropertiesMessageIsSet_PropertiesIncludedInTheMessageAreCorrectlySet()
+function test_SetProperties_WhenSetPropertiesMessageIsSet_PropertiesIncludedInTheMessageAreCorrectlySetAndPropertiesMessageReportsCorrectValues()
 
  	local SetPropertiesMessage = {SIN = vmsSW.sin, MIN = vmsSW:getMinTo("SetProperties")}
   D:log(SetPropertiesMessage)
@@ -3233,14 +3233,21 @@ function test_SetProperties_WhenSetPropertiesMessageIsSet_PropertiesIncludedInTh
     return result
   end
 
+  local function nameToArray(data)
+    local result = {}
+    for index, row in pairs(data) do
+      result[#result+1] = row.Name
+    end
+    return result
+  end
+
+
   for counter = 1, 3, 1 do
 
     if counter%2 > 0 then
       enabled = true else
       enabled = false
     end
-
-  D:log(enabled)
 
     SetPropertiesMessage.Fields = {
       {Name="GpsJammedSendReport",Value=enabled},
@@ -3267,7 +3274,6 @@ function test_SetProperties_WhenSetPropertiesMessageIsSet_PropertiesIncludedInTh
       {Name="PropertyChangeDebounceTime",Value=counter},
       {Name="MinStandardReportLedFlashTime",Value=counter}
     }
-    --D:log(SetPropertiesMessage)
 
     gateway.submitForwardMessage(SetPropertiesMessage)
     framework.delay(3) -- to allow terminal to save properties
@@ -3284,15 +3290,37 @@ function test_SetProperties_WhenSetPropertiesMessageIsSet_PropertiesIncludedInTh
 
     local ReceivedProperties = ReceivedMessages["Properties"]
     local SetProperties = nameValueToArray(SetPropertiesMessage.Fields)
-   -- D:log(ReceivedProperties)
-   -- D:log(SetProperties)
+    local propertyGetByLsf = vmsSW:getPropertiesByName(nameToArray(SetPropertiesMessage.Fields))
+
+    -- modification of propertyGetByLsf entries - conversion to strings
+    for index, row in pairs(propertyGetByLsf) do
+      value = propertyGetByLsf[index]
+      if type(value) == "boolean" then
+        if value then
+          value = "True"
+        else
+          value = "False"
+        end
+      end
+      propertyGetByLsf[index] = "" .. value
+    end
+
+    D:log(ReceivedProperties)
+    D:log(SetProperties)
+    D:log(propertyGetByLsf)
+
 
     for name, value in pairs(ReceivedProperties) do
           if name ~= "MIN" and name~= "SIN"  and name~= "Name" then
+          assert_equal(SetProperties[name], propertyGetByLsf[name], "Property:" ..ReceivedProperties[name] .."has not been correctly set by message")
           assert_equal(SetProperties[name], ReceivedProperties[name], "Property:" ..ReceivedProperties[name] .."has not been correctly set by message")
         end
     end
+
+
   end
+
+
 
 
 

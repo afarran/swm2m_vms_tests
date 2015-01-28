@@ -823,7 +823,6 @@ end
   -- 2. Message ConfigChangeReport is received.
   -- 3. Report values are correct.
 function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport1IsSent()
-
   -- get properties
   local propertiesToChange = {"StandardReport1Interval", "AcceleratedReport1Rate"}
   local propertiesBeforeChange = vmsSW:getPropertiesByName(propertiesToChange)
@@ -1066,6 +1065,46 @@ function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAre
     {StandardReport3Interval = 4, AcceleratedReport3Rate = 2}
   )
 end
+
+function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport1IsSentImmediatelyOnlyOnce()
+  -- get properties
+  local propertiesToChange = {"StandardReport1Interval"}
+  local propertiesBeforeChange = vmsSW:getPropertiesByName(propertiesToChange)
+  D:log(framework.dump(propertiesBeforeChange))
+
+  generic_setConfigViaShell(
+   "ConfigChangeReport1",
+    propertiesToChange,
+    propertiesBeforeChange
+  )
+end
+
+function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport2IsSentImmediatelyOnlyOnce()
+  -- get properties
+  local propertiesToChange = {"StandardReport2Interval"}
+  local propertiesBeforeChange = vmsSW:getPropertiesByName(propertiesToChange)
+  D:log(framework.dump(propertiesBeforeChange))
+
+  generic_setConfigViaShell(
+   "ConfigChangeReport2",
+    propertiesToChange,
+    propertiesBeforeChange
+  )
+end
+
+function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport3IsSentImmediatelyOnlyOnce()
+  -- get properties
+  local propertiesToChange = {"StandardReport3Interval"}
+  local propertiesBeforeChange = vmsSW:getPropertiesByName(propertiesToChange)
+  D:log(framework.dump(propertiesBeforeChange))
+
+  generic_setConfigViaShell(
+   "ConfigChangeReport3",
+    propertiesToChange,
+    propertiesBeforeChange
+  )
+end
+
 -----------------------------------------------------------------------------------------------
 -- Test Cases for LOG REPORTS
 -----------------------------------------------------------------------------------------------
@@ -1457,7 +1496,7 @@ function test_PollRequest_WhenPollRequest3MessageIsSend_CorrectPollResponse3Mess
   )
 end
 
-function test_XXPollRequest_WhenPollRequest1IsRequestedDuringStandardAndAcceleratedReportsCycle_AcceleratedIntervalIsCorrect()
+function test_PollRequest_WhenPollRequest1IsRequestedDuringStandardAndAcceleratedReportsCycle_AcceleratedIntervalIsCorrect()
 
    generic_test_PollRequestWithOthers(
      "PollRequest1",
@@ -1474,7 +1513,7 @@ function test_XXPollRequest_WhenPollRequest1IsRequestedDuringStandardAndAccelera
 
 end
 
-function test_XXPollRequest_WhenPollRequest2IsRequestedDuringStandardAndAcceleratedReportsCycle_AcceleratedIntervalIsCorrect()
+function test_PollRequest_WhenPollRequest2IsRequestedDuringStandardAndAcceleratedReportsCycle_AcceleratedIntervalIsCorrect()
 
    generic_test_PollRequestWithOthers(
      "PollRequest2",
@@ -1491,7 +1530,7 @@ function test_XXPollRequest_WhenPollRequest2IsRequestedDuringStandardAndAccelera
 
 end
 
-function test_XXPollRequest_WhenPollRequest3IsRequestedDuringStandardAndAcceleratedReportsCycle_AcceleratedIntervalIsCorrect()
+function test_PollRequest_WhenPollRequest3IsRequestedDuringStandardAndAcceleratedReportsCycle_AcceleratedIntervalIsCorrect()
 
    generic_test_PollRequestWithOthers(
      "PollRequest3",
@@ -1514,7 +1553,7 @@ function generic_test_PollRequest(pollRequestMsgKey, pollResponseMsgKey)
   local newPosition = {
     latitude  = 1,
     longitude = 1,
-    speed =  1 -- km/h
+    speed =  0 -- km/h
   }
   GPS:set(newPosition)
 
@@ -1544,15 +1583,19 @@ function generic_test_PollRequest(pollRequestMsgKey, pollResponseMsgKey)
     "Wrong speed in " .. pollResponseMsgKey
   )
 
+  D:log(reportMessage[pollResponseMsgKey].Course)
+  assert_equal(
+    361,
+    tonumber(reportMessage[pollResponseMsgKey].Course),
+    0,
+    "Wrong course in report " .. pollResponseMsgKey
+  )
+
   -- some of values are being checked just for their existance
   -- TODO_not_implemented: add checking values of following fields when test framework functions will be implemented
   assert_not_nil(
     reportMessage[pollResponseMsgKey].Timestamp,
     "No timestamp in " .. pollResponseMsgKey
-  )
-  assert_not_nil(
-    reportMessage[pollResponseMsgKey].Course,
-    "No Course in " .. pollResponseMsgKey
   )
   assert_not_nil(
     reportMessage[pollResponseMsgKey].Hdop,
@@ -1573,10 +1616,6 @@ function generic_test_PollRequest(pollRequestMsgKey, pollResponseMsgKey)
 
 
 end
-
-
-
-
 
 -----------------------------------------------------------------------------------------------
 -- GENERIC LOGIC for test cases
@@ -1805,12 +1844,13 @@ function generic_test_StandardReportContent(firstReportKey,reportKey,properties,
   )
   local timestampStart = preReportMessage[firstReportKey].Timestamp
 
+  initialPosition.speed = 0
+
   -- new position setup
   local newPosition = {
     latitude  = GPS:normalize(initialPosition.latitude)   + 1,
     longitude = GPS:normalize(initialPosition.longitude)  + 1,
     speed =  GPS:normalizeSpeed(initialPosition.speed) -- km/h
-    -- TODO: add Course/Heading
   }
   GPS:set(newPosition)
 
@@ -1856,16 +1896,19 @@ function generic_test_StandardReportContent(firstReportKey,reportKey,properties,
     1,
     "Wrong speed in " .. reportKey
   )
+  D:log(reportMessage[reportKey].Course)
+  assert_equal(
+    361,
+    tonumber(reportMessage[reportKey].Course),
+    0,
+    "Wrong course in report " .. reportKey
+  )
 
   -- some of values are being checked just for their existance
   -- TODO_not_implemented: add checking values of following fields when test framework functions will be implemented
   assert_not_nil(
     reportMessage[reportKey].Timestamp,
     "No timestamp in " .. reportKey
-  )
-  assert_not_nil(
-    reportMessage[reportKey].Course,
-    "No Course in " .. reportKey
   )
   assert_not_nil(
     reportMessage[reportKey].Hdop,
@@ -1883,8 +1926,8 @@ function generic_test_StandardReportContent(firstReportKey,reportKey,properties,
     reportMessage[reportKey].StatusBitmap,
     "No StatusBitmap in " .. reportKey
   )
-end
 
+end
 
 -- this is generic function for testing Config Change Reports
 function generic_test_ConfigChangeReportConfigChangeReportIsSent(messageKey,propertiesToChange,propertiesBeforeChange,setConfigMsgKey)
@@ -1933,6 +1976,11 @@ function generic_test_ConfigChangeReportConfigChangeReportIsSent(messageKey,prop
     "No "..messageKey
   )
 
+  -- one more time we fetch properties
+  local propertiesCurrent = vmsSW:getPropertiesByName(propertiesToChange)
+  D:log(propertiesCurrent,"PC")
+
+
   -- checking if raported values are correct
   for i=1, #propertiesToChange do
     local exp
@@ -1942,14 +1990,32 @@ function generic_test_ConfigChangeReportConfigChangeReportIsSent(messageKey,prop
       exp = tonumber(propertiesToChangeValues[propertiesToChange[i]])
     end
     assert_equal(
-      tonumber(configChangeMessage[messageKey][propertiesToChange[i]]),
       exp,
+      tonumber(configChangeMessage[messageKey][propertiesToChange[i]]),
       0,
       "Property " .. propertiesToChange[i] .. " has not changed!"
     )
+    -- check with current properties 
+    assert_equal(
+      propertiesCurrent[propertiesToChange[i]],
+      tonumber(configChangeMessage[messageKey][propertiesToChange[i]]),
+      0,
+      "Property " .. propertiesToChange[i] .. " is different than property fetched from lsf!"
+    )
   end
 
-  -- TODO: check timestamp, source = ota message etc..
+  D:log(configChangeMessage)
+  if setConfigMsgKey then
+    -- source OTA
+    assert_equal("OtaMessage",configChangeMessage[messageKey].ChangeSource,"Wrong source - should be OTA")
+  else
+    -- source console
+    assert_equal("Console",configChangeMessage[messageKey].ChangeSource,"Wrong source - should be console")
+  end
+
+  -- check timestamp
+  assert_not_nil(configChangeMessage[messageKey].Timestamp, "No timestamp in message.")
+
 end
 
 -- This is generic function for disabled standard reports test
@@ -2033,7 +2099,7 @@ function generic_test_PropertyChangeDebounceTime(configChangeMsgKey,initialPrope
   local reportMessage = vmsSW:waitForMessagesByName(
     {configChangeMsgKey}
   )
-  vmsSW:setPropertiesByName({PropertyChangeDebounceTime=60})  -- TODO: shell servicec should be used as well for changing properties
+  vmsSW:setPropertiesByName({PropertyChangeDebounceTime=60}) 
   framework.delay(2)
   vmsSW:setHighWaterMark()
   vmsSW:setPropertiesByName(changedProperties)
@@ -2089,5 +2155,54 @@ function generic_TimestampsInConfigChangeReports(configChangeMsgKey,initialPrope
 
 end
 
---TODO: getConfig message (4.15)
---TODO: PollRequest/Response (6.1-6.3)
+function generic_setConfigViaShell(messageKey,propertiesToChange,propertiesBeforeChange)
+
+  propertiesToChangeValues = {}
+
+  for i=1, #propertiesToChange do
+    propertiesToChangeValues[propertiesToChange[i]] = propertiesBeforeChange[propertiesToChange[i]] + 1
+  end
+
+  -- properties must be changed anyway (the same value after and before properties reset doesn't trigger report)
+  vmsSW:setPropertiesViaShell(shellSW,propertiesToChangeValues)
+
+  -- wait for message
+  local configChangeMessage = vmsSW:waitForMessagesByName(
+    {messageKey},
+    15
+  )
+  assert_not_nil(
+    configChangeMessage,
+    "No "..messageKey
+  )
+  assert_not_nil(
+    configChangeMessage[messageKey],
+    "No "..messageKey
+  )
+
+  -- no others report should come
+  local configChangeMessageWait = vmsSW:waitForMessagesByName(
+    {messageKey},
+    10
+  )
+  assert_equal(0,tonumber(configChangeMessageWait.count),"Message"..messageKey.." should not come!")
+
+  -- checking if raported values are correct
+  for i=1, #propertiesToChange do
+    local exp = tonumber(propertiesToChangeValues[propertiesToChange[i]])
+    assert_equal(
+      exp,
+      tonumber(configChangeMessage[messageKey][propertiesToChange[i]]),
+      0,
+      "Property " .. propertiesToChange[i] .. " has not changed!"
+    )
+  end
+
+  D:log(configChangeMessage)
+  -- source console
+  assert_equal("Console",configChangeMessage[messageKey].ChangeSource,"Wrong source - should be console")
+
+  -- check timestamp
+  assert_not_nil(configChangeMessage[messageKey].Timestamp, "No timestamp in message.")
+
+end
