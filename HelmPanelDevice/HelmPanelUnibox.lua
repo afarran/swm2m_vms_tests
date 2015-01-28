@@ -15,7 +15,7 @@ HelmPanelUnibox = {}
     local properties = self.device:getPropertiesByName({"led3State"})
     local state = properties.led3State
     D:log("Sat LED state is "..state)
-    if state == 'OFF' then 
+    if state == 'OFF' then
       return false
     end
     return true
@@ -25,7 +25,7 @@ HelmPanelUnibox = {}
     local properties = self.device:getPropertiesByName({"led2State"})
     local state = properties.led2State
     D:log("GPS LED state is "..state)
-    if state == 'OFF' then 
+    if state == 'OFF' then
       return false
     end
     return true
@@ -35,9 +35,18 @@ HelmPanelUnibox = {}
     local properties = self.device:getPropertiesByName({"led1State"})
     local state = properties.led1State
     D:log("IDP connect LED state is "..state)
-    if state == 'OFF' then 
+    if state == 'OFF' then
       return false
     end
     return true
   end
 
+  function HelmPanelUnibox:isConnectLedFlashingSlow()
+    local properties = self.device:getPropertiesByName({"led1State"})
+    local state = properties.led1State
+    D:log("IDP connect LED state is "..state)
+    if state == 'SLOW' then
+      return true
+    end
+    return false
+  end
