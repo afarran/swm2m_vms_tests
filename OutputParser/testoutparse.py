@@ -133,6 +133,7 @@ test_suites = {}
 parser = argparse.ArgumentParser(description='Creates an JUnity style XML from lunatest output.')
 parser.add_argument('--source', default=None)
 parser.add_argument('--result', default=None)
+parser.add_argument('--log', default=None)
 args = parser.parse_args()
 all_data = ""
 if args.source:
@@ -184,6 +185,14 @@ except:
 	print("*** END OF RECEIVED DATA ***")
 	raise
 	
+if args.log:
+	try:
+		lunates_out = file(args.log, 'w')
+		lunates_out.write(all_data)
+		lunates_out.close()
+	except Exception as e:
+		print(e)
+		print("Failed to save lunatest log " +args.log)
 
 if args.result:
 	tree = ET.ElementTree(xml_data)
