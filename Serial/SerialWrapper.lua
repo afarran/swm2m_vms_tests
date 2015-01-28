@@ -45,7 +45,7 @@ SerialWrapper = {}
   end
   
   function SerialWrapper:writeLine(data, newline)
-    self:write(data .. newline or self.newline)
+    self:write(data .. (newline or self.newline))
   end
   
   function SerialWrapper:readLine(timeout)
