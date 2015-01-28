@@ -37,6 +37,8 @@ function setup()
                                HelmPanelDisconnectedEndDebounceTime = 1,
                                HwClientDisconnectedStartDebounceTime = 1,
                                HwClientDisconnectedEndDebounceTime = 1,
+                               GpsBlockedStartDebounceTime = 1,
+                               GpsBlockedEndDebounceTime = 1,
                                GpsJammedSendReport = false,
                                GpsBlockedSendReport = false,
                                IdpBlockedSendReport = false,
@@ -70,6 +72,20 @@ end
 function teardown()
 
   GPS:set({jammingDetect = false, fixType = 3})
+
+  -- External power source disconnected from Helm panel
+  helmPanel:externalPowerConnected("false")
+
+  -- Helm Panel disconnected from terminal
+  helmPanel:setConnected("false")
+
+  -- disconnecting HW Client
+  shellSW:postEvent(
+                    "\"_RS232\"",
+                    "DTECONNECTED",
+                    "false"
+  )
+
 
 
 end
@@ -484,7 +500,6 @@ function test_GpsBlocked_WhenGpsSignalIsBlockedForTimeAboveGpsBlockedStartDeboun
   vmsSW:setPropertiesByName({GpsBlockedStartDebounceTime = GPS_BLOCKED_START_DEBOUNCE_TIME,
                              GpsBlockedEndDebounceTime = GPS_BLOCKED_END_DEBOUNCE_TIME,
                              GpsBlockedSendReport = true,
-                             IdpBlockedSendReport = false,
                              }
   )
 
@@ -1397,7 +1412,7 @@ function test_PowerDisconnected_WhenTerminalIsOffForTimeAbovePowerDisconnectedSt
 
   -- receiving all from mobile messages sent after setHighWaterMark()
   local receivedMessages = gateway.getReturnMessages()
- -- look for AbnormalReport messages
+  -- look for AbnormalReport messages
   local AllReceivedAbnormalReports = framework.filterMessages(receivedMessages, framework.checkMessageType(115, 50)) -- TODO: service wrapper functions need to be modified
 
   D:log(AllReceivedAbnormalReports)
@@ -3319,11 +3334,80 @@ function test_SetProperties_WhenSetPropertiesMessageIsSet_PropertiesIncludedInTh
 
 
   end
+end
 
 
+function test_AllAbnormalReportsEnabled_When4AbnormalReportsAreTriggered_4AbnormalReportsAreSentByTerminal()
 
+  -- *** Setup
+  vmsSW:setPropertiesByName({
+                               GpsJammedStartDebounceTime = 1,
+                               GpsJammedEndDebounceTime = 1,
+                               StandardReport1Interval = 0,
+                               ExtPowerDisconnectedStartDebounceTime = 1,
+                               ExtPowerDisconnectedEndDebounceTime = 1,
+                               HelmPanelDisconnectedStartDebounceTime = 1,
+                               HelmPanelDisconnectedEndDebounceTime = 1,
+                               HwClientDisconnectedStartDebounceTime = 1,
+                               HwClientDisconnectedEndDebounceTime = 1,
+                               GpsJammedSendReport = true,
+                               GpsBlockedSendReport = true,
+                               IdpBlockedSendReport = true,
+                               PowerDisconnectedSendReport = true,
+                               HelmPanelDisconnectedSendReport = true,
+                               HwClientDisconnectedSendReport = true,
+                            }
+  )
 
+  gateway.setHighWaterMark() -- to get the newest messages
+  GPS:set({jammingDetect = true, fixType = 3})
 
+  -- External power source disconnected from Helm panel
+  helmPanel:externalPowerConnected("true")
+
+  -- Helm Panel disconnected from terminal
+  helmPanel:setConnected("true")
+
+  -- disconnecting HW Client
+  shellSW:postEvent(
+                    "\"_RS232\"",
+                    "DTECONNECTED",
+                    "true"
+  )
+
+  framework.delay(15)
+
+  -- receiving all from mobile messages sent after setHighWaterMark()
+  local receivedMessages = gateway.getReturnMessages()
+  -- look for AbnormalReport messages
+  local AllReceivedAbnormalReports = framework.filterMessages(receivedMessages, framework.checkMessageType(115, 50)) -- TODO: service wrapper functions need to be modified
+
+  local namesOfAbnormalReports = {}
+
+  for index, row in pairs(AllReceivedAbnormalReports) do
+    namesOfAbnormalReports[#namesOfAbnormalReports+1] = AllReceivedAbnormalReports[index].Payload.EventType
+  end
+
+  local expectedAbnormalReports = {"HwClientDisconnected", "ExtPowerDisconnected", "GpsJammed","HelmPanelDisconnected"}
+
+  D:log(expectedAbnormalReports)
+  D:log(namesOfAbnormalReports)
+  local counter = 0
+
+  for indexExpected, rowExpected in pairs(expectedAbnormalReports) do
+
+    counter = 0
+
+    for indexReceived, rowReceived in pairs(namesOfAbnormalReports) do
+      if expectedAbnormalReports[indexExpected] == namesOfAbnormalReports[indexReceived]  then
+        break
+      else
+          counter = counter + 1
+      end
+    end
+      assert_lt(table.getn(namesOfAbnormalReports), counter, "Abnormal report not received: " .. expectedAbnormalReports[indexExpected] )
+
+  end
 
 end
 

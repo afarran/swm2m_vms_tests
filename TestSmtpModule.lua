@@ -3,6 +3,7 @@
 -- - contains VMS features dependant on Smpt
 -- @module TestSmtpModule
 
+require "UtilLibs/Text"
 require "Email/SmtpWrapper"
 
 local smtp = SmtpWrapper(serialMain)
@@ -49,7 +50,7 @@ function test_SMTP_WhenSMTPCommandCalled_ServerReturnsSMTPServiceReady()
   SMTPclear[1] = "QUIT"
   local startResponse = smtp:getResponse()
   assert_not_nil(startResponse, "SMTP module did not return start message")
-  assert_match("^220.*SMTP Service Ready%. VMS v(%d+)%.(%d+)%.(%d+)", startResponse, "SMTP start message is incorrect")
+  assert_match("^220", startResponse, "SMTP start message is incorrect")
   
 end
 
@@ -61,39 +62,88 @@ local function startSmtp()
   assert_not_nil(startResponse, "SMTP module did not return start message")
 end
 
-function test_SMTP_WhenHELOCommandCalled_ServerReturnsHeloMessage()
+--- Test SMTP Hello command
+--Servers MUST NOT return the extended EHLO-style response to a HELO command.
+function test_SMTP_WhenHELOCommandCalled_ServerReturns250()
   startSmtp()  
   smtp:execute("HELO")
   local heloResponse = smtp:getResponse()
-  assert_match("^250 Hello from IDP terminal", heloResponse, "HELO command response incorrect")
+  heloResponse = string.split(heloResponse, "\r\n")
+  assert_match("^250", heloResponse[1], "HELO command response incorrect")
+  assert_nil(heloResponse[2], "HELO command responded with additional infromation")
 end
 
-function test_SMTP_WhenQUITCommandCalled_ServerReturnsGoodbye()
+function test_SMTP_WhenQUITCommandCalled_ServerReturns221()
   startSmtp()
   smtp:execute("QUIT")
   SMTPclear = {}
   local quitResponse = smtp:getResponse()
-  assert_match("^221 Goodbye", quitResponse, "QUIT command response incorrect")  
+  assert_match("^221", quitResponse, "QUIT command response incorrect")  
 end
 
-function test_SMTP_WhenEHLOCommandCalled_ServerReturnsHelloMessageAndSize()
+function test_SMTP_WhenEHLOCommandCalled_ServerReturns250and250forSize()
   startSmtp()
   smtp:execute("EHLO")
   local ehloResponse = smtp:getResponse()
-  assert_match("^250 Hello from IDP terminal$", ehloResponse, "EHLO command response incorrect - does not contain HELO msg")
-  assert_match("^250 SIZE (%d+)$", ehloResponse, "EHLO command response incorrect - does not contain SIZE")
+  ehloResponse = string.split(ehloResponse, "\r\n")
+  assert_match("^250", ehloResponse[1], "EHLO command response incorrect - does not contain HELO msg")
+  assert_match("^250 SIZE (%d+)$", ehloResponse[2], "EHLO command response incorrect - does not contain SIZE")
 end
 
-function test_SMTP_WhenNOOPCommandCalled_ServerReturnsOk()
+function test_SMTP_WhenNOOPCommandCalled_ServerReturns250()
   startSmtp()
   smtp:execute("NOOP")
   local noopResponse = smtp:getResponse()
-  assert_match("^250 OK", noopResponse, "NOOP command response incorrect")
+  assert_match("^250", noopResponse, "NOOP command response incorrect")
 end
 
-function test_SMTP_WhenRSETCommandCalled_ServerReturnsResetMessage()
+function test_SMTP_WhenRSETCommandCalled_ServerReturns250()
   startSmtp()
   smtp:execute("RSET")
   local rsetResponse = smtp:getResponse()
-  assert_match("^250 Reset OK", rsetResponse, "RSET command response incorrect")
+  assert_match("^250", rsetResponse, "RSET command response incorrect")
 end
+
+--- Test SMTP MAIL FROM
+-- correct syntax for MAIL command is: "MAIL FROM:<reverse-path> [SP <mail-parameters> ] <CRLF>"
+function test_SMTP_WhenCorrectMAILFROMCommandCalled_ServerReturns250()
+  startSmtp()
+  smtp:execute("MAIL FROM: <test@skywave.com>")
+  local mailResponse = smtp:getResponse()
+  assert_match("^250", mailResponse, "MAIL FROM response incorrect")
+end
+
+function test_SMTP_WhenMAILFROMCommandCalledWithBrokenReversePath_ServerReturns5xx()
+  startSmtp()
+  smtp:execute("MAIL FROM:test@skywave.com<>")
+  local mailResponse = smtp:getResponse()
+  assert_match("^5%d%d", mailResponse, "MAIL FROM response incorrect")
+end
+
+function test_SMTP_WhenMAILFROMCommandCalledWithIncorrectEmail_ServerReturns5xx()
+  startSmtp()
+  smtp:execute("MAIL FROM:<test@skywave>")
+  local mailResponse = smtp:getResponse()
+  assert_match("^5%d%d", mailResponse, "MAIL FROM response incorrect")
+end
+
+function test_SMTP_WhenMAILFROMCommandCalledWithEmptyMail_ServerReturns5xx()
+  startSmtp()
+  smtp:execute("MAIL FROM:")
+  local mailResponse = smtp:getResponse()
+  assert_match("^5%d%d", mailResponse, "MAIL FROM response incorrect")
+end
+
+function test_SMTP_WhenCorrectMAILFROMCommandCalledTwice_ServerReturns5xx()
+  startSmtp()
+  smtp:execute("MAIL FROM: <skywave1@skywave.com>")
+  local mailResponse = smtp:getResponse()
+  assert_match("^250", mailResponse, "MAIL FROM response incorrect")
+  
+  smtp:execute("MAIL FROM: <skywave1@skywave.com>")
+  mailResponse = smtp:getResponse()
+  assert_match("^5%d%d", mailResponse, "MAIL FROM second response incorrect")
+end
+
+--- Test SMTP RECPT TO
+-- RCPT TO:<forward-path> [ SP <rcpt-parameters> ] <CRLF>

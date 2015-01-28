@@ -17,7 +17,8 @@ local ltn12 = require("ltn12")
 local mime = require("mime")
 local io = require("io")
 local json = require("json")
-local cfg = require("TestConfiguration")
+ConfigFile = ConfigFile or "TestConfiguration"
+local cfg = require(ConfigFile)
 
 local startUTC = os.time()
 local testNum = 0

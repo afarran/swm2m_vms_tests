@@ -4,7 +4,7 @@ printf = function(string, ...)
           return io.write(s:format(...))
         end
         
-split = function(str, separator)
+string.split = function(str, separator)
     local result = {}
     for word in string.gmatch(str, '([^'.. separator .. ']+)') do
       result[#result+1] = word
