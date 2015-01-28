@@ -187,7 +187,7 @@ except:
 	
 if args.log:
 	try:
-		lunates_out = file(args.log, 'w')
+		lunates_out = open(args.log, 'w')
 		lunates_out.write(all_data)
 		lunates_out.close()
 	except Exception as e:
