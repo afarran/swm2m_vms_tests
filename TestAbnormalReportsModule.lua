@@ -3210,7 +3210,7 @@ end
 
 
 
-function test_SetProperties_WhenSetPropertiesMessageIsSet_PropertiesIncludedInTheMessageAreCorrectlySet()
+function test_SetProperties_WhenSetPropertiesMessageIsSet_PropertiesIncludedInTheMessageAreCorrectlySetAndPropertiesMessageReportsCorrectValues()
 
  	local SetPropertiesMessage = {SIN = vmsSW.sin, MIN = vmsSW:getMinTo("SetProperties")}
   D:log(SetPropertiesMessage)
@@ -3292,6 +3292,7 @@ function test_SetProperties_WhenSetPropertiesMessageIsSet_PropertiesIncludedInTh
     local SetProperties = nameValueToArray(SetPropertiesMessage.Fields)
     local propertyGetByLsf = vmsSW:getPropertiesByName(nameToArray(SetPropertiesMessage.Fields))
 
+    -- modification of propertyGetByLsf entries - conversion to strings
     for index, row in pairs(propertyGetByLsf) do
       value = propertyGetByLsf[index]
       if type(value) == "boolean" then
