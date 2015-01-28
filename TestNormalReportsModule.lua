@@ -1976,6 +1976,11 @@ function generic_test_ConfigChangeReportConfigChangeReportIsSent(messageKey,prop
     "No "..messageKey
   )
 
+  -- one more time we fetch properties
+  local propertiesCurrent = vmsSW:getPropertiesByName(propertiesToChange)
+  D:log(propertiesCurrent,"PC")
+
+
   -- checking if raported values are correct
   for i=1, #propertiesToChange do
     local exp
@@ -1990,6 +1995,13 @@ function generic_test_ConfigChangeReportConfigChangeReportIsSent(messageKey,prop
       0,
       "Property " .. propertiesToChange[i] .. " has not changed!"
     )
+    -- check with current properties 
+    assert_equal(
+      propertiesCurrent[propertiesToChange[i]],
+      tonumber(configChangeMessage[messageKey][propertiesToChange[i]]),
+      0,
+      "Property " .. propertiesToChange[i] .. " is different than property fetched from lsf!"
+    )
   end
 
   D:log(configChangeMessage)
@@ -2003,6 +2015,7 @@ function generic_test_ConfigChangeReportConfigChangeReportIsSent(messageKey,prop
 
   -- check timestamp
   assert_not_nil(configChangeMessage[messageKey].Timestamp, "No timestamp in message.")
+
 end
 
 -- This is generic function for disabled standard reports test
