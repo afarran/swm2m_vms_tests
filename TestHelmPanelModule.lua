@@ -239,10 +239,10 @@ end
 
 function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetTo0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsNotFlashing()
 
-  vmsSW:setPropertiesByName({StandardReport1Interval = 1},
-                            {StandardReport2Interval = 1},
-                            {StandardReport3Interval = 1},
-                            {MinStandardReportLedFlashTime = 0},     -- 0 is for feature disabled
+  vmsSW:setPropertiesByName({StandardReport1Interval = 1,
+                             StandardReport2Interval = 1,
+                             StandardReport3Interval = 1,
+                             MinStandardReportLedFlashTime = 0}     -- 0 is for feature disabled
   )
 
 
@@ -250,10 +250,10 @@ function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsS
   assert_false(helmPanel:isConnectLedFlashingSlow(), "Terminal Connected LED is flashing when feature is disabled")
 
   -- back to reports not being sent
-  vmsSW:setPropertiesByName({StandardReport1Interval = 0},
-                            {StandardReport2Interval = 0},
-                            {StandardReport3Interval = 0},
-                            {MinStandardReportLedFlashTime = 0},     -- 0 is for feature disabled
+  vmsSW:setPropertiesByName({StandardReport1Interval = 0,
+                             StandardReport2Interval = 0,
+                             StandardReport3Interval = 0,
+                             MinStandardReportLedFlashTime = 0}     -- 0 is for feature disabled
   )
 
 end
