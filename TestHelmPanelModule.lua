@@ -245,18 +245,36 @@ function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsS
                              MinStandardReportLedFlashTime = 0}     -- 0 is for feature disabled
   )
 
-
   framework.delay(65)
   assert_false(helmPanel:isConnectLedFlashingSlow(), "Terminal Connected LED is flashing when feature is disabled")
 
   -- back to reports not being sent
   vmsSW:setPropertiesByName({StandardReport1Interval = 0,
                              StandardReport2Interval = 0,
-                             StandardReport3Interval = 0,
-                             MinStandardReportLedFlashTime = 0}     -- 0 is for feature disabled
+                             StandardReport3Interval = 0,}
   )
 
 end
+
+
+function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsFlashingForMinStandardReportLedFlashTime()
+
+  vmsSW:setPropertiesByName({StandardReport1Interval = 1,
+                             MinStandardReportLedFlashTime = 60}     -- feature enabled
+  )
+
+  framework.delay(65)
+  D:log(helmPanel:isConnectLedFlashingSlow())
+  assert_true(helmPanel:isConnectLedFlashingSlow(), "Terminal Connected LED is not flashing when StandardReport1Interval is being sent")
+
+  -- back to reports not being sent
+  vmsSW:setPropertiesByName({StandardReport1Interval = 0,
+                             MinStandardReportLedFlashTime = 0}     -- 0 is for feature disabled
+  )
+
+
+end
+
 
 function raiseNotImpl()
   assert_nil(1,"Not implemented yet!")
