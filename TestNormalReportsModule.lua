@@ -1065,6 +1065,46 @@ function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAre
     {StandardReport3Interval = 4, AcceleratedReport3Rate = 2}
   )
 end
+
+function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport1IsSentImmediatelyOnlyOnce()
+  -- get properties
+  local propertiesToChange = {"StandardReport1Interval"}
+  local propertiesBeforeChange = vmsSW:getPropertiesByName(propertiesToChange)
+  D:log(framework.dump(propertiesBeforeChange))
+
+  generic_setConfigViaShell(
+   "ConfigChangeReport1",
+    propertiesToChange,
+    propertiesBeforeChange
+  )
+end
+
+function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport2IsSentImmediatelyOnlyOnce()
+  -- get properties
+  local propertiesToChange = {"StandardReport2Interval"}
+  local propertiesBeforeChange = vmsSW:getPropertiesByName(propertiesToChange)
+  D:log(framework.dump(propertiesBeforeChange))
+
+  generic_setConfigViaShell(
+   "ConfigChangeReport2",
+    propertiesToChange,
+    propertiesBeforeChange
+  )
+end
+
+function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport3IsSentImmediatelyOnlyOnce()
+  -- get properties
+  local propertiesToChange = {"StandardRepor3Interval"}
+  local propertiesBeforeChange = vmsSW:getPropertiesByName(propertiesToChange)
+  D:log(framework.dump(propertiesBeforeChange))
+
+  generic_setConfigViaShell(
+   "ConfigChangeReport3",
+    propertiesToChange,
+    propertiesBeforeChange
+  )
+end
+
 -----------------------------------------------------------------------------------------------
 -- Test Cases for LOG REPORTS
 -----------------------------------------------------------------------------------------------
@@ -2101,7 +2141,6 @@ function generic_TimestampsInConfigChangeReports(configChangeMsgKey,initialPrope
   )
 
 end
-
 
 function generic_setConfigViaShell(messageKey,propertiesToChange,propertiesBeforeChange)
 
