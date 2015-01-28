@@ -10,14 +10,14 @@ DEBUG_MODE = 1
 local SATELITE_BLOCKAGE_DEBOUNCE = 1
 local SATELITE_BLOCKAGE_DEBOUNCE_TOLERANCE = 0
 local GPS_BLOCKED_START_DEBOUNCE_TIME = 20
-local GPS_BLOCKED_END_DEBOUNCE_TIME = 1 
+local GPS_BLOCKED_END_DEBOUNCE_TIME = 1
 local MAX_FIX_TIMEOUT = 60
 
 -----------------------------------------------------------------------------------------------
 -- SETUP
 -----------------------------------------------------------------------------------------------
 function suite_setup()
-  -- reset of properties 
+  -- reset of properties
   systemSW:resetProperties({vmsSW.sin})
 
   -- debounce
@@ -55,11 +55,11 @@ end
 
 --- teardown function executed after each unit test
 function teardown()
-  
+
 end
 
 -----------------------------------------------------------------------------------------------
--- Test Cases - Helm Panel connected/disconnected 
+-- Test Cases - Helm Panel connected/disconnected
 -----------------------------------------------------------------------------------------------
 
 function test_HelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAndTheStateToggles_HelmPanelDisconnectedStateChangesCorrectlyAndLEDTransitionsAreCorrect()
@@ -105,7 +105,7 @@ function test_HelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAn
   --second state transition
   helmPanel:setConnected(change)
   framework.delay(1)
-  
+
   -- check LED after back to initail state
   local ledState = helmPanel:isConnectLedOn()
   if isDisconnected then
@@ -158,16 +158,16 @@ end
 
 function test_GpsLED_WhenGpsIsBlocked_GpsLedIsOff()
 
-  -- No fix 
+  -- No fix
   local blockedPosition = {
     speed = 0,                      -- kmh
     latitude = 1,                   -- degrees
     longitude = 1,                  -- degrees
     fixType = 1,                    -- no fix
   }
-   
+
   positionSW:setPropertiesByName({
-    continuous = 0, 
+    continuous = 0,
     maxFixTimeout = MAX_FIX_TIMEOUT
   })
   GPS:set(blockedPosition)
@@ -190,15 +190,15 @@ function test_GpsLED_WhenGpsIsSetWithCorrectFix_GpsLedIsOn()
     longitude = 1,                  -- degrees
     fixType = 3,                    -- fix
   }
-   
+
   positionSW:setPropertiesByName({
-    continuous = 1, 
+    continuous = 1,
     maxFixTimeout = MAX_FIX_TIMEOUT
   })
   GPS:set(position)
 
   framework.delay(MAX_FIX_TIMEOUT + GPS_BLOCKED_START_DEBOUNCE_TIME + 2 )
- 
+
   framework.delay(65)
 
   local ledState = helmPanel:isGpsLedOn()
@@ -216,14 +216,14 @@ function xtest_SateliteLED_WhenSateliteIsBlockedOrUnblocked_SateliteLedIsInCorre
 
   -- block satelite
   -- TODO: where is satalite blockage in TF API ?
-  
+
   -- wait debounce time
   framework.delay(SATELITE_BLOCKAGE_DEBOUNCE+SATELITE_BLOCKAGE_DEBOUNCE_TOLERANCE)
 
   -- check satelite led
   local ledState = helmPanel:isSateliteLedOn()
   assert_false(ledState,"The satelite LED should not be off!")
-  
+
   -- unblock satelite
   -- TODO: where is satalite blockage in TF API ?
 
@@ -237,13 +237,34 @@ function xtest_SateliteLED_WhenSateliteIsBlockedOrUnblocked_SateliteLedIsInCorre
 end
 ---------------------------------------------------------------------------------
 
+function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetTo0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsNotFlashing()
+
+  vmsSW:setPropertiesByName({StandardReport1Interval = 1},
+                            {StandardReport2Interval = 1},
+                            {StandardReport3Interval = 1},
+                            {MinStandardReportLedFlashTime = 0},     -- 0 is for feature disabled
+  )
+
+
+  framework.delay(65)
+  assert_false(helmPanel:isConnectLedFlashingSlow(), "Terminal Connected LED is flashing when feature is disabled")
+
+  -- back to reports not being sent
+  vmsSW:setPropertiesByName({StandardReport1Interval = 0},
+                            {StandardReport2Interval = 0},
+                            {StandardReport3Interval = 0},
+                            {MinStandardReportLedFlashTime = 0},     -- 0 is for feature disabled
+  )
+
+end
+
 function raiseNotImpl()
   assert_nil(1,"Not implemented yet!")
 end
 
--- TODO: Investigate. 
--- TODO: turned external power button manually in simulator 
--- TODO: but it does not change external power property in unibox neither vms.. 
+-- TODO: Investigate.
+-- TODO: turned external power button manually in simulator
+-- TODO: but it does not change external power property in unibox neither vms..
 function test_ExternalPower()
 
 end
