@@ -1457,7 +1457,7 @@ function test_PollRequest_WhenPollRequest3MessageIsSend_CorrectPollResponse3Mess
   )
 end
 
-function test_XXPollRequest_WhenPollRequest1IsRequestedDuringStandardAndAcceleratedReportsCycle_AcceleratedIntervalIsCorrect()
+function test_PollRequest_WhenPollRequest1IsRequestedDuringStandardAndAcceleratedReportsCycle_AcceleratedIntervalIsCorrect()
 
    generic_test_PollRequestWithOthers(
      "PollRequest1",
@@ -1474,7 +1474,7 @@ function test_XXPollRequest_WhenPollRequest1IsRequestedDuringStandardAndAccelera
 
 end
 
-function test_XXPollRequest_WhenPollRequest2IsRequestedDuringStandardAndAcceleratedReportsCycle_AcceleratedIntervalIsCorrect()
+function test_PollRequest_WhenPollRequest2IsRequestedDuringStandardAndAcceleratedReportsCycle_AcceleratedIntervalIsCorrect()
 
    generic_test_PollRequestWithOthers(
      "PollRequest2",
@@ -1491,7 +1491,7 @@ function test_XXPollRequest_WhenPollRequest2IsRequestedDuringStandardAndAccelera
 
 end
 
-function test_XXPollRequest_WhenPollRequest3IsRequestedDuringStandardAndAcceleratedReportsCycle_AcceleratedIntervalIsCorrect()
+function test_PollRequest_WhenPollRequest3IsRequestedDuringStandardAndAcceleratedReportsCycle_AcceleratedIntervalIsCorrect()
 
    generic_test_PollRequestWithOthers(
      "PollRequest3",
@@ -1958,7 +1958,17 @@ function generic_test_ConfigChangeReportConfigChangeReportIsSent(messageKey,prop
     )
   end
 
-  -- TODO: check timestamp, source = ota message etc..
+  D:log(configChangeMessage)
+  if setConfigMsgKey then
+    -- source OTA
+    assert_equal("OtaMessage",configChangeMessage[messageKey].ChangeSource,"Wrong source - should be OTA")
+  else
+    -- source console
+    assert_equal("Console",configChangeMessage[messageKey].ChangeSource,"Wrong source - should be console")
+  end
+
+  -- check timestamp
+  assert_not_nil(configChangeMessage[messageKey].Timestamp, "No timestamp in message.")
 end
 
 -- This is generic function for disabled standard reports test
@@ -2042,7 +2052,7 @@ function generic_test_PropertyChangeDebounceTime(configChangeMsgKey,initialPrope
   local reportMessage = vmsSW:waitForMessagesByName(
     {configChangeMsgKey}
   )
-  vmsSW:setPropertiesByName({PropertyChangeDebounceTime=60})  -- TODO: shell servicec should be used as well for changing properties
+  vmsSW:setPropertiesByName({PropertyChangeDebounceTime=60})  -- TODO: shell service should be used as well for changing properties
   framework.delay(2)
   vmsSW:setHighWaterMark()
   vmsSW:setPropertiesByName(changedProperties)
@@ -2098,5 +2108,3 @@ function generic_TimestampsInConfigChangeReports(configChangeMsgKey,initialPrope
 
 end
 
---TODO: getConfig message (4.15)
---TODO: PollRequest/Response (6.1-6.3)
