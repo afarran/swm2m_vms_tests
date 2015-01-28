@@ -73,14 +73,16 @@ function test_SMTP_WhenHELOCommandCalled_ServerReturns250()
   assert_nil(heloResponse[2], "HELO command responded with additional infromation")
 end
 
-function test_SMTP_WhenQUITCommandCalled_ServerReturns221()
-  startSmtp()
-  smtp:execute("QUIT")
-  SMTPclear = {}
-  local quitResponse = smtp:getResponse()
-  assert_match("^221", quitResponse, "QUIT command response incorrect")  
+function test_SMTP_WhenHELOWithParameterCommandCalled_ServerReturns250()
+  startSmtp()  
+  smtp:execute("HELO skywave.com")
+  local heloResponse = smtp:getResponse()
+  heloResponse = string.split(heloResponse, "\r\n")
+  assert_match("^250", heloResponse[1], "HELO command response incorrect")
+  assert_nil(heloResponse[2], "HELO command responded with additional infromation")
 end
 
+--- Test EHLO command
 function test_SMTP_WhenEHLOCommandCalled_ServerReturns250and250forSize()
   startSmtp()
   smtp:execute("EHLO")
@@ -89,6 +91,26 @@ function test_SMTP_WhenEHLOCommandCalled_ServerReturns250and250forSize()
   assert_match("^250", ehloResponse[1], "EHLO command response incorrect - does not contain HELO msg")
   assert_match("^250 SIZE (%d+)$", ehloResponse[2], "EHLO command response incorrect - does not contain SIZE")
 end
+
+function test_SMTP_WhenEHLOWithParameterCommandCalled_ServerReturns250and250forSize()
+  startSmtp()
+  smtp:execute("EHLO skywave.com")
+  local ehloResponse = smtp:getResponse()
+  ehloResponse = string.split(ehloResponse, "\r\n")
+  assert_match("^250", ehloResponse[1], "EHLO command response incorrect - does not contain HELO msg")
+  assert_match("^250 SIZE (%d+)$", ehloResponse[2], "EHLO command response incorrect - does not contain SIZE")
+end
+
+
+function test_SMTP_WhenQUITCommandCalled_ServerReturns221()
+  startSmtp()
+  smtp:execute("QUIT")
+  SMTPclear = {}
+  local quitResponse = smtp:getResponse()
+  assert_match("^221", quitResponse, "QUIT command response incorrect")  
+end
+
+
 
 function test_SMTP_WhenNOOPCommandCalled_ServerReturns250()
   startSmtp()
@@ -104,6 +126,7 @@ function test_SMTP_WhenRSETCommandCalled_ServerReturns250()
   assert_match("^250", rsetResponse, "RSET command response incorrect")
 end
 
+----
 --- Test SMTP MAIL FROM
 -- correct syntax for MAIL command is: "MAIL FROM:<reverse-path> [SP <mail-parameters> ] <CRLF>"
 function test_SMTP_WhenCorrectMAILFROMCommandCalled_ServerReturns250()
@@ -112,7 +135,12 @@ function test_SMTP_WhenCorrectMAILFROMCommandCalled_ServerReturns250()
   local mailResponse = smtp:getResponse()
   assert_match("^250", mailResponse, "MAIL FROM response incorrect")
 end
-
+  
+  --If the mailbox specification is not acceptable for
+  --some reason, the server MUST return a reply indicating whether the
+  --failure is permanent (i.e., will occur again if the client tries to
+  --send the same address again) or temporary (i.e., the address might be
+  --accepted if the client tries again later).
 function test_SMTP_WhenMAILFROMCommandCalledWithBrokenReversePath_ServerReturns5xx()
   startSmtp()
   smtp:execute("MAIL FROM:test@skywave.com<>")
@@ -134,6 +162,10 @@ function test_SMTP_WhenMAILFROMCommandCalledWithEmptyMail_ServerReturns5xx()
   assert_match("^5%d%d", mailResponse, "MAIL FROM response incorrect")
 end
 
+  --The transaction
+  --starts with a MAIL command that gives the sender identification.  (In
+  --general, the MAIL command may be sent only when no mail transaction
+  --is in progress;
 function test_SMTP_WhenCorrectMAILFROMCommandCalledTwice_ServerReturns5xx()
   startSmtp()
   smtp:execute("MAIL FROM: <skywave1@skywave.com>")
@@ -147,3 +179,69 @@ end
 
 --- Test SMTP RECPT TO
 -- RCPT TO:<forward-path> [ SP <rcpt-parameters> ] <CRLF>
+--The first or only argument to this command includes a forward-path
+--(normally a mailbox and domain, always surrounded by "<" and ">"
+--brackets) identifying one recipient.  If accepted, the SMTP server
+--returns a "250 OK" reply and stores the forward-path.
+
+function test_SMTP_WhenRCPTCorrectCommandCalled_ServerReturns250()
+  startSmtp()
+  smtp:execute("MAIL FROM: <skywave@skywave.com>")
+  local response = smtp:getResponse()
+  smtp:execute("RCPT TO: <receiver@skywave.com>")
+  response = smtp:getResponse()
+  assert_match("^250", response, "RCPT TO response incorrect")
+  
+end
+
+function test_SMTP_WhenRCPTCorrectCommandCalledMultipleTimes_ServerReturns250()
+  startSmtp()
+  smtp:execute("MAIL FROM: <skywave@skywave.com>")
+  local response = smtp:getResponse()
+  for index=1, 10 do 
+    smtp:execute("RCPT TO: <receiver"..index.."@skywave.com>")
+    response = smtp:getResponse()
+    assert_match("^250", response, "RCPT TO response incorrect for " .. index .. " receipment")  
+  end  
+end
+
+function test_SMTP_WhenRCPTWithMalformedForwardPathCalled_ServerReturns5xx()
+  startSmtp()
+  smtp:execute("RCPT TO: receiver-skywave")
+  local response = smtp:getResponse()
+  assert_match("^5%d%d", response, "RCPT TO response incorrect")
+  
+end
+
+--If a RCPT command appears without a previous MAIL command, the server MUST
+  -- return a 503 "Bad sequence of commands" response.
+function test_SMTP_WhenRCPTCommandCalledBeforeMAILCommand_ServerReturns503()
+  startSmtp()
+  smtp:execute("HELO")
+  local response = smtp:getResponse()
+  smtp:execute("RCPT TO: <receiver@skywave.com>")
+  response = smtp:getResponse()
+  assert_match("^503", response, "RCPT should be refused if called before MAIL")
+  
+end
+
+------------------------------------------------------------------------------------
+--Several commands (RSET, DATA, QUIT) are specified as not permitting
+--   parameters.  In the absence of specific extensions offered by the
+--   server and accepted by the client, clients MUST NOT send such
+--   parameters and servers SHOULD reject commands containing them as
+--   having invalid syntax.
+
+function test_SMTP_WhenRSETWithParameterCalled_ServerReturns5xx()
+    startSmtp()
+  smtp:execute("RSET someparam")
+  local mailResponse = smtp:getResponse()
+  assert_match("^5%d%d", mailResponse, "RSET with parameter response incorrect")
+end
+
+function test_SMTP_WhenQUITWithParameterCalled_ServerReturns5xx()
+    startSmtp()
+  smtp:execute("QUIT someparam")
+  local mailResponse = smtp:getResponse()
+  assert_match("^5%d%d", mailResponse, "QUIT with parameter response incorrect")
+end
