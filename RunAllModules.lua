@@ -1,3 +1,14 @@
+for idx, val in ipairs(arg) do 
+  print(idx, val) 
+  if val == "-c" then
+    ConfigFile = arg[idx+1]
+  end
+end
+
+if ConfigFile then
+  print("USING CONFIG: " .. ConfigFile)
+end
+
 -- Test Framework
 cfg, framework, gateway, lsf, device, gps = require "TestFramework"()
 lunatest = require "lunatest"
@@ -82,7 +93,6 @@ end
 -- [-v]                     Verbose option
 -- [-t] [<string pattern>]  Execute test cases that match string pattern
 -- [-s] [<string pattern>]  Execute test suites that match string pattern
-for idx, val in ipairs(arg) do print(idx, val) end
 
 setup()
 lunatest.run(nil, arg)
