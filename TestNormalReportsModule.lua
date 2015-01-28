@@ -1072,6 +1072,8 @@ function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExe
   local propertiesBeforeChange = vmsSW:getPropertiesByName(propertiesToChange)
   D:log(framework.dump(propertiesBeforeChange))
 
+  --TODO: PropertyChangeDebouceTime to 60
+
   generic_setConfigViaShell(
    "ConfigChangeReport1",
     propertiesToChange,
@@ -1084,6 +1086,8 @@ function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExe
   local propertiesToChange = {"StandardReport2Interval"}
   local propertiesBeforeChange = vmsSW:getPropertiesByName(propertiesToChange)
   D:log(framework.dump(propertiesBeforeChange))
+  
+  --TODO: PropertyChangeDebouceTime to 60
 
   generic_setConfigViaShell(
    "ConfigChangeReport2",
@@ -1097,6 +1101,8 @@ function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExe
   local propertiesToChange = {"StandardReport3Interval"}
   local propertiesBeforeChange = vmsSW:getPropertiesByName(propertiesToChange)
   D:log(framework.dump(propertiesBeforeChange))
+
+  --TODO: PropertyChangeDebouceTime to 60
 
   generic_setConfigViaShell(
    "ConfigChangeReport3",
@@ -1754,7 +1760,7 @@ function generic_test_LogReports(logReportXKey, standardReportXKey, properties, 
     assert_not_nil(
       logEntries[i].log.Course,
       "No Course in Log Report, entry: " .. i
-    )
+    ) -- TODO: course check 
     assert_not_nil(
       logEntries[i].log.Hdop,
       "No Hdop in Log Report, entry: " .. i
@@ -2045,6 +2051,8 @@ function generic_test_StandardReportDisabled(reportKey,properties,reportInterval
   )
   D:log(reportMessage,"reportMessage")
   assert_equal(0,tonumber(reportMessage.count),"Message"..reportKey.." should not come!")
+
+  --TODO: wait for accelerated report as well, change the names of TCs based on this generic..
 end
 
 -- This is generic function for disabled accelerated reports test (and standard reports enabled)
@@ -2107,7 +2115,8 @@ function generic_test_PropertyChangeDebounceTime(configChangeMsgKey,initialPrope
   vmsSW:setPropertiesByName(initialProperties)
 
   local reportMessage = vmsSW:waitForMessagesByName(
-    {configChangeMsgKey}
+    {configChangeMsgKey},
+    80
   )
 
   -- this config change message should not be sent   
@@ -2163,7 +2172,7 @@ function generic_setConfigViaShell(messageKey,propertiesToChange,propertiesBefor
     propertiesToChangeValues[propertiesToChange[i]] = propertiesBeforeChange[propertiesToChange[i]] + 1
   end
 
-  -- properties must be changed anyway (the same value after and before properties reset doesn't trigger report)
+  -- properties set via shell (prop set *)
   vmsSW:setPropertiesViaShell(shellSW,propertiesToChangeValues)
 
   -- wait for message
@@ -2183,7 +2192,7 @@ function generic_setConfigViaShell(messageKey,propertiesToChange,propertiesBefor
   -- no others report should come
   local configChangeMessageWait = vmsSW:waitForMessagesByName(
     {messageKey},
-    10
+    120
   )
   assert_equal(0,tonumber(configChangeMessageWait.count),"Message"..messageKey.." should not come!")
 
