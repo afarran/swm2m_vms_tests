@@ -319,10 +319,12 @@ end
   -- 1. Properties are correctly set.
   -- 2. Standard Report doesn't come and that is correct.
 function test_StandardReportDisabled_WhenStandardReport1IntervalIsSetToZero_StandardReport1IsNotSent()
+  vmsSW:setPropertiesByName({PropertyChangeDebounceTime=1})
   generic_test_StandardReportDisabled(
     "StandardReport1",
     {StandardReport1Interval=0, AcceleratedReport1Rate=1},
-    120 -- waiting until report not come
+    120, -- waiting until report not come,
+    "AcceleratedReport1"
   )
 end
 
@@ -342,10 +344,12 @@ end
   -- 1. Properties are correctly set.
   -- 2. Standard Report doesn't come and that is correct.
 function test_StandardReportDisabled_WhenStandardReport2IntervalIsSetToZero_StandardReport2IsNotSent()
+  vmsSW:setPropertiesByName({PropertyChangeDebounceTime=1})
   generic_test_StandardReportDisabled(
     "StandardReport2",
     {StandardReport2Interval=0, AcceleratedReport2Rate=1},
-    120 -- waiting until report not come
+    120, -- waiting until report not come
+    "AcceleratedReport2"
   )
 end
 
@@ -365,10 +369,12 @@ end
   -- 1. Properties are correctly set.
   -- 2. Standard Report doesn't come and that is correct.
 function test_StandardReportDisabled_WhenStandardReport3IntervalIsSetToZero_StandardReport3IsNotSent()
+  vmsSW:setPropertiesByName({PropertyChangeDebounceTime=1})
   generic_test_StandardReportDisabled(
     "StandardReport3",
     {StandardReport3Interval=0, AcceleratedReport3Rate=1},
-    120
+    120,
+    "AcceleratedReport3"
   )
 end
 
@@ -1072,7 +1078,7 @@ function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExe
   local propertiesBeforeChange = vmsSW:getPropertiesByName(propertiesToChange)
   D:log(framework.dump(propertiesBeforeChange))
 
-  vmsSW:setPropertiesByName({PropertyChangeDebounceTime=60})
+  vmsSW:setPropertiesByName({PropertyChangeDebounceTime=1})
 
   generic_setConfigViaShell(
    "ConfigChangeReport1",
@@ -1087,7 +1093,7 @@ function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExe
   local propertiesBeforeChange = vmsSW:getPropertiesByName(propertiesToChange)
   D:log(framework.dump(propertiesBeforeChange))
   
-  vmsSW:setPropertiesByName({PropertyChangeDebounceTime=60})
+  vmsSW:setPropertiesByName({PropertyChangeDebounceTime=1})
 
   generic_setConfigViaShell(
    "ConfigChangeReport2",
@@ -1102,7 +1108,7 @@ function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExe
   local propertiesBeforeChange = vmsSW:getPropertiesByName(propertiesToChange)
   D:log(framework.dump(propertiesBeforeChange))
 
-  vmsSW:setPropertiesByName({PropertyChangeDebounceTime=60})
+  vmsSW:setPropertiesByName({PropertyChangeDebounceTime=1})
 
   generic_setConfigViaShell(
    "ConfigChangeReport3",
@@ -1760,7 +1766,7 @@ function generic_test_LogReports(logReportXKey, standardReportXKey, properties, 
     assert_not_nil(
       logEntries[i].log.Course,
       "No Course in Log Report, entry: " .. i
-    ) -- TODO: course check 
+    ) 
     assert_not_nil(
       logEntries[i].log.Hdop,
       "No Hdop in Log Report, entry: " .. i
@@ -2025,7 +2031,7 @@ function generic_test_ConfigChangeReportConfigChangeReportIsSent(messageKey,prop
 end
 
 -- This is generic function for disabled standard reports test
-function generic_test_StandardReportDisabled(reportKey,properties,reportInterval,setConfigMsgKey,configChangeMsgKey,fields)
+function generic_test_StandardReportDisabled(reportKey,properties,reportInterval,acceleratedReportKey)
 
   -- setup
   if setConfigMsgKey then
@@ -2043,8 +2049,10 @@ function generic_test_StandardReportDisabled(reportKey,properties,reportInterval
   else
     vmsSW:setPropertiesByName(properties)
   end
+  
+  framework.delay(65) -- for timer from previous setup, that's hard to test
 
-  D:log("Waiting for report - should not come - "..reportKey)
+  D:log("Waiting for standard report - should not come - "..reportKey)
   local reportMessage = vmsSW:waitForMessagesByName(
     {reportKey},
     reportInterval
@@ -2052,7 +2060,12 @@ function generic_test_StandardReportDisabled(reportKey,properties,reportInterval
   D:log(reportMessage,"reportMessage")
   assert_equal(0,tonumber(reportMessage.count),"Message"..reportKey.." should not come!")
 
-  --TODO: wait for accelerated report as well, change the names of TCs based on this generic..
+  D:log("Waiting for accelerated report - should not come - "..acceleratedReportKey)
+  local reportMessage = vmsSW:waitForMessagesByName(
+    {acceleratedReportKey},
+    reportInterval
+  )
+  assert_equal(0,tonumber(reportMessage.count),"Message"..reportKey.." should not come!")
 end
 
 -- This is generic function for disabled accelerated reports test (and standard reports enabled)
