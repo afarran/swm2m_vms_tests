@@ -17,7 +17,9 @@ a) First you annotate like in other languages (almost):
  function test_XXX()
   --implementation
 ```
-b) Then resolver is able to get annotation @dependencies and invoke by reflection needed method (in this case helmPanel:isReady())```
+b) Then resolver is able to get annotation @dependencies and invoke by reflection needed method (in this case helmPanel:isReady())
+
+```
 function DependencyResolver:resolve(definition)
 if type(definition) ~= "string" then
 return true
@@ -34,6 +36,7 @@ end
 return _G[descr.object][descr.method](_G[descr.object])
 end
 ```
+
 c) This method is an aspect - in this example it just check terminal if helm panel device (unibox) is installed and enabled. All logic and reason to change is here.
 
 7. Any TC can be annotated in this way - no need to do more.
