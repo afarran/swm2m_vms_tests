@@ -192,7 +192,7 @@ function test_SMTP_WhenMAILWithSpaceBeforeColonCalled_ServerReturns550()
   local response = smtp:getResponse()
   smtp:execute("MAIL FROM :<skywave1@skywave.com>")
   response = smtp:getResponse()
-  assert_match("^550", mailResponse, "MAIL FROM :<path> response incorrect")
+  assert_match("^550", response, "MAIL FROM :<path> response incorrect")
 
 end
 
@@ -202,7 +202,7 @@ function test_SMTP_WhenMAILWithSpaceAfterColonCalled_ServerReturns550()
   local response = smtp:getResponse()
   smtp:execute("MAIL FROM: <skywave1@skywave.com>")
   response = smtp:getResponse()
-  assert_match("^550", mailResponse, "MAIL FROM: <path> response incorrect")
+  assert_match("^550", response, "MAIL FROM: <path> response incorrect")
 
 end
 
@@ -212,7 +212,7 @@ function test_SMTP_WhenMAILWithSpaceBeforeAndAfterColonCalled_ServerReturns550()
   local response = smtp:getResponse()
   smtp:execute("MAIL FROM : <skywave1@skywave.com>")
   response = smtp:getResponse()
-  assert_match("^550", mailResponse, "MAIL FROM : <path> response incorrect")
+  assert_match("^550", response, "MAIL FROM : <path> response incorrect")
 
 end
 
