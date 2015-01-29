@@ -56,6 +56,15 @@ end
 --- teardown function executed after each unit test
 function teardown()
 
+
+  vmsSW:setPropertiesByName({StandardReport1Interval = 0,   -- 0 is for feature disabled
+                             StandardReport2Interval = 0,
+                             StandardReport3Interval = 0,
+                             MinStandardReportLedFlashTime = 0}
+  )
+
+
+
 end
 
 -----------------------------------------------------------------------------------------------
@@ -239,33 +248,75 @@ end
 
 function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetTo0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsNotFlashing()
 
+  -- *** Setup
+  local STANDARD_REPORT_1_INTERVAL = 1
+  local STANDARD_REPORT_2_INTERVAL = 1
+  local STANDARD_REPORT_3_INTERVAL = 1
+
   vmsSW:setPropertiesByName({StandardReport1Interval = 1,
                              StandardReport2Interval = 1,
                              StandardReport3Interval = 1,
                              MinStandardReportLedFlashTime = 0}     -- 0 is for feature disabled
   )
-
+  -- *** Execute
   framework.delay(65)
   assert_false(helmPanel:isConnectLedFlashingSlow(), "Terminal Connected LED is flashing when feature is disabled")
 
-  -- back to reports not being sent
-  vmsSW:setPropertiesByName({StandardReport1Interval = 0,
-                             StandardReport2Interval = 0,
-                             StandardReport3Interval = 0,}
-  )
 
 end
 
 
 function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsFlashingForMinStandardReportLedFlashTime()
 
+  -- *** Setup
+  local ledFlashingStateTrueTable = {}
+  local STANDARD_REPORT_1_INTERVAL = 1
   vmsSW:setPropertiesByName({StandardReport1Interval = 1,
-                             MinStandardReportLedFlashTime = 60}     -- feature enabled
+                             MinStandardReportLedFlashTime = 30}     -- feature enabled
   )
+  gateway.setHighWaterMark() -- to get the newest messages
+  framework.delay(STANDARD_REPORT_1_INTERVAL*60 - 5)
 
-  framework.delay(65)
-  D:log(helmPanel:isConnectLedFlashingSlow())
-  assert_true(helmPanel:isConnectLedFlashingSlow(), "Terminal Connected LED is not flashing when StandardReport1Interval is being sent")
+  for counter = 1, 16, 1 do
+    if(helmPanel:isConnectLedFlashing()) then
+      ledFlashingStateTrueTable[#ledFlashingStateTrueTable + 1] = os.time()
+      D:log(os.time())
+    end
+  end
+
+
+  -- receiving all from mobile messages sent after setHighWaterMark()
+  local receivedMessages = gateway.getReturnMessages()
+  -- look for AbnormalReport messages
+  --local AllReceivedReports = framework.filterMessages(receivedMessages, framework.checkMessageType(115, 50)) -- TODO: service wrapper functions need to be modified
+
+  D:log(receivedMessages)
+  -- waiting for StandardReport1 message as the response
+  --ReceivedMessages = vmsSW:waitForMessagesByName({"StandardReport1"})
+
+--  D:log(ReceivedMessages)
+  --[[assert_not_nil(ReceivedMessages["Properties"], "Properties message not received in response for GetProperties message")
+  D:log(os.time(), "property applied")
+  framework.delay(STANDARD_REPORT_1_INTERVAL*60 + 2)
+  D:log(os.time(), "first read")
+  D:log(helmPanel:isConnectLedFlashing())
+  framework.delay(34)
+  D:log(os.time(), "second read")
+  D:log(helmPanel:isConnectLedFlashing())
+
+
+--]]
+
+
+  --[[
+  for counter = 1, 30, 1 do
+    D:log(helmPanel:isConnectLedFlashing())
+    D:log(os.time())
+    framework.delay(2)
+  end
+
+  --]]
+  -- assert_true(helmPanel:isConnectLedFlashingSlow(), "Terminal Connected LED is not flashing when StandardReport1Interval is being sent")
 
   -- back to reports not being sent
   vmsSW:setPropertiesByName({StandardReport1Interval = 0,
