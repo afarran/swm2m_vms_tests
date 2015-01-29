@@ -77,11 +77,9 @@ function test_GeofenceFeatures_WhenInsideGeofenceZone_AcceleratedReportStatusBit
   local currentAcceleratedReport1Rate = Report1Properties["AcceleratedReport1Rate"]
   local newAcceleratedReport1Rate = 2
   local newStandardReport1Interval = 2
-  
+  local stdInterval = newStandardReport1Interval
   if currentStandardReport1Interval > newStandardReport1Interval then
     local stdInterval = currentStandardReport1Interval
-  else
-    local stdInterval = newStandardReport1Interval
   end
   vmsSW:setPropertiesByName({StandardReport1Interval = newStandardReport1Interval,
                              AcceleratedReport1Rate = newAcceleratedReport1Rate})
