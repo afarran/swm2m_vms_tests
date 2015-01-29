@@ -651,6 +651,21 @@ end
 
 
 local function run_test(name, test, suite, hooks, setup, teardown)
+  
+   -- ADDED: resolve dependencies of TC 
+   local dependencies = DependencyResolver:resolve(
+     Annotations:get(
+       "dependencies",
+       suite.name,
+       name
+     )
+   )
+   if dependencies ~= true then
+     print("SKIP: "..name.." "..dependencies)
+     return 
+   end
+   -- ADDED END
+
    local result
    if is_func(hooks.pre_test) then hooks.pre_test(name) end
    local t_pre, t_post, elapsed      --timestamps. requires luasocket.
