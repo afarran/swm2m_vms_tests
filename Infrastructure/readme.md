@@ -1,5 +1,4 @@
-Annotations/Annotations.lua
-DependencyResolver/DependencyResolver.lua
+Annotations/Annotations.lua | DependencyResolver/DependencyResolver.lua
 
 Managing dependencies with installed/enabled services.
 
