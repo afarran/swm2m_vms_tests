@@ -1,3 +1,6 @@
+Annotations/Annotations.lua
+DependencyResolver/DependencyResolver.lua
+
 Managing dependencies with installed/enabled services.
 
 1. Some TCs need to have given service installed on the device.
