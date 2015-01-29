@@ -53,6 +53,9 @@ HelmPanelUnibox = {}
 
   --TODO: should be in HelmPanelDevice but there were problems with reflection in Dependency Resolver
   function HelmPanelUnibox:isReady()
+    if self._isReady ~= nill then
+      return self._isReady
+    end
     local serviceList = self.system:requestMessageByName("getServiceList",nil,"serviceList")
     local disabledList = framework.base64Decode(serviceList.serviceList.disabledList)
     local sinList = framework.base64Decode(serviceList.serviceList.sinList)
@@ -70,9 +73,11 @@ HelmPanelUnibox = {}
       end
     end 
     if enabled then
+      self._isReady = enabled 
       return true
     end
-    return "Unibox is not installed!"
+    self._isReady = "Unibox is not installed!"
+    return self._isReady
   end
 
 

@@ -72,10 +72,10 @@ end
 -----------------------------------------------------------------------------------------------
 Annotations:register([[
 @dependencies(helmPanel,isReady)
-@method(test_HelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAndTheStateToggles_HelmPanelDisconnectedStateChangesCorrectlyAndLEDTransitionsAreCorrect)
+@method(test_XHelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAndTheStateToggles_HelmPanelDisconnectedStateChangesCorrectlyAndLEDTransitionsAreCorrect)
 @module(TestHelmPanelModule)
 ]])
-function test_HelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAndTheStateToggles_HelmPanelDisconnectedStateChangesCorrectlyAndLEDTransitionsAreCorrect()
+function test_XHelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAndTheStateToggles_HelmPanelDisconnectedStateChangesCorrectlyAndLEDTransitionsAreCorrect()
 
   local properties = vmsSW:getPropertiesByName({"HelmPanelDisconnectedState"})
   local isDisconnected = properties.HelmPanelDisconnectedState
