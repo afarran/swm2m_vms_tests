@@ -24,7 +24,7 @@ end
 
 --- setup function
 function setup()
-  gateway.setHighWaterMark()
+  --gateway.setHighWaterMark()
 end
 
 -----------------------------------------------------------------------------------------------
