@@ -128,7 +128,7 @@ function test_HelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAn
 end
 
 Annotations:register([[
-@dependencies(helmPanel)
+@dependencies(helmPanel,isReady)
 @method(test_HelmPanelDisconnected_WhenHelmPanelIsDisConnected_ConnectLEDIsOff)
 @module(TestHelmPanelModule)
 ]])
