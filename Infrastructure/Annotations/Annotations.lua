@@ -30,7 +30,19 @@ Annotations = {}
   end
 
   function Annotations:get(annotation,module,method)
-    return ""
+
+    if Annotations.registered.module == nil or 
+       Annotations.registered.module.method == nil then
+      return false
+    end
+
+    if Annotations.registered.module.method.annotation and 
+       Annotations.registered.module.method.annotation == annotation then
+      return Annotations.registered.module.method.annotation
+    end
+
+    return false
+
   end
   
   
