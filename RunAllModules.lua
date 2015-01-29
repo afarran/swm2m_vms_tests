@@ -1,7 +1,20 @@
+--- Runs Feature Tests
+-- @tparam table args array of string arguments
+-- @usage
+-- [-v]                     Verbose option
+-- [-t] [<string pattern>]  Execute test cases that match string pattern
+-- [-s] [<string pattern>]  Execute test suites that match string pattern
+-- [-p] [<port>]  Use specific gateway port
+-- [-c] [<FilePath>]  Use Test configuration given in FilePath
+
 for idx, val in ipairs(arg) do 
   print(idx, val) 
   if val == "-c" then
     ConfigFile = arg[idx+1]
+  end
+  
+  if val == "-p" then
+    GatewayPort = arg[idx+1]
   end
 end
 
@@ -44,7 +57,7 @@ shellSW = ShellServiceWrapper()
 uniboxSW = UniboxServiceWrapper()
 
 require("Serial/RealSerialWrapper")
-serialMain = RealSerialWrapper({name="com201", open=false, newline="\r\n"})
+serialMain = RealSerialWrapper({name="com203", open=true, newline="\r\n"})
 
 -- Helm Panel
 helmPanelFactory = require("HelmPanelDevice/HelmPanelDeviceFactory")()
@@ -83,16 +96,11 @@ local function setup()
 end
 
 local function teardown()
+  serialMain:close()
   print("*** VMS Feature Tests Completed ***")
   framework.printResults()
 end
 
---- Runs Feature Tests
--- @tparam table args array of string arguments
--- @usage
--- [-v]                     Verbose option
--- [-t] [<string pattern>]  Execute test cases that match string pattern
--- [-s] [<string pattern>]  Execute test suites that match string pattern
 
 setup()
 lunatest.run(nil, arg)
