@@ -661,7 +661,7 @@ local function run_test(name, test, suite, hooks, setup, teardown)
      )
    )
    if dependencies ~= true then
-     print("SKIP: "..name.." "..dependencies)
+     print("SKIP: "..name.." - "..dependencies)
      return 
    end
    -- ADDED END

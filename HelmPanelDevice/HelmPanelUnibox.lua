@@ -50,3 +50,26 @@ HelmPanelUnibox = {}
     end
     return false
   end
+
+  function HelmPanelUnibox:isReady()
+    local serviceList = self.system:requestMessageByName("getServiceList",nil,"serviceList")
+    local disabledList = framework.base64Decode(serviceList.serviceList.disabledList) 
+    local sinList = framework.base64Decode(serviceList.serviceList.sinList)
+
+    local enabled = false
+    for i,v in ipairs(sinList) do
+      if tonumber(v) == tonumber(self.device.sin) then
+        enabled = true
+        break
+      end
+    end
+    for i,v in ipairs(disabledList) do
+      if tonumber(self.device.sin) == tonumber(v) then
+        enabled = false
+      end
+    end 
+    if enabled then
+      return true
+    end
+    return "Unibox is not installed!"
+  end

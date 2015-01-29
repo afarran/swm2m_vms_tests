@@ -26,13 +26,11 @@ Annotations = {}
     end
     Annotations.registered[module][method] = annotations
 
-    D:log(Annotations.registered,"registered")
+    --D:log(Annotations.registered,"registered")
   end
 
   function Annotations:get(annotation,module,method)
-
-    if Annotations.registered[module] == nil or 
-       Annotations.registered[module][method] == nil then
+    if Annotations.registered[module] == nil or Annotations.registered[module][method] == nil then
       return false
     end
 
@@ -41,9 +39,4 @@ Annotations = {}
     end
 
     return false
-
   end
-  
-  
-
-

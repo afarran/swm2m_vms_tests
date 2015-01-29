@@ -192,7 +192,7 @@ function test_SMTP_WhenMAILWithSpaceBeforeColonCalled_ServerReturns550()
   local response = smtp:getResponse()
   smtp:execute("MAIL FROM :<skywave1@skywave.com>")
   response = smtp:getResponse()
-  assert_match("^550", mailResponse, "MAIL FROM :<path> response incorrect")
+  assert_match("^550", response, "MAIL FROM :<path> response incorrect")
 
 end
 
@@ -202,7 +202,7 @@ function test_SMTP_WhenMAILWithSpaceAfterColonCalled_ServerReturns550()
   local response = smtp:getResponse()
   smtp:execute("MAIL FROM: <skywave1@skywave.com>")
   response = smtp:getResponse()
-  assert_match("^550", mailResponse, "MAIL FROM: <path> response incorrect")
+  assert_match("^550", response, "MAIL FROM: <path> response incorrect")
 
 end
 
@@ -212,7 +212,7 @@ function test_SMTP_WhenMAILWithSpaceBeforeAndAfterColonCalled_ServerReturns550()
   local response = smtp:getResponse()
   smtp:execute("MAIL FROM : <skywave1@skywave.com>")
   response = smtp:getResponse()
-  assert_match("^550", mailResponse, "MAIL FROM : <path> response incorrect")
+  assert_match("^550", response, "MAIL FROM : <path> response incorrect")
 
 end
 
@@ -247,6 +247,20 @@ function test_SMTP_WhenRCPTCorrectCommandCalledMultipleTimes_ServerReturns250()
     assert_match("^250", response, "RCPT TO response incorrect for " .. index .. " receipment")  
   end  
 end
+
+function test_SMTP_WhenRCPTCommandCalledTooManyTimes_ServerReturns552()
+  startSmtp()
+  smtp:execute("HELO")
+  response = smtp:getResponse()
+  smtp:execute("MAIL FROM:<skywave@skywave.com>")
+  local response = smtp:getResponse()
+  for index=1,500 do 
+    smtp:execute("RCPT TO:<receiver"..index.."@skywave.com>")
+  end  
+  response = smtp:getResponse(nil, 0.05)
+  assert_match("^552", response, "RCPT TO did not return 552 Too many recipients")  
+end
+
 
 function test_SMTP_WhenRCPTWithMalformedForwardPathCalled_ServerReturns5xx()
   startSmtp()
@@ -291,6 +305,28 @@ function test_SMTP_WhenDATACorrectCommandCalled_ServerReturns354()
   SMTPclear[1] = "\r\n.\r\n"
   SMTPclear[2] = "QUIT"
 end
+
+function test_SMTP_WhenDATACommandCalledDataPassedWithEndChar_ServerReturns250()
+  startSmtp()
+  smtp:execute("HELO")
+  local response = smtp:getResponse()
+  smtp:execute("MAIL FROM:<skywave@skywave.com>")
+  response = smtp:getResponse()
+  smtp:execute("RCPT TO:<receiver@skywave.com>")
+  response = smtp:getResponse()
+  smtp:execute("DATA")
+  response = smtp:getResponse()
+  assert_match("^354", response, "DATA command response is incorrect")
+  
+  smtp:execute("Some message data")
+  smtp:execute("More message data")
+  
+  smtp:execute("\r\n.", "\r\n")
+  response = smtp:getResponse()
+  assert_match("^250", response, "DATA command end response is incorrect")
+end
+
+  
 
 --If there was no MAIL, or no RCPT, command, or all such commands were
 --   rejected, the server MAY return a "command out of sequence" (503) or

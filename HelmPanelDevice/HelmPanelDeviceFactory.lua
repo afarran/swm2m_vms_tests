@@ -10,11 +10,11 @@ function helmPanelDeviceFactory.create(variant)
   local helmPanel
 
   if variant == "unibox" then
-    if uniboxSW == nil or shellSW == nil then
-      print "Helm panel device needs unibox and shell service wrappers!"
+    if uniboxSW == nil or shellSW == nil or systemSW == nil then
+      print "Helm panel device needs unibox, shell and system service wrappers!"
       return nil
     end
-    helmPanel = HelmPanelUnibox(uniboxSW,shellSW)
+    helmPanel = HelmPanelUnibox(uniboxSW,shellSW,systemSW)
   end
   
   print("Helm Panel used : " .. variant)
