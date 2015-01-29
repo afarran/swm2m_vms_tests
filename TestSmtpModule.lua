@@ -182,6 +182,10 @@ function test_SMTP_WhenMAILCorrectCommandCalledTwice_ServerReturns5xx()
   assert_match("^5%d%d", mailResponse, "MAIL FROM second response incorrect")
 end
 
+--Since it has been a common source of errors, it is worth noting that
+--   spaces are not permitted on either side of the colon following FROM
+--   in the MAIL command or TO in the RCPT command. 
+
 --- Test SMTP RECPT TO
 -- RCPT TO:<forward-path> [ SP <rcpt-parameters> ] <CRLF>
 --The first or only argument to this command includes a forward-path
@@ -294,17 +298,28 @@ end
 --   server and accepted by the client, clients MUST NOT send such
 --   parameters and servers SHOULD reject commands containing them as
 --   having invalid syntax.
-
-function test_SMTP_WhenRSETWithParameterCalled_ServerReturns5xx()
-    startSmtp()
+--   future extensions, commands that are specified in this document as
+--   not accepting arguments (DATA, RSET, QUIT) SHOULD return a 501
+--   message if arguments are supplied in the absence of EHLO-
+--   advertised extensions.
+      
+function test_SMTP_WhenRSETWithParameterCalled_ServerReturns501()
+  startSmtp()
   smtp:execute("RSET someparam")
   local mailResponse = smtp:getResponse()
-  assert_match("^5%d%d", mailResponse, "RSET with parameter response incorrect")
+  assert_match("^501", mailResponse, "RSET with parameter response incorrect")
 end
 
-function test_SMTP_WhenQUITWithParameterCalled_ServerReturns5xx()
-    startSmtp()
+function test_SMTP_WhenQUITWithParameterCalled_ServerReturns501()
+  startSmtp()
   smtp:execute("QUIT someparam")
   local mailResponse = smtp:getResponse()
-  assert_match("^5%d%d", mailResponse, "QUIT with parameter response incorrect")
+  assert_match("^501", mailResponse, "QUIT with parameter response incorrect")
+end
+
+function test_SMTP_WhenDATAWithParameterCalled_ServerReturns501()
+  startSmtp()
+  smtp:execute("DATA someparam")
+  local mailResponse = smtp:getResponse()
+  assert_match("^501", mailResponse, "DATA with parameter response incorrect")
 end
