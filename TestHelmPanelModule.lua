@@ -314,8 +314,52 @@ function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsS
   "IDP Connected LED was flashing for incorrect period of time when MIN_STANDARD_REPORT_FLASH_TIME is set above zero"
   )
 
+end
+
+
+function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardIsWaitingInQueueToBeSent_TerminalConnectedLEDIsFlashing()
+
+  -- TODO this need to be modified when an implementation of the function allowing IDP blockage will be done
+  -- device profile application
+  if IDPBlockageFeaturesImplemented == false then skip("API for setting Satellite Control State has not been implemented yet - no use to perform TC") end
+
+  -- *** Setup
+  local ledFlashingStateTrueTable = {}
+  local STANDARD_REPORT_1_INTERVAL = 1
+  local MIN_STANDARD_REPORT_FLASH_TIME = 5
+
+  vmsSW:setPropertiesByName({StandardReport1Interval = STANDARD_REPORT_1_INTERVAL,
+                             MinStandardReportLedFlashTime = MIN_STANDARD_REPORT_FLASH_TIME}     -- feature enabled
+  )
+
+  local standardReportEnabledStartTime = os.time()
+  D:log(standardReportEnabledStartTime)
+
+  gateway.setHighWaterMark() -- to get the newest messages
+  framework.delay(STANDARD_REPORT_1_INTERVAL*60 - 10)
+
+  local currentTime = os.time()
+
+  while currentTime < standardReportEnabledStartTime + STANDARD_REPORT_1_INTERVAL*60 + 60 do
+      currentTime = os.time()
+      if(helmPanel:isConnectLedFlashing()) then
+        currentTime = os.time()
+        ledFlashingStateTrueTable[#ledFlashingStateTrueTable + 1] = currentTime
+      end
+  end
+
+  D:log(ledFlashingStateTrueTable)
+
+  local lastElementIndex = table.getn(ledFlashingStateTrueTable)
+
+  assert_gt(ledFlashingStateTrueTable[lastElementIndex],
+  standardReportEnabledStartTime + STANDARD_REPORT_1_INTERVAL*60 + MIN_STANDARD_REPORT_FLASH_TIME + 5,
+  8,
+  "IDP Connected LED was not flashing when StandardReport was waiting in queue while IDP Blockage"
+  )
 
 end
+
 
 
 function raiseNotImpl()
