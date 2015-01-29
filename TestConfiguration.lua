@@ -21,13 +21,14 @@
 -- @field PASSWORD 		Simulated gateway access password; don't change
 -- @field MOBILE_ID 	Simulated mobile ID; don't change
 -- @field GATEWAY_TIMEOUT Seconds framework waits for a particular message from gateway before timing out
+GatewayPort = GatewayPort or "8080"
 cfg = {
 	HTTP_PROXY 		= nil,                                  -- Uncomment if not snooping on traffic using Fiddler
 	--HTTP_PROXY = "http://127.0.0.1:8888",                 -- Uncomment if using Fiddler to snoop traffic
-	GATEWAY_URL 	= "http://localhost:8080",
+	GATEWAY_URL 	= "http://localhost:"..GatewayPort,
 	GATEWAY_SUFFIX 	= "/GLGW/GWServices_v1/RestMessages.svc",
-	DEVICE_URL 		= "http://localhost:8080/DeviceWebService",
-	GPS_URL 		= "http://localhost:8080/GpsWebService",
+	DEVICE_URL 		= "http://localhost:"..GatewayPort.."/DeviceWebService",
+	GPS_URL 		= "http://localhost:"..GatewayPort.."/GpsWebService",
 
 	ACCESS_ID 		= "00000000",
 	PASSWORD 		= "password",

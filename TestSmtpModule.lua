@@ -14,17 +14,16 @@ module("TestSmtpModule", package.seeall)
 local SMTPclear = {}
 
 function suite_setup()
-  serialMain:open()
+  
 end
 
 -- executed after each test suite
 function suite_teardown()
-  framework.delay(1) -- for some reason simulator blocks if serial port is closed too soon
-  serialMain:close()
+  
 end
 
 --- setup function
-function setulp()
+function setup()
   gateway.setHighWaterMark()
 end
 
@@ -45,6 +44,9 @@ end
 -------------------------
 
 function test_SMTP_WhenSMTPCommandCalled_ServerReturnsSMTPServiceReady()
+  if not smtp:ready() then 
+    skip("Smtp is not ready - serial port not opened (".. serialMain.name .. ")")
+  end
   assert_true(smtp:ready(), "Smtp is not ready - serial port not opened")
   smtp:start()
   SMTPclear[1] = "QUIT"
@@ -55,6 +57,9 @@ function test_SMTP_WhenSMTPCommandCalled_ServerReturnsSMTPServiceReady()
 end
 
 local function startSmtp()
+  if not smtp:ready() then 
+    skip("Smtp is not ready - serial port not opened (".. serialMain.name .. ")")
+  end
   assert_true(smtp:ready(), "Smtp is not ready - serial port not opened")
   smtp:start()
   SMTPclear[1] = "QUIT"

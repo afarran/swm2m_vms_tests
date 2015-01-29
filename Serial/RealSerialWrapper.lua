@@ -26,7 +26,11 @@ RealSerialWrapper = {}
   end
     
   function RealSerialWrapper:close()
-    return self.port:close()
+    if self.port then
+      return self.port:close()
+    else
+      return nil
+    end
   end
   
   function RealSerialWrapper:getPorts()
