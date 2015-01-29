@@ -3,7 +3,6 @@ DependencyResolver = {}
   DependencyResolver.__index = DependencyResolver
 
   function DependencyResolver:resolve(definition)
-    D:log(type(definition))
     if type(definition) ~= "string" then
       return true
     end
@@ -16,7 +15,7 @@ DependencyResolver = {}
       D:log("Method "..descr.method.." not found!")
       return true
     end
-    return _G[descr.object][descr.method]()
+    return _G[descr.object][descr.method](_G[descr.object])
   end
 
   function DependencyResolver:parseDef(def)

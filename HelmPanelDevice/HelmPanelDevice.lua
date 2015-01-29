@@ -8,9 +8,10 @@ HelmPanelDevice = {}
       return self
     end,})
 
-  function HelmPanelDevice:_init(deviceSW, shellSW)
+  function HelmPanelDevice:_init(deviceSW, shellSW, systemSW)
     self.device = deviceSW
     self.shell = shellSW
+    self.system = systemSW
   end
 
   function HelmPanelDevice:setConnected(change)
