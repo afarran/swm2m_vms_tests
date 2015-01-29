@@ -22,12 +22,12 @@ if ConfigFile then
   print("USING CONFIG: " .. ConfigFile)
 end
 
+-- Annotations
+require("Annotations/Annotations")
+
 -- Test Framework
 cfg, framework, gateway, lsf, device, gps = require "TestFramework"()
 lunatest = require "lunatest"
-
--- Annotations
-require("Annotations/Annotations")
 
 -- Global variables used in the tests
 GPS_PROCESS_TIME = 1                                                -- seconds
