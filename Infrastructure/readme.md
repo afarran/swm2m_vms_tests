@@ -19,7 +19,7 @@ a) First you annotate like in other languages (almost):
  function test_XXX()
   --implementation
 ```
-b) Then resolver is able to get annotation @dependencies and invoke by reflection needed method (in this case helmPanel:isReady())
+b) Then resolver is able to get annotation @dependOn and invoke by reflection needed method (in this case helmPanel:isReady())
 
 ```
 function DependencyResolver:resolve(definition)
