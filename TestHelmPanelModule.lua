@@ -70,7 +70,11 @@ end
 -----------------------------------------------------------------------------------------------
 -- Test Cases - Helm Panel connected/disconnected
 -----------------------------------------------------------------------------------------------
-
+Annotations:register([[
+@dependencies(helmPanel)
+@method(test_HelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAndTheStateToggles_HelmPanelDisconnectedStateChangesCorrectlyAndLEDTransitionsAreCorrect)
+@module(TestHelmPanelModule)
+]])
 function test_HelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAndTheStateToggles_HelmPanelDisconnectedStateChangesCorrectlyAndLEDTransitionsAreCorrect()
 
   local properties = vmsSW:getPropertiesByName({"HelmPanelDisconnectedState"})
@@ -131,6 +135,12 @@ function test_HelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAn
   assert_not_equal(isDisconnectedAfterChange, isDisconnectedAfterSecondChange, "There should be change in disconnected state.")
 
 end
+
+Annotations:register([[
+@dependencies(helmPanel)
+@method(test_HelmPanelDisconnected_WhenHelmPanelIsDisConnected_ConnectLEDIsOff)
+@module(TestHelmPanelModule)
+]])
 function test_HelmPanelDisconnected_WhenHelmPanelIsDisConnected_ConnectLEDIsOff()
   helmPanel:setConnected("false")
   local ledState = helmPanel:isConnectLedOn()
