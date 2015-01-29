@@ -13,6 +13,9 @@ end
 cfg, framework, gateway, lsf, device, gps = require "TestFramework"()
 lunatest = require "lunatest"
 
+-- Annotations
+require("Annotations/Annotations")
+
 -- Global variables used in the tests
 GPS_PROCESS_TIME = 1                                                -- seconds
 GATEWAY_TIMEOUT = 60                                                -- in seconds
