@@ -62,7 +62,7 @@ shellSW = ShellServiceWrapper()
 uniboxSW = UniboxServiceWrapper()
 
 require("Serial/RealSerialWrapper")
-serialMain = RealSerialWrapper({name="com203", open=true, newline="\r\n"})
+serialMain = RealSerialWrapper({name="com201", open=true, newline="\r\n"})
 
 -- Helm Panel
 helmPanelFactory = require("HelmPanelDevice/HelmPanelDeviceFactory")()
