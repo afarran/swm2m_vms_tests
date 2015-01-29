@@ -21,19 +21,19 @@ b) Then resolver is able to get annotation @dependencies and invoke by reflectio
 
 ```
 function DependencyResolver:resolve(definition)
-if type(definition) ~= "string" then
-return true
-end
-local descr = DependencyResolver:parseDef(definition)
-if _G[descr.object] == nil then
-D:log("Object "..descr.object.." not found!")
-return true
-end
-if _G[descr.object][descr.method] == nil then
-D:log("Method "..descr.method.." not found!")
-return true
-end
-return _G[descr.object][descr.method](_G[descr.object])
+  if type(definition) ~= "string" then
+   return true
+  end
+  local descr = DependencyResolver:parseDef(definition)
+  if _G[descr.object] == nil then
+    D:log("Object "..descr.object.." not found!")
+    return true
+  end
+  if _G[descr.object][descr.method] == nil then
+    D:log("Method "..descr.method.." not found!")
+    return true
+  end
+  return _G[descr.object][descr.method](_G[descr.object])
 end
 ```
 
@@ -41,25 +41,25 @@ c) This method is an aspect - in this example it just check terminal if helm pan
 
 ```
 function HelmPanelUnibox:isReady()
-local serviceList = self.system:requestMessageByName("getServiceList",nil,"serviceList")
-local disabledList = framework.base64Decode(serviceList.serviceList.disabledList)
-local sinList = framework.base64Decode(serviceList.serviceList.sinList)
-local enabled = false
-for i,v in ipairs(sinList) do
-if tonumber(v) == tonumber(self.device.sin) then
-enabled = true
-break
-end
-end
-for i,v in ipairs(disabledList) do
-if tonumber(self.device.sin) == tonumber(v) then
-enabled = false
-end
-end
-if enabled then
-return true
-end
-return "Unibox is not installed!"
+  local serviceList = self.system:requestMessageByName("getServiceList",nil,"serviceList")
+  local disabledList = framework.base64Decode(serviceList.serviceList.disabledList)
+  local sinList = framework.base64Decode(serviceList.serviceList.sinList)
+  local enabled = false
+  for i,v in ipairs(sinList) do
+    if tonumber(v) == tonumber(self.device.sin) then
+      enabled = true
+      break
+    end
+  end
+  for i,v in ipairs(disabledList) do
+    if tonumber(self.device.sin) == tonumber(v) then
+      enabled = false
+    end
+  end
+  if enabled then
+    return true
+  end
+  return "Unibox is not installed!"
 end
 
 
