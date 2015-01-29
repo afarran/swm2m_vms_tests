@@ -33,3 +33,4 @@ HelmPanelDevice = {}
   function HelmPanelDevice:isSateliteLedOn() end
   function HelmPanelDevice:isGpsLedOn() end
   function HelmPanelDevice:isConnectLedOn() end
+  function HelmPanelDevice:isReady() end

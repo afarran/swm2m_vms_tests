@@ -138,10 +138,10 @@ end
 
 Annotations:register([[
 @dependencies(helmPanel,isReady)
-@method(test_HelmPanelDisconnected_WhenHelmPanelIsDisConnected_ConnectLEDIsOff)
+@method(test_XHelmPanelDisconnected_WhenHelmPanelIsDisConnected_ConnectLEDIsOff)
 @module(TestHelmPanelModule)
 ]])
-function test_HelmPanelDisconnected_WhenHelmPanelIsDisConnected_ConnectLEDIsOff()
+function test_XHelmPanelDisconnected_WhenHelmPanelIsDisConnected_ConnectLEDIsOff()
   helmPanel:setConnected("false")
   local ledState = helmPanel:isConnectLedOn()
   D:log(ledState,"LED-FALSE")

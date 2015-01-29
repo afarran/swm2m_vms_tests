@@ -50,3 +50,7 @@ HelmPanelUnibox = {}
     end
     return false
   end
+
+  function HelmPanelUnibox:isReady() 
+    return "Unibox is not installed!"
+  end
