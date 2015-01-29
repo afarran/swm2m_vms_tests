@@ -22,6 +22,9 @@ if ConfigFile then
   print("USING CONFIG: " .. ConfigFile)
 end
 
+-- Annotations
+require("Annotations/Annotations")
+
 -- Test Framework
 cfg, framework, gateway, lsf, device, gps = require "TestFramework"()
 lunatest = require "lunatest"
