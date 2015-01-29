@@ -186,33 +186,33 @@ end
 --   spaces are not permitted on either side of the colon following FROM
 --   in the MAIL command or TO in the RCPT command. 
 
-function test_SMTP_WhenMAILWithSpaceBeforeColonCalled_ServerReturns552()
+function test_SMTP_WhenMAILWithSpaceBeforeColonCalled_ServerReturns550()
   startSmtp()
   smtp:execute("HELO")
   local response = smtp:getResponse()
   smtp:execute("MAIL FROM :<skywave1@skywave.com>")
   response = smtp:getResponse()
-  assert_match("^552", mailResponse, "MAIL FROM :<path> response incorrect")
+  assert_match("^550", response, "MAIL FROM :<path> response incorrect")
 
 end
 
-function test_SMTP_WhenMAILWithSpaceAfterColonCalled_ServerReturns554()
+function test_SMTP_WhenMAILWithSpaceAfterColonCalled_ServerReturns550()
   startSmtp()
   smtp:execute("HELO")
   local response = smtp:getResponse()
   smtp:execute("MAIL FROM: <skywave1@skywave.com>")
   response = smtp:getResponse()
-  assert_match("^554", mailResponse, "MAIL FROM :<path> response incorrect")
+  assert_match("^550", response, "MAIL FROM: <path> response incorrect")
 
 end
 
-function test_SMTP_WhenMAILWithSpaceBeforeAndAfterColonCalled_ServerReturns552()
+function test_SMTP_WhenMAILWithSpaceBeforeAndAfterColonCalled_ServerReturns550()
   startSmtp()
   smtp:execute("HELO")
   local response = smtp:getResponse()
   smtp:execute("MAIL FROM : <skywave1@skywave.com>")
   response = smtp:getResponse()
-  assert_match("^552", mailResponse, "MAIL FROM : <path> response incorrect")
+  assert_match("^550", response, "MAIL FROM : <path> response incorrect")
 
 end
 

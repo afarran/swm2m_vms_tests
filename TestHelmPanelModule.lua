@@ -56,6 +56,15 @@ end
 --- teardown function executed after each unit test
 function teardown()
 
+
+  vmsSW:setPropertiesByName({StandardReport1Interval = 0,   -- 0 is for feature disabled
+                             StandardReport2Interval = 0,
+                             StandardReport3Interval = 0,
+                             MinStandardReportLedFlashTime = 0}
+  )
+
+
+
 end
 
 -----------------------------------------------------------------------------------------------
@@ -249,37 +258,60 @@ end
 
 function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetTo0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsNotFlashing()
 
+  -- *** Setup
+  local STANDARD_REPORT_1_INTERVAL = 1
+  local STANDARD_REPORT_2_INTERVAL = 1
+  local STANDARD_REPORT_3_INTERVAL = 1
+
   vmsSW:setPropertiesByName({StandardReport1Interval = 1,
                              StandardReport2Interval = 1,
                              StandardReport3Interval = 1,
                              MinStandardReportLedFlashTime = 0}     -- 0 is for feature disabled
   )
-
+  -- *** Execute
   framework.delay(65)
   assert_false(helmPanel:isConnectLedFlashingSlow(), "Terminal Connected LED is flashing when feature is disabled")
 
-  -- back to reports not being sent
-  vmsSW:setPropertiesByName({StandardReport1Interval = 0,
-                             StandardReport2Interval = 0,
-                             StandardReport3Interval = 0,}
-  )
 
 end
 
 
 function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsFlashingForMinStandardReportLedFlashTime()
 
-  vmsSW:setPropertiesByName({StandardReport1Interval = 1,
-                             MinStandardReportLedFlashTime = 60}     -- feature enabled
+  -- *** Setup
+  local ledFlashingStateTrueTable = {}
+  local STANDARD_REPORT_1_INTERVAL = 1
+  local MIN_STANDARD_REPORT_FLASH_TIME = 30
+
+  vmsSW:setPropertiesByName({StandardReport1Interval = STANDARD_REPORT_1_INTERVAL,
+                             MinStandardReportLedFlashTime = MIN_STANDARD_REPORT_FLASH_TIME}     -- feature enabled
   )
 
-  framework.delay(65)
-  D:log(helmPanel:isConnectLedFlashingSlow())
-  assert_true(helmPanel:isConnectLedFlashingSlow(), "Terminal Connected LED is not flashing when StandardReport1Interval is being sent")
+  local standardReportEnabledStartTime = os.time()
+  D:log(standardReportEnabledStartTime)
+  local currentTime = 0
 
-  -- back to reports not being sent
-  vmsSW:setPropertiesByName({StandardReport1Interval = 0,
-                             MinStandardReportLedFlashTime = 0}     -- 0 is for feature disabled
+  gateway.setHighWaterMark() -- to get the newest messages
+  framework.delay(STANDARD_REPORT_1_INTERVAL*60 - 10)
+
+  currentTime = os.time()
+
+  while currentTime < standardReportEnabledStartTime + STANDARD_REPORT_1_INTERVAL*60 + MIN_STANDARD_REPORT_FLASH_TIME + 10  do
+      currentTime = os.time()
+      if(helmPanel:isConnectLedFlashing()) then
+        currentTime = os.time()
+        ledFlashingStateTrueTable[#ledFlashingStateTrueTable + 1] = currentTime
+      end
+  end
+
+  D:log(ledFlashingStateTrueTable)
+
+  local lastElementIndex = table.getn(ledFlashingStateTrueTable)
+
+  assert_equal(ledFlashingStateTrueTable[lastElementIndex] - ledFlashingStateTrueTable[1],
+  MIN_STANDARD_REPORT_FLASH_TIME,
+  8,
+  "IDP Connected LED was flashing for incorrect period of time when MIN_STANDARD_REPORT_FLASH_TIME is set above zero"
   )
 
 
