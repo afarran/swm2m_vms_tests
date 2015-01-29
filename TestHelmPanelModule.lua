@@ -71,7 +71,7 @@ end
 -- Test Cases - Helm Panel connected/disconnected
 -----------------------------------------------------------------------------------------------
 Annotations:register([[
-@dependencies(helmPanel,isReady)
+@dependOn(helmPanel,isReady)
 @method(test_XHelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAndTheStateToggles_HelmPanelDisconnectedStateChangesCorrectlyAndLEDTransitionsAreCorrect)
 @module(TestHelmPanelModule)
 ]])
@@ -137,7 +137,7 @@ function test_XHelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateA
 end
 
 Annotations:register([[
-@dependencies(helmPanel,isReady)
+@dependOn(helmPanel,isReady)
 @method(test_XHelmPanelDisconnected_WhenHelmPanelIsDisConnected_ConnectLEDIsOff)
 @module(TestHelmPanelModule)
 ]])

@@ -12,7 +12,7 @@ Managing dependencies with installed/enabled services.
 a) First you annotate like in other languages (almost):
 ```
  Annotations:register([[
- @dependencies(helmPanel,isReady)
+ @dependOn(helmPanel,isReady)
  @method(test_XXX)
  @module(TestHelmPanelModule)
  ]])
