@@ -83,9 +83,9 @@ def find_test_case(line):
 	return None
 
 def find_trace(line):
-	match = re.match('.*\..*:([0-9]+):.*', line)
-	if match:
-		return match.group(0)
+	match = re.search('.*Finished suite \"(.+?)\"', line)
+	if not match:
+		return line.rstrip()
 	return None
 	
 def create_xml(data):
@@ -98,6 +98,7 @@ def create_xml(data):
 		
 		for test_case in test_suite_data:
 			xml_test_case = ET.SubElement(xml_test_suite, "testcase")
+			xml_test_case_std = None
 			try:
 				tokens = test_case["name"].split("_")
 				test_group = tokens[1]
@@ -121,8 +122,13 @@ def create_xml(data):
 			if test_case["result"] == "ERROR":
 				xml_test_case_failure = ET.SubElement(xml_test_case, "error")
 				xml_test_case_failure.set("message", test_case["msg"])
-				xml_test_case_std = ET.SubElement(xml_test_case, "system-out")
-				xml_test_case_std.text = test_case["trace"]
+				
+			if "trace" in test_case:
+				try:
+					xml_test_case_std.text =  xml_test_case_std.text + "\n" + test_case["trace"]
+				except:
+					xml_test_case_std = ET.SubElement(xml_test_case, "system-out")
+					xml_test_case_std.text = test_case["trace"]
 			
 	return xml_test_suites
 	

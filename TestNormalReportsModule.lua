@@ -63,6 +63,11 @@ end
 -- Test Cases for STANDARD REPORTS
 -----------------------------------------------------------------------------------------------
 
+Annotations:register([[
+@dependencies(unibox)
+@method(test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if StandardReport 1 is sent periodically and its values are correct (setProperties used for report setup)
   -- Initial Conditions:
   --
@@ -100,6 +105,11 @@ function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsS
   )
 end
 
+Annotations:register([[
+@dependencies(unibox)
+@method(test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if StandardReport 2 is sent periodically and its values are correct (setProperties used for report setup)
   -- Initial Conditions:
   --

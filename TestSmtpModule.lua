@@ -14,17 +14,16 @@ module("TestSmtpModule", package.seeall)
 local SMTPclear = {}
 
 function suite_setup()
-  serialMain:open()
+  
 end
 
 -- executed after each test suite
 function suite_teardown()
-  framework.delay(1) -- for some reason simulator blocks if serial port is closed too soon
-  serialMain:close()
+  
 end
 
 --- setup function
-function setulp()
+function setup()
   gateway.setHighWaterMark()
 end
 
@@ -45,6 +44,9 @@ end
 -------------------------
 
 function test_SMTP_WhenSMTPCommandCalled_ServerReturnsSMTPServiceReady()
+  if not smtp:ready() then 
+    skip("Smtp is not ready - serial port not opened (".. serialMain.name .. ")")
+  end
   assert_true(smtp:ready(), "Smtp is not ready - serial port not opened")
   smtp:start()
   SMTPclear[1] = "QUIT"
@@ -55,6 +57,9 @@ function test_SMTP_WhenSMTPCommandCalled_ServerReturnsSMTPServiceReady()
 end
 
 local function startSmtp()
+  if not smtp:ready() then 
+    skip("Smtp is not ready - serial port not opened (".. serialMain.name .. ")")
+  end
   assert_true(smtp:ready(), "Smtp is not ready - serial port not opened")
   smtp:start()
   SMTPclear[1] = "QUIT"
@@ -129,7 +134,7 @@ end
 ----
 --- Test SMTP MAIL FROM
 -- correct syntax for MAIL command is: "MAIL FROM:<reverse-path> [SP <mail-parameters> ] <CRLF>"
-function test_SMTP_WhenCorrectMAILFROMCommandCalled_ServerReturns250()
+function test_SMTP_WhenMAILCorrectCommandCalled_ServerReturns250()
   startSmtp()
   smtp:execute("MAIL FROM: <test@skywave.com>")
   local mailResponse = smtp:getResponse()
@@ -141,21 +146,21 @@ end
   --failure is permanent (i.e., will occur again if the client tries to
   --send the same address again) or temporary (i.e., the address might be
   --accepted if the client tries again later).
-function test_SMTP_WhenMAILFROMCommandCalledWithBrokenReversePath_ServerReturns5xx()
+function test_SMTP_WhenMAILCommandCalledWithBrokenReversePath_ServerReturns5xx()
   startSmtp()
   smtp:execute("MAIL FROM:test@skywave.com<>")
   local mailResponse = smtp:getResponse()
   assert_match("^5%d%d", mailResponse, "MAIL FROM response incorrect")
 end
 
-function test_SMTP_WhenMAILFROMCommandCalledWithIncorrectEmail_ServerReturns5xx()
+function test_SMTP_WhenMAILCommandCalledWithIncorrectEmail_ServerReturns5xx()
   startSmtp()
   smtp:execute("MAIL FROM:<test@skywave>")
   local mailResponse = smtp:getResponse()
   assert_match("^5%d%d", mailResponse, "MAIL FROM response incorrect")
 end
 
-function test_SMTP_WhenMAILFROMCommandCalledWithEmptyMail_ServerReturns5xx()
+function test_SMTP_WhenMAILCommandCalledWithEmptyMail_ServerReturns5xx()
   startSmtp()
   smtp:execute("MAIL FROM:")
   local mailResponse = smtp:getResponse()
@@ -166,7 +171,7 @@ end
   --starts with a MAIL command that gives the sender identification.  (In
   --general, the MAIL command may be sent only when no mail transaction
   --is in progress;
-function test_SMTP_WhenCorrectMAILFROMCommandCalledTwice_ServerReturns5xx()
+function test_SMTP_WhenMAILCorrectCommandCalledTwice_ServerReturns5xx()
   startSmtp()
   smtp:execute("MAIL FROM: <skywave1@skywave.com>")
   local mailResponse = smtp:getResponse()
@@ -186,8 +191,10 @@ end
 
 function test_SMTP_WhenRCPTCorrectCommandCalled_ServerReturns250()
   startSmtp()
-  smtp:execute("MAIL FROM: <skywave@skywave.com>")
+  smtp:execute("HELO")
   local response = smtp:getResponse()
+  smtp:execute("MAIL FROM: <skywave@skywave.com>")
+  response = smtp:getResponse()
   smtp:execute("RCPT TO: <receiver@skywave.com>")
   response = smtp:getResponse()
   assert_match("^250", response, "RCPT TO response incorrect")
@@ -196,6 +203,8 @@ end
 
 function test_SMTP_WhenRCPTCorrectCommandCalledMultipleTimes_ServerReturns250()
   startSmtp()
+  smtp:execute("HELO")
+  response = smtp:getResponse()
   smtp:execute("MAIL FROM: <skywave@skywave.com>")
   local response = smtp:getResponse()
   for index=1, 10 do 
@@ -207,6 +216,8 @@ end
 
 function test_SMTP_WhenRCPTWithMalformedForwardPathCalled_ServerReturns5xx()
   startSmtp()
+  smtp:execute("HELO")
+  response = smtp:getResponse()
   smtp:execute("RCPT TO: receiver-skywave")
   local response = smtp:getResponse()
   assert_match("^5%d%d", response, "RCPT TO response incorrect")
@@ -224,6 +235,58 @@ function test_SMTP_WhenRCPTCommandCalledBeforeMAILCommand_ServerReturns503()
   assert_match("^503", response, "RCPT should be refused if called before MAIL")
   
 end
+
+---DATA command tests
+--DATA <CRLF>
+--   If accepted, the SMTP server returns a 354 Intermediate reply and
+--   considers all succeeding lines up to but not including the end of
+--   mail data indicator to be the message text.  When the end of text is
+--   successfully received and stored, the SMTP-receiver sends a "250 OK"
+--   reply.
+function test_SMTP_WhenDATACorrectCommandCalled_ServerReturns354()
+  startSmtp()
+  smtp:execute("HELO")
+  local response = smtp:getResponse()
+  smtp:execute("MAIL FROM: <skywave@skywave.com>")
+  response = smtp:getResponse()
+  smtp:execute("RCPT TO: <receiver@skywave.com>")
+  response = smtp:getResponse()
+  smtp:execute("DATA")
+  response = smtp:getResponse()
+  assert_match("^354", response, "DATA command response is incorrect")
+  SMTPclear[1] = "\r\n.\r\n"
+  SMTPclear[2] = "QUIT"
+end
+
+--If there was no MAIL, or no RCPT, command, or all such commands were
+--   rejected, the server MAY return a "command out of sequence" (503) or
+--   "no valid recipients" (554) reply in response to the DATA command.
+function test_SMTP_WhenDATACommandCalledBeforeMAILCommand_ServerReturns5xx()
+  startSmtp()
+  smtp:execute("HELO")
+  local response = smtp:getResponse()
+  smtp:execute("DATA")
+  response = smtp:getResponse()
+  SMTPclear[1] = "\r\n.\r\n"
+  SMTPclear[2] = "QUIT"
+  assert_match("^5%d%d", response, "DATA command response is incorrect")
+
+end
+
+function test_SMTP_WhenDATACommandCalledBeforeRCPTCommand_ServerReturns5xx()
+  startSmtp()
+  smtp:execute("HELO")
+  local response = smtp:getResponse()
+  smtp:execute("MAIL FROM: <skywave@skywave.com>")
+  response = smtp:getResponse()
+  smtp:execute("DATA")
+  response = smtp:getResponse()
+  SMTPclear[1] = "\r\n.\r\n"
+  SMTPclear[2] = "QUIT"
+  assert_match("^5%d%d", response, "DATA command response is incorrect")
+
+end
+
 
 ------------------------------------------------------------------------------------
 --Several commands (RSET, DATA, QUIT) are specified as not permitting
