@@ -22,12 +22,14 @@ if ConfigFile then
   print("USING CONFIG: " .. ConfigFile)
 end
 
+-- Annotations
+require("Infrastructure/Annotations/Annotations")
+-- Dependency Resolver
+require("Infrastructure/DependencyResolver/DependencyResolver")
+
 -- Test Framework
 cfg, framework, gateway, lsf, device, gps = require "TestFramework"()
 lunatest = require "lunatest"
-
--- Annotations
-require("Annotations/Annotations")
 
 -- Global variables used in the tests
 GPS_PROCESS_TIME = 1                                                -- seconds
@@ -60,7 +62,7 @@ shellSW = ShellServiceWrapper()
 uniboxSW = UniboxServiceWrapper()
 
 require("Serial/RealSerialWrapper")
-serialMain = RealSerialWrapper({name="com203", open=true, newline="\r\n"})
+serialMain = RealSerialWrapper({name="com201", open=true, newline="\r\n"})
 
 -- Helm Panel
 helmPanelFactory = require("HelmPanelDevice/HelmPanelDeviceFactory")()

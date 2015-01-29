@@ -173,13 +173,47 @@ end
   --is in progress;
 function test_SMTP_WhenMAILCorrectCommandCalledTwice_ServerReturns5xx()
   startSmtp()
-  smtp:execute("MAIL FROM: <skywave1@skywave.com>")
+  smtp:execute("MAIL FROM:<skywave1@skywave.com>")
   local mailResponse = smtp:getResponse()
   assert_match("^250", mailResponse, "MAIL FROM response incorrect")
   
-  smtp:execute("MAIL FROM: <skywave1@skywave.com>")
+  smtp:execute("MAIL FROM:<skywave1@skywave.com>")
   mailResponse = smtp:getResponse()
   assert_match("^5%d%d", mailResponse, "MAIL FROM second response incorrect")
+end
+
+--Since it has been a common source of errors, it is worth noting that
+--   spaces are not permitted on either side of the colon following FROM
+--   in the MAIL command or TO in the RCPT command. 
+
+function test_SMTP_WhenMAILWithSpaceBeforeColonCalled_ServerReturns552()
+  startSmtp()
+  smtp:execute("HELO")
+  local response = smtp:getResponse()
+  smtp:execute("MAIL FROM :<skywave1@skywave.com>")
+  response = smtp:getResponse()
+  assert_match("^552", mailResponse, "MAIL FROM :<path> response incorrect")
+
+end
+
+function test_SMTP_WhenMAILWithSpaceAfterColonCalled_ServerReturns554()
+  startSmtp()
+  smtp:execute("HELO")
+  local response = smtp:getResponse()
+  smtp:execute("MAIL FROM: <skywave1@skywave.com>")
+  response = smtp:getResponse()
+  assert_match("^554", mailResponse, "MAIL FROM :<path> response incorrect")
+
+end
+
+function test_SMTP_WhenMAILWithSpaceBeforeAndAfterColonCalled_ServerReturns552()
+  startSmtp()
+  smtp:execute("HELO")
+  local response = smtp:getResponse()
+  smtp:execute("MAIL FROM : <skywave1@skywave.com>")
+  response = smtp:getResponse()
+  assert_match("^552", mailResponse, "MAIL FROM : <path> response incorrect")
+
 end
 
 --- Test SMTP RECPT TO
@@ -193,9 +227,9 @@ function test_SMTP_WhenRCPTCorrectCommandCalled_ServerReturns250()
   startSmtp()
   smtp:execute("HELO")
   local response = smtp:getResponse()
-  smtp:execute("MAIL FROM: <skywave@skywave.com>")
+  smtp:execute("MAIL FROM:<skywave@skywave.com>")
   response = smtp:getResponse()
-  smtp:execute("RCPT TO: <receiver@skywave.com>")
+  smtp:execute("RCPT TO:<receiver@skywave.com>")
   response = smtp:getResponse()
   assert_match("^250", response, "RCPT TO response incorrect")
   
@@ -205,10 +239,10 @@ function test_SMTP_WhenRCPTCorrectCommandCalledMultipleTimes_ServerReturns250()
   startSmtp()
   smtp:execute("HELO")
   response = smtp:getResponse()
-  smtp:execute("MAIL FROM: <skywave@skywave.com>")
+  smtp:execute("MAIL FROM:<skywave@skywave.com>")
   local response = smtp:getResponse()
   for index=1, 10 do 
-    smtp:execute("RCPT TO: <receiver"..index.."@skywave.com>")
+    smtp:execute("RCPT TO:<receiver"..index.."@skywave.com>")
     response = smtp:getResponse()
     assert_match("^250", response, "RCPT TO response incorrect for " .. index .. " receipment")  
   end  
@@ -218,7 +252,7 @@ function test_SMTP_WhenRCPTWithMalformedForwardPathCalled_ServerReturns5xx()
   startSmtp()
   smtp:execute("HELO")
   response = smtp:getResponse()
-  smtp:execute("RCPT TO: receiver-skywave")
+  smtp:execute("RCPT TO:receiver-skywave")
   local response = smtp:getResponse()
   assert_match("^5%d%d", response, "RCPT TO response incorrect")
   
@@ -230,7 +264,7 @@ function test_SMTP_WhenRCPTCommandCalledBeforeMAILCommand_ServerReturns503()
   startSmtp()
   smtp:execute("HELO")
   local response = smtp:getResponse()
-  smtp:execute("RCPT TO: <receiver@skywave.com>")
+  smtp:execute("RCPT TO:<receiver@skywave.com>")
   response = smtp:getResponse()
   assert_match("^503", response, "RCPT should be refused if called before MAIL")
   
@@ -247,9 +281,9 @@ function test_SMTP_WhenDATACorrectCommandCalled_ServerReturns354()
   startSmtp()
   smtp:execute("HELO")
   local response = smtp:getResponse()
-  smtp:execute("MAIL FROM: <skywave@skywave.com>")
+  smtp:execute("MAIL FROM:<skywave@skywave.com>")
   response = smtp:getResponse()
-  smtp:execute("RCPT TO: <receiver@skywave.com>")
+  smtp:execute("RCPT TO:<receiver@skywave.com>")
   response = smtp:getResponse()
   smtp:execute("DATA")
   response = smtp:getResponse()
@@ -277,7 +311,7 @@ function test_SMTP_WhenDATACommandCalledBeforeRCPTCommand_ServerReturns5xx()
   startSmtp()
   smtp:execute("HELO")
   local response = smtp:getResponse()
-  smtp:execute("MAIL FROM: <skywave@skywave.com>")
+  smtp:execute("MAIL FROM:<skywave@skywave.com>")
   response = smtp:getResponse()
   smtp:execute("DATA")
   response = smtp:getResponse()
@@ -294,17 +328,30 @@ end
 --   server and accepted by the client, clients MUST NOT send such
 --   parameters and servers SHOULD reject commands containing them as
 --   having invalid syntax.
-
-function test_SMTP_WhenRSETWithParameterCalled_ServerReturns5xx()
-    startSmtp()
+--   future extensions, commands that are specified in this document as
+--   not accepting arguments (DATA, RSET, QUIT) SHOULD return a 501
+--   message if arguments are supplied in the absence of EHLO-
+--   advertised extensions.
+      
+function test_SMTP_WhenRSETWithParameterCalled_ServerReturns501()
+  startSmtp()
   smtp:execute("RSET someparam")
   local mailResponse = smtp:getResponse()
-  assert_match("^5%d%d", mailResponse, "RSET with parameter response incorrect")
+  assert_match("^501", mailResponse, "RSET with parameter response incorrect")
 end
 
-function test_SMTP_WhenQUITWithParameterCalled_ServerReturns5xx()
-    startSmtp()
+function test_SMTP_WhenQUITWithParameterCalled_ServerReturns501()
+  startSmtp()
   smtp:execute("QUIT someparam")
   local mailResponse = smtp:getResponse()
-  assert_match("^5%d%d", mailResponse, "QUIT with parameter response incorrect")
+  assert_match("^501", mailResponse, "QUIT with parameter response incorrect")
+end
+
+function test_SMTP_WhenDATAWithParameterCalled_ServerReturns501()
+  startSmtp()
+  smtp:execute("DATA someparam")
+  SMTPclear[1] = "\r\n.\r\n"
+  SMTPclear[2] = "QUIT"
+  local mailResponse = smtp:getResponse()
+  assert_match("^501", mailResponse, "DATA with parameter response incorrect")
 end

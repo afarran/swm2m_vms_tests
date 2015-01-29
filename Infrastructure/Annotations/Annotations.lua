@@ -28,6 +28,22 @@ Annotations = {}
 
     D:log(Annotations.registered,"registered")
   end
+
+  function Annotations:get(annotation,module,method)
+
+    if Annotations.registered[module] == nil or 
+       Annotations.registered[module][method] == nil then
+      return false
+    end
+
+    if Annotations.registered[module][method][annotation] then 
+      return Annotations.registered[module][method][annotation]
+    end
+
+    return false
+
+  end
+  
   
 
 
