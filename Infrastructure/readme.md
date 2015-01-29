@@ -39,8 +39,35 @@ end
 
 c) This method is an aspect - in this example it just check terminal if helm panel device (unibox) is installed and enabled. All logic and reason to change is here.
 
-7. Any TC can be annotated in this way - no need to do more.
-8. Other annotations can be designed - that is the piece of design which can be tuned (simple but works).
+```
+function HelmPanelUnibox:isReady()
+local serviceList = self.system:requestMessageByName("getServiceList",nil,"serviceList")
+local disabledList = framework.base64Decode(serviceList.serviceList.disabledList)
+local sinList = framework.base64Decode(serviceList.serviceList.sinList)
+local enabled = false
+for i,v in ipairs(sinList) do
+if tonumber(v) == tonumber(self.device.sin) then
+enabled = true
+break
+end
+end
+for i,v in ipairs(disabledList) do
+if tonumber(self.device.sin) == tonumber(v) then
+enabled = false
+end
+end
+if enabled then
+return true
+end
+return "Unibox is not installed!"
+end
+
+
+```
+
+Any TC can be annotated in this way - no need to do more.
+
+Other annotations can be designed - that is the piece of design which can be tuned (simple but works).
 
 pblo
 
