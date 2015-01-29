@@ -26,8 +26,9 @@ SmtpWrapper = {}
     return self.port:opened()
   end
   
-  function SmtpWrapper:getResponse(timeout)
+  function SmtpWrapper:getResponse(timeout, delay)
     local timeout = timeout or self.timeout
+    local delay = delay or 0.2
     local startTime = os.time()
     local startAvailable = self.port:available()
     while (os.time() - startTime < timeout) do
@@ -37,7 +38,7 @@ SmtpWrapper = {}
         return self.port:read()
       end
       startAvailable = currentAvailable
-      framework.delay(0.2)
+      framework.delay(delay)
     end
   end
   
