@@ -23,7 +23,9 @@ if ConfigFile then
 end
 
 -- Annotations
-require("Annotations/Annotations")
+require("Infrastructure/Annotations/Annotations")
+-- Dependency Resolver
+require("Infrastructure/DependencyResolver/DependencyResolver")
 
 -- Test Framework
 cfg, framework, gateway, lsf, device, gps = require "TestFramework"()

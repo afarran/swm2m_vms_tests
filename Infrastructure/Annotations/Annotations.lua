@@ -26,8 +26,13 @@ Annotations = {}
     end
     Annotations.registered[module][method] = annotations
 
-    D:log(Annotations.registered,"registered")
+    --D:log(Annotations.registered,"registered")
   end
+
+  function Annotations:get(annotation,module,method)
+    return ""
+  end
+  
   
 
 
