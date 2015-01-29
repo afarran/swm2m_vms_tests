@@ -308,17 +308,10 @@ function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsS
 
   local lastElementIndex = table.getn(ledFlashingStateTrueTable)
 
-  D:log(lastElementIndex)
-
   assert_equal(ledFlashingStateTrueTable[lastElementIndex] - ledFlashingStateTrueTable[1],
   MIN_STANDARD_REPORT_FLASH_TIME,
   8,
   "IDP Connected LED was flashing for incorrect period of time when MIN_STANDARD_REPORT_FLASH_TIME is set above zero"
-  )
-
-
-  vmsSW:setPropertiesByName({StandardReport1Interval = 0,
-                             MinStandardReportLedFlashTime = 0}     -- 0 is for feature disabled
   )
 
 
