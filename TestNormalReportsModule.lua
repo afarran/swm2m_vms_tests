@@ -28,7 +28,7 @@ function suite_setup()
     latitude = 0,
     longitude = 0,
     speed = 0,
-    heading = 361
+    heading = 0
   }
   GPS:set(pos)
 
@@ -96,14 +96,14 @@ end
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues()
-  generic_test_StandardReportContent(
-    "StandardReport1",
-    "StandardReport1",
-    {StandardReport1Interval=1, AcceleratedReport1Rate=1},
-    1,
-    1
-  )
+function test_TTStandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues()
+  generic_test_StandardReportContent({
+    firstReportKey = "StandardReport1",
+    reportKey = "StandardReport1",
+    properties = {StandardReport1Interval=1, AcceleratedReport1Rate=1}, -- minute , divide
+    firstReportInterval = 1, -- minute
+    reportInterval = 1 -- minute
+  })
 end
 
 --- TC checks if StandardReport 2 is sent periodically and its values are correct (setProperties used for report setup)
@@ -133,14 +133,15 @@ end
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues()
-  generic_test_StandardReportContent(
-    "StandardReport2",
-    "StandardReport2",
-    {StandardReport2Interval=1, AcceleratedReport2Rate=1},
-    1,
-    1
-  )
+function test_TTStandardReport_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues()
+  generic_test_StandardReportContent({
+    firstReportKey = "StandardReport2",
+    reportKey = "StandardReport2",
+    properties = {StandardReport2Interval=1, AcceleratedReport2Rate=1}, -- minute , divide
+    firstReportInterval = 1, -- minute
+    reportInterval = 1 -- minute
+  })
+
 end
 
 --- TC checks if StandardReport 3 is sent periodically and its values are correct (setProperties used for report setup)
@@ -170,14 +171,14 @@ end
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues()
-  generic_test_StandardReportContent(
-    "StandardReport3",
-    "StandardReport3",
-    {StandardReport3Interval=1, AcceleratedReport3Rate=1},
-    1,
-    1
-  )
+function test_TTStandardReport_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues()
+  generic_test_StandardReportContent({
+    firstReportKey = "StandardReport3",
+    reportKey = "StandardReport3",
+    properties = {StandardReport3Interval=1, AcceleratedReport3Rate=1}, -- minute , divide
+    firstReportInterval = 1, -- minute
+    reportInterval = 1 -- minute
+  })
 end
 
 --- TC checks if StandardReport 1 is sent periodically and its values are correct (SetConfigReport1 used for report setup)
@@ -207,20 +208,20 @@ end
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-function test_StandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport1MessageIsSent_StandardReport1IsSentPeriodicallyWithCorrectValues()
-  generic_test_StandardReportContent(
-    "StandardReport1",
-    "StandardReport1",
-    {StandardReport1Interval=1, AcceleratedReport1Rate=1},
-    1,
-    1,
-    "SetConfigReport1",
-    "ConfigChangeReport1",
-    {
+function test_TTStandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport1MessageIsSent_StandardReport1IsSentPeriodicallyWithCorrectValues()
+  generic_test_StandardReportContent({
+    firstReportKey = "StandardReport1",
+    reportKey ="StandardReport1",
+    properties = {StandardReport1Interval=1, AcceleratedReport1Rate=1}, --minutes,divide
+    firstReportInterval = 1,  --minutes
+    reportInterval = 1, --minutes
+    setConfigMsgKey = "SetConfigReport1",
+    configChangeMsgKey = "ConfigChangeReport1",
+    fields = {
       {Name = "StandardReport1Interval" , Value = 1},
       {Name = "AcceleratedReport1Rate" , Value = 1}
     }
-  )
+  })
 end
 
 --- TC checks if StandardReport 2 is sent periodically and its values are correct (SetConfigReport2 used for report setup)
@@ -250,20 +251,20 @@ end
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-function test_StandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport2MessageIsSent_StandardReport2IsSentPeriodicallyWithCorrectValues()
-  generic_test_StandardReportContent(
-    "StandardReport2",
-    "StandardReport2",
-    {StandardReport2Interval=1, AcceleratedReport2Rate=1},
-    1,
-    1,
-    "SetConfigReport2",
-    "ConfigChangeReport2",
-    {
+function test_TTStandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport2MessageIsSent_StandardReport2IsSentPeriodicallyWithCorrectValues()
+   generic_test_StandardReportContent({
+    firstReportKey = "StandardReport2",
+    reportKey ="StandardReport2",
+    properties = {StandardReport2Interval=1, AcceleratedReport2Rate=1}, --minutes,divide
+    firstReportInterval = 1,  --minutes
+    reportInterval = 1, --minutes
+    setConfigMsgKey = "SetConfigReport2",
+    configChangeMsgKey = "ConfigChangeReport2",
+    fields = {
       {Name = "StandardReport2Interval" , Value = 1},
       {Name = "AcceleratedReport2Rate" , Value = 1}
     }
-  )
+  })
 end
 
 --- TC checks if StandardReport 3 is sent periodically and its values are correct (SetConfigReport3 used for report setup)
@@ -293,20 +294,22 @@ end
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-function test_StandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport3MessageIsSent_StandardReport3IsSentPeriodicallyWithCorrectValues()
-  generic_test_StandardReportContent(
-    "StandardReport3",
-    "StandardReport3",
-    {StandardReport3Interval=1, AcceleratedReport3Rate=1},
-    1,
-    1,
-    "SetConfigReport3",
-    "ConfigChangeReport3",
-    {
+function test_TTStandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport3MessageIsSent_StandardReport3IsSentPeriodicallyWithCorrectValues()
+
+  generic_test_StandardReportContent({
+    firstReportKey = "StandardReport3",
+    reportKey ="StandardReport3",
+    properties = {StandardReport3Interval=1, AcceleratedReport3Rate=1}, --minutes,divide
+    firstReportInterval = 1,  --minutes
+    reportInterval = 1, --minutes
+    setConfigMsgKey = "SetConfigReport3",
+    configChangeMsgKey = "ConfigChangeReport3",
+    fields = {
       {Name = "StandardReport3Interval" , Value = 1},
       {Name = "AcceleratedReport3Rate" , Value = 1}
     }
-  )
+  })
+
 end
 
 --- TC checks if StandardReport 1 is not sent
@@ -416,7 +419,7 @@ end
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-function test_StandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues()
+function test_CCStandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues()
 
   -- intervals and rates setup
   -- intervals in minutes
@@ -429,13 +432,13 @@ function test_StandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport1
 
   framework.delay(60)
 
-  generic_test_StandardReportContent(
-    "StandardReport1",
-    "StandardReport1",
-    {StandardReport1Interval=1, AcceleratedReport1Rate=1},
-    1,
-    1
-  )
+  generic_test_StandardReportContent({
+    firstReportKey = "StandardReport1",
+    reportKey = "StandardReport1",
+    properties = {StandardReport1Interval=1, AcceleratedReport1Rate=1},
+    firstReportInterval = 1,
+    reportInterval = 1
+  })
 end
 
 --- TC checks if StandardReport 2 is sent periodically and its values are correct (setProperties used for report setup)
@@ -470,7 +473,7 @@ end
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-function test_StandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues()
+function test_CCStandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues()
 
   -- intervals and rates setup
   -- intervals in minutes
@@ -483,13 +486,13 @@ function test_StandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport2
 
   framework.delay(60)
 
-  generic_test_StandardReportContent(
-    "StandardReport2",
-    "StandardReport2",
-    {StandardReport2Interval=1, AcceleratedReport2Rate=1},
-    1,
-    1
-  )
+  generic_test_StandardReportContent({
+    firstReportKey = "StandardReport2",
+    reportKey = "StandardReport2",
+    properties = {StandardReport2Interval=1, AcceleratedReport2Rate=1},
+    firstReportInterval = 1,
+    reportInterval = 1
+  })
 end
 
 --- TC checks if StandardReport 3 is sent periodically and its values are correct (setProperties used for report setup)
@@ -524,7 +527,7 @@ end
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-function test_StandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues()
+function test_CCStandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues()
 
   -- intervals and rates setup
   -- intervals in minutes
@@ -537,13 +540,13 @@ function test_StandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport3
 
   framework.delay(60)
 
-  generic_test_StandardReportContent(
-    "StandardReport3",
-    "StandardReport3",
-    {StandardReport3Interval=1, AcceleratedReport3Rate=1},
-    1,
-    1
-  )
+  generic_test_StandardReportContent({
+    firstReportKey = "StandardReport3",
+    reportKey = "StandardReport3",
+    properties = {StandardReport3Interval=1, AcceleratedReport3Rate=1},
+    firstReportInterval = 1,
+    reportInterval = 1
+  })
 end
 
 
@@ -579,14 +582,14 @@ end
   -- 6. Accelerated Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport1IsSentWithCorrectValues()
-  generic_test_StandardReportContent(
-    "StandardReport1",
-    "AcceleratedReport1",
-    {StandardReport1Interval=2, AcceleratedReport1Rate=2},
-    2,
-    1
-  )
+function test_CCAcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport1IsSentWithCorrectValues()
+  generic_test_StandardReportContent({
+    firstReportKey = "StandardReport1",
+    reportKey = "AcceleratedReport1",
+    properties = {StandardReport1Interval=2, AcceleratedReport1Rate=2},
+    firstReportInterval = 2,
+    reportInterval = 1
+  })
 end
 
 --- TC checks if AcceleratedReport 2 is sent periodically and its values are correct (setProperties used for setup)
@@ -616,14 +619,14 @@ end
   -- 6. Accelerated Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport2IsSentWithCorrectValues()
-  generic_test_StandardReportContent(
-    "StandardReport2",
-    "AcceleratedReport2",
-    {StandardReport2Interval=2, AcceleratedReport2Rate=2},
-    2,
-    1
-  )
+function test_CCAcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport2IsSentWithCorrectValues()
+  generic_test_StandardReportContent({
+    firstReportKey = "StandardReport2",
+    reportKey = "AcceleratedReport2",
+    properties = {StandardReport2Interval=2, AcceleratedReport2Rate=2},
+    firstReportInterval = 2,
+    reporrInterval = 1
+  })
 end
 
 --- TC checks if AcceleratedReport 3 is sent periodically and its values are correct (setProperties used for setup)
@@ -653,14 +656,14 @@ end
   -- 6. Accelerated Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport3IsSentWithCorrectValues()
-  generic_test_StandardReportContent(
-    "StandardReport3",
-    "AcceleratedReport3",
-    {StandardReport3Interval=2, AcceleratedReport3Rate=2},
-    2,
-    1
-  )
+function test_CCAcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport3IsSentWithCorrectValues()
+  generic_test_StandardReportContent({
+    firstReportKey = "StandardReport3",
+    reportKey = "AcceleratedReport3",
+    properties = {StandardReport3Interval=2, AcceleratedReport3Rate=2},
+    firstReportInterval = 2,
+    reportInterval = 1
+  })
 end
 
 --- TC checks if StandardReport 1 is sent and accelerated report is not sent.
@@ -770,14 +773,14 @@ end
   -- 6. Accelerated Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-function test_AcceleretedReportDivisionVariant43_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport1IsSentWithCorrectValues()
-  generic_test_StandardReportContent(
-    "StandardReport1",
-    "AcceleratedReport1",
-    {StandardReport1Interval=4, AcceleratedReport1Rate=3},
-    4,
-    4/3
-  )
+function test_CCAcceleretedReportDivisionVariant43_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport1IsSentWithCorrectValues()
+  generic_test_StandardReportContent({
+    firstReportKey = "StandardReport1",
+    reportKey = "AcceleratedReport1",
+    properties = {StandardReport1Interval=4, AcceleratedReport1Rate=3},
+    firstReportInterval = 4,
+    reportInterval = 4/3
+  })
 end
 
 --- TC checks if AcceleratedReport 1 is sent periodically and its values are correct (setProperties used for setup)
@@ -809,14 +812,14 @@ end
   -- 6. Accelerated Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-function test_AcceleretedReportDivisionVariant23_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport1IsSentWithCorrectValues()
-  generic_test_StandardReportContent(
-    "StandardReport1",
-    "AcceleratedReport1",
-    {StandardReport1Interval=2, AcceleratedReport1Rate=3},
-    2,
-    2/3
-  )
+function test_CCAcceleretedReportDivisionVariant23_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport1IsSentWithCorrectValues()
+  generic_test_StandardReportContent({
+    firstReportKey = "StandardReport1",
+    reportKey = "AcceleratedReport1",
+    properties = {StandardReport1Interval=2, AcceleratedReport1Rate=3},
+    firstReportInterval = 2,
+    reportInterval = 2/3
+  })
 end
 
 -----------------------------------------------------------------------------------------------
@@ -1806,7 +1809,15 @@ function generic_test_LogReports(logReportXKey, standardReportXKey, properties, 
 end
 
 -- This is generic function for configure and test reports (StandardReport,AcceleratedReport)
-function generic_test_StandardReportContent(firstReportKey,reportKey,properties,firstReportInterval,reportInterval,setConfigMsgKey,configChangeMsgKey,fields)
+function generic_test_StandardReportContent(configuration)
+  local firstReportKey = configuration.firstReportKey  -- first report name
+  local reportKey = configuration.reportKey -- second report name
+  local properties = configuration.properties -- StandardReportXInterval, AcceleratedReportXRate
+  local firstReportInterval = configuration.firstReportInterval -- first report interval
+  local reportInterval = configuration.reportInterval -- second report interval
+  local setConfigMsgKey = configuration.setConfigMsgKey -- setConfig message name
+  local fields = configuration.fields -- fields for setConfig message
+  local configChangeMsgKey = configuration.configChangeMsgKey -- configChange message name
 
   -- testing via message
   if setConfigMsgKey then
@@ -1847,7 +1858,7 @@ function generic_test_StandardReportContent(firstReportKey,reportKey,properties,
     latitude  = 1,
     longitude = 1,
     speed =  0,
-    heading = 361
+    heading = 0
   }
   GPS:set(newPosition)
   framework.delay(GPS_READ_INTERVAL + GPS_PROCESS_TIME)
