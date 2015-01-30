@@ -1,14 +1,9 @@
-***
+**
 Simple Annotations Engine
-
-Annotations/Annotations.lua
-***
-
 Example of annotations usage:
+**
 
-***
 Managing dependencies with installed/enabled services.
-***
 
 1. Some TCs need to have given service installed on the device.
 2. If the service is not installed/enabled the TC should skip.
