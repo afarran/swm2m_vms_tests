@@ -1876,6 +1876,7 @@ end
 function test_GpsBlocked_WhenGpsSignalIsBlockedAndNoFixWasEverObtainedByTerminal_DefaultValuesOfLattitudeAndLongitudeAreSentInReports()
 
   -- TODO: THIS need to be a first TC to be run - just after formatting terminal!
+  skip("This is a draft version - this TC requires deleting gps data before run")
 
   -- *** Setup
   -- terminal in some position but no valid fix provided
@@ -1898,35 +1899,35 @@ function test_GpsBlocked_WhenGpsSignalIsBlockedAndNoFixWasEverObtainedByTerminal
   -- *** Execute
   gateway.setHighWaterMark() -- to get the newest messages
   -- Waiting for StandardReport
-  local ReceivedMessages = vmsSW:waitForMessagesByName({"StandardReport1"}, 125)
-  D:log(ReceivedMessages["StandardReport1"])
+  local ReceivedMessages1 = vmsSW:waitForMessagesByName({"StandardReport1"}, 125)
+  D:log(ReceivedMessages1["StandardReport1"])
 
-  ReceivedMessages = vmsSW:waitForMessagesByName({"AcceleratedReport1"}, 125)
-  D:log(ReceivedMessages["AcceleratedReport1"])
+  local ReceivedMessages2 = vmsSW:waitForMessagesByName({"AcceleratedReport1"}, 125)
+  D:log(ReceivedMessages2["AcceleratedReport1"])
 
 
   assert_equal(
     5460000,
-    tonumber(ReceivedMessages["StandardReport1"].Latitude),
+    tonumber(ReceivedMessages1["StandardReport1"].Latitude),
     "Wrong latitude value in StandardReport received when no fix has been obtained by terminal"
   )
 
   assert_equal(
     10860000,
-    tonumber(ReceivedMessages["StandardReport1"].Longitude),
+    tonumber(ReceivedMessages1["StandardReport1"].Longitude),
     "Wrong longitude value in StandardReport received when no fix has been obtained by terminal"
   )
 
 
   assert_equal(
     5460000,
-    tonumber(ReceivedMessages["AcceleratedReport1"].Latitude),
+    tonumber(ReceivedMessages2["AcceleratedReport1"].Latitude),
     "Wrong latitude value in AcceleratedReport received when no fix has been obtained by terminal"
   )
 
   assert_equal(
     10860000,
-    tonumber(ReceivedMessages["AcceleratedReport1"].Longitude),
+    tonumber(ReceivedMessages2["AcceleratedReport1"].Longitude),
     "Wrong longitude value in AcceleratedReport received when no fix has been obtained by terminal"
   )
 
