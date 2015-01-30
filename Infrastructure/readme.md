@@ -1,6 +1,14 @@
-Annotations/Annotations.lua | DependencyResolver/DependencyResolver.lua
+***
+Simple Annotations Engine
 
+Annotations/Annotations.lua
+***
+
+Example of annotations usage:
+
+***
 Managing dependencies with installed/enabled services.
+***
 
 1. Some TCs need to have given service installed on the device.
 2. If the service is not installed/enabled the TC should skip.
@@ -19,7 +27,7 @@ a) First you annotate like in other languages (almost):
  function test_XXX()
   --implementation
 ```
-b) Then resolver is able to get annotation @dependOn and invoke by reflection needed method (in this case helmPanel:isReady())
+b) Then resolver is able to get annotation and invoke by reflection needed method (in this case helmPanel:isReady())
 
 ```
 function Annotations:resolve(annotationName,module,method)
@@ -43,7 +51,7 @@ function Annotations:resolve(annotationName,module,method)
 
 ```
 
-c) This method is an aspect - in this example it just checks terminal if helm panel device (unibox) is installed and enabled. All logic and reason to change is here.
+c) Invoked method pointed by annotation is an aspect - in this example it just checks terminal if helm panel device (unibox) is installed and enabled. All logic and reason to change is in this method, so loose coupling is achieved.
 
 ```
 function HelmPanel:isReady()
