@@ -40,3 +40,31 @@ Annotations = {}
 
     return false
   end
+
+  function Annotations:resolve(annotationName,module,method)
+
+    local definition = Annotations:get(annotationName,module,method)
+
+    if type(definition) ~= "string" then
+      return true
+    end
+    local descr = Annotations:parseDef(definition)
+    if _G[descr.object] == nil then
+      D:log("Object "..descr.object.." not found!")
+      return true
+    end
+    if _G[descr.object][descr.method] == nil then
+      D:log("Method  not found!")
+      return true
+    end
+    return _G[descr.object][descr.method](_G[descr.object])
+  end
+
+  function Annotations:parseDef(def)
+    local splt = string.split(def,',')
+    local result = {}
+    result['object']=splt[1]
+    result['method']=splt[2]
+    return result
+  end
+

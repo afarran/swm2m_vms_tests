@@ -22,27 +22,31 @@ a) First you annotate like in other languages (almost):
 b) Then resolver is able to get annotation @dependOn and invoke by reflection needed method (in this case helmPanel:isReady())
 
 ```
-function DependencyResolver:resolve(definition)
-  if type(definition) ~= "string" then
-   return true
+function Annotations:resolve(annotationName,module,method)
+
+    local definition = Annotations:get(annotationName,module,method)
+
+    if type(definition) ~= "string" then
+      return true
+    end
+    local descr = Annotations:parseDef(definition)
+    if _G[descr.object] == nil then
+      D:log("Object "..descr.object.." not found!")
+      return true
+    end
+    if _G[descr.object][descr.method] == nil then
+      D:log("Method  not found!")
+      return true
+    end
+    return _G[descr.object][descr.method](_G[descr.object])
   end
-  local descr = DependencyResolver:parseDef(definition)
-  if _G[descr.object] == nil then
-    D:log("Object "..descr.object.." not found!")
-    return true
-  end
-  if _G[descr.object][descr.method] == nil then
-    D:log("Method "..descr.method.." not found!")
-    return true
-  end
-  return _G[descr.object][descr.method](_G[descr.object])
-end
+
 ```
 
 c) This method is an aspect - in this example it just checks terminal if helm panel device (unibox) is installed and enabled. All logic and reason to change is here.
 
 ```
-function HelmPanelUnibox:isReady()
+function HelmPanel:isReady()
   local serviceList = self.system:requestMessageByName("getServiceList",nil,"serviceList")
   local disabledList = framework.base64Decode(serviceList.serviceList.disabledList)
   local sinList = framework.base64Decode(serviceList.serviceList.sinList)
@@ -61,7 +65,7 @@ function HelmPanelUnibox:isReady()
   if enabled then
     return true
   end
-  return "Unibox is not installed!"
+  return "HelmPanel is not installed!"
 end
 
 
