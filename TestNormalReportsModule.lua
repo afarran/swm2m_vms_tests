@@ -418,6 +418,8 @@ end
   -- 8. Values in report are correct.
 function test_StandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues()
 
+  -- intervals and rates setup
+  -- intervals in minutes
   vmsSW:setPropertiesByName({
       StandardReport2Interval = 2,
       AcceleratedReport2Rate = 2,
@@ -470,6 +472,8 @@ end
   -- 8. Values in report are correct.
 function test_StandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues()
 
+  -- intervals and rates setup
+  -- intervals in minutes
   vmsSW:setPropertiesByName({
       StandardReport1Interval = 2,
       AcceleratedReport1Rate = 2,
@@ -522,6 +526,8 @@ end
   -- 8. Values in report are correct.
 function test_StandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues()
 
+  -- intervals and rates setup
+  -- intervals in minutes
   vmsSW:setPropertiesByName({
       StandardReport1Interval = 2,
       AcceleratedReport1Rate = 2,
@@ -1159,7 +1165,6 @@ function test_LogReport1_WhenGpsPositionIsSetAndLogFilterEstablished_LogEntriesS
 
   local logReportXKey = "LogReport1"
   local standardReportXKey = "StandardReport1"
-  local properties = {}
 
   local properties = {
     LogReport1Rate = LOG_REPORT_RATE,
@@ -1399,6 +1404,7 @@ function generic_test_DriftOverTime_StandardAndAccelerated(properties,configChan
   local lastTimestamp = 0
   local dataToAnalysis = {}
 
+  -- setup for : StandardReportXInterval and AcceleratedReportXRate
   vmsSW:setPropertiesByName(properties)
 
   vmsSW:waitForMessagesByName(
@@ -1680,7 +1686,7 @@ end
 
 function generic_test_LogReportsNegative(logReportXKey, standardReportXKey, properties, timeForLogging)
 
-  -- set properties for log interval
+  -- set properties for log interval calculation (StandardReportXInterval, LogReportXRate)
   vmsSW:setPropertiesByName(properties)
 
   --synchronize first standard report
@@ -1718,7 +1724,7 @@ function generic_test_LogReports(logReportXKey, standardReportXKey, properties, 
   -- prerequisites
   assert_lt(3,itemsInLog,0,"There should be min 2 log items! Configure TC!")
 
-  -- set properties for log interval
+  -- set properties for log interval calculation (LogReportXRate, StandardReportXInterval)
   vmsSW:setPropertiesByName(properties)
 
   -- set position for reports
@@ -1804,9 +1810,8 @@ function generic_test_StandardReportContent(firstReportKey,reportKey,properties,
 
   -- testing via message
   if setConfigMsgKey then
-    D:log(setConfigMsgKey,"X1")
-    D:log(fields,"X2")
     -- change config to trigger ConfigChange message (SetConfigReportX used)
+    -- setting :  StandardReportXInterval, AcceleratedReportXRate
     vmsSW:sendMessageByName(
       setConfigMsgKey,
       fields
@@ -1816,6 +1821,7 @@ function generic_test_StandardReportContent(firstReportKey,reportKey,properties,
       30
     )
   else
+    -- setting :  StandardReportXInterval, AcceleratedReportXRate
     vmsSW:setPropertiesByName(properties)
   end
 
@@ -1938,6 +1944,7 @@ function generic_test_ConfigChangeReportConfigChangeReportIsSent(messageKey,prop
   end
 
   -- properties must be changed anyway (the same value after and before properties reset doesn't trigger report)
+  -- setting: StandardReportXInterval, AcceleratedReportXRate
   vmsSW:setPropertiesByName(propertiesToChangeValues)
 
   -- testing via message
@@ -2015,9 +2022,7 @@ function generic_test_StandardReportDisabled(reportKey,properties,reportInterval
 
   -- setup
   if setConfigMsgKey then
-    D:log(setConfigMsgKey,"X1")
-    D:log(fields,"X2")
-    -- change config
+    --setting for: StandardReportXInterval, AcceleratedReportXRate
     vmsSW:sendMessageByName(
       setConfigMsgKey,
       fields
@@ -2027,6 +2032,7 @@ function generic_test_StandardReportDisabled(reportKey,properties,reportInterval
       30
     )
   else
+    --setting for: StandardReportXInterval, AcceleratedReportXRate
     vmsSW:setPropertiesByName(properties)
   end
   
@@ -2053,9 +2059,8 @@ function generic_test_AcceleratedReportDisabledAndStandardReportEnabled(standard
 
   -- setup
   if setConfigMsgKey then
-    D:log(setConfigMsgKey,"X1")
-    D:log(fields,"X2")
     -- change config to trigger ConfigChange message (SetConfigReportX used)
+    -- Setup for: StandardReportXInterval, AcceleratedReportXRate
     vmsSW:sendMessageByName(
       setConfigMsgKey,
       fields
@@ -2065,6 +2070,7 @@ function generic_test_AcceleratedReportDisabledAndStandardReportEnabled(standard
       30
     )
   else
+    -- Setup for: StandardReportXInterval, AcceleratedReportXRate
     vmsSW:setPropertiesByName(properties)
   end
 
@@ -2096,13 +2102,18 @@ function generic_test_PropertyChangeDebounceTime(configChangeMsgKey,initialPrope
 
   vmsSW:setPropertiesByName({PropertyChangeDebounceTime=1})
   framework.delay(2)
+
+  -- initial values for : StandardReportXInterval, AcceleratedReportXRate
   vmsSW:setPropertiesByName(initialProperties)
   local reportMessage = vmsSW:waitForMessagesByName(
     {configChangeMsgKey}
   )
+
   vmsSW:setPropertiesByName({PropertyChangeDebounceTime=60}) 
   framework.delay(2)
   vmsSW:setHighWaterMark()
+
+  -- changed values for : StandardReportXInterval, AcceleratedReportXRate
   vmsSW:setPropertiesByName(changedProperties)
   framework.delay(2)
   vmsSW:setPropertiesByName(initialProperties)
@@ -2125,29 +2136,33 @@ function generic_TimestampsInConfigChangeReports(configChangeMsgKey,initialPrope
 
   vmsSW:setPropertiesByName({PropertyChangeDebounceTime=1})
   framework.delay(2)
+
+  -- changed values for : StandardReportXInterval, AcceleratedReportXRate
   vmsSW:setPropertiesByName(changedProperties)
+
   local reportMessageZero = vmsSW:waitForMessagesByName(
     {configChangeMsgKey},
     90
   )
 
-  D:log(reportMessageZero)
-
   vmsSW:setPropertiesByName({PropertyChangeDebounceTime=60})
   framework.delay(5)
+
+  -- initial values for : StandardReportXInterval, AcceleratedReportXRate
   vmsSW:setPropertiesByName(initialProperties)
+
   local reportMessageFirst = vmsSW:waitForMessagesByName(
     {configChangeMsgKey},
     90
   )
-  --framework.delay(65)
+
+  -- changed values for : StandardReportXInterval, AcceleratedReportXRate
   vmsSW:setPropertiesByName(changedProperties)
+
   local reportMessageSecond = vmsSW:waitForMessagesByName(
     {configChangeMsgKey},
     90
   )
-  D:log(reportMessageFirst)
-  D:log(reportMessageSecond)
   assert_equal(  
     60,
     tonumber(reportMessageSecond[configChangeMsgKey].Timestamp) - tonumber(reportMessageFirst[configChangeMsgKey].Timestamp),
@@ -2166,6 +2181,7 @@ function generic_setConfigViaShell(messageKey,propertiesToChange,propertiesBefor
   end
 
   -- properties set via shell (prop set *)
+  -- property StandardReportXInterval
   vmsSW:setPropertiesViaShell(shellSW,propertiesToChangeValues)
 
   -- wait for message
