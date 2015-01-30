@@ -321,7 +321,7 @@ function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsS
 
   -- TODO this need to be modified when an implementation of the function allowing IDP blockage will be done
   -- device profile application
-  if IDPBlockageFeaturesImplemented == false then skip("API for setting Satellite Control State has not been implemented yet - no use to perform TC") end
+  --if IDPBlockageFeaturesImplemented == false then skip("API for setting Satellite Control State has not been implemented yet - no use to perform TC") end
 
   -- *** Setup
   local ledFlashingStateTrueTable = {}
@@ -337,6 +337,8 @@ function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsS
 
   gateway.setHighWaterMark() -- to get the newest messages
   framework.delay(STANDARD_REPORT_1_INTERVAL*60 - 10)
+ -- GPS:set({blockage = true})
+  D:log("communication blocked")
 
   local currentTime = os.time()
 
