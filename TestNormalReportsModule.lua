@@ -23,6 +23,15 @@ function suite_setup()
   -- debounce
   vmsSW:setPropertiesByName({PropertyChangeDebounceTime=1})
 
+  -- initial gps position
+  local pos = {
+    latitude = 0,
+    longitude = 0,
+    speed = 0,
+    heading = 361
+  }
+  GPS:set(pos)
+
 end
 
 -- executed after each test suite
@@ -51,7 +60,7 @@ function teardown()
       StandardReport3Interval = 0,
       AcceleratedReport3Rate = 1,
       LogReport3Rate = 1,
-      -- ... and debounce time
+      -- ... and debounce time in seconds
       PropertyChangeDebounceTime=1 
   })
 
@@ -1810,32 +1819,6 @@ function generic_test_StandardReportContent(firstReportKey,reportKey,properties,
     vmsSW:setPropertiesByName(properties)
   end
 
-  -- fetching current position info
-  positionSW:sendMessageByName(
-    "getPosition",
-    {fixType = "3D"}
-  )
-  local positionMessage = positionSW:waitForMessagesByName({"position"})
-  local initialPosition = positionMessage.position
-
-  assert_not_nil(
-    initialPosition,
-    "No initial position."
-  )
-
-  assert_not_nil(
-    initialPosition.longitude,
-    "No longitude in position messsage."
-  )
-  assert_not_nil(
-    initialPosition.latitude,
-    "No latitude in position messsage."
-  )
-  assert_not_nil(
-    initialPosition.speed,
-    "No speed in position messsage."
-  )
-
   -- wait for raport to ensure that values will be fetched from current gps changes
   -- and to synchronize report sequence
   D:log("Waiting for first report "..firstReportKey)
@@ -1853,15 +1836,15 @@ function generic_test_StandardReportContent(firstReportKey,reportKey,properties,
   )
   local timestampStart = preReportMessage[firstReportKey].Timestamp
 
-  initialPosition.speed = 0
-
   -- new position setup
   local newPosition = {
-    latitude  = GPS:normalize(initialPosition.latitude)   + 1,
-    longitude = GPS:normalize(initialPosition.longitude)  + 1,
-    speed =  GPS:normalizeSpeed(initialPosition.speed) -- km/h
+    latitude  = 1,
+    longitude = 1,
+    speed =  0,
+    heading = 361
   }
   GPS:set(newPosition)
+  framework.delay(GPS_READ_INTERVAL + GPS_PROCESS_TIME)
 
   -- wait for next report
   D:log("Waiting for second report "..reportKey)
