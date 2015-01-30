@@ -52,7 +52,7 @@ function test_SMTP_WhenSMTPCommandCalled_ServerReturnsSMTPServiceReady()
   SMTPclear[1] = "QUIT"
   local startResponse = smtp:getResponse()
   assert_not_nil(startResponse, "SMTP module did not return start message")
-  assert_match("^220", startResponse, "SMTP start message is incorrect")
+  assert_match("^220.*\r\n", startResponse, "SMTP start message is incorrect")
   
 end
 
@@ -65,6 +65,7 @@ local function startSmtp()
   SMTPclear[1] = "QUIT"
   local startResponse = smtp:getResponse()
   assert_not_nil(startResponse, "SMTP module did not return start message")
+  assert_match("^220.*\r\n", startResponse, "SMTP start message is incorrect")
 end
 
 --- Test SMTP Hello command
@@ -73,8 +74,8 @@ function test_SMTP_WhenHELOCommandCalled_ServerReturns250()
   startSmtp()  
   smtp:execute("HELO")
   local heloResponse = smtp:getResponse()
-  heloResponse = string.split(heloResponse, "\r\n")
-  assert_match("^250", heloResponse[1], "HELO command response incorrect")
+  heloResponse = string.split(heloResponse, "\r\n") -- split also removes \r\n
+  assert_match("^250.*", heloResponse[1], "HELO command response incorrect")
   assert_nil(heloResponse[2], "HELO command responded with additional infromation")
 end
 
@@ -83,7 +84,7 @@ function test_SMTP_WhenHELOWithParameterCommandCalled_ServerReturns250()
   smtp:execute("HELO skywave.com")
   local heloResponse = smtp:getResponse()
   heloResponse = string.split(heloResponse, "\r\n")
-  assert_match("^250", heloResponse[1], "HELO command response incorrect")
+  assert_match("^250.*", heloResponse[1], "HELO command response incorrect")
   assert_nil(heloResponse[2], "HELO command responded with additional infromation")
 end
 
@@ -93,8 +94,8 @@ function test_SMTP_WhenEHLOCommandCalled_ServerReturns250and250forSize()
   smtp:execute("EHLO")
   local ehloResponse = smtp:getResponse()
   ehloResponse = string.split(ehloResponse, "\r\n")
-  assert_match("^250", ehloResponse[1], "EHLO command response incorrect - does not contain HELO msg")
-  assert_match("^250 SIZE (%d+)$", ehloResponse[2], "EHLO command response incorrect - does not contain SIZE")
+  assert_match("^250.*", ehloResponse[1], "EHLO command response incorrect - does not contain HELO msg")
+  assert_match("^250 SIZE (%d+).*$", ehloResponse[2], "EHLO command response incorrect - does not contain SIZE")
 end
 
 function test_SMTP_WhenEHLOWithParameterCommandCalled_ServerReturns250and250forSize()
@@ -102,8 +103,8 @@ function test_SMTP_WhenEHLOWithParameterCommandCalled_ServerReturns250and250forS
   smtp:execute("EHLO skywave.com")
   local ehloResponse = smtp:getResponse()
   ehloResponse = string.split(ehloResponse, "\r\n")
-  assert_match("^250", ehloResponse[1], "EHLO command response incorrect - does not contain HELO msg")
-  assert_match("^250 SIZE (%d+)$", ehloResponse[2], "EHLO command response incorrect - does not contain SIZE")
+  assert_match("^250.*", ehloResponse[1], "EHLO command response incorrect - does not contain HELO msg")
+  assert_match("^250 SIZE (%d+).*", ehloResponse[2], "EHLO command response incorrect - does not contain SIZE")
 end
 
 
@@ -112,7 +113,7 @@ function test_SMTP_WhenQUITCommandCalled_ServerReturns221()
   smtp:execute("QUIT")
   SMTPclear = {}
   local quitResponse = smtp:getResponse()
-  assert_match("^221", quitResponse, "QUIT command response incorrect")  
+  assert_match("^221.*\r\n", quitResponse, "QUIT command response incorrect")  
 end
 
 
@@ -121,14 +122,14 @@ function test_SMTP_WhenNOOPCommandCalled_ServerReturns250()
   startSmtp()
   smtp:execute("NOOP")
   local noopResponse = smtp:getResponse()
-  assert_match("^250", noopResponse, "NOOP command response incorrect")
+  assert_match("^250.*\r\n", noopResponse, "NOOP command response incorrect")
 end
 
 function test_SMTP_WhenRSETCommandCalled_ServerReturns250()
   startSmtp()
   smtp:execute("RSET")
   local rsetResponse = smtp:getResponse()
-  assert_match("^250", rsetResponse, "RSET command response incorrect")
+  assert_match("^250.*\r\n", rsetResponse, "RSET command response incorrect")
 end
 
 ----
@@ -138,7 +139,7 @@ function test_SMTP_WhenMAILCorrectCommandCalled_ServerReturns250()
   startSmtp()
   smtp:execute("MAIL FROM: <test@skywave.com>")
   local mailResponse = smtp:getResponse()
-  assert_match("^250", mailResponse, "MAIL FROM response incorrect")
+  assert_match("^250.*\r\n", mailResponse, "MAIL FROM response incorrect")
 end
   
   --If the mailbox specification is not acceptable for
@@ -150,21 +151,21 @@ function test_SMTP_WhenMAILCommandCalledWithBrokenReversePath_ServerReturns5xx()
   startSmtp()
   smtp:execute("MAIL FROM:test@skywave.com<>")
   local mailResponse = smtp:getResponse()
-  assert_match("^5%d%d", mailResponse, "MAIL FROM response incorrect")
+  assert_match("^5%d%d.*\r\n", mailResponse, "MAIL FROM response incorrect")
 end
 
 function test_SMTP_WhenMAILCommandCalledWithIncorrectEmail_ServerReturns5xx()
   startSmtp()
   smtp:execute("MAIL FROM:<test@skywave>")
   local mailResponse = smtp:getResponse()
-  assert_match("^5%d%d", mailResponse, "MAIL FROM response incorrect")
+  assert_match("^5%d%d.*\r\n", mailResponse, "MAIL FROM response incorrect")
 end
 
 function test_SMTP_WhenMAILCommandCalledWithEmptyMail_ServerReturns5xx()
   startSmtp()
   smtp:execute("MAIL FROM:")
   local mailResponse = smtp:getResponse()
-  assert_match("^5%d%d", mailResponse, "MAIL FROM response incorrect")
+  assert_match("^5%d%d.*\r\n", mailResponse, "MAIL FROM response incorrect")
 end
 
   --The transaction
@@ -175,11 +176,11 @@ function test_SMTP_WhenMAILCorrectCommandCalledTwice_ServerReturns5xx()
   startSmtp()
   smtp:execute("MAIL FROM:<skywave1@skywave.com>")
   local mailResponse = smtp:getResponse()
-  assert_match("^250", mailResponse, "MAIL FROM response incorrect")
+  assert_match("^250.*\r\n", mailResponse, "MAIL FROM response incorrect")
   
   smtp:execute("MAIL FROM:<skywave1@skywave.com>")
   mailResponse = smtp:getResponse()
-  assert_match("^5%d%d", mailResponse, "MAIL FROM second response incorrect")
+  assert_match("^5%d%d.*\r\n", mailResponse, "MAIL FROM second response incorrect")
 end
 
 --Since it has been a common source of errors, it is worth noting that
@@ -192,7 +193,7 @@ function test_SMTP_WhenMAILWithSpaceBeforeColonCalled_ServerReturns550()
   local response = smtp:getResponse()
   smtp:execute("MAIL FROM :<skywave1@skywave.com>")
   response = smtp:getResponse()
-  assert_match("^550", response, "MAIL FROM :<path> response incorrect")
+  assert_match("^550.*\r\n", response, "MAIL FROM :<path> response incorrect")
 
 end
 
@@ -202,7 +203,7 @@ function test_SMTP_WhenMAILWithSpaceAfterColonCalled_ServerReturns550()
   local response = smtp:getResponse()
   smtp:execute("MAIL FROM: <skywave1@skywave.com>")
   response = smtp:getResponse()
-  assert_match("^550", response, "MAIL FROM: <path> response incorrect")
+  assert_match("^550.*\r\n", response, "MAIL FROM: <path> response incorrect")
 
 end
 
@@ -212,7 +213,7 @@ function test_SMTP_WhenMAILWithSpaceBeforeAndAfterColonCalled_ServerReturns550()
   local response = smtp:getResponse()
   smtp:execute("MAIL FROM : <skywave1@skywave.com>")
   response = smtp:getResponse()
-  assert_match("^550", response, "MAIL FROM : <path> response incorrect")
+  assert_match("^550.*\r\n", response, "MAIL FROM : <path> response incorrect")
 
 end
 
@@ -231,7 +232,7 @@ function test_SMTP_WhenRCPTCorrectCommandCalled_ServerReturns250()
   response = smtp:getResponse()
   smtp:execute("RCPT TO:<receiver@skywave.com>")
   response = smtp:getResponse()
-  assert_match("^250", response, "RCPT TO response incorrect")
+  assert_match("^250.*\r\n", response, "RCPT TO response incorrect")
   
 end
 
@@ -244,7 +245,7 @@ function test_SMTP_WhenRCPTCorrectCommandCalledMultipleTimes_ServerReturns250()
   for index=1, 10 do 
     smtp:execute("RCPT TO:<receiver"..index.."@skywave.com>")
     response = smtp:getResponse()
-    assert_match("^250", response, "RCPT TO response incorrect for " .. index .. " receipment")  
+    assert_match("^250.*\r\n", response, "RCPT TO response incorrect for " .. index .. " receipment")  
   end  
 end
 
@@ -258,7 +259,7 @@ function test_SMTP_WhenRCPTCommandCalledTooManyTimes_ServerReturns552()
     smtp:execute("RCPT TO:<receiver"..index.."@skywave.com>")
   end  
   response = smtp:getResponse(nil, 0.05)
-  assert_match("^552", response, "RCPT TO did not return 552 Too many recipients")  
+  assert_match("^552.*\r\n", response, "RCPT TO did not return 552 Too many recipients")  
 end
 
 
@@ -268,7 +269,7 @@ function test_SMTP_WhenRCPTWithMalformedForwardPathCalled_ServerReturns5xx()
   response = smtp:getResponse()
   smtp:execute("RCPT TO:receiver-skywave")
   local response = smtp:getResponse()
-  assert_match("^5%d%d", response, "RCPT TO response incorrect")
+  assert_match("^5%d%d.*\r\n", response, "RCPT TO response incorrect")
   
 end
 
@@ -280,7 +281,7 @@ function test_SMTP_WhenRCPTCommandCalledBeforeMAILCommand_ServerReturns503()
   local response = smtp:getResponse()
   smtp:execute("RCPT TO:<receiver@skywave.com>")
   response = smtp:getResponse()
-  assert_match("^503", response, "RCPT should be refused if called before MAIL")
+  assert_match("^503.*\r\n", response, "RCPT should be refused if called before MAIL")
   
 end
 
@@ -301,7 +302,7 @@ function test_SMTP_WhenDATACorrectCommandCalled_ServerReturns354()
   response = smtp:getResponse()
   smtp:execute("DATA")
   response = smtp:getResponse()
-  assert_match("^354", response, "DATA command response is incorrect")
+  assert_match("^354.*\r\n", response, "DATA command response is incorrect")
   SMTPclear[1] = "\r\n.\r\n"
   SMTPclear[2] = "QUIT"
 end
@@ -316,14 +317,14 @@ function test_SMTP_WhenDATACommandCalledDataPassedWithEndChar_ServerReturns250()
   response = smtp:getResponse()
   smtp:execute("DATA")
   response = smtp:getResponse()
-  assert_match("^354", response, "DATA command response is incorrect")
+  assert_match("^354.*\r\n", response, "DATA command response is incorrect")
   
   smtp:execute("Some message data")
   smtp:execute("More message data")
   
   smtp:execute("\r\n.", "\r\n")
   response = smtp:getResponse()
-  assert_match("^250", response, "DATA command end response is incorrect")
+  assert_match("^250.*\r\n", response, "DATA command end response is incorrect")
 end
 
   
@@ -339,7 +340,7 @@ function test_SMTP_WhenDATACommandCalledBeforeMAILCommand_ServerReturns5xx()
   response = smtp:getResponse()
   SMTPclear[1] = "\r\n.\r\n"
   SMTPclear[2] = "QUIT"
-  assert_match("^5%d%d", response, "DATA command response is incorrect")
+  assert_match("^5%d%d.*\r\n", response, "DATA command response is incorrect")
 
 end
 
@@ -353,7 +354,7 @@ function test_SMTP_WhenDATACommandCalledBeforeRCPTCommand_ServerReturns5xx()
   response = smtp:getResponse()
   SMTPclear[1] = "\r\n.\r\n"
   SMTPclear[2] = "QUIT"
-  assert_match("^5%d%d", response, "DATA command response is incorrect")
+  assert_match("^5%d%d.*\r\n", response, "DATA command response is incorrect")
 
 end
 
@@ -373,14 +374,14 @@ function test_SMTP_WhenRSETWithParameterCalled_ServerReturns501()
   startSmtp()
   smtp:execute("RSET someparam")
   local mailResponse = smtp:getResponse()
-  assert_match("^501", mailResponse, "RSET with parameter response incorrect")
+  assert_match("^501.*\r\n", mailResponse, "RSET with parameter response incorrect")
 end
 
 function test_SMTP_WhenQUITWithParameterCalled_ServerReturns501()
   startSmtp()
   smtp:execute("QUIT someparam")
   local mailResponse = smtp:getResponse()
-  assert_match("^501", mailResponse, "QUIT with parameter response incorrect")
+  assert_match("^501.*\r\n", mailResponse, "QUIT with parameter response incorrect")
 end
 
 function test_SMTP_WhenDATAWithParameterCalled_ServerReturns501()
@@ -391,3 +392,18 @@ function test_SMTP_WhenDATAWithParameterCalled_ServerReturns501()
   local mailResponse = smtp:getResponse()
   assert_match("^501", mailResponse, "DATA with parameter response incorrect")
 end
+
+function test_SMTP_WhenIDLETimeoutExceeded_ServerReturns221()
+  local timeout = 1
+  vmsSW:setPropertiesByName({SessionIdleTimeout = timeout})
+  startSmtp()
+  local response, waitTime = smtp:getResponse(timeout*60 + 5)
+  
+  assert_match("^421.*\r\n", response, "Timeout message incorrect")
+  assert_equal(timeout*60, waitTime, 5, "Timeout value incorrect")
+  
+  
+end
+
+
+-- TODO: Test if HELO command issued - session should be reset (HELO/EHLO invokes RSET)
