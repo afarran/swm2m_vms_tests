@@ -175,6 +175,11 @@ end
 -- Test Cases - GPS LED on/off - IN DEVELOPMENT!
 ----------------------------------------------------------------------------------------------
 
+Annotations:register([[
+@dependOn(helmPanel,isReady)
+@method(test_GpsLED_WhenGpsIsBlocked_GpsLedIsOff)
+@module(TestHelmPanelModule)
+]])
 function test_GpsLED_WhenGpsIsBlocked_GpsLedIsOff()
 
   -- No fix
@@ -200,6 +205,11 @@ function test_GpsLED_WhenGpsIsBlocked_GpsLedIsOff()
 
 end
 
+Annotations:register([[
+@dependOn(helmPanel,isReady)
+@method(test_GpsLED_WhenGpsIsSetWithCorrectFix_GpsLedIsOn)
+@module(TestHelmPanelModule)
+]])
 function test_GpsLED_WhenGpsIsSetWithCorrectFix_GpsLedIsOn()
 
   -- Fix
@@ -256,6 +266,11 @@ function xtest_SateliteLED_WhenSateliteIsBlockedOrUnblocked_SateliteLedIsInCorre
 end
 ---------------------------------------------------------------------------------
 
+Annotations:register([[
+@dependOn(helmPanel,isReady)
+@method(test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetTo0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsNotFlashing)
+@module(TestHelmPanelModule)
+]])
 function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetTo0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsNotFlashing()
 
   -- *** Setup
@@ -275,7 +290,11 @@ function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsS
 
 end
 
-
+Annotations:register([[
+@dependOn(helmPanel,isReady)
+@method(test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsFlashingForMinStandardReportLedFlashTime)
+@module(TestHelmPanelModule)
+]])
 function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsFlashingForMinStandardReportLedFlashTime()
 
   -- *** Setup
@@ -316,7 +335,11 @@ function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsS
 
 end
 
-
+Annotations:register([[
+@dependOn(helmPanel,isReady)
+@method(test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardIsWaitingInQueueToBeSent_TerminalConnectedLEDIsFlashing)
+@module(TestHelmPanelModule)
+]])
 function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardIsWaitingInQueueToBeSent_TerminalConnectedLEDIsFlashing()
 
   -- TODO this need to be modified when an implementation of the function allowing IDP blockage will be done
