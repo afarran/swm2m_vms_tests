@@ -317,16 +317,15 @@ function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsS
 
   while currentTime < standardReportEnabledStartTime + STANDARD_REPORT_1_INTERVAL*60 + MIN_STANDARD_REPORT_FLASH_TIME + 10  do
       currentTime = os.time()
-      if(helmPanel:isConnectLedFlashing()) then
+      if(helmPanel:isConnectLedFlashingFast()) then
         currentTime = os.time()
         ledFlashingStateTrueTable[#ledFlashingStateTrueTable + 1] = currentTime
       end
   end
 
+  assert_not_nil(next(ledFlashingStateTrueTable))
   D:log(ledFlashingStateTrueTable)
-
   local lastElementIndex = table.getn(ledFlashingStateTrueTable)
-
   assert_equal(ledFlashingStateTrueTable[lastElementIndex] - ledFlashingStateTrueTable[1],
   MIN_STANDARD_REPORT_FLASH_TIME,
   8,
@@ -344,7 +343,7 @@ function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsS
 
   -- TODO this need to be modified when an implementation of the function allowing IDP blockage will be done
   -- device profile application
-  --if IDPBlockageFeaturesImplemented == false then skip("API for setting Satellite Control State has not been implemented yet - no use to perform TC") end
+  skip("waiting for implementation of direct shell usage - property cannot be read by GetProperties message when satellite signal is blocked")
 
   -- *** Setup
   local ledFlashingStateTrueTable = {}
