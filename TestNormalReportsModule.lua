@@ -7,7 +7,11 @@
 -----------------------------------------------------------------------------------------------
 
 module("TestNormalReportsModule", package.seeall)
-DEBUG_MODE = 1
+
+-- 1 turns debug output ON 
+-- 0 turns debug output OFF
+-- For more info see: Debugger.lua
+DEBUG_MODE = 1 
 
 -----------------------------------------------------------------------------------------------
 -- SETUP
@@ -19,11 +23,12 @@ function suite_setup()
   -- debounce
   vmsSW:setPropertiesByName({PropertyChangeDebounceTime=1})
 
-  -- gps setup
-  pos = {
-    latitude  = 0,
+  -- initial gps position
+  local pos = {
+    latitude = 0,
     longitude = 0,
-    speed =  0
+    speed = 0,
+    heading = 361
   }
   GPS:set(pos)
 
@@ -31,32 +36,33 @@ end
 
 -- executed after each test suite
 function suite_teardown()
+
 end
 
 --- setup function
 function setup()
-  
-  -- disabling periodic reports in suite_teardown function
-  vmsSW:setPropertiesByName({
-      StandardReport1Interval = 1,
-      AcceleratedReport1Rate = 1,
-      LogReport1Rate = 1,
-      StandardReport2Interval = 1,
-      AcceleratedReport2Rate = 1,
-      LogReport2Rate = 1,
-      StandardReport3Interval = 1,
-      AcceleratedReport3Rate = 1,
-      LogReport3Rate = 1,
-      PropertyChangeDebounceTime=1
-  })
-
   vmsSW:setHighWaterMark()
 end
 
 --- teardown function executed after each unit test
 function teardown()
 
-  D:log("teardown")
+  vmsSW:setPropertiesByName({
+      -- disabling periodic reports
+      -- all *Intervals are in minutes
+      -- all *Rates means "divided by rate"
+      StandardReport1Interval = 0,
+      AcceleratedReport1Rate = 1,
+      LogReport1Rate = 1,
+      StandardReport2Interval = 0,
+      AcceleratedReport2Rate = 1,
+      LogReport2Rate = 1,
+      StandardReport3Interval = 0,
+      AcceleratedReport3Rate = 1,
+      LogReport3Rate = 1,
+      -- ... and debounce time in seconds
+      PropertyChangeDebounceTime=1 
+  })
 
 end
 -----------------------------------------------------------------------------------------------
@@ -1813,32 +1819,6 @@ function generic_test_StandardReportContent(firstReportKey,reportKey,properties,
     vmsSW:setPropertiesByName(properties)
   end
 
-  -- fetching current position info
-  positionSW:sendMessageByName(
-    "getPosition",
-    {fixType = "3D"}
-  )
-  local positionMessage = positionSW:waitForMessagesByName({"position"})
-  local initialPosition = positionMessage.position
-
-  assert_not_nil(
-    initialPosition,
-    "No initial position."
-  )
-
-  assert_not_nil(
-    initialPosition.longitude,
-    "No longitude in position messsage."
-  )
-  assert_not_nil(
-    initialPosition.latitude,
-    "No latitude in position messsage."
-  )
-  assert_not_nil(
-    initialPosition.speed,
-    "No speed in position messsage."
-  )
-
   -- wait for raport to ensure that values will be fetched from current gps changes
   -- and to synchronize report sequence
   D:log("Waiting for first report "..firstReportKey)
@@ -1856,15 +1836,15 @@ function generic_test_StandardReportContent(firstReportKey,reportKey,properties,
   )
   local timestampStart = preReportMessage[firstReportKey].Timestamp
 
-  initialPosition.speed = 0
-
   -- new position setup
   local newPosition = {
-    latitude  = GPS:normalize(initialPosition.latitude)   + 1,
-    longitude = GPS:normalize(initialPosition.longitude)  + 1,
-    speed =  GPS:normalizeSpeed(initialPosition.speed) -- km/h
+    latitude  = 1,
+    longitude = 1,
+    speed =  0,
+    heading = 361
   }
   GPS:set(newPosition)
+  framework.delay(GPS_READ_INTERVAL + GPS_PROCESS_TIME)
 
   -- wait for next report
   D:log("Waiting for second report "..reportKey)

@@ -12,14 +12,14 @@ Managing dependencies with installed/enabled services.
 a) First you annotate like in other languages (almost):
 ```
  Annotations:register([[
- @dependencies(helmPanel,isReady)
+ @dependOn(helmPanel,isReady)
  @method(test_XXX)
  @module(TestHelmPanelModule)
  ]])
  function test_XXX()
   --implementation
 ```
-b) Then resolver is able to get annotation @dependencies and invoke by reflection needed method (in this case helmPanel:isReady())
+b) Then resolver is able to get annotation @dependOn and invoke by reflection needed method (in this case helmPanel:isReady())
 
 ```
 function DependencyResolver:resolve(definition)
@@ -39,7 +39,7 @@ function DependencyResolver:resolve(definition)
 end
 ```
 
-c) This method is an aspect - in this example it just check terminal if helm panel device (unibox) is installed and enabled. All logic and reason to change is here.
+c) This method is an aspect - in this example it just checks terminal if helm panel device (unibox) is installed and enabled. All logic and reason to change is here.
 
 ```
 function HelmPanelUnibox:isReady()
@@ -69,7 +69,9 @@ end
 
 Any TC can be annotated in this way - no need to do more.
 
-Other annotations can be designed - that is the piece of design which can be tuned (simple but works).
+Other annotations can be designed for other aspects.
+
+That is the piece of design which can be tuned (for now "simple but works").
 
 pblo
 

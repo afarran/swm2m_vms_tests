@@ -71,11 +71,11 @@ end
 -- Test Cases - Helm Panel connected/disconnected
 -----------------------------------------------------------------------------------------------
 Annotations:register([[
-@dependencies(helmPanel,isReady)
-@method(test_HelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAndTheStateToggles_HelmPanelDisconnectedStateChangesCorrectlyAndLEDTransitionsAreCorrect)
+@dependOn(helmPanel,isReady)
+@method(test_XHelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAndTheStateToggles_HelmPanelDisconnectedStateChangesCorrectlyAndLEDTransitionsAreCorrect)
 @module(TestHelmPanelModule)
 ]])
-function test_HelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAndTheStateToggles_HelmPanelDisconnectedStateChangesCorrectlyAndLEDTransitionsAreCorrect()
+function test_XHelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAndTheStateToggles_HelmPanelDisconnectedStateChangesCorrectlyAndLEDTransitionsAreCorrect()
 
   local properties = vmsSW:getPropertiesByName({"HelmPanelDisconnectedState"})
   local isDisconnected = properties.HelmPanelDisconnectedState
@@ -137,7 +137,7 @@ function test_HelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAn
 end
 
 Annotations:register([[
-@dependencies(helmPanel,isReady)
+@dependOn(helmPanel,isReady)
 @method(test_XHelmPanelDisconnected_WhenHelmPanelIsDisConnected_ConnectLEDIsOff)
 @module(TestHelmPanelModule)
 ]])
@@ -175,6 +175,11 @@ end
 -- Test Cases - GPS LED on/off - IN DEVELOPMENT!
 ----------------------------------------------------------------------------------------------
 
+Annotations:register([[
+@dependOn(helmPanel,isReady)
+@method(test_GpsLED_WhenGpsIsBlocked_GpsLedIsOff)
+@module(TestHelmPanelModule)
+]])
 function test_GpsLED_WhenGpsIsBlocked_GpsLedIsOff()
 
   -- No fix
@@ -200,6 +205,11 @@ function test_GpsLED_WhenGpsIsBlocked_GpsLedIsOff()
 
 end
 
+Annotations:register([[
+@dependOn(helmPanel,isReady)
+@method(test_GpsLED_WhenGpsIsSetWithCorrectFix_GpsLedIsOn)
+@module(TestHelmPanelModule)
+]])
 function test_GpsLED_WhenGpsIsSetWithCorrectFix_GpsLedIsOn()
 
   -- Fix
@@ -256,6 +266,11 @@ function xtest_SateliteLED_WhenSateliteIsBlockedOrUnblocked_SateliteLedIsInCorre
 end
 ---------------------------------------------------------------------------------
 
+Annotations:register([[
+@dependOn(helmPanel,isReady)
+@method(test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetTo0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsNotFlashing)
+@module(TestHelmPanelModule)
+]])
 function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetTo0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsNotFlashing()
 
   -- *** Setup
@@ -275,7 +290,11 @@ function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsS
 
 end
 
-
+Annotations:register([[
+@dependOn(helmPanel,isReady)
+@method(test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsFlashingForMinStandardReportLedFlashTime)
+@module(TestHelmPanelModule)
+]])
 function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsFlashingForMinStandardReportLedFlashTime()
 
   -- *** Setup
@@ -298,16 +317,15 @@ function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsS
 
   while currentTime < standardReportEnabledStartTime + STANDARD_REPORT_1_INTERVAL*60 + MIN_STANDARD_REPORT_FLASH_TIME + 10  do
       currentTime = os.time()
-      if(helmPanel:isConnectLedFlashing()) then
+      if(helmPanel:isConnectLedFlashingFast()) then
         currentTime = os.time()
         ledFlashingStateTrueTable[#ledFlashingStateTrueTable + 1] = currentTime
       end
   end
 
+  assert_not_nil(next(ledFlashingStateTrueTable))
   D:log(ledFlashingStateTrueTable)
-
   local lastElementIndex = table.getn(ledFlashingStateTrueTable)
-
   assert_equal(ledFlashingStateTrueTable[lastElementIndex] - ledFlashingStateTrueTable[1],
   MIN_STANDARD_REPORT_FLASH_TIME,
   8,
@@ -316,12 +334,16 @@ function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsS
 
 end
 
-
+Annotations:register([[
+@dependOn(helmPanel,isReady)
+@method(test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardIsWaitingInQueueToBeSent_TerminalConnectedLEDIsFlashing)
+@module(TestHelmPanelModule)
+]])
 function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardIsWaitingInQueueToBeSent_TerminalConnectedLEDIsFlashing()
 
   -- TODO this need to be modified when an implementation of the function allowing IDP blockage will be done
   -- device profile application
-  if IDPBlockageFeaturesImplemented == false then skip("API for setting Satellite Control State has not been implemented yet - no use to perform TC") end
+  skip("waiting for implementation of direct shell usage - property cannot be read by GetProperties message when satellite signal is blocked")
 
   -- *** Setup
   local ledFlashingStateTrueTable = {}
@@ -337,9 +359,13 @@ function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsS
 
   gateway.setHighWaterMark() -- to get the newest messages
   framework.delay(STANDARD_REPORT_1_INTERVAL*60 - 10)
+  --TODO:
+  -- GPS:set({blockage = true})
+  D:log("communication blocked")
 
   local currentTime = os.time()
-
+  -- this needs to be modified - property cannot be read by GetProperties message when satellite signal is blocked
+  -- shell command should be used
   while currentTime < standardReportEnabledStartTime + STANDARD_REPORT_1_INTERVAL*60 + 60 do
       currentTime = os.time()
       if(helmPanel:isConnectLedFlashing()) then
@@ -357,6 +383,35 @@ function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsS
   8,
   "IDP Connected LED was not flashing when StandardReport was waiting in queue while IDP Blockage"
   )
+
+end
+
+
+Annotations:register([[
+@dependOn(helmPanel,isReady)
+@method(test_MinStandardReportLedFlashTime_WhenToMobileEmailIsUnread_TerminalConnectedLEDIsFlashingSlowly)
+@module(TestHelmPanelModule)
+]])
+function test_MinStandardReportLedFlashTime_WhenToMobileEmailIsUnread_TerminalConnectedLEDIsFlashingSlowly()
+
+  -- TODO: update this TC when receiving emails by VMS will be implemented and available in test framework
+  skip("Receiving Emails is not implemented yet")
+
+  -- *** Setup
+  local ledFlashingStateTrueTable = {}
+  local STANDARD_REPORT_1_INTERVAL = 1
+  local MIN_STANDARD_REPORT_FLASH_TIME = 5
+
+  vmsSW:setPropertiesByName({MinStandardReportLedFlashTime = MIN_STANDARD_REPORT_FLASH_TIME})     -- feature enabled
+
+  local standardReportEnabledStartTime = os.time()
+  D:log(standardReportEnabledStartTime)
+
+  gateway.setHighWaterMark() -- to get the newest messages
+
+  -- simulate receivied email now
+  helmPanel:isConnectLedFlashingSlow()
+  assert_true(helmPanel:isConnectLedFlashingSlow(), "IDP Connected LED is not flashing slow when to-mobile email is received")
 
 end
 

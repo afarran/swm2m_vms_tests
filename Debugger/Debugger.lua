@@ -18,6 +18,8 @@ Debugger = {}
   function Debugger:log(info,tag)
     if type(info) == "table" or type(info) == "boolean" then 
       info = framework.dump(info) 
+    elseif type(info) == "function" then
+      info = "function"
     end
     if info == nil then info = "nil" end
     if not tag then tag="info" end

@@ -41,38 +41,22 @@ HelmPanelUnibox = {}
     return true
   end
 
-  function HelmPanelUnibox:isConnectLedFlashing()
+  function HelmPanelUnibox:isConnectLedFlashingFast()
     local properties = self.device:getPropertiesByName({"led1State"})
     local state = properties.led1State
     D:log("IDP connect LED state is "..state)
-    if state == 'SLOW_FLASH' or state == 'FAST_FLASH' then
+    if state == 'FAST_FLASH' then
       return true
     end
     return false
   end
 
-  --TODO: should be in HelmPanelDevice but there were problems with reflection in Dependency Resolver
-  function HelmPanelUnibox:isReady()
-    local serviceList = self.system:requestMessageByName("getServiceList",nil,"serviceList")
-    local disabledList = framework.base64Decode(serviceList.serviceList.disabledList)
-    local sinList = framework.base64Decode(serviceList.serviceList.sinList)
- 
-    local enabled = false
-    for i,v in ipairs(sinList) do
-      if tonumber(v) == tonumber(self.device.sin) then
-        enabled = true
-        break
-      end
-    end
-    for i,v in ipairs(disabledList) do
-      if tonumber(self.device.sin) == tonumber(v) then
-        enabled = false
-      end
-    end 
-    if enabled then
+  function HelmPanelUnibox:isConnectLedFlashingSlow()
+    local properties = self.device:getPropertiesByName({"led1State"})
+    local state = properties.led1State
+    D:log("IDP connect LED state is "..state)
+    if state == 'SLOW_FLASH'  then
       return true
     end
-    return "Unibox is not installed!"
+    return false
   end
-
-
