@@ -18,6 +18,11 @@ SmtpWrapper = {}
     self.port:writeLine(command, newline)
   end
   
+  function SmtpWrapper:request(command, newline, timeout, delay)
+    self:execute(command, newline)
+    return self:getResponse(timeout, delay)
+  end
+  
   function SmtpWrapper:start()
     self:execute("SMTP", "\r")
   end
