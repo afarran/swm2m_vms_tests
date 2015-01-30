@@ -161,9 +161,13 @@ current_suite = None
 		
 #parse test cases results
 for line in data:
+	all_data = all_data + line
 	new_suite = find_test_suite_start(line)
 	if new_suite:
+		if current_test_case_data:
+			test_suites["suites"][current_suite].append(current_test_case_data)
 		current_suite = new_suite
+		current_test_case_data = None
 		continue
 	
 	test_case = find_test_case(line)
@@ -171,12 +175,16 @@ for line in data:
 		if not current_suite:
 			print("Found testcase but no testsuite detected in first place. Parser source seems malformed")
 			sys.exit(-1)
+		if current_test_case_data:
+			test_suites["suites"][current_suite].append(current_test_case_data)
+
 		current_test_case_data = {	"name" : test_case["name"],
 									"result" : test_case["result"],
 									"time" : test_case["time"],
 									"msg" : test_case["msg"],
-									"trace": ""}
-		test_suites["suites"][current_suite].append(current_test_case_data)
+									"trace" : "",
+									}
+		
 		continue
 	
 	trace = find_trace(line)
@@ -184,6 +192,12 @@ for line in data:
 		if current_test_case_data:
 			current_test_case_data["trace"] = current_test_case_data["trace"] + trace + "\n"
 
+if current_test_case_data:
+	if not current_suite:
+		print("Found testcase but no testsuite detected in first place. Parser source seems malformed")
+		sys.exit(-1)
+	test_suites["suites"][current_suite].append(current_test_case_data)
+			
 try:
 	xml_data = create_xml(test_suites)		
 except:

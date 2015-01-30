@@ -108,3 +108,7 @@ function test_GeofenceFeatures_WhenInsideGeofenceZone_AcceleratedReportStatusBit
   state = vmsSW:decodeBitmap(acceleratedReport.StatusBitmap, "EventStateId")
   assert_true(state.InsideGeofence, "Terminal incorrectly repored as NOT inside geofence zone") 
 end
+
+-- TODO: test geofence message from VMS service - not implemented
+-- TODO: test when terminal inside more than one geofence
+-- TODO: test inside geofence LED? 
