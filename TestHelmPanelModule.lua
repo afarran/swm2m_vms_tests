@@ -337,11 +337,13 @@ function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsS
 
   gateway.setHighWaterMark() -- to get the newest messages
   framework.delay(STANDARD_REPORT_1_INTERVAL*60 - 10)
- -- GPS:set({blockage = true})
+  --TODO:
+  -- GPS:set({blockage = true})
   D:log("communication blocked")
 
   local currentTime = os.time()
-
+  -- this needs to be modified - property cannot be read by GetProperties message when satellite signal is blocked
+  -- shell command should be used
   while currentTime < standardReportEnabledStartTime + STANDARD_REPORT_1_INTERVAL*60 + 60 do
       currentTime = os.time()
       if(helmPanel:isConnectLedFlashing()) then
