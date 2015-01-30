@@ -7,7 +7,11 @@
 -----------------------------------------------------------------------------------------------
 
 module("TestNormalReportsModule", package.seeall)
-DEBUG_MODE = 1
+
+-- 1 turns debug output ON 
+-- 0 turns debug output OFF
+-- For more info see: Debugger.lua
+DEBUG_MODE = 1 
 
 -----------------------------------------------------------------------------------------------
 -- SETUP
