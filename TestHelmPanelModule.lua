@@ -175,6 +175,11 @@ end
 -- Test Cases - GPS LED on/off - IN DEVELOPMENT!
 ----------------------------------------------------------------------------------------------
 
+Annotations:register([[
+@dependOn(helmPanel,isReady)
+@method(test_GpsLED_WhenGpsIsBlocked_GpsLedIsOff)
+@module(TestHelmPanelModule)
+]])
 function test_GpsLED_WhenGpsIsBlocked_GpsLedIsOff()
 
   -- No fix
@@ -200,6 +205,11 @@ function test_GpsLED_WhenGpsIsBlocked_GpsLedIsOff()
 
 end
 
+Annotations:register([[
+@dependOn(helmPanel,isReady)
+@method(test_GpsLED_WhenGpsIsSetWithCorrectFix_GpsLedIsOn)
+@module(TestHelmPanelModule)
+]])
 function test_GpsLED_WhenGpsIsSetWithCorrectFix_GpsLedIsOn()
 
   -- Fix
@@ -256,6 +266,11 @@ function xtest_SateliteLED_WhenSateliteIsBlockedOrUnblocked_SateliteLedIsInCorre
 end
 ---------------------------------------------------------------------------------
 
+Annotations:register([[
+@dependOn(helmPanel,isReady)
+@method(test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetTo0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsNotFlashing)
+@module(TestHelmPanelModule)
+]])
 function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetTo0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsNotFlashing()
 
   -- *** Setup
@@ -275,7 +290,11 @@ function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsS
 
 end
 
-
+Annotations:register([[
+@dependOn(helmPanel,isReady)
+@method(test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsFlashingForMinStandardReportLedFlashTime)
+@module(TestHelmPanelModule)
+]])
 function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsFlashingForMinStandardReportLedFlashTime()
 
   -- *** Setup
@@ -316,12 +335,16 @@ function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsS
 
 end
 
-
+Annotations:register([[
+@dependOn(helmPanel,isReady)
+@method(test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardIsWaitingInQueueToBeSent_TerminalConnectedLEDIsFlashing)
+@module(TestHelmPanelModule)
+]])
 function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardIsWaitingInQueueToBeSent_TerminalConnectedLEDIsFlashing()
 
   -- TODO this need to be modified when an implementation of the function allowing IDP blockage will be done
   -- device profile application
-  if IDPBlockageFeaturesImplemented == false then skip("API for setting Satellite Control State has not been implemented yet - no use to perform TC") end
+  --if IDPBlockageFeaturesImplemented == false then skip("API for setting Satellite Control State has not been implemented yet - no use to perform TC") end
 
   -- *** Setup
   local ledFlashingStateTrueTable = {}
@@ -337,9 +360,13 @@ function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsS
 
   gateway.setHighWaterMark() -- to get the newest messages
   framework.delay(STANDARD_REPORT_1_INTERVAL*60 - 10)
+  --TODO:
+  -- GPS:set({blockage = true})
+  D:log("communication blocked")
 
   local currentTime = os.time()
-
+  -- this needs to be modified - property cannot be read by GetProperties message when satellite signal is blocked
+  -- shell command should be used
   while currentTime < standardReportEnabledStartTime + STANDARD_REPORT_1_INTERVAL*60 + 60 do
       currentTime = os.time()
       if(helmPanel:isConnectLedFlashing()) then
