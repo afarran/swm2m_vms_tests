@@ -19,7 +19,7 @@ SmtpWrapper = {}
   end
   
   function SmtpWrapper:start()
-    self:execute("SMTP")
+    self:execute("SMTP", "\r")
   end
   
   function SmtpWrapper:ready()
@@ -35,11 +35,12 @@ SmtpWrapper = {}
     
       local currentAvailable = self.port:available()
       if (currentAvailable > 0) and (currentAvailable == startAvailable) then
-        return self.port:read()
+        return self.port:read(), os.time() - startTime
       end
       startAvailable = currentAvailable
       framework.delay(delay)
     end
+    return "", os.time() - startTime
   end
   
   function SmtpWrapper:setTimeout(timeout)
