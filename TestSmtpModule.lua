@@ -254,12 +254,14 @@ function test_SMTP_WhenRCPTCommandCalledTooManyTimes_ServerReturns552()
   smtp:execute("HELO")
   response = smtp:getResponse()
   smtp:execute("MAIL FROM:<skywave@skywave.com>")
+  local full_response = ""
   local response = smtp:getResponse()
   for index=1,500 do 
     smtp:execute("RCPT TO:<receiver"..index.."@skywave.com>")
+    response = smtp:getResponse(nil, 0.025)
+    full_response = full_response .. response
   end  
-  response = smtp:getResponse(nil, 0.05)
-  assert_match("^552.*\r\n", response, "RCPT TO did not return 552 Too many recipients")  
+  assert_match("^552.*\r\n", full_response, "RCPT TO did not return 552 Too many recipients")  
 end
 
 
