@@ -439,4 +439,23 @@ function test_SMTP_WhenIDLETimeoutExceededInDATAMode_ServerReturns221()
   assert_equal(timeout*60, waitTime, 5, "Timeout value incorrect")
 end
 
+function test_SMTP_WhenIDLETimeoutExceededAfterCommands_ServerReturns221()
+  local timeout = 1
+  vmsSW:setPropertiesByName({SessionIdleTimeout = timeout})
+  startSmtp()
+  smtp:execute("HELO")
+  response = smtp:getResponse()
+  smtp:execute("MAIL FROM:<skywave@skywave.com>")
+  response = smtp:getResponse()
+  framework.delay(timeout*60/2)
+  smtp:execute("RCPT TO:<receiver@skywave.com>")
+  response = smtp:getResponse()
+  
+  local response, waitTime = smtp:getResponse(timeout*60 + 5)
+  
+  assert_match("^421.*\r\n", response, "Timeout message incorrect")
+  SMTPclear = {}
+  assert_equal(timeout*60, waitTime, 5, "Timeout value incorrect")
+end
+
 -- TODO: Test if HELO command issued - session should be reset (HELO/EHLO invokes RSET)
