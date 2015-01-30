@@ -23,44 +23,37 @@ function suite_setup()
   -- debounce
   vmsSW:setPropertiesByName({PropertyChangeDebounceTime=1})
 
-  -- gps setup
-  pos = {
-    latitude  = 0,
-    longitude = 0,
-    speed =  0
-  }
-  GPS:set(pos)
-
 end
 
 -- executed after each test suite
 function suite_teardown()
+
 end
 
 --- setup function
 function setup()
-  
-  -- disabling periodic reports in suite_teardown function
-  vmsSW:setPropertiesByName({
-      StandardReport1Interval = 1,
-      AcceleratedReport1Rate = 1,
-      LogReport1Rate = 1,
-      StandardReport2Interval = 1,
-      AcceleratedReport2Rate = 1,
-      LogReport2Rate = 1,
-      StandardReport3Interval = 1,
-      AcceleratedReport3Rate = 1,
-      LogReport3Rate = 1,
-      PropertyChangeDebounceTime=1
-  })
-
   vmsSW:setHighWaterMark()
 end
 
 --- teardown function executed after each unit test
 function teardown()
 
-  D:log("teardown")
+  vmsSW:setPropertiesByName({
+      -- disabling periodic reports
+      -- all *Intervals are in minutes
+      -- all *Rates means "divided by rate"
+      StandardReport1Interval = 0,
+      AcceleratedReport1Rate = 1,
+      LogReport1Rate = 1,
+      StandardReport2Interval = 0,
+      AcceleratedReport2Rate = 1,
+      LogReport2Rate = 1,
+      StandardReport3Interval = 0,
+      AcceleratedReport3Rate = 1,
+      LogReport3Rate = 1,
+      -- ... and debounce time
+      PropertyChangeDebounceTime=1 
+  })
 
 end
 -----------------------------------------------------------------------------------------------
