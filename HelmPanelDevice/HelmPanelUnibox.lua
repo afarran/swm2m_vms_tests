@@ -41,13 +41,22 @@ HelmPanelUnibox = {}
     return true
   end
 
-  function HelmPanelUnibox:isConnectLedFlashing()
+  function HelmPanelUnibox:isConnectLedFlashingFast()
     local properties = self.device:getPropertiesByName({"led1State"})
     local state = properties.led1State
     D:log("IDP connect LED state is "..state)
-    if state == 'SLOW_FLASH' or state == 'FAST_FLASH' then
+    if state == 'FAST_FLASH' then
       return true
     end
     return false
   end
 
+  function HelmPanelUnibox:isConnectLedFlashingSlow()
+    local properties = self.device:getPropertiesByName({"led1State"})
+    local state = properties.led1State
+    D:log("IDP connect LED state is "..state)
+    if state == 'SLOW_FLASH'  then
+      return true
+    end
+    return false
+  end

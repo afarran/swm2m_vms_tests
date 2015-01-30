@@ -410,10 +410,7 @@ function test_MinStandardReportLedFlashTime_WhenToMobileEmailIsUnread_TerminalCo
 
   gateway.setHighWaterMark() -- to get the newest messages
 
-  local currentTime = os.time()
-
   -- simulate receivied email now
-
   helmPanel:isConnectLedFlashingSlow()
   assert_true(helmPanel:isConnectLedFlashingSlow(), "IDP Connected LED is not flashing slow when to-mobile email is received")
 
