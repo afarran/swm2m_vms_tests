@@ -63,6 +63,8 @@ function setup()
                     "false"
   )
 
+  framework.delay(2)
+
 
 
 end
@@ -1368,8 +1370,8 @@ function test_PowerDisconnected_WhenTerminalIsOffForTimeAbovePowerDisconnectedSt
 
   -- *** Setup
   local POWER_DISCONNECTED_START_DEBOUNCE_TIME = 1   -- seconds
-  local POWER_DISCONNECTED_END_DEBOUNCE_TIME = 1      -- seconds
-  local PROPERTIES_SAVE_INTERVAL = 600                      -- seconds
+  local POWER_DISCONNECTED_END_DEBOUNCE_TIME = 1     -- seconds
+  local PROPERTIES_SAVE_INTERVAL = 600               -- seconds
 
   -- terminal stationary
   local InitialPosition = {
@@ -1395,7 +1397,7 @@ function test_PowerDisconnected_WhenTerminalIsOffForTimeAbovePowerDisconnectedSt
   -- *** Execute
   -- terminal in initial position
   GPS:set(InitialPosition)
-  framework.delay(PROPERTIES_SAVE_INTERVAL)
+  framework.delay(PROPERTIES_SAVE_INTERVAL + 5)
   gateway.setHighWaterMark() -- to get the newest messages
   framework.delay(POWER_DISCONNECTED_START_DEBOUNCE_TIME)
 
@@ -1554,7 +1556,6 @@ function test_PowerDisconnected_WhenTerminalIsOffForTimeBelowPowerDisconnectedSt
 
 
 end
-
 
 
 
