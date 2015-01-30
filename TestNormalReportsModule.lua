@@ -619,13 +619,13 @@ end
   -- 6. Accelerated Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-function test_CCAcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport2IsSentWithCorrectValues()
+function test_XCCAcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport2IsSentWithCorrectValues()
   generic_test_StandardReportContent({
     firstReportKey = "StandardReport2",
     reportKey = "AcceleratedReport2",
     properties = {StandardReport2Interval=2, AcceleratedReport2Rate=2},
     firstReportInterval = 2,
-    reporrInterval = 1
+    reportInterval = 1
   })
 end
 
