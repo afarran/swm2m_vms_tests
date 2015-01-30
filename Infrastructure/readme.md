@@ -1,7 +1,6 @@
-**
-Simple Annotations Engine
+<strong>Simple Annotations Engine</strong>
+
 Example of annotations usage:
-**
 
 Managing dependencies with installed/enabled services.
 
