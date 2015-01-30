@@ -17,16 +17,11 @@ Annotations = {}
       end
       annotations[key]=value
     end
-    -- D:log(module,"module")
-    -- D:log(method,"method")
-    -- D:log(annotations,"annotations")
 
     if (Annotations.registered[module] == nil) then
       Annotations.registered[module] = {}
     end
     Annotations.registered[module][method] = annotations
-
-    --D:log(Annotations.registered,"registered")
   end
 
   function Annotations:get(annotation,module,method)
@@ -57,7 +52,7 @@ Annotations = {}
       D:log("Method  not found!")
       return true
     end
-    return _G[descr.object][descr.method](_G[descr.object])
+    return _G[descr.object][descr.method](_G[descr.object],descr.args)
   end
 
   function Annotations:parseDef(def)
@@ -65,6 +60,14 @@ Annotations = {}
     local result = {}
     result['object']=splt[1]
     result['method']=splt[2]
+    if #splt>2 then
+      result['args'] = {}
+      for i,value in pairs(splt) do
+        if i>2 then
+          table.insert(result['args'],value)
+        end 
+      end
+    end
     return result
   end
 

@@ -652,10 +652,15 @@ end
 
 local function run_test(name, test, suite, hooks, setup, teardown)
   
-   -- ADDED: resolve dependOn of TC 
+   -- ADDED: resolve dependOn and randIn
    local dependOn = Annotations:resolve("dependOn",suite.name,name)
    if dependOn ~= true then
      print("SKIP: "..name.." - "..dependOn)
+     return 
+   end
+   local randIn = Annotations:resolve("randIn",suite.name,name)
+   if randIn ~= true then
+     print("SKIP: "..name.." - "..randIn)
      return 
    end
    -- ADDED END

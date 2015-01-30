@@ -69,6 +69,11 @@ end
 -- Test Cases for STANDARD REPORTS
 -----------------------------------------------------------------------------------------------
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,standardReportPeriodic,3)
+@method(test_ATStandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if StandardReport 1 is sent periodically and its values are correct (setProperties used for report setup)
   -- Initial Conditions:
   --
@@ -96,7 +101,7 @@ end
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-function test_TTStandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues()
+function test_ATStandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues()
   generic_test_StandardReportContent({
     firstReportKey = "StandardReport1",
     reportKey = "StandardReport1",
@@ -106,6 +111,11 @@ function test_TTStandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1I
   })
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,standardReportPeriodic,3)
+@method(test_ATStandardReport_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if StandardReport 2 is sent periodically and its values are correct (setProperties used for report setup)
   -- Initial Conditions:
   --
@@ -133,7 +143,7 @@ end
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-function test_TTStandardReport_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues()
+function test_ATStandardReport_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues()
   generic_test_StandardReportContent({
     firstReportKey = "StandardReport2",
     reportKey = "StandardReport2",
@@ -144,6 +154,12 @@ function test_TTStandardReport_WhenReportIntervalIsSetAboveZero_StandardReport2I
 
 end
 
+
+Annotations:register([[
+@randIn(tcRandomizer,batch,standardReportPeriodic,3)
+@method(test_ATStandardReport_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if StandardReport 3 is sent periodically and its values are correct (setProperties used for report setup)
   -- Initial Conditions:
   --
@@ -171,7 +187,7 @@ end
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-function test_TTStandardReport_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues()
+function test_ATStandardReport_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues()
   generic_test_StandardReportContent({
     firstReportKey = "StandardReport3",
     reportKey = "StandardReport3",
