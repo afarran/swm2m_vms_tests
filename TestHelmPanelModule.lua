@@ -388,6 +388,38 @@ function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsS
 end
 
 
+Annotations:register([[
+@dependOn(helmPanel,isReady)
+@method(test_MinStandardReportLedFlashTime_WhenToMobileEmailIsUnread_TerminalConnectedLEDIsFlashingSlowly)
+@module(TestHelmPanelModule)
+]])
+function test_MinStandardReportLedFlashTime_WhenToMobileEmailIsUnread_TerminalConnectedLEDIsFlashingSlowly()
+
+  -- TODO: update this TC when receiving emails by VMS will be implemented and available in test framework
+  skip("Receiving Emails is not implemented yet")
+
+  -- *** Setup
+  local ledFlashingStateTrueTable = {}
+  local STANDARD_REPORT_1_INTERVAL = 1
+  local MIN_STANDARD_REPORT_FLASH_TIME = 5
+
+  vmsSW:setPropertiesByName({MinStandardReportLedFlashTime = MIN_STANDARD_REPORT_FLASH_TIME})     -- feature enabled
+
+  local standardReportEnabledStartTime = os.time()
+  D:log(standardReportEnabledStartTime)
+
+  gateway.setHighWaterMark() -- to get the newest messages
+
+  local currentTime = os.time()
+
+  -- simulate receivied email now
+
+  helmPanel:isConnectLedFlashingSlow()
+  assert_true(helmPanel:isConnectLedFlashingSlow(), "IDP Connected LED is not flashing slow when to-mobile email is received")
+
+end
+
+
 
 function raiseNotImpl()
   assert_nil(1,"Not implemented yet!")
