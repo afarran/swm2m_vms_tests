@@ -12,7 +12,7 @@ DependencyResolver = {}
       return true
     end
     if _G[descr.object][descr.method] == nil then
-      D:log("Method "..descr.method.." not found!")
+      D:log("Method  not found!")
       return true
     end
     return _G[descr.object][descr.method](_G[descr.object])

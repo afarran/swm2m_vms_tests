@@ -655,7 +655,7 @@ local function run_test(name, test, suite, hooks, setup, teardown)
    -- ADDED: resolve dependencies of TC 
    local dependencies = DependencyResolver:resolve(
      Annotations:get(
-       "dependencies",
+       "dependOn",
        suite.name,
        name
      )

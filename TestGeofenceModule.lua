@@ -76,11 +76,20 @@ function test_GeofenceFeatures_WhenInsideGeofenceZone_AcceleratedReportStatusBit
   local currentStandardReport1Interval = Report1Properties["StandardReport1Interval"]
   local currentAcceleratedReport1Rate = Report1Properties["AcceleratedReport1Rate"]
   local newAcceleratedReport1Rate = 2
-  local newStandardReport1Interval
-  vmsSW:setPropertiesByName({StandardReport1Interval = 2,
+  local newStandardReport1Interval = 2
+  local stdInterval = newStandardReport1Interval
+  if currentStandardReport1Interval > newStandardReport1Interval then
+    local stdInterval = currentStandardReport1Interval
+  end
+  vmsSW:setPropertiesByName({StandardReport1Interval = newStandardReport1Interval,
                              AcceleratedReport1Rate = newAcceleratedReport1Rate})
   
-  local receivedMessages = vmsSW:waitForMessagesByName("AcceleratedReport1", 5 + currentStandardReport1Interval*60)
+  local receivedMessages = vmsSW:waitForMessagesByName("StandardReport1", 5 + stdInterval*60)
+  local standardReport = receivedMessages.StandardReport1
+  assert_not_nil(standardReport, "First Standard report not received")
+  
+  -- accelerated report should be send before next standard report
+  receivedMessages = vmsSW:waitForMessagesByName("AcceleratedReport1", 5 + newStandardReport1Interval*60) 
   local acceleratedReport = receivedMessages.AcceleratedReport1
   
   assert_not_nil(acceleratedReport, "First accelerated report not received")
@@ -89,7 +98,9 @@ function test_GeofenceFeatures_WhenInsideGeofenceZone_AcceleratedReportStatusBit
   assert_false(state.InsigeGeofence, "Terminal incorrectly repored as inside geofence zone")
   vmsSW:setHighWaterMark()
   GPS:set({latitude = 50.50, longitude = 21.687})
-  receivedMessages = vmsSW:waitForMessagesByName("AcceleratedReport1", 5 + newAcceleratedReport1Rate*60) -- wait
+  
+  -- accelerated report should be send before next standard report
+  receivedMessages = vmsSW:waitForMessagesByName("AcceleratedReport1", 5 + newStandardReport1Interval*60)
   acceleratedReport = receivedMessages.AcceleratedReport1
   
   assert_not_nil(acceleratedReport, "Second accelerated report not received")

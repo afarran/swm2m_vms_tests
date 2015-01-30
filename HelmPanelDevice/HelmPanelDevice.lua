@@ -30,8 +30,35 @@ HelmPanelDevice = {}
     )
   end
 
+  function HelmPanelDevice:isReady()
+    if self._isReady ~= nill then
+      return self._isReady
+    end
+    local serviceList = self.system:requestMessageByName("getServiceList",nil,"serviceList")
+    local disabledList = framework.base64Decode(serviceList.serviceList.disabledList)
+    local sinList = framework.base64Decode(serviceList.serviceList.sinList)
+
+    local enabled = false
+    for i,v in ipairs(sinList) do
+      if tonumber(v) == tonumber(self.device.sin) then
+        enabled = true
+        break
+      end
+    end
+    for i,v in ipairs(disabledList) do
+      if tonumber(self.device.sin) == tonumber(v) then
+        enabled = false
+      end
+    end
+    if enabled then
+      self._isReady = enabled
+      return true
+    end
+    self._isReady = "HelmPanel device is not installed!"
+    return self._isReady
+  end
+
   -- abstract methods
   function HelmPanelDevice:isSateliteLedOn() end
   function HelmPanelDevice:isGpsLedOn() end
   function HelmPanelDevice:isConnectLedOn() end
-  function HelmPanelDevice:isReady() end
