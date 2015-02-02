@@ -1497,7 +1497,7 @@ function test_PowerDisconnected_WhenTerminalIsOffForTimeBelowPowerDisconnectedSt
 
   -- *** Setup
   local POWER_DISCONNECTED_START_DEBOUNCE_TIME = 1          -- seconds
-  local POWER_DISCONNECTED_END_DEBOUNCE_TIME = 4000         -- seconds
+  local POWER_DISCONNECTED_END_DEBOUNCE_TIME = 1            -- seconds
   local PROPERTIES_SAVE_INTERVAL = 600                      -- seconds
 
   -- terminal stationary
@@ -1548,7 +1548,9 @@ function test_PowerDisconnected_WhenTerminalIsOffForTimeBelowPowerDisconnectedSt
   end
 
   D:log(PowerDisconnectedAbnormalReport)
-  assert_nil(PowerDisconnectedAbnormalReport, "AbnormalReport with PowerDisconnected information received but not expected")
+
+  local StatusBitmap = vmsSW:decodeBitmap(PowerDisconnectedAbnormalReport.Payload.StatusBitmap, "EventStateId")
+  assert_false(StatusBitmap["PowerDisconnected"], "AbnormalReport with PowerDisconnected = true information received but not expected")
 
 end
 
