@@ -18,6 +18,13 @@ def find_test_suite_start(line):
 		test_suites["suites"][suite_name] = []
 		return suite_name
 	return None
+
+def find_test_case_start(line):
+	match = re.match('\[STARTING\]: (.*)', line)
+	if match:
+		return match.group(1)
+	else:
+		return None
 	
 def find_test_case(line):
 	match = re.match('(FAIL|PASS|SKIP): (.*)', line)
@@ -170,21 +177,23 @@ for line in data:
 		current_test_case_data = None
 		continue
 	
-	test_case = find_test_case(line)
-	if test_case:
+	test_case_start = find_test_case_start(line)
+	if test_case_start:
 		if not current_suite:
 			print("Found testcase but no testsuite detected in first place. Parser source seems malformed")
 			sys.exit(-1)
 		if current_test_case_data:
 			test_suites["suites"][current_suite].append(current_test_case_data)
-
-		current_test_case_data = {	"name" : test_case["name"],
-									"result" : test_case["result"],
-									"time" : test_case["time"],
-									"msg" : test_case["msg"],
-									"trace" : "",
-									}
-		
+		current_test_case_data = {}
+		current_test_case_data["name"] = test_case_start
+		current_test_case_data["trace"] = ""
+		continue
+			
+	test_case = find_test_case(line)
+	if test_case:
+		current_test_case_data["result"] = test_case["result"]
+		current_test_case_data["time"] = test_case["time"]
+		current_test_case_data["msg"] = test_case["msg"]
 		continue
 	
 	trace = find_trace(line)
