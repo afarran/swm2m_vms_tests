@@ -651,7 +651,6 @@ end
 
 
 local function run_test(name, test, suite, hooks, setup, teardown)
-  
    -- ADDED: resolve dependencies of TC 
    local dependencies = DependencyResolver:resolve(
      Annotations:get(
@@ -763,6 +762,9 @@ local function run_suite(hooks, opts, results, sname, tests)
          res.tests = tests
          for name, test in pairs(tests) do
             if not opts.test_pat or name:match(opts.test_pat) then
+              if opts.verbose then
+                print("[STARTING]: " .. name)
+              end
                run_test(name, test, res, hooks, setup, teardown)
             end
          end
