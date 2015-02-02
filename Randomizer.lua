@@ -12,6 +12,7 @@ local Randomizer = {}
 
   function Randomizer:_init()
     --print("initing randomizer ...")
+    self.batches = {}
   end
   
   function Randomizer:chooseTest(title, tests, psetup, pteardown)
@@ -61,6 +62,28 @@ local Randomizer = {}
     else
       return ptest(math.random(min, max), ...)
     end
+  end
+
+  function Randomizer:batch(args)
+    local falseInfo = "Another TC choosen"
+    -- counting tries
+    if self.batches[args[1]] == nil then
+      self.batches[args[1]] = 1
+    else 
+      self.batches[args[1]] = self.batches[args[1]]+1
+    end
+    -- choosen already 
+    if self.batches[args[1]] > tonumber(args[2]) then
+      return falseInfo
+    end
+    -- last try or rand
+    math.randomseed(os.time())
+    local randv = math.random(1,100)
+    if self.batches[args[1]] == tonumber(args[2]) or randv%2 == 0  then
+      self.batches[args[1]] = tonumber(args[2])+1
+      return true
+    end
+    return falseInfo
   end
   
 return Randomizer
