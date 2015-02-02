@@ -1429,7 +1429,6 @@ function test_PowerDisconnected_WhenTerminalIsOffForTimeAbovePowerDisconnectedSt
     end
   end
 
-
   D:log(PowerDisconnectedAbnormalReport)
 
   assert_not_nil(PowerDisconnectedAbnormalReport, "AbnormalReport  with PowerDisconnected information not received")
@@ -1521,7 +1520,7 @@ function test_PowerDisconnected_WhenTerminalIsOffForTimeBelowPowerDisconnectedSt
 
   framework.delay(POWER_DISCONNECTED_START_DEBOUNCE_TIME)
 
-  -- checking PowerDisconnectedState property - this is expected to be false - terminal is powered on for time longer than
+  -- checking PowerDisconnectedState property - this is expected to be false - terminal is powered on for time longer than POWER_DISCONNECTED_START_DEBOUNCE_TIME
   local PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
   assert_false(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState is incorrectly true")
   D:log(PowerDisconnectedStateProperty, "PowerDisconnectedStateProperty in the start of TC")
@@ -1533,7 +1532,6 @@ function test_PowerDisconnected_WhenTerminalIsOffForTimeBelowPowerDisconnectedSt
   systemSW:restartFramework()
 
   local timeOfEvent = os.time()  -- to get exact timestamp
-
 
   -- receiving all from mobile messages sent after setHighWaterMark()
   local receivedMessages = gateway.getReturnMessages()
@@ -1549,11 +1547,8 @@ function test_PowerDisconnected_WhenTerminalIsOffForTimeBelowPowerDisconnectedSt
     end
   end
 
-
   D:log(PowerDisconnectedAbnormalReport)
-
   assert_nil(PowerDisconnectedAbnormalReport, "AbnormalReport with PowerDisconnected information received but not expected")
-
 
 end
 
@@ -3353,8 +3348,6 @@ function test_AllAbnormalReportsEnabled_When4AbnormalReportsAreTriggered_4Abnorm
                                HwClientDisconnectedStartDebounceTime = 1,
                                HwClientDisconnectedEndDebounceTime = 1,
                                GpsJammedSendReport = true,
-                               GpsBlockedSendReport = true,
-                               IdpBlockedSendReport = true,
                                PowerDisconnectedSendReport = true,
                                HelmPanelDisconnectedSendReport = true,
                                HwClientDisconnectedSendReport = true,
@@ -3370,14 +3363,14 @@ function test_AllAbnormalReportsEnabled_When4AbnormalReportsAreTriggered_4Abnorm
   -- Helm Panel disconnected from terminal
   helmPanel:setConnected("true")
 
-  -- disconnecting HW Client
+  -- connecting HW Client
   shellSW:postEvent(
                     "\"_RS232\"",
                     "DTECONNECTED",
                     "true"
   )
 
-  framework.delay(15)
+  framework.delay(35)
 
   -- receiving all from mobile messages sent after setHighWaterMark()
   local receivedMessages = gateway.getReturnMessages()
