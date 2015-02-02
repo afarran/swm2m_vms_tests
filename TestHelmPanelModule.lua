@@ -323,7 +323,8 @@ function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsS
       end
   end
 
-  assert_not_nil(next(ledFlashingStateTrueTable))
+  D:log(next(ledFlashingStateTrueTable))
+  assert_not_nil(next(ledFlashingStateTrueTable),"LED was not in flashing fast state at when terminal was sending StandardReports" )
   D:log(ledFlashingStateTrueTable)
   local lastElementIndex = table.getn(ledFlashingStateTrueTable)
   assert_equal(ledFlashingStateTrueTable[lastElementIndex] - ledFlashingStateTrueTable[1],
