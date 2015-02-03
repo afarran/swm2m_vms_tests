@@ -50,8 +50,32 @@ end
 --- setup function
 function setup()
 
+  vmsSW:setPropertiesByName({
+                               ExtPowerDisconnectedStartDebounceTime = 1,
+                               ExtPowerDisconnectedEndDebounceTime = 1,
+                               HelmPanelDisconnectedStartDebounceTime = 1,
+                               HelmPanelDisconnectedEndDebounceTime = 1,
+                               HwClientDisconnectedStartDebounceTime = 1,
+                               HwClientDisconnectedEndDebounceTime = 1,
+                               GpsBlockedStartDebounceTime = 1,
+                               GpsBlockedEndDebounceTime = 1,
+                               GpsBlockedSendReport = false,
+                               IdpBlockedSendReport = false,
+                               PowerDisconnectedSendReport = false,
+                               HelmPanelDisconnectedSendReport = false,
+                            }
+  )
+
   GPS:set({jammingDetect = false, fixType = 3}) -- not to interrupt other suites
-  vmsSW:setHighWaterMark()
+
+  -- External power source disconnected from Helm panel
+  helmPanel:externalPowerConnected("false")
+
+  -- Helm Panel disconnected from terminal
+  helmPanel:setConnected("false")
+
+  framework.delay(2)
+
 
 end
 
@@ -74,67 +98,30 @@ end
 -----------------------------------------------------------------------------------------------
 Annotations:register([[
 @dependOn(helmPanel,isReady)
-@method(test_XHelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAndTheStateToggles_HelmPanelDisconnectedStateChangesCorrectlyAndLEDTransitionsAreCorrect)
+@method(test_TerminalConnectedLED_WhenTerminalIsConnectedOrDisconnectedFromHelmPanel_TerminalConnectedLEDIsOnOrOffAccordingToConnection)
 @module(TestHelmPanelModule)
 ]])
-function test_XHelmPanelConnected_WhenHelmPanelDisconnectedStateIsInAGivenStateAndTheStateToggles_HelmPanelDisconnectedStateChangesCorrectlyAndLEDTransitionsAreCorrect()
+function test_TerminalConnectedLED_WhenTerminalIsConnectedOrDisconnectedFromHelmPanel_TerminalConnectedLEDIsOnOrOffAccordingToConnection()
 
-  local properties = vmsSW:getPropertiesByName({"HelmPanelDisconnectedState"})
-  local isDisconnected = properties.HelmPanelDisconnectedState
+  -- Terminal is connected to helm panel
+  helmPanel:setConnected("true")
+  framework.delay(3)  -- wait until led state is changed
 
-  local change = ""
-
-  -- check LED before switch (commented out because in this way TC is unstable, LED is tested in unit test later)
+  -- read TerminalConnected led when connection is estabilished
   local ledState = helmPanel:isConnectLedOn()
-  if isDisconnected then
-    change = "true"
-    --assert_false(ledState,"The IDP connect LED should be off!")
-  else
-    --assert_true(ledState,"The IDP connect LED should be on!")
-    change = "false"
-  end
+  assert_true(ledState, "Terminal Connected LED is not ON when terminal is connected to helm panel")
+  D:log(ledState, "TerminalConnected LED state for terminal connected to helm panel")
 
-  -- state transition
-  helmPanel:setConnected(change)
-  framework.delay(1)
+  -- Helm Panel disconnected from terminal
+  helmPanel:setConnected("false")
+
+  framework.delay(3)  -- wait until led state is changed
 
   -- check LED again after switch
-  local ledState = helmPanel:isConnectLedOn()
-  if isDisconnected then
-    --assert_true(ledState,"The IDP connect LED should be on!")
-  else
-    --assert_false(ledState,"The IDP connect LED should be off!")
-  end
+  ledState = helmPanel:isConnectLedOn()
+  assert_false(ledState, "Terminal Connected LED is not OFF when terminal is disconnected from helm panel")
+  D:log(ledState,"TerminalConnected LED state for terminal disconnected from helm panel")
 
-  -- check transition
-  local propertiesAfterChange = vmsSW:getPropertiesByName({"HelmPanelDisconnectedState"})
-  local isDisconnectedAfterChange = propertiesAfterChange.HelmPanelDisconnectedState
-  assert_not_equal(isDisconnectedAfterChange, isDisconnected, "There should be change in disconnected state.")
-
-  if isDisconnectedAfterChange then
-    change = "true"
-  else
-    change = "false"
-  end
-
-  --second state transition
-  helmPanel:setConnected(change)
-  framework.delay(1)
-
-  -- check LED after back to initail state
-  local ledState = helmPanel:isConnectLedOn()
-  if isDisconnected then
-    change = "true"
-    --assert_false(ledState,"The IDP connect LED should be off!")
-  else
-    change = "false"
-    --assert_true(ledState,"The IDP connect LED should be on!")
-  end
-
-  -- check state transition
-  local propertiesAfterSecondChange = vmsSW:getPropertiesByName({"HelmPanelDisconnectedState"})
-  local isDisconnectedAfterSecondChange = propertiesAfterSecondChange.HelmPanelDisconnectedState
-  assert_not_equal(isDisconnectedAfterChange, isDisconnectedAfterSecondChange, "There should be change in disconnected state.")
 
 end
 
