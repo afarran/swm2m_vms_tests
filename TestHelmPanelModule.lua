@@ -7,10 +7,6 @@
 module("TestHelmPanelModule", package.seeall)
 DEBUG_MODE = 1
 
-local SATELITE_BLOCKAGE_DEBOUNCE = 1
-local SATELITE_BLOCKAGE_DEBOUNCE_TOLERANCE = 0
-local GPS_BLOCKED_START_DEBOUNCE_TIME = 20
-local GPS_BLOCKED_END_DEBOUNCE_TIME = 1
 local MAX_FIX_TIMEOUT = 60
 
 -----------------------------------------------------------------------------------------------
@@ -26,17 +22,6 @@ function suite_setup()
                              MinStandardReportLedFlashTime = 0}
   )
 
-  -- debounce
-  vmsSW:setPropertiesByName({
-    PropertyChangeDebounceTime=1,
-    HelmPanelDisconnectedStartDebounceTime=1,
-    HelmPanelDisconnectedEndDebounceTime=1,
-    HelmPanelDisconnectedSendReport = true,
-    IdpBlockedStartDebounceTime = SATELITE_BLOCKAGE_DEBOUNCE ,
-    IdpBlockedEndDebounceTime = SATELITE_BLOCKAGE_DEBOUNCE,
-    GpsBlockedStartDebounceTime = GPS_BLOCKED_START_DEBOUNCE_TIME,
-    GpsBlockedEndDebounceTime = GPS_BLOCKED_END_DEBOUNCE_TIME
-  })
 
 end
 
@@ -53,10 +38,6 @@ function setup()
   vmsSW:setPropertiesByName({
                                ExtPowerDisconnectedStartDebounceTime = 1,
                                ExtPowerDisconnectedEndDebounceTime = 1,
-                               HelmPanelDisconnectedStartDebounceTime = 1,
-                               HelmPanelDisconnectedEndDebounceTime = 1,
-                               HwClientDisconnectedStartDebounceTime = 1,
-                               HwClientDisconnectedEndDebounceTime = 1,
                                GpsBlockedStartDebounceTime = 1,
                                GpsBlockedEndDebounceTime = 1,
                                GpsBlockedSendReport = false,
@@ -66,7 +47,7 @@ function setup()
                             }
   )
 
-  GPS:set({jammingDetect = false, fixType = 3}) -- not to interrupt other suites
+  GPS:set({jammingDetect = false, fixType = 3}) -- good signal quality simulated
 
   -- External power source disconnected from Helm panel
   helmPanel:externalPowerConnected("false")
@@ -82,6 +63,7 @@ end
 --- teardown function executed after each unit test
 function teardown()
 
+  GPS:set({jammingDetect = false, fixType = 3}) -- not to interrupt other TCs
 
   vmsSW:setPropertiesByName({StandardReport1Interval = 0,   -- 0 is for feature disabled
                              StandardReport2Interval = 0,
@@ -275,108 +257,43 @@ function test_TerminalConnectedLED_WhenToMobileEmailIsUnread_TerminalConnectedLE
 
 end
 
-
-
-
-
-Annotations:register([[
-@dependOn(helmPanel,isReady)
-@method(test_XHelmPanelDisconnected_WhenHelmPanelIsDisConnected_ConnectLEDIsOff)
-@module(TestHelmPanelModule)
-]])
-function test_XHelmPanelDisconnected_WhenHelmPanelIsDisConnected_ConnectLEDIsOff()
-  helmPanel:setConnected("false")
-  local ledState = helmPanel:isConnectLedOn()
-  D:log(ledState,"LED-FALSE")
-  assert_false(ledState,"LED should be off!")
-end
-
-function test_HelmPanelDisconnected_WhenHelmPanelIsConnected_ConnectLEDIsOn()
-  helmPanel:setConnected("true")
-  local ledState = helmPanel:isConnectLedOn()
-  D:log(ledState,"LED-TRUE")
-  assert_true(ledState,"LED should be on!")
-end
-
-function test_HelmPanelDisconnected_WhenSeveralStateChangesAreTriggered_LedWhichIndicatesConnectIsInCorrectState()
-  i = 0
-  while i < 3 do
-    helmPanel:setConnected("true")
-    local ledState = helmPanel:isConnectLedOn()
-    D:log(ledState,"LED-TRUE")
-    assert_true(ledState,"LED should be on!")
-    helmPanel:setConnected("false")
-    local ledState = helmPanel:isConnectLedOn()
-    D:log(ledState,"LED-FALSE")
-    assert_false(ledState,"LED should be off!")
-    framework.delay(1)
-    i = i+1
- end
-end
-
 -----------------------------------------------------------------------------------------------
 -- Test Cases - GPS LED on/off - IN DEVELOPMENT!
 ----------------------------------------------------------------------------------------------
 
 Annotations:register([[
 @dependOn(helmPanel,isReady)
-@method(test_GpsLED_WhenGpsIsBlocked_GpsLedIsOff)
+@method(test_GpsLED_WhenGpsIsBlockedAndNotBlocked_GpsLedIsOffOrOnAccordingToGPSSignal)
 @module(TestHelmPanelModule)
 ]])
-function test_GpsLED_WhenGpsIsBlocked_GpsLedIsOff()
+function test_GpsLED_WhenGpsIsBlockedAndNotBlocked_GpsLedIsOffOrOnAccordingToGPSSignal()
 
-  -- No fix
-  local blockedPosition = {
-    speed = 0,                      -- kmh
-    latitude = 1,                   -- degrees
-    longitude = 1,                  -- degrees
-    fixType = 1,                    -- no fix
-  }
+  local GPS_BLOCKED_START_DEBOUNCE_TIME = 1
+  local GPS_BLOCKED_END_DEBOUNCE_TIME = 1
 
-  positionSW:setPropertiesByName({
-    continuous = 0,
-    maxFixTimeout = MAX_FIX_TIMEOUT
-  })
-  GPS:set(blockedPosition)
+  vmsSW:setPropertiesByName({
+                               GpsBlockedStartDebounceTime = GPS_BLOCKED_START_DEBOUNCE_TIME,
+                               GpsBlockedEndDebounceTime = GPS_BLOCKED_END_DEBOUNCE_TIME,
+                               GpsBlockedSendReport = false,
+                            }
+  )
 
-  framework.delay(MAX_FIX_TIMEOUT + GPS_BLOCKED_START_DEBOUNCE_TIME + 2)
+  positionSW:setPropertiesByName({maxFixTimeout = MAX_FIX_TIMEOUT})
+  GPS:set({fixType = 1})
 
-  framework.delay(120)
+  framework.delay(MAX_FIX_TIMEOUT + GPS_BLOCKED_START_DEBOUNCE_TIME + 20)
 
   local ledState = helmPanel:isGpsLedOn()
-  assert_false(ledState,"The GPS LED should be off!")
+  assert_false(ledState,"The GPS LED is not Off when there is no GPS signal")
+
+  GPS:set({fixType = 3})
+  framework.delay(GPS_BLOCKED_END_DEBOUNCE_TIME + 20)
+
+  ledState = helmPanel:isGpsLedOn()
+  assert_true(ledState,"The GPS LED is not ON when GPS signal is good")
 
 end
 
-Annotations:register([[
-@dependOn(helmPanel,isReady)
-@method(test_GpsLED_WhenGpsIsSetWithCorrectFix_GpsLedIsOn)
-@module(TestHelmPanelModule)
-]])
-function test_GpsLED_WhenGpsIsSetWithCorrectFix_GpsLedIsOn()
-
-  -- Fix
-  local position = {
-    speed = 0,                      -- kmh
-    latitude = 1,                   -- degrees
-    longitude = 1,                  -- degrees
-    fixType = 3,                    -- fix
-  }
-
-  positionSW:setPropertiesByName({
-    continuous = 1,
-    maxFixTimeout = MAX_FIX_TIMEOUT
-  })
-  GPS:set(position)
-
-  framework.delay(MAX_FIX_TIMEOUT + GPS_BLOCKED_START_DEBOUNCE_TIME + 2 )
-
-  framework.delay(65)
-
-  local ledState = helmPanel:isGpsLedOn()
-  assert_true(ledState,"The GPS LED should be on!")
-
-end
 
 -----------------------------------------------------------------------------------------------
 -- Test Cases - SATELITE LED on/off - IN DEVELOPMENT
