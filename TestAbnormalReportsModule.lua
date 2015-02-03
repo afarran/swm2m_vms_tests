@@ -3334,7 +3334,7 @@ function test_SetProperties_WhenSetPropertiesMessageIsSet_PropertiesIncludedInTh
 end
 
 
-function test_AllAbnormalReportsEnabled_When4AbnormalReportsAreTriggered_4AbnormalReportsAreSentByTerminal()
+function test_MultipleAbnormalReportsEnabled_When3AbnormalReportsAreTriggered_3AbnormalReportsAreSentByTerminal()
 
   -- *** Setup
   vmsSW:setPropertiesByName({
@@ -3345,12 +3345,9 @@ function test_AllAbnormalReportsEnabled_When4AbnormalReportsAreTriggered_4Abnorm
                                ExtPowerDisconnectedEndDebounceTime = 1,
                                HelmPanelDisconnectedStartDebounceTime = 1,
                                HelmPanelDisconnectedEndDebounceTime = 1,
-                               HwClientDisconnectedStartDebounceTime = 1,
-                               HwClientDisconnectedEndDebounceTime = 1,
                                GpsJammedSendReport = true,
                                PowerDisconnectedSendReport = true,
                                HelmPanelDisconnectedSendReport = true,
-                               HwClientDisconnectedSendReport = true,
                             }
   )
 
@@ -3362,13 +3359,6 @@ function test_AllAbnormalReportsEnabled_When4AbnormalReportsAreTriggered_4Abnorm
 
   -- Helm Panel disconnected from terminal
   helmPanel:setConnected("true")
-
-  -- connecting HW Client
-  shellSW:postEvent(
-                    "\"_RS232\"",
-                    "DTECONNECTED",
-                    "true"
-  )
 
   framework.delay(35)
 
@@ -3383,7 +3373,7 @@ function test_AllAbnormalReportsEnabled_When4AbnormalReportsAreTriggered_4Abnorm
     namesOfAbnormalReports[#namesOfAbnormalReports+1] = AllReceivedAbnormalReports[index].Payload.EventType
   end
 
-  local expectedAbnormalReports = {"HwClientDisconnected", "ExtPowerDisconnected", "GpsJammed","HelmPanelDisconnected"}
+  local expectedAbnormalReports = {"ExtPowerDisconnected", "GpsJammed","HelmPanelDisconnected"}
 
   D:log(expectedAbnormalReports)
   D:log(namesOfAbnormalReports)
