@@ -127,6 +127,160 @@ end
 
 Annotations:register([[
 @dependOn(helmPanel,isReady)
+@method(test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetTo0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsNotFlashing)
+@module(TestHelmPanelModule)
+]])
+function test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetTo0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsNotFlashing()
+
+  -- *** Setup
+  local STANDARD_REPORT_1_INTERVAL = 1
+  local STANDARD_REPORT_2_INTERVAL = 1
+  local STANDARD_REPORT_3_INTERVAL = 1
+
+  vmsSW:setPropertiesByName({StandardReport1Interval = 1,
+                             StandardReport2Interval = 1,
+                             StandardReport3Interval = 1,
+                             MinStandardReportLedFlashTime = 0}     -- 0 is for feature disabled
+  )
+  -- *** Execute
+  framework.delay(65)
+  assert_false(helmPanel:isConnectLedFlashingSlow(), "Terminal Connected LED is flashing when feature is disabled")
+
+
+end
+
+Annotations:register([[
+@dependOn(helmPanel,isReady)
+@method(test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsFlashingForMinStandardReportLedFlashTime)
+@module(TestHelmPanelModule)
+]])
+function test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsFlashingForMinStandardReportLedFlashTime()
+
+  -- *** Setup
+  local ledFlashingStateTrueTable = {}
+  local STANDARD_REPORT_1_INTERVAL = 1
+  local MIN_STANDARD_REPORT_FLASH_TIME = 30
+
+  vmsSW:setPropertiesByName({StandardReport1Interval = STANDARD_REPORT_1_INTERVAL,
+                             MinStandardReportLedFlashTime = MIN_STANDARD_REPORT_FLASH_TIME}     -- feature enabled
+  )
+
+  local standardReportEnabledStartTime = os.time()
+  D:log(standardReportEnabledStartTime)
+  local currentTime = 0
+
+  gateway.setHighWaterMark() -- to get the newest messages
+  framework.delay(STANDARD_REPORT_1_INTERVAL*60 - 10)
+
+  currentTime = os.time()
+
+  while currentTime < standardReportEnabledStartTime + STANDARD_REPORT_1_INTERVAL*60 + MIN_STANDARD_REPORT_FLASH_TIME + 10  do
+      currentTime = os.time()
+      if(helmPanel:isConnectLedFlashingFast()) then
+        currentTime = os.time()
+        ledFlashingStateTrueTable[#ledFlashingStateTrueTable + 1] = currentTime
+      end
+  end
+
+  D:log(next(ledFlashingStateTrueTable))
+  assert_not_nil(next(ledFlashingStateTrueTable),"LED was not in flashing fast state at when terminal was sending StandardReports" )
+  D:log(ledFlashingStateTrueTable)
+  local lastElementIndex = table.getn(ledFlashingStateTrueTable)
+  assert_equal(ledFlashingStateTrueTable[lastElementIndex] - ledFlashingStateTrueTable[1],
+  MIN_STANDARD_REPORT_FLASH_TIME,
+  8,
+  "IDP Connected LED was flashing for incorrect period of time when MIN_STANDARD_REPORT_FLASH_TIME is set above zero"
+  )
+
+end
+
+Annotations:register([[
+@dependOn(helmPanel,isReady)
+@method(test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardIsWaitingInQueueToBeSent_TerminalConnectedLEDIsFlashing)
+@module(TestHelmPanelModule)
+]])
+function test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardIsWaitingInQueueToBeSent_TerminalConnectedLEDIsFlashing()
+
+  -- TODO this need to be modified when an implementation of the function allowing IDP blockage will be done
+  -- device profile application
+  skip("waiting for implementation of direct shell usage - property cannot be read by GetProperties message when satellite signal is blocked")
+
+  -- *** Setup
+  local ledFlashingStateTrueTable = {}
+  local STANDARD_REPORT_1_INTERVAL = 1
+  local MIN_STANDARD_REPORT_FLASH_TIME = 5
+
+  vmsSW:setPropertiesByName({StandardReport1Interval = STANDARD_REPORT_1_INTERVAL,
+                             MinStandardReportLedFlashTime = MIN_STANDARD_REPORT_FLASH_TIME}     -- feature enabled
+  )
+
+  local standardReportEnabledStartTime = os.time()
+  D:log(standardReportEnabledStartTime)
+
+  gateway.setHighWaterMark() -- to get the newest messages
+  framework.delay(STANDARD_REPORT_1_INTERVAL*60 - 10)
+  --TODO:
+  -- GPS:set({blockage = true})
+  D:log("communication blocked")
+
+  local currentTime = os.time()
+  -- this needs to be modified - property cannot be read by GetProperties message when satellite signal is blocked
+  -- shell command should be used
+  while currentTime < standardReportEnabledStartTime + STANDARD_REPORT_1_INTERVAL*60 + 60 do
+      currentTime = os.time()
+      if(helmPanel:isConnectLedFlashing()) then
+        currentTime = os.time()
+        ledFlashingStateTrueTable[#ledFlashingStateTrueTable + 1] = currentTime
+      end
+  end
+
+  D:log(ledFlashingStateTrueTable)
+
+  local lastElementIndex = table.getn(ledFlashingStateTrueTable)
+
+  assert_gt(ledFlashingStateTrueTable[lastElementIndex],
+  standardReportEnabledStartTime + STANDARD_REPORT_1_INTERVAL*60 + MIN_STANDARD_REPORT_FLASH_TIME + 5,
+  8,
+  "IDP Connected LED was not flashing when StandardReport was waiting in queue while IDP Blockage"
+  )
+
+end
+
+
+Annotations:register([[
+@dependOn(helmPanel,isReady)
+@method(test_MinStandardReportLedFlashTime_WhenToMobileEmailIsUnread_TerminalConnectedLEDIsFlashingSlowly)
+@module(TestHelmPanelModule)
+]])
+function test_TerminalConnectedLED_WhenToMobileEmailIsUnread_TerminalConnectedLEDIsFlashingSlowly()
+
+  -- TODO: update this TC when receiving emails by VMS will be implemented and available in test framework
+  skip("Receiving Emails is not implemented yet")
+
+  -- *** Setup
+  local ledFlashingStateTrueTable = {}
+  local STANDARD_REPORT_1_INTERVAL = 1
+  local MIN_STANDARD_REPORT_FLASH_TIME = 5
+
+  vmsSW:setPropertiesByName({MinStandardReportLedFlashTime = MIN_STANDARD_REPORT_FLASH_TIME})     -- feature enabled
+
+  local standardReportEnabledStartTime = os.time()
+  D:log(standardReportEnabledStartTime)
+
+  gateway.setHighWaterMark() -- to get the newest messages
+
+  -- simulate receivied email now
+  helmPanel:isConnectLedFlashingSlow()
+  assert_true(helmPanel:isConnectLedFlashingSlow(), "IDP Connected LED is not flashing slow when to-mobile email is received")
+
+end
+
+
+
+
+
+Annotations:register([[
+@dependOn(helmPanel,isReady)
 @method(test_XHelmPanelDisconnected_WhenHelmPanelIsDisConnected_ConnectLEDIsOff)
 @module(TestHelmPanelModule)
 ]])
@@ -255,155 +409,6 @@ function xtest_SateliteLED_WhenSateliteIsBlockedOrUnblocked_SateliteLedIsInCorre
 end
 ---------------------------------------------------------------------------------
 
-Annotations:register([[
-@dependOn(helmPanel,isReady)
-@method(test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetTo0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsNotFlashing)
-@module(TestHelmPanelModule)
-]])
-function test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetTo0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsNotFlashing()
-
-  -- *** Setup
-  local STANDARD_REPORT_1_INTERVAL = 1
-  local STANDARD_REPORT_2_INTERVAL = 1
-  local STANDARD_REPORT_3_INTERVAL = 1
-
-  vmsSW:setPropertiesByName({StandardReport1Interval = 1,
-                             StandardReport2Interval = 1,
-                             StandardReport3Interval = 1,
-                             MinStandardReportLedFlashTime = 0}     -- 0 is for feature disabled
-  )
-  -- *** Execute
-  framework.delay(65)
-  assert_false(helmPanel:isConnectLedFlashingSlow(), "Terminal Connected LED is flashing when feature is disabled")
-
-
-end
-
-Annotations:register([[
-@dependOn(helmPanel,isReady)
-@method(test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsFlashingForMinStandardReportLedFlashTime)
-@module(TestHelmPanelModule)
-]])
-function test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsFlashingForMinStandardReportLedFlashTime()
-
-  -- *** Setup
-  local ledFlashingStateTrueTable = {}
-  local STANDARD_REPORT_1_INTERVAL = 1
-  local MIN_STANDARD_REPORT_FLASH_TIME = 30
-
-  vmsSW:setPropertiesByName({StandardReport1Interval = STANDARD_REPORT_1_INTERVAL,
-                             MinStandardReportLedFlashTime = MIN_STANDARD_REPORT_FLASH_TIME}     -- feature enabled
-  )
-
-  local standardReportEnabledStartTime = os.time()
-  D:log(standardReportEnabledStartTime)
-  local currentTime = 0
-
-  gateway.setHighWaterMark() -- to get the newest messages
-  framework.delay(STANDARD_REPORT_1_INTERVAL*60 - 10)
-
-  currentTime = os.time()
-
-  while currentTime < standardReportEnabledStartTime + STANDARD_REPORT_1_INTERVAL*60 + MIN_STANDARD_REPORT_FLASH_TIME + 10  do
-      currentTime = os.time()
-      if(helmPanel:isConnectLedFlashingFast()) then
-        currentTime = os.time()
-        ledFlashingStateTrueTable[#ledFlashingStateTrueTable + 1] = currentTime
-      end
-  end
-
-  D:log(next(ledFlashingStateTrueTable))
-  assert_not_nil(next(ledFlashingStateTrueTable),"LED was not in flashing fast state at when terminal was sending StandardReports" )
-  D:log(ledFlashingStateTrueTable)
-  local lastElementIndex = table.getn(ledFlashingStateTrueTable)
-  assert_equal(ledFlashingStateTrueTable[lastElementIndex] - ledFlashingStateTrueTable[1],
-  MIN_STANDARD_REPORT_FLASH_TIME,
-  8,
-  "IDP Connected LED was flashing for incorrect period of time when MIN_STANDARD_REPORT_FLASH_TIME is set above zero"
-  )
-
-end
-
-Annotations:register([[
-@dependOn(helmPanel,isReady)
-@method(test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardIsWaitingInQueueToBeSent_TerminalConnectedLEDIsFlashing)
-@module(TestHelmPanelModule)
-]])
-function test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardIsWaitingInQueueToBeSent_TerminalConnectedLEDIsFlashing()
-
-  -- TODO this need to be modified when an implementation of the function allowing IDP blockage will be done
-  -- device profile application
-  skip("waiting for implementation of direct shell usage - property cannot be read by GetProperties message when satellite signal is blocked")
-
-  -- *** Setup
-  local ledFlashingStateTrueTable = {}
-  local STANDARD_REPORT_1_INTERVAL = 1
-  local MIN_STANDARD_REPORT_FLASH_TIME = 5
-
-  vmsSW:setPropertiesByName({StandardReport1Interval = STANDARD_REPORT_1_INTERVAL,
-                             MinStandardReportLedFlashTime = MIN_STANDARD_REPORT_FLASH_TIME}     -- feature enabled
-  )
-
-  local standardReportEnabledStartTime = os.time()
-  D:log(standardReportEnabledStartTime)
-
-  gateway.setHighWaterMark() -- to get the newest messages
-  framework.delay(STANDARD_REPORT_1_INTERVAL*60 - 10)
-  --TODO:
-  -- GPS:set({blockage = true})
-  D:log("communication blocked")
-
-  local currentTime = os.time()
-  -- this needs to be modified - property cannot be read by GetProperties message when satellite signal is blocked
-  -- shell command should be used
-  while currentTime < standardReportEnabledStartTime + STANDARD_REPORT_1_INTERVAL*60 + 60 do
-      currentTime = os.time()
-      if(helmPanel:isConnectLedFlashing()) then
-        currentTime = os.time()
-        ledFlashingStateTrueTable[#ledFlashingStateTrueTable + 1] = currentTime
-      end
-  end
-
-  D:log(ledFlashingStateTrueTable)
-
-  local lastElementIndex = table.getn(ledFlashingStateTrueTable)
-
-  assert_gt(ledFlashingStateTrueTable[lastElementIndex],
-  standardReportEnabledStartTime + STANDARD_REPORT_1_INTERVAL*60 + MIN_STANDARD_REPORT_FLASH_TIME + 5,
-  8,
-  "IDP Connected LED was not flashing when StandardReport was waiting in queue while IDP Blockage"
-  )
-
-end
-
-
-Annotations:register([[
-@dependOn(helmPanel,isReady)
-@method(test_MinStandardReportLedFlashTime_WhenToMobileEmailIsUnread_TerminalConnectedLEDIsFlashingSlowly)
-@module(TestHelmPanelModule)
-]])
-function test_TerminalConnectedLED_WhenToMobileEmailIsUnread_TerminalConnectedLEDIsFlashingSlowly()
-
-  -- TODO: update this TC when receiving emails by VMS will be implemented and available in test framework
-  skip("Receiving Emails is not implemented yet")
-
-  -- *** Setup
-  local ledFlashingStateTrueTable = {}
-  local STANDARD_REPORT_1_INTERVAL = 1
-  local MIN_STANDARD_REPORT_FLASH_TIME = 5
-
-  vmsSW:setPropertiesByName({MinStandardReportLedFlashTime = MIN_STANDARD_REPORT_FLASH_TIME})     -- feature enabled
-
-  local standardReportEnabledStartTime = os.time()
-  D:log(standardReportEnabledStartTime)
-
-  gateway.setHighWaterMark() -- to get the newest messages
-
-  -- simulate receivied email now
-  helmPanel:isConnectLedFlashingSlow()
-  assert_true(helmPanel:isConnectLedFlashingSlow(), "IDP Connected LED is not flashing slow when to-mobile email is received")
-
-end
 
 
 
