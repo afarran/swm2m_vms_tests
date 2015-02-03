@@ -88,8 +88,6 @@ function teardown()
                     "false"
   )
 
-
-
 end
 
 -------------------------
@@ -1493,12 +1491,12 @@ end
 
 
 
-function test_PowerDisconnected_WhenTerminalIsOffForTimeBelowPowerDisconnectedStartDebouncePeriod_PowerDisconnectedAbnormalReportIsNotSentWhenTerminalIsOnAgain()
+function test_PowerDisconnected_WhenTerminalIsOffForTimeBelowPowerDisconnectedEndDebouncePeriod_PowerDisconnectedAbnormalReportIsNotSentWhenTerminalIsOnAgain()
 
   -- *** Setup
-  local POWER_DISCONNECTED_START_DEBOUNCE_TIME = 1          -- seconds
-  local POWER_DISCONNECTED_END_DEBOUNCE_TIME = 1            -- seconds
-  local PROPERTIES_SAVE_INTERVAL = 600                      -- seconds
+  local POWER_DISCONNECTED_START_DEBOUNCE_TIME = 1              -- seconds
+  local POWER_DISCONNECTED_END_DEBOUNCE_TIME = 4000             -- seconds
+  local PROPERTIES_SAVE_INTERVAL = 600                          -- seconds
 
   -- terminal stationary
   local InitialPosition = {
