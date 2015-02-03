@@ -20,6 +20,11 @@ function suite_setup()
   -- reset of properties
   systemSW:resetProperties({vmsSW.sin})
 
+  vmsSW:setPropertiesByName({StandardReport1Interval = 0,   -- 0 is for feature disabled
+                             StandardReport2Interval = 0,
+                             StandardReport3Interval = 0,
+                             MinStandardReportLedFlashTime = 0}
+  )
 
   -- debounce
   vmsSW:setPropertiesByName({
@@ -44,7 +49,10 @@ end
 
 --- setup function
 function setup()
+
+  GPS:set({jammingDetect = false, fixType = 3}) -- not to interrupt other suites
   vmsSW:setHighWaterMark()
+
 end
 
 --- teardown function executed after each unit test
