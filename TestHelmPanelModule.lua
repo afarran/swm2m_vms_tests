@@ -20,6 +20,7 @@ function suite_setup()
   -- reset of properties
   systemSW:resetProperties({vmsSW.sin})
 
+
   -- debounce
   vmsSW:setPropertiesByName({
     PropertyChangeDebounceTime=1,
@@ -36,15 +37,8 @@ end
 
 -- executed after each test suite
 function suite_teardown()
-  -- Fix
-  local position = {
-    speed = 0,                      -- kmh
-    latitude = 1,                   -- degrees
-    longitude = 1,                  -- degrees
-    fixType = 3,                    -- fix
-  }
 
-  GPS:set(position)
+  PS:set({jammingDetect = false, fixType = 3}) -- not to interrupt other suites
 
 end
 
