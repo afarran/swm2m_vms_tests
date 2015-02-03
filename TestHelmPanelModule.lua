@@ -266,7 +266,7 @@ Annotations:register([[
 @method(test_GpsLED_WhenGpsIsBlockedAndNotBlocked_GpsLedIsOffOrOnAccordingToGPSSignal)
 @module(TestHelmPanelModule)
 ]])
-function test_GpsLED_WhenGpsIsBlockedAndNotBlocked_GpsLedIsOffOrOnAccordingToGPSSignal()
+function test_GpsLED_WhenGpsIsBlockedAndNotBlocked_GpsLedIsOffOrOnAccordingToGPSSignalPresence()
 
   local GPS_BLOCKED_START_DEBOUNCE_TIME = 1
   local GPS_BLOCKED_END_DEBOUNCE_TIME = 1
