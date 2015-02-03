@@ -260,7 +260,7 @@ Annotations:register([[
 @method(test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetTo0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsNotFlashing)
 @module(TestHelmPanelModule)
 ]])
-function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetTo0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsNotFlashing()
+function test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetTo0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsNotFlashing()
 
   -- *** Setup
   local STANDARD_REPORT_1_INTERVAL = 1
@@ -284,7 +284,7 @@ Annotations:register([[
 @method(test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsFlashingForMinStandardReportLedFlashTime)
 @module(TestHelmPanelModule)
 ]])
-function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsFlashingForMinStandardReportLedFlashTime()
+function test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsFlashingForMinStandardReportLedFlashTime()
 
   -- *** Setup
   local ledFlashingStateTrueTable = {}
@@ -329,7 +329,7 @@ Annotations:register([[
 @method(test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardIsWaitingInQueueToBeSent_TerminalConnectedLEDIsFlashing)
 @module(TestHelmPanelModule)
 ]])
-function test_MinStandardReportLedFlashTime_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardIsWaitingInQueueToBeSent_TerminalConnectedLEDIsFlashing()
+function test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardIsWaitingInQueueToBeSent_TerminalConnectedLEDIsFlashing()
 
   -- TODO this need to be modified when an implementation of the function allowing IDP blockage will be done
   -- device profile application
@@ -382,7 +382,7 @@ Annotations:register([[
 @method(test_MinStandardReportLedFlashTime_WhenToMobileEmailIsUnread_TerminalConnectedLEDIsFlashingSlowly)
 @module(TestHelmPanelModule)
 ]])
-function test_MinStandardReportLedFlashTime_WhenToMobileEmailIsUnread_TerminalConnectedLEDIsFlashingSlowly()
+function test_TerminalConnectedLED_WhenToMobileEmailIsUnread_TerminalConnectedLEDIsFlashingSlowly()
 
   -- TODO: update this TC when receiving emails by VMS will be implemented and available in test framework
   skip("Receiving Emails is not implemented yet")
