@@ -300,8 +300,44 @@ end
 
 
 -----------------------------------------------------------------------------------------------
--- Test Cases - SATELITE LED ON or OFF for IDP OK and blocked
+-- Test Cases - SATELITE LED
 -----------------------------------------------------------------------------------------------
+
+function test_SatelliteLED_WhenIDPSignalIsBeingEstabilished_SatelliteLEDIsFlashingSlowly()
+
+  if IDPBlockageFeaturesImplemented == false then skip("API for setting Satellite Control State has not been implemented yet - no use to perform TC") end
+
+  -- *** Setup
+  local IDP_BLOCKED_START_DEBOUNCE_TIME = 1     -- seconds
+  local IDP_BLOCKED_END_DEBOUNCE_TIME = 20      -- seconds
+
+  vmsSW:setPropertiesByName({
+                             IdpBlockedStartDebounceTime = IDP_BLOCKED_START_DEBOUNCE_TIME,
+                             IdpBlockedEndDebounceTime = IDP_BLOCKED_END_DEBOUNCE_TIME,
+                             IdpBlockedSendReport = false,
+                             }
+  )
+
+  -- *** Execute
+  ------------------------------------------------------------------------------
+  -- IDP signal is blocked - LED is expected to be OFF
+  ------------------------------------------------------------------------------
+
+  vmsSW:SatelliteControlState("NotActive")
+  framework.delay(IDP_BLOCKED_START_DEBOUNCE_TIME)   -- wait until terminal goes back to IdpBlocked = true state
+
+  local ledState = helmPanel:isSatelliteLedOn()
+  assert_false(ledState, "Satellite LED is not OFF when IDP link is unavailable")
+
+  ------------------------------------------------------------------------------
+  -- IDP signal is being estabilished - LED is expected to be flashing slowly
+  ------------------------------------------------------------------------------
+  vmsSW:SatelliteControlState("Active")
+  ledState = helmPanel:isSatelliteLedFlashingSlow()
+  assert_true(ledState, "Satellite LED is not flashing slowly when IDP connection is being estabilished")
+
+end
+
 
 function test_SatelliteLED_WhenIDPSignalIsNotAvailableOrIDPSignalIsGood_SatelliteLEDIsOffForIDPBlockedAndOnForIdpSignalGood()
 
@@ -339,6 +375,7 @@ function test_SatelliteLED_WhenIDPSignalIsNotAvailableOrIDPSignalIsGood_Satellit
   assert_true(ledState, "Satellite LED is not ON when IDP link is OK")
 
 end
+
 
 
 
