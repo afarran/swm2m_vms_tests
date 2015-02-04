@@ -375,24 +375,3 @@ function test_SatelliteLED_WhenIDPSignalIsNotAvailableOrIDPSignalIsGood_Satellit
   assert_true(ledState, "Satellite LED is not ON when IDP link is OK")
 
 end
-
-
-
-
----------------------------------------------------------------------------------
--- This test case if just for reporting test framework issue. REMOVE AFTER FIX!
----------------------------------------------------------------------------------
-function test_getPropertiesBug()
-  i = 0
-  while i < 10 do
-    helmPanel:setConnected("true") -- this is posting event via shell service(lua code chunk)
-    local result = lsf.getProperties(162, {2})
-    D:log(result,"RESULT")
-    helmPanel:setConnected("false")
-    local result = lsf.getProperties(162, {2})
-    D:log(result,"RESULT")
-    framework.delay(1)
-    i = i+1
- end
-
-end
