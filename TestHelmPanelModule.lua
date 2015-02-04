@@ -8,6 +8,7 @@ module("TestHelmPanelModule", package.seeall)
 DEBUG_MODE = 1
 
 local MAX_FIX_TIMEOUT = 60
+local GPS_CHECK_INTERVAL = 60
 
 -----------------------------------------------------------------------------------------------
 -- SETUP
@@ -258,7 +259,7 @@ function test_TerminalConnectedLED_WhenToMobileEmailIsUnread_TerminalConnectedLE
 end
 
 -----------------------------------------------------------------------------------------------
--- Test Cases - GPS LED on/off - IN DEVELOPMENT!
+-- Test Cases - GPS LED on/off
 ----------------------------------------------------------------------------------------------
 
 Annotations:register([[
@@ -281,13 +282,13 @@ function test_GpsLED_WhenGpsIsBlockedAndNotBlocked_GpsLedIsOffOrOnAccordingToGPS
   positionSW:setPropertiesByName({maxFixTimeout = MAX_FIX_TIMEOUT})
   GPS:set({fixType = 1})
 
-  framework.delay(MAX_FIX_TIMEOUT + GPS_BLOCKED_START_DEBOUNCE_TIME + 20)
+  framework.delay(MAX_FIX_TIMEOUT + GPS_BLOCKED_START_DEBOUNCE_TIME + GPS_CHECK_INTERVAL)
 
   local ledState = helmPanel:isGpsLedOn()
   assert_false(ledState,"The GPS LED is not Off when there is no GPS signal")
 
   GPS:set({fixType = 3})
-  framework.delay(GPS_BLOCKED_END_DEBOUNCE_TIME + 20)
+  framework.delay(GPS_BLOCKED_END_DEBOUNCE_TIME + GPS_CHECK_INTERVAL)
 
   ledState = helmPanel:isGpsLedOn()
   assert_true(ledState,"The GPS LED is not ON when GPS signal is good")
