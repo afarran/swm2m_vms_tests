@@ -300,7 +300,7 @@ end
 
 
 -----------------------------------------------------------------------------------------------
--- Test Cases - SATELITE LED on/off - IN DEVELOPMENT
+-- Test Cases - SATELITE LED ON or OFF for IDP OK and blocked
 -----------------------------------------------------------------------------------------------
 
 function test_SatelliteLED_WhenIDPSignalIsNotAvailableOrIDPSignalIsGood_SatelliteLEDIsOffForIDPBlockedAndOnForIdpSignalGood()
@@ -340,18 +340,6 @@ function test_SatelliteLED_WhenIDPSignalIsNotAvailableOrIDPSignalIsGood_Satellit
 
 end
 
-
-
-function raiseNotImpl()
-  assert_nil(1,"Not implemented yet!")
-end
-
--- TODO: Investigate.
--- TODO: turned external power button manually in simulator
--- TODO: but it does not change external power property in unibox neither vms..
-function test_ExternalPower()
-
-end
 
 
 ---------------------------------------------------------------------------------
