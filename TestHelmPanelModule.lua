@@ -408,6 +408,23 @@ end
 -- Test Cases - SATELLITE LED
 -----------------------------------------------------------------------------------------------
 
+--- TC checks if Satellite LED is flashing slowly when IDP link is being estabilished
+  -- Initial Conditions:
+  --
+  -- * Helm Panel service installed on terminal
+  -- Steps:
+  --
+  -- 1. Set IdpBlockedStartDebounceTime to 1 second and IdpBlockedEndDebounceTime to 20 seconds (not to get immediate change)
+  -- 2. Simulate IDP connection loss for time above IdpBlockedStartDebounceTime
+  -- 3. Simulate IDP connection good
+  -- 4. Read Satellite LED before IdpBlockedEndDebounceTime passes
+  --
+  -- Results:
+  --
+  -- 1. IdpBlockedStartDebounceTime and IdpBlockedEndDebounceTime set correctly
+  -- 2. IDP connection is lost for time longer than IdpBlockedStartDebounceTime - terminal enter IDP blocked state
+  -- 3. IDP connection is good again
+  -- 4. Satellite LED is flashing slowly when connection is being estabilished
 Annotations:register([[
 @dependOn(helmPanel,isReady)
 @method(test_SatelliteLED_WhenIDPSignalIsBeingEstabilished_SatelliteLEDIsFlashingSlowly)
