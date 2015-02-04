@@ -126,9 +126,25 @@ function test_TerminalConnectedLED_WhenTerminalIsConnectedOrDisconnectedFromHelm
   assert_false(ledState, "Terminal Connected LED is not OFF when terminal is disconnected from helm panel")
   D:log(ledState,"TerminalConnected LED state for terminal disconnected from helm panel")
 
-
 end
 
+--- TC checks if TerminalConnected LED is not flashing when feature is disabled (MinStandardReportLedFlashTime is set to 0)
+  -- Initial Conditions:
+  --
+  -- * Helm Panel service installed on terminal
+  -- Steps:
+  --
+  -- 1. Set StandardReport1Interval, StandardReport2Interval and StandardReport3Interval to 1 minute
+  -- 2. Set MinStandardReportLedFlashTime to 0
+  -- 3. Wait for longer than one minute to make sure a StandardReport is sent
+  -- 4. Read the state of TerminalConnected LED
+  --
+  -- Results:
+  --
+  -- 1. StandardReport1Interval, StandardReport2Interval and StandardReport3Interval set to 1 minute
+  -- 2. MinStandardReportLedFlashTime set to 0
+  -- 3. StandardReport is sent after 1 minute
+  -- 4. TerminalConnected LED is not flashing
 Annotations:register([[
 @dependOn(helmPanel,isReady)
 @method(test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetTo0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsNotFlashing)
@@ -148,6 +164,7 @@ function test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetTo0AndS
   )
   -- *** Execute
   framework.delay(65)
+  assert_false(helmPanel:isConnectLedFlashingFast(), "Terminal Connected LED is flashing when feature is disabled")
   assert_false(helmPanel:isConnectLedFlashingSlow(), "Terminal Connected LED is flashing when feature is disabled")
 
 
