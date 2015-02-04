@@ -11,6 +11,7 @@ local MAX_FIX_TIMEOUT = 60
 local GPS_CHECK_INTERVAL = 60
 
 -- global variable, to be removed
+-- TODO: remove this when IDP blockage TestFramework functions are implemented
 IDPBlockageFeaturesImplemented = false
 
 -----------------------------------------------------------------------------------------------
@@ -59,7 +60,7 @@ function setup()
   -- Helm Panel disconnected from terminal
   helmPanel:setConnected("false")
 
-  framework.delay(2)
+  framework.delay(2)  -- to let terminal go into desired state
 
 
 end
@@ -80,8 +81,25 @@ function teardown()
 end
 
 -----------------------------------------------------------------------------------------------
--- Test Cases - Terminal Panel connected/disconnected
+-- Test Cases - TerminalConnected LED
 -----------------------------------------------------------------------------------------------
+--- TC checks if TerminalConnected LED is ON when IDP terminal is connected to Helm Panel
+  -- Initial Conditions:
+  --
+  -- * Helm Panel service installed on terminal
+  -- Steps:
+  --
+  -- 1. Simulate IDP terminal connected to Helm Panel
+  -- 2. Read the state of TerminalConnected LED
+  -- 3. Simulate IDP terminal disconnected from HelmPanel
+  -- 4. Read the state of TerminalConnected LED
+  --
+  -- Results:
+  --
+  -- 1. Terminal is connected to Helm Panel
+  -- 2. TerminalConnected LED is ON
+  -- 3. Terminal disconnected from Helm Panel
+  -- 4. TerminalConnected LED is OFF
 Annotations:register([[
 @dependOn(helmPanel,isReady)
 @method(test_TerminalConnectedLED_WhenTerminalIsConnectedOrDisconnectedFromHelmPanel_TerminalConnectedLEDIsOnOrOffAccordingToConnection)
@@ -150,7 +168,7 @@ function test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetToValue
   vmsSW:setPropertiesByName({StandardReport1Interval = STANDARD_REPORT_1_INTERVAL,
                              MinStandardReportLedFlashTime = MIN_STANDARD_REPORT_FLASH_TIME}     -- feature enabled
   )
-
+  -- *** Execute
   local standardReportEnabledStartTime = os.time()
   D:log(standardReportEnabledStartTime)
   local currentTime = 0
@@ -206,7 +224,7 @@ function test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetToValue
   gateway.setHighWaterMark() -- to get the newest messages
   framework.delay(STANDARD_REPORT_1_INTERVAL*60 - 10)
   --TODO:
-  -- GPS:set({blockage = true})
+  -- GPS:set({blackaSe = true})
   D:log("communication blocked")
 
   local currentTime = os.time()
