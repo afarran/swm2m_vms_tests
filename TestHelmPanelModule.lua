@@ -167,9 +167,29 @@ function test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetTo0AndS
   assert_false(helmPanel:isConnectLedFlashingFast(), "Terminal Connected LED is flashing when feature is disabled")
   assert_false(helmPanel:isConnectLedFlashingSlow(), "Terminal Connected LED is flashing when feature is disabled")
 
-
 end
 
+
+
+--- TC checks if TerminalConnected LED is flashing fast when standard reports are being sent
+  -- Initial Conditions:
+  --
+  -- * Helm Panel service installed on terminal
+  -- Steps:
+  --
+  -- 1. Set StandardReport1Interval to 1 minute
+  -- 2. Set MinStandardReportLedFlashTime to some value (less than StandardReport1Interval)
+  -- 3. Wait for longer than one minute to make sure a StandardReport is sent
+  -- 4. Read the state of the TerminalConnected LED for time longer than MIN_STANDARD_REPORT_FLASH_TIME
+  -- 5. Check if TerminalConnected LED was flashing for MIN_STANDARD_REPORT_FLASH_TIME period after sending StandardReport
+  --
+  -- Results:
+  --
+  -- 1. StandardReport1Interval set to 1 minute
+  -- 2. MinStandardReportLedFlashTime set to value above 0 but below StandardReport1Interval
+  -- 3. StandardReport is sent after 1 minute
+  -- 4. State of TerminalConnected LED is read periodically every couple of seconds and timestamps when LED is flashing fast are saved
+  -- 5. Assertion is performed checking if LED was flashing for correct time after sending standard report
 Annotations:register([[
 @dependOn(helmPanel,isReady)
 @method(test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsFlashingForMinStandardReportLedFlashTime)
