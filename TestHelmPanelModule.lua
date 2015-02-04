@@ -417,12 +417,12 @@ end
   -- 1. Set IdpBlockedStartDebounceTime to 1 second and IdpBlockedEndDebounceTime to 20 seconds (not to get immediate change)
   -- 2. Simulate IDP connection loss for time above IdpBlockedStartDebounceTime
   -- 3. Simulate IDP connection good
-  -- 4. Read Satellite LED before IdpBlockedEndDebounceTime passes
+  -- 4. Read Satellite LED state before IdpBlockedEndDebounceTime passes
   --
   -- Results:
   --
   -- 1. IdpBlockedStartDebounceTime and IdpBlockedEndDebounceTime set correctly
-  -- 2. IDP connection is lost for time longer than IdpBlockedStartDebounceTime - terminal enter IDP blocked state
+  -- 2. IDP connection is lost for time longer than IdpBlockedStartDebounceTime - terminal enters IDP blocked state
   -- 3. IDP connection is good again
   -- 4. Satellite LED is flashing slowly when connection is being estabilished
 Annotations:register([[
@@ -466,6 +466,25 @@ function test_SatelliteLED_WhenIDPSignalIsBeingEstabilished_SatelliteLEDIsFlashi
 end
 
 
+--- TC checks if Satellite LED is ON and OFF according to IDP connection
+  -- Initial Conditions:
+  --
+  -- * Helm Panel service installed on terminal
+  -- Steps:
+  --
+  -- 1. Set IdpBlockedStartDebounceTime to 1 second and IdpBlockedEndDebounceTime to 1 seconds (to get immediate change)
+  -- 2. Simulate IDP connection loss for time above IdpBlockedStartDebounceTime
+  -- 3. Read Satellite LED state
+  -- 4. Simulate IDP connection good for time above IdpBlockedEndDebounceTime
+  -- 5. Read Satellite LED state
+  --
+  -- Results:
+  --
+  -- 1. IdpBlockedStartDebounceTime and IdpBlockedEndDebounceTime set correctly
+  -- 2. IDP connection is lost for time longer than IdpBlockedStartDebounceTime - terminal enters IDP blocked state
+  -- 3. Satellite LED is OFF
+  -- 4. IDP connection is good for time longer than IdpBlockedEndDebounceTime - terminal leaves IDP blocked state
+  -- 5. Satellite LED is ON
 Annotations:register([[
 @dependOn(helmPanel,isReady)
 @method(test_SatelliteLED_WhenIDPSignalIsNotAvailableOrIDPSignalIsGood_SatelliteLEDIsOffForIDPBlockedAndOnForIdpSignalGood)
