@@ -80,7 +80,7 @@ function teardown()
 end
 
 -----------------------------------------------------------------------------------------------
--- Test Cases - Helm Panel connected/disconnected
+-- Test Cases - Terminal Panel connected/disconnected
 -----------------------------------------------------------------------------------------------
 Annotations:register([[
 @dependOn(helmPanel,isReady)
@@ -300,9 +300,14 @@ end
 
 
 -----------------------------------------------------------------------------------------------
--- Test Cases - SATELITE LED
+-- Test Cases - SATELLITE LED
 -----------------------------------------------------------------------------------------------
 
+Annotations:register([[
+@dependOn(helmPanel,isReady)
+@method(test_SatelliteLED_WhenIDPSignalIsBeingEstabilished_SatelliteLEDIsFlashingSlowly)
+@module(TestHelmPanelModule)
+]])
 function test_SatelliteLED_WhenIDPSignalIsBeingEstabilished_SatelliteLEDIsFlashingSlowly()
 
   if IDPBlockageFeaturesImplemented == false then skip("API for setting Satellite Control State has not been implemented yet - no use to perform TC") end
@@ -339,6 +344,11 @@ function test_SatelliteLED_WhenIDPSignalIsBeingEstabilished_SatelliteLEDIsFlashi
 end
 
 
+Annotations:register([[
+@dependOn(helmPanel,isReady)
+@method(test_SatelliteLED_WhenIDPSignalIsNotAvailableOrIDPSignalIsGood_SatelliteLEDIsOffForIDPBlockedAndOnForIdpSignalGood)
+@module(TestHelmPanelModule)
+]])
 function test_SatelliteLED_WhenIDPSignalIsNotAvailableOrIDPSignalIsGood_SatelliteLEDIsOffForIDPBlockedAndOnForIdpSignalGood()
 
 
