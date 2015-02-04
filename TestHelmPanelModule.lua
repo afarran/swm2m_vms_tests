@@ -10,6 +10,9 @@ DEBUG_MODE = 1
 local MAX_FIX_TIMEOUT = 60
 local GPS_CHECK_INTERVAL = 60
 
+-- global variable, to be removed
+IDPBlockageFeaturesImplemented = false
+
 -----------------------------------------------------------------------------------------------
 -- SETUP
 -----------------------------------------------------------------------------------------------
@@ -300,33 +303,42 @@ end
 -- Test Cases - SATELITE LED on/off - IN DEVELOPMENT
 -----------------------------------------------------------------------------------------------
 
-function xtest_SateliteLED_WhenSateliteIsBlockedOrUnblocked_SateliteLedIsInCorrectState()
+function test_SatelliteLED_WhenIDPSignalIsNotAvailableOrIDPSignalIsGood_SatelliteLEDIsOffForIDPBlockedAndOnForIdpSignalGood()
 
-  raiseNotImpl()
 
-  -- block satelite
-  -- TODO: where is satalite blockage in TF API ?
+  if IDPBlockageFeaturesImplemented == false then skip("API for setting Satellite Control State has not been implemented yet - no use to perform TC") end
 
-  -- wait debounce time
-  framework.delay(SATELITE_BLOCKAGE_DEBOUNCE+SATELITE_BLOCKAGE_DEBOUNCE_TOLERANCE)
+  -- *** Setup
+  local IDP_BLOCKED_START_DEBOUNCE_TIME = 1     -- seconds
+  local IDP_BLOCKED_END_DEBOUNCE_TIME = 1       -- seconds
 
-  -- check satelite led
-  local ledState = helmPanel:isSateliteLedOn()
-  assert_false(ledState,"The satelite LED should not be off!")
+  vmsSW:setPropertiesByName({
+                             IdpBlockedStartDebounceTime = IDP_BLOCKED_START_DEBOUNCE_TIME,
+                             IdpBlockedEndDebounceTime = IDP_BLOCKED_END_DEBOUNCE_TIME,
+                             IdpBlockedSendReport = false,
+                             }
+  )
 
-  -- unblock satelite
-  -- TODO: where is satalite blockage in TF API ?
+  -- *** Execute
+  ------------------------------------------------------------------------------
+  -- IDP signal is blocked - LED is expected to be OFF
+  ------------------------------------------------------------------------------
 
-  -- wait debounce time
-  framework.delay(SATELITE_BLOCKAGE_DEBOUNCE+SATELITE_BLOCKAGE_DEBOUNCE_TOLERANCE)
+  vmsSW:SatelliteControlState("NotActive")
+  framework.delay(IDP_BLOCKED_START_DEBOUNCE_TIME)   -- wait until terminal goes back to IdpBlocked = true state
 
-  -- check satelite led
-  local ledState = helmPanel:isSateliteLedOn()
-  assert_true(ledState,"The satelite LED should be on!")
+  local ledState = helmPanel:isSatelliteLedOn()
+  assert_false(ledState, "Satellite LED is not OFF when IDP link is unavailable")
+
+  ------------------------------------------------------------------------------
+  -- IDP signal is estabilished - LED is expected to be ON
+  ------------------------------------------------------------------------------
+  vmsSW:SatelliteControlState("Active")
+  framework.delay(IDP_BLOCKED_END_DEBOUNCE_TIME)   -- wait until terminal goes back to IdpBlocked = false state
+  ledState = helmPanel:isSatelliteLedOn()
+  assert_true(ledState, "Satellite LED is not ON when IDP link is OK")
 
 end
----------------------------------------------------------------------------------
-
 
 
 

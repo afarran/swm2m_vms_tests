@@ -11,11 +11,21 @@ HelmPanelUnibox = {}
     end,
   })
 
-  function HelmPanelUnibox:isSateliteLedOn()
+  function HelmPanelUnibox:isSatelliteLedOn()
     local properties = self.device:getPropertiesByName({"led3State"})
     local state = properties.led3State
     D:log("Sat LED state is "..state)
     if state == 'OFF' then
+      return false
+    end
+    return true
+  end
+
+  function HelmPanelUnibox:isSatelliteLedFlashingSlow()
+    local properties = self.device:getPropertiesByName({"led3State"})
+    local state = properties.led3State
+    D:log("Sat LED state is "..state)
+    if state == 'SLOW_FLASH' then
       return false
     end
     return true
