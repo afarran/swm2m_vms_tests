@@ -170,7 +170,6 @@ function test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetTo0AndS
 end
 
 
-
 --- TC checks if TerminalConnected LED is flashing fast when standard reports are being sent
   -- Initial Conditions:
   --
@@ -235,6 +234,25 @@ function test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetToValue
 
 end
 
+
+
+--- TC checks if TerminalConnected LED is flashing fast when standard report is waiting in queue
+  -- Initial Conditions:
+  --
+  -- * Helm Panel service installed on terminal
+  -- Steps:
+  --
+  -- 1. Set StandardReport1Interval to 1 minute
+  -- 2. Set MinStandardReportLedFlashTime to value above zero
+  -- 3. Block air communication
+  -- 4. Read the state of the TerminalConnected LED for time longer than MinStandardReportLedFlashTime set previously
+  --
+  -- Results:
+  --
+  -- 1. StandardReport1Interval set to 1 minute
+  -- 2. MinStandardReportLedFlashTime set to value above 0
+  -- 3. StandardReport is generated after one minute but cannot be sent due to air communication blockage
+  -- 4. TerminalConnected LED is flasing for time longer than MinStandardReportLedFlashTime
 Annotations:register([[
 @dependOn(helmPanel,isReady)
 @method(test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardIsWaitingInQueueToBeSent_TerminalConnectedLEDIsFlashing)
@@ -288,7 +306,20 @@ function test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetToValue
 end
 
 
-Annotations:register([[
+--- TC checks if TerminalConnected LED is flashing slowly when an incoming email is waiting to be read
+  -- Initial Conditions:
+  --
+  -- * Helm Panel service installed on terminal
+  -- Steps:
+  --
+  -- 1. Simulate an incoming email message received
+  -- 2. Read TerminalConnected LED state
+  --
+  -- Results:
+  --
+  -- 1. Email message received by terminal
+  -- 2. TerminalConnected LED is flashing slowly when email waits to be read
+ Annotations:register([[
 @dependOn(helmPanel,isReady)
 @method(test_MinStandardReportLedFlashTime_WhenToMobileEmailIsUnread_TerminalConnectedLEDIsFlashingSlowly)
 @module(TestHelmPanelModule)
@@ -320,6 +351,25 @@ end
 -- Test Cases - GPS LED on/off
 ----------------------------------------------------------------------------------------------
 
+--- TC checks if GPS LED is OFF when GPS signal is blocked
+  -- Initial Conditions:
+  --
+  -- * Helm Panel service installed on terminal
+  -- Steps:
+  --
+  -- 1. Set GpsBlockedStartDebounceTime and GpsBlockedEndDebounceTime to 1 second (to get immediate change)
+  -- 2. Simulate GPS signal blocked for time above GpsBlockedStartDebounceTime
+  -- 3. Read state of GPS LED
+  -- 4. Simulate GPS signal not blocked for time above GpsBlockedEndDebounceTime
+  -- 5. Read state of GPS LED
+  --
+  -- Results:
+  --
+  -- 1. GpsBlockedStartDebounceTime and GpsBlockedEndDebounceTime set to 1 seconds
+  -- 2. GPS signal blocked - terminal enters GpsBlockedState after GpsBlockedStartDebounceTime
+  -- 3. GPS LED is OFF
+  -- 4. GPS sinal good - terminal leaves GpsBlockedState after GpsBlockedEndDebounceTime
+  -- 5. GPS LES is ON
 Annotations:register([[
 @dependOn(helmPanel,isReady)
 @method(test_GpsLED_WhenGpsIsBlockedAndNotBlocked_GpsLedIsOffOrOnAccordingToGPSSignal)
