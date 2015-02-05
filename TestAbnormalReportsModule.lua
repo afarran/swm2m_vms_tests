@@ -1647,7 +1647,7 @@ function test_PowerDisconnected_ForTerminalInPowerDisconnectedStateWhenTerminalI
     20,
     "Wrong Timestamp value in PowerDisconnected abnormal report"
   )
---]]
+  --]]
   -- TODO: update this after implementation in TestFramework file
   --[[
   assert_equal(
@@ -2018,6 +2018,27 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSource
     10,
     "Wrong Timestamp value in ExtPowerDisconnected abnormal report"
   )
+  --]]
+  -- TODO: update this after implementation in TestFramework file
+  --[[
+  assert_equal(
+    InitialPosition.hdop,
+    PowerDisconnectedAbnormalReport.Payload.Hdop,
+    "Wrong HDOP value in IdpBlocked abnormal report"
+  )
+
+  assert_equal(
+    InitialPosition.idpsnr,
+    PowerDisconnectedAbnormalReport.Payload.IdpSnr,
+    "Wrong IdpSnr value in IdpBlocked abnormal report"
+  )
+
+  assert_equal(
+    InitialPosition.numsats,
+    PowerDisconnectedAbnormalReport.Payload.NumSats,
+    "Wrong NumSats value in IdpBlocked abnormal report"
+  )
+  --]]
 
   local StatusBitmap = vmsSW:decodeBitmap(ReceivedMessages["AbnormalReport"].StatusBitmap, "EventStateId")
   assert_false(StatusBitmap["ExtPowerDisconnected"], "StatusBitmap has not been correctly changed to false when external power source of helm panel was connected")
@@ -2065,7 +2086,9 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsDisconnectedFromExternalPowerS
   -- Helm Panel is connected to external power from now
   helmPanel:externalPowerConnected("true")
 
-  framework.delay(EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME + 3)
+  framework.delay(EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME)
+
+  framework.delay(10) -- this delay is added due to TC failing for too many messages processes at once
 
   -- checking ExtPowerDisconnectedState property
   ExtPowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"ExtPowerDisconnectedState"})
@@ -2132,6 +2155,28 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsDisconnectedFromExternalPowerS
     10,
     "Wrong Timestamp value in ExtPowerDisconnected abnormal report"
   )
+  --]]
+  -- TODO: update this after implementation in TestFramework file
+  --[[
+  assert_equal(
+    InitialPosition.hdop,
+    PowerDisconnectedAbnormalReport.Payload.Hdop,
+    "Wrong HDOP value in IdpBlocked abnormal report"
+  )
+
+  assert_equal(
+    InitialPosition.idpsnr,
+    PowerDisconnectedAbnormalReport.Payload.IdpSnr,
+    "Wrong IdpSnr value in IdpBlocked abnormal report"
+  )
+
+  assert_equal(
+    InitialPosition.numsats,
+    PowerDisconnectedAbnormalReport.Payload.NumSats,
+    "Wrong NumSats value in IdpBlocked abnormal report"
+  )
+  --]]
+
 
   local StatusBitmap = vmsSW:decodeBitmap(ReceivedMessages["AbnormalReport"].StatusBitmap, "EventStateId")
   assert_true(StatusBitmap["ExtPowerDisconnected"], "StatusBitmap has not been correctly changed to true when external power source of helm panel was disconnected")
