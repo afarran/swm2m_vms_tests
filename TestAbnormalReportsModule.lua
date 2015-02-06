@@ -1872,6 +1872,7 @@ function test_GpsBlocked_WhenGpsSignalIsBlockedAndNoFixWasEverObtainedByTerminal
 
   -- *** Setup
   local MAX_FIX_TIMEOUT = 60                   -- seconds (60 seconds is the minimum allowed value for this property)
+  local PROPERTIES_SAVE_INTERVAL = 600         -- seconds
 
   -- terminal in some position but no valid fix provided
   local GpsBlockedPosition = {
@@ -1890,34 +1891,27 @@ function test_GpsBlocked_WhenGpsSignalIsBlockedAndNoFixWasEverObtainedByTerminal
 	deleteParamsFileMessage.Fields = {{Name="path",Value="/data/svc/VMS/params.dat"},{Name="offset",Value=0},{Name="flags",Value="Truncate"},{Name="data",Value=""}}
 	gateway.submitForwardMessage(deleteParamsFileMessage)
 
-    positionSW:setPropertiesByName({maxFixTimeout = 60,
+  positionSW:setPropertiesByName({maxFixTimeout = 60,
                                   acquireTimeout = 1,
-                                  })
+                                 })
 
   vmsSW:setPropertiesByName({
                              StandardReport1Interval = 2,
                              AcceleratedReport1Rate = 2,
-                            }
+                            }, false, true
   )
 
   -- systemSW:restartService(positionSW.sin)
 
   systemSW:restartFramework()
 
-  framework.delay(50)
-
-
-  D:log("after restart delay")
-
-  framework.delay(MAX_FIX_TIMEOUT)
-
   -- *** Execute
   gateway.setHighWaterMark() -- to get the newest messages
   -- Waiting for StandardReport
-  local ReceivedMessages1 = vmsSW:waitForMessagesByName({"StandardReport1"}, 125)
+  local ReceivedMessages1 = vmsSW:waitForMessagesByName({"StandardReport1"}, PROPERTIES_SAVE_INTERVAL)
   D:log(ReceivedMessages1["StandardReport1"])
 
-  local ReceivedMessages2 = vmsSW:waitForMessagesByName({"AcceleratedReport1"}, 125)
+  local ReceivedMessages2 = vmsSW:waitForMessagesByName({"AcceleratedReport1"}, PROPERTIES_SAVE_INTERVAL)
   D:log(ReceivedMessages2["AcceleratedReport1"])
 
   assert_not_nil(ReceivedMessages1["StandardReport1"], "StandardReport1 not received")
@@ -1935,6 +1929,18 @@ function test_GpsBlocked_WhenGpsSignalIsBlockedAndNoFixWasEverObtainedByTerminal
     "Wrong longitude value in StandardReport received when no fix has been obtained by terminal"
   )
 
+  assert_equal(
+    361,
+    tonumber(ReceivedMessages1["StandardReport1"].Course),
+    "Wrong Course value in StandardReport received when no fix has been obtained by terminal"
+  )
+
+  assert_equal(
+    0,
+    tonumber(ReceivedMessages1["StandardReport1"].Speed),
+    "Wrong Speed value in StandardReport received when no fix has been obtained by terminal"
+  )
+
 
   assert_equal(
     5460000,
@@ -1947,6 +1953,19 @@ function test_GpsBlocked_WhenGpsSignalIsBlockedAndNoFixWasEverObtainedByTerminal
     tonumber(ReceivedMessages2["AcceleratedReport1"].Longitude),
     "Wrong longitude value in AcceleratedReport received when no fix has been obtained by terminal"
   )
+
+  assert_equal(
+    361,
+    tonumber(ReceivedMessages2["AcceleratedReport1"].Course),
+    "Wrong Course value in AcceleratedReport received when no fix has been obtained by terminal"
+  )
+
+  assert_equal(
+    0,
+    tonumber(speed["AcceleratedReport1"].Speed),
+    "Wrong longitude value in AcceleratedReport received when no fix has been obtained by terminal"
+  )
+
 
 
 end
