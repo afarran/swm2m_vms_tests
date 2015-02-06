@@ -1870,10 +1870,9 @@ end
 
 function test_GpsBlocked_WhenGpsSignalIsBlockedAndNoFixWasEverObtainedByTerminal_DefaultValuesOfLattitudeAndLongitudeAreSentInReports()
 
-  -- TODO: THIS need to be a first TC to be run - just after formatting terminal!
-  skip("This is a draft version - this TC requires deleting gps data before run")
-
   -- *** Setup
+  local MAX_FIX_TIMEOUT = 60                   -- seconds (60 seconds is the minimum allowed value for this property)
+
   -- terminal in some position but no valid fix provided
   local GpsBlockedPosition = {
                               speed = 0,                      -- kmh
@@ -1881,15 +1880,36 @@ function test_GpsBlocked_WhenGpsSignalIsBlockedAndNoFixWasEverObtainedByTerminal
                               longitude = 1,                  -- degrees
                               fixType = 1,                    -- no fix
   }
-
   -- GPS signal is blocked from now - no fix provided
   GPS:set(GpsBlockedPosition)
+  ----------------------------------------------------------------------------------------
+  -- params.dat file should be deleted - no gps information should be there
+  ----------------------------------------------------------------------------------------
+
+  local deleteParamsFileMessage = {SIN = 24, MIN = 1}
+	deleteParamsFileMessage.Fields = {{Name="path",Value="/data/svc/VMS/params.dat"},{Name="offset",Value=0},{Name="flags",Value="Truncate"},{Name="data",Value=""}}
+	gateway.submitForwardMessage(deleteParamsFileMessage)
+
+    positionSW:setPropertiesByName({maxFixTimeout = 60,
+                                  acquireTimeout = 1,
+                                  })
 
   vmsSW:setPropertiesByName({
                              StandardReport1Interval = 2,
                              AcceleratedReport1Rate = 2,
                             }
   )
+
+  -- systemSW:restartService(positionSW.sin)
+
+  systemSW:restartFramework()
+
+  framework.delay(50)
+
+
+  D:log("after restart delay")
+
+  framework.delay(MAX_FIX_TIMEOUT)
 
   -- *** Execute
   gateway.setHighWaterMark() -- to get the newest messages
@@ -1900,6 +1920,8 @@ function test_GpsBlocked_WhenGpsSignalIsBlockedAndNoFixWasEverObtainedByTerminal
   local ReceivedMessages2 = vmsSW:waitForMessagesByName({"AcceleratedReport1"}, 125)
   D:log(ReceivedMessages2["AcceleratedReport1"])
 
+  assert_not_nil(ReceivedMessages1["StandardReport1"], "StandardReport1 not received")
+  assert_not_nil(ReceivedMessages1["AcceleratedReport1"], "AcceleratedReport1 not received")
 
   assert_equal(
     5460000,
