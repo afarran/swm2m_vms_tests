@@ -241,7 +241,7 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeAboveGpsJammedStartDebounce
 end
 
 
---- TC checks if GpsJamming AbnormalReport is when GPS signal is not jammed for time above GpsJammedEndDebounceTime for terminal in GPS jammed state
+--- TC checks if GpsJamming AbnormalReport is sent when GPS signal is not jammed for time above GpsJammedEndDebounceTime for terminal in GPS jammed state
   -- Initial Conditions:
   --
   -- * GPS signal is jammed
@@ -271,7 +271,7 @@ end
 function test_GpsJamming_ForTerminalInGpsJammedStateWhenGpsSignalIsNotJammedForTimeAboveGpsJammedEndDebouncePeriod_GpsJammedAbnormalReportIsSent()
 
   -- *** Setup
-  local GPS_JAMMED_START_DEBOUNCE_TIME = 1    -- seconds
+  local GPS_JAMMED_START_DEBOUNCE_TIME = 1     -- seconds
   local GPS_JAMMED_END_DEBOUNCE_TIME = 10      -- seconds
 
   -- terminal in different position (wrong GPS data)
@@ -385,38 +385,34 @@ function test_GpsJamming_ForTerminalInGpsJammedStateWhenGpsSignalIsNotJammedForT
 end
 
 
---- TC checks if GpsJamming AbnormalReport is not sent when GPS signal is jammed for time below GpsJammedStartDebounceTime period
+--- TC checks if GpsJamming AbnormalReport is not sent when GPS signal is not jammed for time below GpsJammedEndDebounceTime for terminal in GPS jammed state
   -- Initial Conditions:
   --
-  -- * GPS signal is good
-  -- * Terminal not in GpsJammed state
+  -- * GPS signal is jammed
+  -- * Terminal is in GpsJammed state
   --
   -- Steps:
   --
-  -- 1. Set GpsJammedStartDebounceTime to value A.
-  -- 2. Set GpsJammedSendReport to true.
-  -- 3. Simulate terminal in InitialPosition - GPS signal not jammed.
-  -- 4. Simulate terminal in GpsJammedPosition - GPS signal jammed.
-  -- 5. Before GpsJammedStartDebounceTime time passes check GpsJammedState property.
-  -- 6. Wait longer than GpsJammedStartDebounceTime.
-  -- 7. Check the content of received AbnormalReport.
-  -- 8. Check GpsJammedState property.
+  -- 1. Set GpsJammedEndDebounceTime to some high value (90 seconds in example)
+  -- 2. Enable sending GpsJammed reports.
+  -- 3. Put terminal into gps jammed state.
+  -- 4. Simulate gps signal good (not jammed) for time shorter than GpsJammedEndDebounceTime.
+  -- 5. Wait for GpsJammed AbnormalReport.
+  -- 6. Check GpsJammedState property.
   --
   -- Results:
   --
-  -- 1. GpsJammedStartDebounceTime set to value A.
+  -- 1. GpsJammedEndDebounceTime set to some high value.
   -- 2. GpsJammedSendReport set to true.
-  -- 3. Terminal in InitialPosition with good GPS quality.
-  -- 4. GPS signal jammed.
-  -- 5. GpsJammedState property should be false before GpsJammedStartDebounceTime passes.
-  -- 6. AbnormalReport with GpsJammed information is sent.
-  -- 7. Report contains all required fields and StatusBitmap contains GpsJammed bit set to true.
-  -- 8. GpsJammedState is true after GpsJammedStartDebounceTime has passed.
-function test_GpsJamming_ForTerminalInGpsJammedStateWhenGpsSignalIsNotJammedForTimeBelowGpsJammedEndDebouncePeriod_GpsJammedAbnormalReportIsNotSent()
+  -- 3. Terminal in GpsJammed state.
+  -- 4. GPS signal is not jammed for time below GpsJammedEndDebounceTime.
+  -- 5. GpsJammed AbnormalReport is not sent.
+  -- 6. GpsJammedState is true.
+ function test_GpsJamming_ForTerminalInGpsJammedStateWhenGpsSignalIsNotJammedForTimeBelowGpsJammedEndDebouncePeriod_GpsJammedAbnormalReportIsNotSent()
 
   -- *** Setup
-  local GPS_JAMMED_START_DEBOUNCE_TIME = 1    -- seconds
-  local GPS_JAMMED_END_DEBOUNCE_TIME = 30      -- seconds
+  local GPS_JAMMED_START_DEBOUNCE_TIME = 1     -- seconds
+  local GPS_JAMMED_END_DEBOUNCE_TIME = 90      -- seconds
 
   -- terminal in different position (wrong GPS data)
   local GpsJammedPosition = {
@@ -452,7 +448,7 @@ function test_GpsJamming_ForTerminalInGpsJammedStateWhenGpsSignalIsNotJammedForT
   local GpsJammedStateProperty = vmsSW:getPropertiesByName({"GpsJammedState"})
   assert_true(GpsJammedStateProperty["GpsJammedState"], "GpsJammedState is incorrectly false for terminal in GpsJammed state")
 
-  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
+  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 75)
 
   if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "GpsJammed" ) then
     assert_nil(1, "GpsJammed abnormal report sent but not expected")
