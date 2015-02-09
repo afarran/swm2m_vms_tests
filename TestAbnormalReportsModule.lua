@@ -144,6 +144,7 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeAboveGpsJammedStartDebounce
   }
 
   vmsSW:setPropertiesByName({GpsJammedStartDebounceTime = GPS_JAMMED_START_DEBOUNCE_TIME,
+                             GpsJammedEndDebounceTime = GPS_JAMMED_END_DEBOUNCE_TIME,
                              GpsJammedSendReport = true,
                             }
   )
@@ -240,6 +241,33 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeAboveGpsJammedStartDebounce
 end
 
 
+--- TC checks if GpsJamming AbnormalReport is when GPS signal is not jammed for time above GpsJammedEndDebounceTime for terminal in GPS jammed state
+  -- Initial Conditions:
+  --
+  -- * GPS signal is jammed
+  -- * Terminal is in GpsJammed state
+  --
+  -- Steps:
+  --
+  -- 1. Set GpsJammedStartDebounceTime to value A and GpsJammedEndDebounceTime to value B.
+  -- 2. Set GpsJammedSendReport to true.
+  -- 3. Simulate terminal in GpsJammedPosition - GPS signal jammed for time above GpsJammedStartDebounceTime.
+  -- 4. Simulate terminal in GpsNotJammedPosition - GPS signal not jammed.
+  -- 5. Before GpsJammedEndDebounceTime time passes check GpsJammedState property.
+  -- 6. Wait longer than GpsJammedEndDebounceTime.
+  -- 7. Check the content of received AbnormalReport.
+  -- 8. Check GpsJammedState property.
+  --
+  -- Results:
+  --
+  -- 1. GpsJammedStartDebounceTime set to value A and GpsJammedEndDebounceTime set to value B.
+  -- 2. GpsJammedSendReport set to true.
+  -- 3. Terminal in GpsJammedPosition enters gps jammed state after GpsJammedStartDebounceTime.
+  -- 4. GPS signal is not jammed in GpsNotJammedPosition.
+  -- 5. GpsJammedState property should be true before GpsJammedEndDebounceTime passes.
+  -- 6. AbnormalReport with GpsJammed information is sent.
+  -- 7. Report contains all required fields and StatusBitmap contains GpsJammed bit set to false.
+  -- 8. GpsJammedState is false after GpsJammedEndDebounceTime has passed.
 function test_GpsJamming_ForTerminalInGpsJammedStateWhenGpsSignalIsNotJammedForTimeAboveGpsJammedEndDebouncePeriod_GpsJammedAbnormalReportIsSent()
 
   -- *** Setup
@@ -357,6 +385,33 @@ function test_GpsJamming_ForTerminalInGpsJammedStateWhenGpsSignalIsNotJammedForT
 end
 
 
+--- TC checks if GpsJamming AbnormalReport is not sent when GPS signal is jammed for time below GpsJammedStartDebounceTime period
+  -- Initial Conditions:
+  --
+  -- * GPS signal is good
+  -- * Terminal not in GpsJammed state
+  --
+  -- Steps:
+  --
+  -- 1. Set GpsJammedStartDebounceTime to value A.
+  -- 2. Set GpsJammedSendReport to true.
+  -- 3. Simulate terminal in InitialPosition - GPS signal not jammed.
+  -- 4. Simulate terminal in GpsJammedPosition - GPS signal jammed.
+  -- 5. Before GpsJammedStartDebounceTime time passes check GpsJammedState property.
+  -- 6. Wait longer than GpsJammedStartDebounceTime.
+  -- 7. Check the content of received AbnormalReport.
+  -- 8. Check GpsJammedState property.
+  --
+  -- Results:
+  --
+  -- 1. GpsJammedStartDebounceTime set to value A.
+  -- 2. GpsJammedSendReport set to true.
+  -- 3. Terminal in InitialPosition with good GPS quality.
+  -- 4. GPS signal jammed.
+  -- 5. GpsJammedState property should be false before GpsJammedStartDebounceTime passes.
+  -- 6. AbnormalReport with GpsJammed information is sent.
+  -- 7. Report contains all required fields and StatusBitmap contains GpsJammed bit set to true.
+  -- 8. GpsJammedState is true after GpsJammedStartDebounceTime has passed.
 function test_GpsJamming_ForTerminalInGpsJammedStateWhenGpsSignalIsNotJammedForTimeBelowGpsJammedEndDebouncePeriod_GpsJammedAbnormalReportIsNotSent()
 
   -- *** Setup
