@@ -1964,9 +1964,16 @@ function test_GpsBlocked_WhenGpsSignalIsBlockedAndNoFixWasEverObtainedByTerminal
   -- params.dat file should be deleted - no gps information should be there
   ----------------------------------------------------------------------------------------
 
+  local deleteParamsFileMessage = {SIN = 26, MIN = 1}
+	deleteParamsFileMessage.Fields = {{Name="tag",Value=0},{Name="data",Value="del /data/svc/VMS/params.dat"}}
+	gateway.submitForwardMessage(deleteParamsFileMessage)
+
+  -- This is an alternative way of deleting the file - that caused troubles
+  --[[
   local deleteParamsFileMessage = {SIN = 24, MIN = 1}
 	deleteParamsFileMessage.Fields = {{Name="path",Value="/data/svc/VMS/params.dat"},{Name="offset",Value=0},{Name="flags",Value="Truncate"},{Name="data",Value=""}}
 	gateway.submitForwardMessage(deleteParamsFileMessage)
+  --]]
 
   positionSW:setPropertiesByName({maxFixTimeout = 60,
                                   acquireTimeout = 1,
