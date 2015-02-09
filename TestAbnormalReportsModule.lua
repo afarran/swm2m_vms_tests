@@ -94,6 +94,33 @@ end
 -- Test Cases
 -------------------------
 
+--- TC checks if GpsJamming AbnormalReport is sent when GPS signal is jammed for time above GpsJammedStartDebounceTime period
+  -- Initial Conditions:
+  --
+  -- * GPS signal is good
+  -- * Terminal not in GpsJammed state
+  --
+  -- Steps:
+  --
+  -- 1. Set GpsJammedStartDebounceTime to value A.
+  -- 2. Set GpsJammedSendReport to true.
+  -- 3. Simulate terminal in InitialPosition - GPS signal not jammed.
+  -- 4. Simulate terminal in GpsJammedPosition - GPS signal jammed.
+  -- 5. Before GpsJammedStartDebounceTime time passes check GpsJammedState property.
+  -- 6. Wait longer than GpsJammedStartDebounceTime.
+  -- 7. Check the content of received AbnormalReport.
+  -- 8. Check GpsJammedState property.
+  --
+  -- Results:
+  --
+  -- 1. GpsJammedStartDebounceTime set to value A.
+  -- 2. GpsJammedSendReport set to true.
+  -- 3. Terminal in InitialPosition with good GPS quality.
+  -- 4. GPS signal jammed.
+  -- 5. GpsJammedState property should be false before GpsJammedStartDebounceTime passes.
+  -- 6. AbnormalReport with GpsJammed information is sent.
+  -- 7. Report contains all required fields and StatusBitmap contains GpsJammed bit set to true.
+  -- 8. GpsJammedState is true after GpsJammedStartDebounceTime has passed.
 function test_GpsJamming_WhenGpsSignalIsJammedForTimeAboveGpsJammedStartDebouncePeriod_GpsJammedAbnormalReportIsSent()
 
   -- *** Setup
@@ -117,7 +144,6 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeAboveGpsJammedStartDebounce
   }
 
   vmsSW:setPropertiesByName({GpsJammedStartDebounceTime = GPS_JAMMED_START_DEBOUNCE_TIME,
-                             GpsJammedEndDebounceTime = GPS_JAMMED_END_DEBOUNCE_TIME,
                              GpsJammedSendReport = true,
                             }
   )
@@ -1903,7 +1929,9 @@ function test_GpsBlocked_WhenGpsSignalIsBlockedAndNoFixWasEverObtainedByTerminal
 
   -- systemSW:restartService(positionSW.sin)
 
+  D:log(os.time(), "restart performed")
   systemSW:restartFramework()
+  D:log(os.time(), "after restart")
 
   -- *** Execute
   gateway.setHighWaterMark() -- to get the newest messages
