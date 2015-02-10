@@ -1172,7 +1172,33 @@ function test_GpsBlocked_ForTerminalInGpsBlockedStateWhenGpsSignalIsNotBlockedFo
 end
 
 
-
+--- TC checks if IdpBlocked AbnormalReport is sent when Satellite Control State not active for time above IdpBlockedStartDebounceTime period
+  -- Initial Conditions:
+  --
+  -- * Satellite Control State is active
+  -- * Terminal not in IdpBlocked state
+  --
+  -- Steps:
+  --
+  -- 1. Set IdpBlockedStartDebounceTime to value A, IdpBlockedEndDebounceTime to value B
+  -- 2. Enable sending IdpBlocked reports.
+  -- 3. Simulate terminal in InitialPosition with Satellite Control State = not active.
+  -- 4. Check IdpBlockedState property before IdpBlockedStartDebounceTime passes.
+  -- 5. Wait longer than IdpBlockedStartDebounceTime and check if IdpBlocked AbnormalReport has been sent.
+  -- 6. Check the content of the AbnormalReport.
+  -- 7. Check the StatusBitmap in the AbnormalReport.
+  -- 8. Check the IdpBlockedState property.
+  --
+  -- Results:
+  --
+  -- 1. Settings applied successfully.
+  -- 2. IdpBlockedSendReport set to true.
+  -- 3. Terminal in InitialPosition with Satellite Control State = not active.
+  -- 4. IdpBlockedState property is expected to be false before IdpBlockedStartDebounceTime passes.
+  -- 5. AbnormalReport with IdpBlocked information is sent after IdpBlockedStartDebounceTime.
+  -- 7. IdpBlocked AbnormalReport contains all the required information.
+  -- 8. IdpBlocked bit in StatusBitmap is set to true.
+  -- 9. IdpBlockedState is true after IdpBlockedStartDebounceTime has passed.
 function test_IdpBlocked_WhenSatelliteControlStateIsNotActiveForTimeAboveIdpBlockedStartDebouncePeriod_IdpBlockedAbnormalReportIsSent()
 
   -- device profile application
@@ -1195,7 +1221,7 @@ function test_IdpBlocked_WhenSatelliteControlStateIsNotActiveForTimeAboveIdpBloc
                              }
   )
 
-  -- *** Execute
+
 
   -- TODO: uncomment this section when the funtions are implemented
   -- SatelliteControlState("Active")
@@ -1204,6 +1230,8 @@ function test_IdpBlocked_WhenSatelliteControlStateIsNotActiveForTimeAboveIdpBloc
 
   -- terminal in initial position, Satellite Control State is Active now (IDP not blocked)
   GPS:set(InitialPosition)
+
+  -- *** Execute
   gateway.setHighWaterMark() -- to get the newest messages
   -- Satellite Control State is not Active now - IDP blockage starts
   -- TODO: uncomment this section when the funtions are implemented
