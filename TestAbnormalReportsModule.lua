@@ -1411,6 +1411,28 @@ end
 
 
 
+
+--- TC checks if IdpBlocked AbnormalReport is not sent when Satellite Control State is not active for time below IdpBlockedStartDebounceTime period
+  -- Initial Conditions:
+  --
+  -- * Satellite Control State is active
+  -- * Terminal not in IdpBlocked state
+  --
+  -- Steps:
+  --
+  -- 1. Set IdpBlockedStartDebounceTime to value A, IdpBlockedEndDebounceTime to value B
+  -- 2. Enable sending IdpBlocked reports.
+  -- 3. Simulate terminal in InitialPosition with Satellite Control State = not active.
+  -- 4. Wait shorter than IdpBlockedStartDebounceTime and check if IdpBlocked report is not sent.
+  -- 5. Simulate terminal in Satellite Control State = active.
+  --
+  -- Results:
+  --
+  -- 1. Settings applied successfully.
+  -- 2. IdpBlockedSendReport set to true.
+  -- 3. Terminal in InitialPosition with Satellite Control State = not active.
+  -- 4. IdpBlocked repoort is not sent.
+  -- 5. IDP signal quality good again.
 function test_IdpBlocked_WhenSatelliteControlStateIsNotActiveForTimeBelowIdpBlockedStartDebouncePeriod_IdpBlockedAbnormalReportIsNotSent()
 
   -- device profile application
@@ -1433,12 +1455,11 @@ function test_IdpBlocked_WhenSatelliteControlStateIsNotActiveForTimeBelowIdpBloc
                              }
   )
 
-  -- *** Execute
-
 
   -- TODO: uncomment this section when the funtions are implemented
   -- SatelliteControlState("Active")
 
+  -- *** Execute
   gateway.setHighWaterMark() -- to get the newest messages
   -- Satellite Control State is not Active now - IDP blockage starts
   -- TODO: uncomment this section when the funtions are implemented
