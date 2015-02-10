@@ -467,9 +467,29 @@ end
 
 
 
+--- TC checks if GpsJamming AbnormalReport is not sent when GPS signal is jammed for time below GpsJammedStartDebounceTime
+  -- Initial Conditions:
+  --
+  -- * GPS signal is not jammed
+  -- * Terminal is not in GpsJammed state
+  --
+  -- Steps:
+  --
+  -- 1. Set GpsJammedStartDebounceTime to some high value (90 seconds in example).
+  -- 2. Enable sending GpsJammed reports.
+  -- 3. Simulate GPS signal jammed for time shorter than GpsJammedStartDebounceTime.
+  -- 4. Check GpsJammedState property.
+  --
+  -- Results:
+  --
+  -- 1. GpsJammedStartDebounceTime set to some high value.
+  -- 2. GpsJammedSendReport set to true.
+  -- 3. GpsJammed AbnormalReport is not sent.
+  -- 4. GPS signal is not jammed for time below GpsJammedEndDebounceTime.
+  -- 5. GpsJammedState is not true.
 function test_GpsJamming_WhenGpsSignalIsJammedForTimeBelowGpsJammedStartDebouncePeriod_GpsJammedAbnormalReportIsNotSent()
 
-  local GPS_JAMMED_START_DEBOUNCE_TIME = 30   -- seconds
+  local GPS_JAMMED_START_DEBOUNCE_TIME = 90   -- seconds
   local GPS_JAMMED_END_DEBOUNCE_TIME = 1
 
   vmsSW:setPropertiesByName({GpsJammedStartDebounceTime = GPS_JAMMED_START_DEBOUNCE_TIME,
@@ -493,8 +513,9 @@ function test_GpsJamming_WhenGpsSignalIsJammedForTimeBelowGpsJammedStartDebounce
   -- GPS signal is jammed from now
   GPS:set({jammingDetect = true})
 
-  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
+  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 75)
 
+  -- back to GPS signal not jammed
   GPS:set(InitialPosition)
 
   -- checking GpsJammedState property
