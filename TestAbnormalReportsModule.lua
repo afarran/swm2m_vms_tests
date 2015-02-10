@@ -1350,7 +1350,7 @@ end
   -- 3. Terminal in InitialPosition with Satellite Control State = not active.
   -- 4. Satellite Control State = not active longer than IdpBlockedStartDebounceTime.
   -- 5. AbnormalReport with IdpBlocked information is not sent after IdpBlockedStartDebounceTime.
-  -- 7. IdpBlockedState is set to true after IdpBlockedStartDebounceTime.
+  -- 6. IdpBlockedState is set to true after IdpBlockedStartDebounceTime.
 function test_IdpBlocked_WhenSatelliteControlStateIsNotActiveForTimeAboveIdpBlockedStartDebouncePeriodButIdpBlockedReportsAreDisabled_IdpBlockedAbnormalReportIsNotSent()
 
   -- device profile application
@@ -1487,6 +1487,30 @@ function test_IdpBlocked_WhenSatelliteControlStateIsNotActiveForTimeBelowIdpBloc
 end
 
 
+
+--- TC checks if IdpBlocked AbnormalReport is not sent when Satellite Control State not active for time above IdpBlockedStartDebounceTime but IdpBlocked reports are disabled
+  -- Initial Conditions:
+  --
+  -- * Satellite Control State is active
+  -- * Terminal not in IdpBlocked state
+  --
+  -- Steps:
+  --
+  -- 1. Set IdpBlockedStartDebounceTime to value A, IdpBlockedEndDebounceTime to value B
+  -- 2. Disable sending IdpBlocked reports.
+  -- 3. Simulate terminal in InitialPosition with Satellite Control State = not active.
+  -- 4. Wait longer than IdpBlockedStartDebounceTime.
+  -- 5. Check if IdpBlocked AbnormalReport has not been sent.
+  -- 6. Check IdpBlockedState property.
+  --
+  -- Results:
+  --
+  -- 1. Settings applied successfully.
+  -- 2. IdpBlockedSendReport set to false.
+  -- 3. Terminal in InitialPosition with Satellite Control State = not active.
+  -- 4. Satellite Control State = not active longer than IdpBlockedStartDebounceTime.
+  -- 5. AbnormalReport with IdpBlocked information is not sent after IdpBlockedStartDebounceTime.
+  -- 6. IdpBlockedState is set to true after IdpBlockedStartDebounceTime.
 function test_IdpBlocked_ForTerminalInIdpBlockedStateWhenSatelliteControlStateIsActiveForTimeAboveIdpBlockedEndDebouncePeriod_IdpBlockedAbnormalReportIsSent()
 
   -- device profile application
@@ -1612,6 +1636,33 @@ end
 
 
 
+--- TC checks if IdpBlocked AbnormalReport is sent when Satellite Control State active for time above IdpBlockedEndDebounceTime for terminal in IdpBlocked state
+  -- Initial Conditions:
+  --
+  -- * Satellite Control State is not active
+  -- * Terminal in IdpBlocked state
+  --
+  -- Steps:
+  --
+  -- 1. Set IdpBlockedStartDebounceTime to value A, IdpBlockedEndDebounceTime to value B
+  -- 2. Enable sending IdpBlocked reports.
+  -- 3. Put terminal to IdpBlocked state.
+  -- 4. Simulate Satellite Control State = active.
+  -- 5. Before IdpBlockedEndDebounceTime time passes check IdpBlockedState property
+  -- 6. Wait longer than IdpBlockedEndDebounceTime and receive IdpBlocked AbnormalReport
+  -- 7. Verify the content of report, check IdpBlocked bit in it.
+  -- 8. Check IdpBlockedState property.
+  --
+  -- Results:
+  --
+  -- 1. Settings applied successfully.
+  -- 2. IdpBlockedSendReport set to true.
+  -- 3. Terminal in IdpBlocked state.
+  -- 4. Satellite Control State = active.
+  -- 5. IdpBlockedState is true before IdpBlockedEndDebounceTime passes.
+  -- 6. AbnormalReport with IdpBlocked information is sent after IdpBlockedEndDebounceTime.
+  -- 7. Report contains all required information, IdpBlocked bit is set to false.
+  -- 8. IdpBlockedState is set to false after IdpBlockedEndDebounceTime.
 function test_IdpBlocked_ForTerminalInIdpBlockedStateWhenSatelliteControlStateIsActiveForTimeBelowIdpBlockedEndDebouncePeriod_IdpBlockedAbnormalReportIsNotSent()
 
   -- device profile application
