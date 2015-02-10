@@ -38,7 +38,7 @@ function setup()
                                HwClientDisconnectedStartDebounceTime = 1,
                                HwClientDisconnectedEndDebounceTime = 1,
                                GpsBlockedStartDebounceTime = 1,
-                               GpsBlockedEndDebounceTime = 1,;.
+                               GpsBlockedEndDebounceTime = 1,
                                GpsJammedSendReport = false,
                                GpsBlockedSendReport = false,
                                IdpBlockedSendReport = false,
@@ -1005,6 +1005,25 @@ end
 
 
 
+--- TC checks if GpsBlocked AbnormalReport is not sent when GPS signal is blocked below GpsBlockedStartDebounceTime period
+  -- Initial Conditions:
+  --
+  -- * GPS signal is good
+  -- * Terminal not in GpsBlocked state
+  --
+  -- Steps:
+  --
+  -- 1. Set GpsBlockedStartDebounceTime to value A, GpsBlockedEndDebounceTime to value B and maxFixTimeout to 60 seconds
+  -- 2. Enable sending GpsBlocked reports.
+  -- 3. Simulate GPS signal blocked for time above maxFixTimeout.
+  -- 4. Wait shorter than  GpsBlockedStartDebounceTime and check if GpsBlocked AbnormalReport has not been sent.
+  --
+  -- Results:
+  --
+  -- 1. Settings applied successfully.
+  -- 2. GpsBlockedSendReport set to true.
+  -- 3. GPS signal blocked.
+  -- 4. GpsBlocked AbnormalReport is not sent by terminal.
 function test_GpsBlocked_WhenGpsSignalIsBlockedForTimeBelowGpsBlockedStartDebouncePeriod_GpsBlockedAbnormalReportIsNotSent()
 
   -- *** Setup
