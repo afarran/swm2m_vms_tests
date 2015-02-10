@@ -750,33 +750,36 @@ function test_GpsBlocked_WhenGpsSignalIsBlockedForTimeAboveGpsBlockedStartDeboun
 
 end
 
---- TC checks if GpsBlocked AbnormalReport is sent when GPS signal is good for time above GpsBlockedEndDebounceTime period for terminal in GpsBlocked state
+
+--- TC checks if GpsBlocked AbnormalReport is not sent when GPS signal is blocked for time above GpsBlockedStartDebounceTime period but GpsBlocked reports are disabled
   -- Initial Conditions:
   --
-  -- * GPS signal is blocked
-  -- * Terminal in GpsBlocked state
+  -- * GPS signal is good
+  -- * Terminal not in GpsBlocked state
   --
   -- Steps:
   --
-  -- 1. Set GpsBlockedStartDebounceTime to value A, GpsBlockedEndDebounceTime to value B
+  -- 1. Set GpsBlockedStartDebounceTime to value A, GpsBlockedEndDebounceTime to value B and maxFixTimeout in Position service to 60 seconds.
   -- 2. Set GpsBlockedSendReport to true.
-  -- 3. Put terminal in GpsBlocked state
-  -- 4. Simulate GPS signal good.
-  -- 5. Before GpsBlockedEndDebounceTime time passes check GpsBlockedState property.
-  -- 6. Wait longer than GpsBlockedEndDebounceTime.
-  -- 7. Check the content of received AbnormalReport.
-  -- 8. Check GpsBlockedState property.
+  -- 3. Simulate terminal in InitialPosition - GPS signal not blocked.
+  -- 4. Simulate terminal in GpsBlockedPosition - no valid fix provided.
+  -- 5. Wait for maxFixTimeout period.
+  -- 6. Before GpsBlockedStartDebounceTime time passes check GpsBlockedState property.
+  -- 7. Wait longer than GpsBlockedStartDebounceTime.
+  -- 8. Check the content of received AbnormalReport.
+  -- 9. Check GpsBlockedState property.
   --
   -- Results:
   --
   -- 1. Settings applied successfully.
   -- 2. GpsBlockedSendReport set to true.
-  -- 3. Terminal in GpsBlocked state.
-  -- 4. Valid fix is provided.
-  -- 5. GpsBlockedState property should be true before GpsBlockedEndDebounceTime passes.
-  -- 6. AbnormalReport with GpsBlocked information is sent after GpsBlockedStartDebounceTime.
-  -- 7. Report contains all required fields and StatusBitmap contains GpsBlocked bit set to false.
-  -- 8. GpsBlockedState is true false GpsBlockedStartDebounceTime has passed.
+  -- 3. Terminal in InitialPosition with good GPS quality.
+  -- 4. GPS signal blocked.
+  -- 5. MaxFixTimeout time passes.
+  -- 6. GpsBlockedState property should be false before GpsBlockedStartDebounceTime passes.
+  -- 7. AbnormalReport with GpsBlocked information is sent after GpsBlockedStartDebounceTime.
+  -- 8. Report contains all required fields and StatusBitmap contains GpsBlocked bit set to true.
+  -- 9. GpsBlockedState is true after GpsBlockedStartDebounceTime has passed.
 function test_GpsBlocked_ForTerminalInGpsBlockedStateWhenGpsSignalIsNotBlockedForTimeAboveGpsBlockedEndDebouncePeriod_GpsBlockedAbnormalReportIsSent()
 
   -- *** Setup
@@ -919,6 +922,27 @@ function test_GpsBlocked_ForTerminalInGpsBlockedStateWhenGpsSignalIsNotBlockedFo
 end
 
 
+--- TC checks if GpsBlocked AbnormalReport is not sent when GpsBlocked reports are disabled for terminal in GpsBlocked state
+  -- Initial Conditions:
+  --
+  -- * GPS signal is good
+  -- * Terminal not in GpsBlocked state
+  --
+  -- Steps:
+  --
+  -- 1. Set GpsBlockedStartDebounceTime to value A, GpsBlockedEndDebounceTime to value B and maxFixTimeout to 60 seconds
+  -- 2. Disable sending GpsBlocked reports.
+  -- 3. Simulate GPS signal blocked for time above maxFixTimeout and GpsBlockedStartDebounceTime.
+  -- 4. Wait for GpsBlocked AbnormalReport.
+  -- 5. Check GpsBlockedState property.
+  --
+  -- Results:
+  --
+  -- 1. Settings applied successfully.
+  -- 2. GpsBlockedSendReport set to false.
+  -- 3. GPS signal blocked.
+  -- 4. GpsBlocked AbnormalReport is not sent.
+  -- 5. GpsBlockedState property is true after GpsBlockedStartDebounceTime.
 function test_GpsBlocked_WhenGpsSignalIsBlockedForTimeAboveGpsBlockedStartDebouncePeriodButGpsBlockedReportsAreDisabled_GpsBlockedAbnormalReportIsNotSent()
 
   -- *** Setup
