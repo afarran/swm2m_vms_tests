@@ -1727,12 +1727,40 @@ end
 
 
 
-function test_PowerDisconnected_WhenTerminalIsOffForTimeAbovePowerDisconnectedStartDebouncePeriod_PowerDisconnectedAbnormalReportIsSentWhenTerminalIsOnAgain()
+
+--- TC checks if PowerDisconnected AbnormalReport is sent when terminal is power cycled
+  -- Initial Conditions:
+  --
+  -- * Satellite Control State is not active
+  -- * Terminal in IdpBlocked state
+  --
+  -- Steps:
+  --
+  -- 1. Set IdpBlockedStartDebounceTime to value A, IdpBlockedEndDebounceTime to value B
+  -- 2. Enable sending IdpBlocked reports.
+  -- 3. Put terminal to IdpBlocked state.
+  -- 4. Simulate Satellite Control State = active.
+  -- 5. Before IdpBlockedEndDebounceTime time passes check IdpBlockedState property
+  -- 6. Wait longer than IdpBlockedEndDebounceTime and receive IdpBlocked AbnormalReport
+  -- 7. Verify the content of report, check IdpBlocked bit in it.
+  -- 8. Check IdpBlockedState property.
+  --
+  -- Results:
+  --
+  -- 1. Settings applied successfully.
+  -- 2. IdpBlockedSendReport set to true.
+  -- 3. Terminal in IdpBlocked state.
+  -- 4. Satellite Control State = active.
+  -- 5. IdpBlockedState is true before IdpBlockedEndDebounceTime passes.
+  -- 6. AbnormalReport with IdpBlocked information is sent after IdpBlockedEndDebounceTime.
+  -- 7. Report contains all required information, IdpBlocked bit is set to false.
+  -- 8. IdpBlockedState is set to false after IdpBlockedEndDebounceTime.
+function test_PowerDisconnected_WhenTerminalIsPoweCycled_OnePowerDisconnectedAbnormalReportIsSentAfterPowerDisconnectedStartDebounceTimeAndSecondPowerDisconnectedAbnormalReportIsSentAfterPowerDisconnectedEndDebounceTime()
 
   -- *** Setup
-  local POWER_DISCONNECTED_START_DEBOUNCE_TIME = 1   -- seconds
-  local POWER_DISCONNECTED_END_DEBOUNCE_TIME = 1     -- seconds
-  local PROPERTIES_SAVE_INTERVAL = 600               -- seconds
+  local POWER_DISCONNECTED_START_DEBOUNCE_TIME = 5    -- seconds
+  local POWER_DISCONNECTED_END_DEBOUNCE_TIME = 60     -- seconds
+  local PROPERTIES_SAVE_INTERVAL = 600                -- seconds
 
   -- terminal stationary
   local InitialPosition = {
@@ -1746,6 +1774,7 @@ function test_PowerDisconnected_WhenTerminalIsOffForTimeAbovePowerDisconnectedSt
     speed = 7,                      -- kmh
     latitude = 5,                   -- degrees
     longitude = 5,                  -- degrees
+    heading = 90,                   -- degrees
   }
 
 
@@ -1771,147 +1800,154 @@ function test_PowerDisconnected_WhenTerminalIsOffForTimeAbovePowerDisconnectedSt
 
   GPS:set(AfterRebootPosition)
 
-  local timeOfEvent = os.time()  -- to get exact timestamp
+  local terminalOnTimeStamp = os.time()  -- to get exact timestamp
+
+  local readData, readResult = filesystemSW:read("/data/svc/VMS/params.dat", 0, 100)
+
+  local paramsFile = string.char(unpack(readData))
+  local paramsFileSaveTimeStamp = string.match(paramsFile, ".*sysTime=(%d+)%,")
+  D:log(paramsFile)
+  D:log(paramsFileSaveTimeStamp)
+
+  framework.delay(POWER_DISCONNECTED_END_DEBOUNCE_TIME)
 
   -- receiving all from mobile messages sent after setHighWaterMark()
   local receivedMessages = gateway.getReturnMessages()
   -- look for AbnormalReport messages
   local AllReceivedAbnormalReports = framework.filterMessages(receivedMessages, framework.checkMessageType(115, 50)) -- TODO: service wrapper functions need to be modified
 
-  D:log(AllReceivedAbnormalReports)
-
-  local PowerDisconnectedAbnormalReport = nil
+  local PowerDisconnectedAbnormalReportTrue = nil
   for index = 1 , #AllReceivedAbnormalReports, 1 do
     local StatusBitmap = vmsSW:decodeBitmap(AllReceivedAbnormalReports[index].Payload.StatusBitmap, "EventStateId")
     D:log(StatusBitmap["PowerDisconnected"] )
     if AllReceivedAbnormalReports[index].Payload.EventType == "PowerDisconnected" and StatusBitmap["PowerDisconnected"] == true then
-        PowerDisconnectedAbnormalReport = AllReceivedAbnormalReports[index]
+        PowerDisconnectedAbnormalReportTrue = AllReceivedAbnormalReports[index]
         break
     end
   end
 
-  D:log(PowerDisconnectedAbnormalReport)
+  local PowerDisconnectedAbnormalReportFalse = nil
+  for index = 1 , #AllReceivedAbnormalReports, 1 do
+    local StatusBitmap = vmsSW:decodeBitmap(AllReceivedAbnormalReports[index].Payload.StatusBitmap, "EventStateId")
+    D:log(StatusBitmap["PowerDisconnected"] )
+    if AllReceivedAbnormalReports[index].Payload.EventType == "PowerDisconnected" and StatusBitmap["PowerDisconnected"] == true then
+        PowerDisconnectedAbnormalReportFalse = AllReceivedAbnormalReports[index]
+        break
+    end
+  end
 
-  assert_not_nil(PowerDisconnectedAbnormalReport, "AbnormalReport  with PowerDisconnected information not received")
+  D:log(PowerDisconnectedAbnormalReportTrue)
+  D:log(PowerDisconnectedAbnormalReportFalse)
+
+  assert_not_nil(PowerDisconnectedAbnormalReportFalse, "AbnormalReport with PowerDisconnected bit = false not received")
+  assert_not_nil(PowerDisconnectedAbnormalReportTrue, "AbnormalReport  with PowerDisconnected bit = true not received")
 
   assert_equal(
-    InitialPosition.latitude*60000,
-    tonumber(PowerDisconnectedAbnormalReport.Payload.Latitude),
+    AfterRebootPosition.latitude*60000,
+    tonumber(PowerDisconnectedAbnormalReportFalse.Payload.Latitude),
     "Wrong latitude value in PowerDisconnected abnormal report"
   )
 
   assert_equal(
-    InitialPosition.longitude*60000,
-    tonumber(PowerDisconnectedAbnormalReport.Payload.Longitude),
+    AfterRebootPosition.longitude*60000,
+    tonumber(PowerDisconnectedAbnormalReportFalse.Payload.Longitude),
     "Wrong longitude value in PowerDisconnected abnormal report"
   )
 
   assert_equal(
-    InitialPosition.speed,
-    tonumber(PowerDisconnectedAbnormalReport.Payload.Speed),
+    AfterRebootPosition.speed*5.39956803,
+    tonumber(PowerDisconnectedAbnormalReportFalse.Payload.Speed),
+    2,
     "Wrong speed value in PowerDisconnected abnormal report"
   )
 
   assert_equal(
-    361,
-    tonumber(PowerDisconnectedAbnormalReport.Payload.Course),
+    AfterRebootPosition.heading,
+    tonumber(PowerDisconnectedAbnormalReportFalse.Payload.Course),
     "Wrong course value in PowerDisconnected abnormal report"
   )
 
   assert_equal(
-    timeOfEvent,
-    tonumber(PowerDisconnectedAbnormalReport.Payload.Timestamp),
+    terminalOnTimeStamp + POWER_DISCONNECTED_START_DEBOUNCE_TIME,
+    tonumber(PowerDisconnectedAbnormalReportTrue.Payload.Timestamp),
     20,
     "Wrong Timestamp value in PowerDisconnected abnormal report"
   )
---]]
+
   -- TODO: update this after implementation in TestFramework file
   --[[
   assert_equal(
     InitialPosition.hdop,
-    PowerDisconnectedAbnormalReport.Payload.Hdop,
+    PowerDisconnectedAbnormalReportFalse.Payload.Hdop,
     "Wrong HDOP value in IdpBlocked abnormal report"
   )
 
   assert_equal(
     InitialPosition.idpsnr,
-    PowerDisconnectedAbnormalReport.Payload.IdpSnr,
+    PowerDisconnectedAbnormalReportFalse.Payload.IdpSnr,
     "Wrong IdpSnr value in IdpBlocked abnormal report"
   )
 
   assert_equal(
     InitialPosition.numsats,
-    PowerDisconnectedAbnormalReport.Payload.NumSats,
+    PowerDisconnectedAbnormalReportFalse.Payload.NumSats,
+    "Wrong NumSats value in IdpBlocked abnormal report"
+  )
+  --]]
+
+  assert_equal(
+    InitialPosition.latitude*60000,
+    tonumber(PowerDisconnectedAbnormalReportTrue.Payload.Latitude),
+    "Wrong latitude value in PowerDisconnected abnormal report send after POWER_DISCONNECTED_END_DEBOUNCE_TIME"
+  )
+
+  assert_equal(
+    InitialPosition.longitude*60000,
+    tonumber(PowerDisconnectedAbnormalReportTrue.Payload.Longitude),
+    "Wrong longitude value in PowerDisconnected abnormal report send after POWER_DISCONNECTED_END_DEBOUNCE_TIME"
+  )
+
+  assert_equal(
+    InitialPosition.speed,
+    tonumber(PowerDisconnectedAbnormalReportTrue.Payload.Speed),
+    "Wrong speed value in PowerDisconnected abnormal report send after POWER_DISCONNECTED_END_DEBOUNCE_TIME"
+  )
+
+  assert_equal(
+    361,
+    tonumber(PowerDisconnectedAbnormalReportTrue.Payload.Course),
+    "Wrong course value in PowerDisconnected abnormal report send after POWER_DISCONNECTED_END_DEBOUNCE_TIME"
+  )
+
+  assert_equal(
+    paramsFileSaveTimeStamp + POWER_DISCONNECTED_END_DEBOUNCE_TIME,
+    tonumber(PowerDisconnectedAbnormalReportTrue.Payload.Timestamp),
+    10,
+    "Wrong Timestamp value in PowerDisconnected abnormal report send after POWER_DISCONNECTED_END_DEBOUNCE_TIME"
+  )
+
+  -- TODO: update this after implementation in TestFramework file
+  --[[
+  assert_equal(
+    InitialPosition.hdop,
+    PowerDisconnectedAbnormalReportTrue.Payload.Hdop,
+    "Wrong HDOP value in IdpBlocked abnormal report"
+  )
+
+  assert_equal(
+    InitialPosition.idpsnr,
+    PowerDisconnectedAbnormalReportTrue.Payload.IdpSnr,
+    "Wrong IdpSnr value in IdpBlocked abnormal report"
+  )
+
+  assert_equal(
+    InitialPosition.numsats,
+    PowerDisconnectedAbnormalReportTrue.Payload.NumSats,
     "Wrong NumSats value in IdpBlocked abnormal report"
   )
   --]]
 
 
-  local StatusBitmap = vmsSW:decodeBitmap(PowerDisconnectedAbnormalReport.Payload.StatusBitmap, "EventStateId")
-  assert_true(StatusBitmap["PowerDisconnected"], "PowerDisconnected bit in StatusBitmap has not been correctly changed when terminal was power-cycled")
-
-end
-
-
-
-function test_PowerDisconnected_WhenTerminalIsOffForTimeBelowPowerDisconnectedEndDebouncePeriod_PowerDisconnectedAbnormalReportIsNotSentWhenTerminalIsOnAgain()
-
-  -- *** Setup
-  local POWER_DISCONNECTED_START_DEBOUNCE_TIME = 1              -- seconds
-  local POWER_DISCONNECTED_END_DEBOUNCE_TIME = 4000             -- seconds
-  local PROPERTIES_SAVE_INTERVAL = 600                          -- seconds
-
-  -- terminal stationary
-  local InitialPosition = {
-    speed = 0,                      -- kmh
-    latitude = 1,                   -- degrees
-    longitude = 1,                  -- degrees
-  }
-
-  vmsSW:setPropertiesByName({PowerDisconnectedStartDebounceTime = POWER_DISCONNECTED_START_DEBOUNCE_TIME,
-                             PowerDisconnectedEndDebounceTime = POWER_DISCONNECTED_END_DEBOUNCE_TIME,
-                             PowerDisconnectedSendReport = true,
-                             }, false, true
-  )
-
-  -- *** Execute
-  -- terminal in initial position
-  GPS:set(InitialPosition)
-  gateway.setHighWaterMark() -- to get the newest messages
-
-  framework.delay(POWER_DISCONNECTED_START_DEBOUNCE_TIME)
-
-  -- checking PowerDisconnectedState property - this is expected to be false - terminal is powered on for time longer than POWER_DISCONNECTED_START_DEBOUNCE_TIME
-  local PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
-  assert_false(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState is incorrectly true")
-  D:log(PowerDisconnectedStateProperty, "PowerDisconnectedStateProperty in the start of TC")
-
-  D:log(os.time(), "timestamp before saving properties")
-  framework.delay(PROPERTIES_SAVE_INTERVAL + 5) -- wait until previous SysTime is saved in non volatile memory
-  D:log(os.time(), "timestamp after saving properties")
-
-  systemSW:restartFramework()
-
-  local timeOfEvent = os.time()  -- to get exact timestamp
-
-  -- receiving all from mobile messages sent after setHighWaterMark()
-  local receivedMessages = gateway.getReturnMessages()
- -- look for AbnormalReport messages
-  local AllReceivedAbnormalReports = framework.filterMessages(receivedMessages, framework.checkMessageType(115, 50)) -- TODO: service wrapper functions need to be modified
-
-
-  local PowerDisconnectedAbnormalReport = nil
-  for index = 1 , #AllReceivedAbnormalReports, 1 do
-    if AllReceivedAbnormalReports[index].Payload.EventType == "PowerDisconnected" then
-        PowerDisconnectedAbnormalReport = AllReceivedAbnormalReports[index]
-        break
-    end
-  end
-
-  D:log(PowerDisconnectedAbnormalReport)
-
-  local StatusBitmap = vmsSW:decodeBitmap(PowerDisconnectedAbnormalReport.Payload.StatusBitmap, "EventStateId")
-  assert_false(StatusBitmap["PowerDisconnected"], "AbnormalReport with PowerDisconnected = true information received but not expected")
 
 end
 
@@ -2231,7 +2267,7 @@ function test_GpsBlocked_WhenGpsSignalIsBlocked_TimeStampsReportedInPeriodicRepo
 end
 
 
-function test_GpsBlocked_WhenGpsSignalIsBlockedAndNoFixWasEverObtainedByTerminal_DefaultValuesOfLattitudeAndLongitudeAreSentInReports()
+function test_GpsBlocked_WhenGpsSignalIsBlockedAndNoFixWasObtainedByTerminal_DefaultValuesOfLattitudeAndLongitudeAreSentInReports()
 
   -- *** Setup
   local MAX_FIX_TIMEOUT = 60                   -- seconds (60 seconds is the minimum allowed value for this property)
