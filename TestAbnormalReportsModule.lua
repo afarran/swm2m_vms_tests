@@ -1974,7 +1974,7 @@ end
 
 
 
---- TC checks if PowerDisconnected AbnormalReport is sent when terminal is power cycled
+--- TC checks if two PowerDisconnected abnormal reports are sent when terminal is power cycled
   -- Initial Conditions:
   --
   -- * Satellite Control State is not active
@@ -1982,25 +1982,29 @@ end
   --
   -- Steps:
   --
-  -- 1. Set IdpBlockedStartDebounceTime to value A, IdpBlockedEndDebounceTime to value B
-  -- 2. Enable sending IdpBlocked reports.
-  -- 3. Put terminal to IdpBlocked state.
-  -- 4. Simulate Satellite Control State = active.
-  -- 5. Before IdpBlockedEndDebounceTime time passes check IdpBlockedState property
-  -- 6. Wait longer than IdpBlockedEndDebounceTime and receive IdpBlocked AbnormalReport
-  -- 7. Verify the content of report, check IdpBlocked bit in it.
-  -- 8. Check IdpBlockedState property.
+  -- 1. Set PowerDisconnectedStartDebounceTime to value A, PowerDisconnectedEndDebounceTime to value B
+  -- 2. Enable sending PowerDisconnected reports.
+  -- 3. Simulate terminal in InitialPosition.
+  -- 4. Wait longer than properties save interval (10 minutes) to make sure properties are saved.
+  -- 5. Perform lsf framework restart (terminal power cycle simulated).
+  -- 6. Simulate terminal in AfterRebootPosition.
+  -- 7. Wait longer than PowerDisconnectedStartDebounceTime and PowerDisconnectedEndDebounceTime and receive all the messages after reboot.
+  -- 8. Check if two PowerDisconnected reports are sent - one after PowerDisconnectedStartDebounceTime and one after PowerDisconnectedEndDebounceTime.
+  -- 9. Verify content of PowerDisconnected with PowerDisconnected state true.
+  -- 10. Verify content of PowerDisconnected with PowerDisconnected state false.
   --
   -- Results:
   --
   -- 1. Settings applied successfully.
-  -- 2. IdpBlockedSendReport set to true.
-  -- 3. Terminal in IdpBlocked state.
-  -- 4. Satellite Control State = active.
-  -- 5. IdpBlockedState is true before IdpBlockedEndDebounceTime passes.
-  -- 6. AbnormalReport with IdpBlocked information is sent after IdpBlockedEndDebounceTime.
-  -- 7. Report contains all required information, IdpBlocked bit is set to false.
-  -- 8. IdpBlockedState is set to false after IdpBlockedEndDebounceTime.
+  -- 2. PowerDisconnectedSendReport set to true.
+  -- 3. Terminal in InitialPosition.
+  -- 4. Properties saved after 10 minutes.
+  -- 5. Lsf framework performed - terminal power cycled.
+  -- 6. Terminal in AfterRebootPosition.
+  -- 7. All messages after reboot received.
+  -- 8. There are two PowerDisconnected reports - one with PowerDisconnected bit true and one with PowerDisconnected bit false
+  -- 9. PowerDisconnected Abnormal Report with PowerDisconnected bit true contains InitialPosition GPS information
+  -- 10. PowerDisconnected Abnormal Report with PowerDisconnected bit false contains AfterRebootPosition GPS information
 function test_PowerDisconnected_WhenTerminalIsPoweCycled_OnePowerDisconnectedAbnormalReportIsSentAfterPowerDisconnectedStartDebounceTimeAndSecondPowerDisconnectedAbnormalReportIsSentAfterPowerDisconnectedEndDebounceTime()
 
   -- *** Setup
@@ -2034,7 +2038,6 @@ function test_PowerDisconnected_WhenTerminalIsPoweCycled_OnePowerDisconnectedAbn
   GPS:set(InitialPosition)
   framework.delay(PROPERTIES_SAVE_INTERVAL + 5)
   gateway.setHighWaterMark() -- to get the newest messages
-  framework.delay(POWER_DISCONNECTED_START_DEBOUNCE_TIME)
 
   -- checking PowerDisconnectedState property - this is expected to be false - terminal is powered on for time longer than
   local PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
