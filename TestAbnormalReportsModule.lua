@@ -2188,6 +2188,94 @@ end
 
 
 
+-- comments to be added
+function test_PowerDisconnected_WhenTerminalIsPoweCycledMultipleTimesForShortPeriodOfTime_OnePowerDisconnectedAbnormalReportIsSentAfterPowerDisconnectedStartDebounceTimeAndSecondPowerDisconnectedAbnormalReportIsSentAfterPowerDisconnectedEndDebounceTime()
+
+  -- *** Setup
+  local POWER_DISCONNECTED_START_DEBOUNCE_TIME = 100   -- seconds
+  local POWER_DISCONNECTED_END_DEBOUNCE_TIME = 700     -- seconds
+
+  -- terminal stationary
+  local InitialPosition = {
+    speed = 0,                      -- kmh
+    latitude = 1,                   -- degrees
+    longitude = 1,                  -- degrees
+  }
+
+  -- terminal stationary
+  local AfterRebootPosition = {
+    speed = 7,                      -- kmh
+    latitude = 5,                   -- degrees
+    longitude = 5,                  -- degrees
+    heading = 90,                   -- degrees
+  }
+
+  vmsSW:setPropertiesByName({PowerDisconnectedStartDebounceTime = POWER_DISCONNECTED_START_DEBOUNCE_TIME,
+                             PowerDisconnectedEndDebounceTime = POWER_DISCONNECTED_END_DEBOUNCE_TIME,
+                             PowerDisconnectedSendReport = true,
+                             }, false, true
+  )
+
+  -- *** Execute
+  gateway.setHighWaterMark() -- to get the newest messages
+
+  -- checking PowerDisconnectedState property - this is expected to be false - terminal is powered on for time longer than
+  local PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
+  assert_false(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState is incorrectly true")
+  D:log(PowerDisconnectedStateProperty, "PowerDisconnectedStateProperty in the start of TC")
+
+  -- 3 terminal restarts simulated
+  systemSW:restartFramework()
+  framework.delay(10)
+  systemSW:restartFramework()
+  framework.delay(10)
+  systemSW:restartFramework()
+
+  framework.delay(POWER_DISCONNECTED_END_DEBOUNCE_TIME + 5)
+
+  -- receiving all from mobile messages sent after setHighWaterMark()
+  local receivedMessages = gateway.getReturnMessages()
+  -- look for AbnormalReport messages
+  local AllReceivedAbnormalReports = framework.filterMessages(receivedMessages, framework.checkMessageType(115, 50)) -- TODO: service wrapper functions need to be modified
+
+  local PowerDisconnectedAbnormalReportTrue = {}
+  local indexTrue = 1
+  for index = 1 , #AllReceivedAbnormalReports, 1 do
+    local StatusBitmap = vmsSW:decodeBitmap(AllReceivedAbnormalReports[index].Payload.StatusBitmap, "EventStateId")
+    D:log(StatusBitmap["PowerDisconnected"] )
+    if AllReceivedAbnormalReports[index].Payload.EventType == "PowerDisconnected" and StatusBitmap["PowerDisconnected"] == true then
+        PowerDisconnectedAbnormalReportTrue[indexTrue] = AllReceivedAbnormalReports[index]
+        indexTrue = indexTrue + 1
+        break
+    end
+  end
+
+  local PowerDisconnectedAbnormalReportFalse = {}
+  local indexFalse = 1
+  for index = 1 , #AllReceivedAbnormalReports, 1 do
+    local StatusBitmap = vmsSW:decodeBitmap(AllReceivedAbnormalReports[index].Payload.StatusBitmap, "EventStateId")
+    D:log(StatusBitmap["PowerDisconnected"] )
+    if AllReceivedAbnormalReports[index].Payload.EventType == "PowerDisconnected" and StatusBitmap["PowerDisconnected"] == true then
+        PowerDisconnectedAbnormalReportFalse[indexFalse] = AllReceivedAbnormalReports[index]
+        indexFalse = indexFalse + 1
+        break
+    end
+  end
+
+  D:log(PowerDisconnectedAbnormalReportTrue)
+  D:log(PowerDisconnectedAbnormalReportFalse)
+
+
+  assert_nil(next(PowerDisconnectedAbnormalReportFalse[1]), "AbnormalReport with PowerDisconnected bit = false not received more than once")
+  assert_nil(next(PowerDisconnectedAbnormalReportTrue[1]), "AbnormalReport  with PowerDisconnected bit = true not received")
+
+
+
+end
+
+
+
+
 function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSourceForTimeAboveExtPowerDisconnectedEndDebounceTime_ExtPowerDisconnectedAbnormalReportIsSent()
 
   local EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME = 1
