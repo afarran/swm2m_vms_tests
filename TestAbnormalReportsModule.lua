@@ -2023,7 +2023,6 @@ function test_PowerDisconnected_WhenTerminalIsPoweCycled_OnePowerDisconnectedAbn
     heading = 90,                   -- degrees
   }
 
-
   vmsSW:setPropertiesByName({PowerDisconnectedStartDebounceTime = POWER_DISCONNECTED_START_DEBOUNCE_TIME,
                              PowerDisconnectedEndDebounceTime = POWER_DISCONNECTED_END_DEBOUNCE_TIME,
                              PowerDisconnectedSendReport = true,
@@ -2048,14 +2047,8 @@ function test_PowerDisconnected_WhenTerminalIsPoweCycled_OnePowerDisconnectedAbn
 
   local terminalOnTimeStamp = os.time()  -- to get exact timestamp
 
-  local readData, readResult = filesystemSW:read("/data/svc/VMS/params.dat", 0, 100)
 
-  local paramsFile = string.char(unpack(readData))
-  local paramsFileSaveTimeStamp = string.match(paramsFile, ".*sysTime=(%d+)%,")
-  D:log(paramsFile)
-  D:log(paramsFileSaveTimeStamp)
-
-  framework.delay(POWER_DISCONNECTED_END_DEBOUNCE_TIME)
+  framework.delay(POWER_DISCONNECTED_END_DEBOUNCE_TIME + 5)
 
   -- receiving all from mobile messages sent after setHighWaterMark()
   local receivedMessages = gateway.getReturnMessages()
@@ -2163,13 +2156,6 @@ function test_PowerDisconnected_WhenTerminalIsPoweCycled_OnePowerDisconnectedAbn
     361,
     tonumber(PowerDisconnectedAbnormalReportTrue.Payload.Course),
     "Wrong course value in PowerDisconnected abnormal report send after POWER_DISCONNECTED_END_DEBOUNCE_TIME"
-  )
-
-  assert_equal(
-    paramsFileSaveTimeStamp + POWER_DISCONNECTED_END_DEBOUNCE_TIME,
-    tonumber(PowerDisconnectedAbnormalReportTrue.Payload.Timestamp),
-    10,
-    "Wrong Timestamp value in PowerDisconnected abnormal report send after POWER_DISCONNECTED_END_DEBOUNCE_TIME"
   )
 
   -- TODO: update this after implementation in TestFramework file
