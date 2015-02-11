@@ -256,7 +256,7 @@ function test_SMTP_WhenRCPTCommandCalledTooManyTimes_ServerReturns552()
   smtp:execute("MAIL FROM:<skywave@skywave.com>")
   local full_response = ""
   local response = smtp:getResponse()
-  for index=1,500 do 
+  for index=1,2000 do 
     smtp:execute("RCPT TO:<receiver"..index.."@skywave.com>")
     response = smtp:getResponse(nil, 0.025)
     full_response = full_response .. response
@@ -459,3 +459,8 @@ function test_SMTP_WhenIDLETimeoutExceededAfterCommands_ServerReturns221()
 end
 
 -- TODO: Test if HELO command issued - session should be reset (HELO/EHLO invokes RSET)
+-- TODO: Test if RSET properly resets session information
+-- TODO: Test if commands ended with <CR> instead of <CRLF> are not executed
+-- TOOD: Test if text passed to SMTP without <CR> nor <CRLF> is not executed before timeout
+-- TODO: Test if wrong command produces only one 500 response
+-- TODO: Test if in DATA mode timeout produces 421 timeout error
