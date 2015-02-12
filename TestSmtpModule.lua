@@ -478,6 +478,17 @@ function test_SMTP_WhenWrongCommandIsExecutedMultipleTimes_ServerRetursOnlyOne50
 
 end
 
+
+function test_SMTP_WhenTextEndedWithCRInsteadOfCRLFAreIsSent_TextIsNotTreatedAsCommand()
+
+  startSmtp()
+  smtp:execute("HELO", "\r")
+  local  response = smtp:getResponse()
+  D:log(response)
+  assert_nil(response, "Text ended with only CR (not CRLF) was executed as a command")
+
+end
+
 -- TODO: Test if HELO command issued - session should be reset (HELO/EHLO invokes RSET)
 -- TODO: Test if RSET properly resets session information
 -- TODO: Test if commands ended with <CR> instead of <CRLF> are not executed
