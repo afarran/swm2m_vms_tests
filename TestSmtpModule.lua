@@ -395,7 +395,7 @@ function test_SMTP_WhenDATAWithParameterCalled_ServerReturns501()
   assert_match("^501", mailResponse, "DATA with parameter response incorrect")
 end
 
-function test_SMTP_WhenIDLETimeoutExceeded_ServerReturns221()
+function test_SMTP_WhenIDLETimeoutExceeded_ServerReturns421()
   local timeout = 1
   vmsSW:setPropertiesByName({SessionIdleTimeout = timeout})
   startSmtp()
@@ -406,7 +406,7 @@ function test_SMTP_WhenIDLETimeoutExceeded_ServerReturns221()
   assert_equal(timeout*60, waitTime, 5, "Timeout value incorrect")
 end
 
-function test_SMTP_WhenIDLETimeout2MinsExceeded_ServerReturns221()
+function test_SMTP_WhenIDLETimeout2MinsExceeded_ServerReturns421()
   local timeout = 2
   vmsSW:setPropertiesByName({SessionIdleTimeout = timeout})
   startSmtp()
@@ -417,7 +417,7 @@ function test_SMTP_WhenIDLETimeout2MinsExceeded_ServerReturns221()
   assert_equal(timeout*60, waitTime, 5, "Timeout value incorrect")
 end
 
-function test_SMTP_WhenIDLETimeoutExceededInDATAMode_ServerReturns221()
+function test_SMTP_WhenIDLETimeoutExceededInDATAMode_ServerReturns421()
   local timeout = 1
   vmsSW:setPropertiesByName({SessionIdleTimeout = timeout})
   startSmtp()
@@ -439,7 +439,7 @@ function test_SMTP_WhenIDLETimeoutExceededInDATAMode_ServerReturns221()
   assert_equal(timeout*60, waitTime, 5, "Timeout value incorrect")
 end
 
-function test_SMTP_WhenIDLETimeoutExceededAfterCommands_ServerReturns221()
+function test_SMTP_WhenIDLETimeoutExceededAfterCommands_ServerReturns421()
   local timeout = 1
   vmsSW:setPropertiesByName({SessionIdleTimeout = timeout})
 
@@ -489,9 +489,22 @@ function test_SMTP_WhenTextEndedWithCRInsteadOfCRLFAreIsSent_TextIsNotTreatedAsC
 
 end
 
--- TODO: Test if HELO command issued - session should be reset (HELO/EHLO invokes RSET)
--- TODO: Test if RSET properly resets session information
--- TODO: Test if commands ended with <CR> instead of <CRLF> are not executed
+function test_SMTP_WhenTextIsSentWithoutCRLF_421ConnectionTimeoutIsSentAfterTimeout()
+  local timeout = 1
+  vmsSW:setPropertiesByName({SessionIdleTimeout = timeout})
+  startSmtp()
+  smtp:execute("HELO", "")
+  local response = smtp:getResponse(65)
+  D:log(response)
+  assert_match("^421.*\r\n", response, "A command not ended with CRLF was executed after timeout instead of 421 Connection timeout message sent in response")
+
+end
+
+
+
+-- TODO: Test if HELO command issued - session should be reset (HELO/EHLO invokes RSET) - not possible to test in current implementation
+-- TODO: Test if RSET properly resets session information - not possible to test in current implementation
+-- TODO: Test if commands ended with <CR> instead of <CRLF> are not executed DONE
 -- TOOD: Test if text passed to SMTP without <CR> nor <CRLF> is not executed before timeout
 -- TODO: Test if wrong command produces only one 500 response DONE
 -- TODO: Test if in DATA mode timeout produces 421 timeout error
