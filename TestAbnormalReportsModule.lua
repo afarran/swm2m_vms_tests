@@ -1325,7 +1325,8 @@ function test_GpsBlocked_WhenGpsSignalIsBlocked_TimeStampsReportedInPeriodicRepo
 
 end
 
-
+--- This TC checks if terminal has never obtained valid fix default values of GPS information fields are sent in reports
+  -- Scenario: params.dat file is deleted, position service is restarted and standard reports are triggered
 function test_GpsBlocked_WhenGpsSignalIsBlockedAndNoFixWasObtainedByTerminal_DefaultValuesOfLattitudeAndLongitudeAreSentInReports()
 
   -- *** Setup
@@ -1349,7 +1350,7 @@ function test_GpsBlocked_WhenGpsSignalIsBlockedAndNoFixWasObtainedByTerminal_Def
 	deleteParamsFileMessage.Fields = {{Name="tag",Value=0},{Name="data",Value="del /data/svc/VMS/params.dat"}}
 	gateway.submitForwardMessage(deleteParamsFileMessage)
 
-  -- This is an alternative way of deleting the file - that caused troubles
+  -- This is an alternative way of deleting the file - that caused troubles, lef
   --[[
   local deleteParamsFileMessage = {SIN = 24, MIN = 1}
 	deleteParamsFileMessage.Fields = {{Name="path",Value="/data/svc/VMS/params.dat"},{Name="offset",Value=0},{Name="flags",Value="Truncate"},{Name="data",Value=""}}
@@ -2209,7 +2210,7 @@ end
 
 
 
--- comments to be added
+-- TC checks if when terminal is power cycled two PowerDisconnected reports are sent. One is expected after PowerDisconnectedStartDebounceTime and second after PowerDisconnectedEndDebounceTime.
 function test_PowerDisconnected_WhenTerminalIsPoweCycledMultipleTimesForShortPeriodOfTime_OnePowerDisconnectedAbnormalReportIsSentAfterPowerDisconnectedStartDebounceTimeAndSecondPowerDisconnectedAbnormalReportIsSentAfterPowerDisconnectedEndDebounceTime()
 
   -- *** Setup
@@ -2296,7 +2297,8 @@ end
 
 
 
-
+-- TC checks if when HelmPanel is connected to external power source for time above ExtPowerDisconnectedEndDebounceTime ExtPowerDisconnected AbnormalReport is sent
+  -- and terminal leaves ExtPowerDisconnected state
 function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSourceForTimeAboveExtPowerDisconnectedEndDebounceTime_ExtPowerDisconnectedAbnormalReportIsSent()
 
   local EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME = 1
@@ -2419,6 +2421,9 @@ end
 
 
 
+
+--- TC checks if when HelmPanel is disconnected from external power source for time above ExtPowerDisconnectedStartDebounceTime for terminal in ExtPowerDisconnected state
+  -- ExtPowerDisconnected AbnormalReport is sent and terminal enters ExtPowerDisconnected state
 function test_ExtPowerDisconnected_WhenHelmPanelIsDisconnectedFromExternalPowerSourceForTimeAboveExtPowerDisconnectedStartDebounceTime_ExtPowerDisconnectedAbnormalReportIsSent()
 
   local EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME = 30
@@ -2551,6 +2556,11 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsDisconnectedFromExternalPowerS
 end
 
 
+
+
+
+--- TC checks if when HelmPanel is connected to external power source for time below ExtPowerDisconnectedEndDebounceTime ExtPowerDisconnected AbnormalReport is not sent
+  -- and terminal does not leave ExtPowerDisconnected state
 function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSourceForTimeBelowExtPowerDisconnectedEndDebounceTime_ExtPowerDisconnectedAbnormalReportIsNotSent()
 
   local EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME = 1
@@ -2599,7 +2609,8 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSource
 
 end
 
-
+--- TC checks if when HelmPanel is disconnected from external power source for time below ExtPowerDisconnectedStartDebounceTime for terminal in ExtPowerDisconnected state
+  -- ExtPowerDisconnected AbnormalReport is not sent and terminal does not enter ExtPowerDisconnected state
 function test_ExtPowerDisconnected_WhenHelmPanelIsDisonnectedFromExternalPowerSourceForTimeBelowExtPowerDisconnectedStartDebounceTime_ExtPowerDisconnectedAbnormalReportIsNotSent()
 
   local EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME = 30
@@ -2658,7 +2669,8 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsDisonnectedFromExternalPowerSo
 
 end
 
-
+--- TC checks if when HelmPanel is disconnected and connected to external power source for time above thresholds
+  -- ExtPowerDisconnected AbnormalReports are not sent when sending reports is disabled
 function test_ExtPowerDisconnected_WhenExternalPowerIsConnectedAndDisconnectedForTimeAboveThresholdButExtPowerDisconnectedReportsAreDisabled_ExtPowerDisconnectedAbnormalReportIsNotSent()
 
   local EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME = 1
@@ -2730,8 +2742,8 @@ function test_ExtPowerDisconnected_WhenExternalPowerIsConnectedAndDisconnectedFo
 
 end
 
-
-
+--- TC checks if when HelmPanel is connected to IDP terminal for time above HelmPanelDisconnectedEndDebounceTime HelmPannelDisconneted is sent and terminal
+  -- leaves HelmPanelDisconnected state
 function test_HelmPanelDisconnected_WhenHelmPanelIsConnectedForTimeAboveHelmPanelDisconnectedEndDebounceTime_HelmPanelDisconnectedAbnormalReportIsSent()
 
   local HELM_PANEL_DISCONNECTED_START_DEBOUNCE_TIME = 1
@@ -2856,7 +2868,8 @@ function test_HelmPanelDisconnected_WhenHelmPanelIsConnectedForTimeAboveHelmPane
 
 end
 
-
+--- TC checks if when HelmPanel is disconnected from IDP terminal for time above HelmPanelDisconnectedStartDebounceTime HelmPanelDisconnected AbnormalReport is sent
+  -- and terminal enters HelmPanelDisconnected state
 function test_HelmPanelDisconnected_WhenHelmPanelIsDisconnectedForTimeAboveHelmPanelDisconnectedStartDebounceTime_HelmPanelDisconnectedAbnormalReportIsSent()
 
   local HELM_PANEL_DISCONNECTED_START_DEBOUNCE_TIME = 30
@@ -2981,8 +2994,8 @@ function test_HelmPanelDisconnected_WhenHelmPanelIsDisconnectedForTimeAboveHelmP
 end
 
 
-
-
+--- TC checks if when HelmPanel is connected to IDP terminal for time below HelmPanelDisconnectedEndDebounceTime HelmPannelDisconneted is sent not and terminal
+  -- does not leave HelmPanelDisconnected state
 function test_HelmPanelDisconnected_ForTerminalInHelmPanelDisconnectedStateTrueWhenHelmPanelIsConnectedForTimeBelowHelmPanelDisconnectedEndDebounceTime_HelmPanelDisconnectedAbnormalReportIsNotSent()
 
   local HELM_PANEL_DISCONNECTED_START_DEBOUNCE_TIME = 1
@@ -3038,7 +3051,8 @@ function test_HelmPanelDisconnected_ForTerminalInHelmPanelDisconnectedStateTrueW
 
 end
 
-
+--- TC checks if when HelmPanel is disconnected from IDP terminal for time below HelmPanelDisconnectedStartDebounceTime HelmPanelDisconnected AbnormalReport is not sent
+  -- and terminal does not enter HelmPanelDisconnected state
 function test_HelmPanelDisconnected_ForTerminalInHelmPanelDisconnectedStateFalseWhenHelmPanelIsDisconnectedForTimeBelowHelmPanelDisconnectedStartDebounceTime_HelmPanelDisconnectedAbnormalReportIsNotSent()
 
   local HELM_PANEL_DISCONNECTED_START_DEBOUNCE_TIME = 30
@@ -3103,6 +3117,7 @@ function test_HelmPanelDisconnected_ForTerminalInHelmPanelDisconnectedStateFalse
 end
 
 
+--- TC checks if when HelmPanel is connected and disconnected for time above thresholds HelmPanelDisconnected AbnormalReports are not sent when sending is disabled
 function test_HelmPanelDisconnected_ForTerminalInHelmPanelDisconnectedStateTrueWhenHelmPanelIsConnectedAndConnectedForTimeAboveThresholdAndHelmPanelDisconnectedReportsAreDisabled_HelmPanelDisconnectedAbnormalReportIsNotSent()
 
   local HELM_PANEL_DISCONNECTED_START_DEBOUNCE_TIME = 1
