@@ -3764,7 +3764,7 @@ function test_SetProperties_WhenSetPropertiesMessageIsSet_PropertiesIncludedInTh
   end
 end
 
---- TC checks if multiple AbnormalReports are trigger all of them are correctly sent
+--- TC checks if multiple AbnormalReports are triggered all of them are correctly sent
 function test_MultipleAbnormalReportsEnabled_When3AbnormalReportsAreTriggered_3AbnormalReportsAreSentByTerminal()
 
   -- *** Setup
