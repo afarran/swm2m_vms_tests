@@ -3652,7 +3652,7 @@ end
 
 
 
-
+--- TC checks if SetProperties message sent to mobile is setting correctly all the properties included in the message
 function test_SetProperties_WhenSetPropertiesMessageIsSet_PropertiesIncludedInTheMessageAreCorrectlySetAndPropertiesMessageReportsCorrectValues()
 
  	local SetPropertiesMessage = {SIN = vmsSW.sin, MIN = vmsSW:getMinTo("SetProperties")}
@@ -3764,7 +3764,7 @@ function test_SetProperties_WhenSetPropertiesMessageIsSet_PropertiesIncludedInTh
   end
 end
 
-
+--- TC checks if multiple AbnormalReports are trigger all of them are correctly sent
 function test_MultipleAbnormalReportsEnabled_When3AbnormalReportsAreTriggered_3AbnormalReportsAreSentByTerminal()
 
   -- *** Setup
