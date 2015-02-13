@@ -501,10 +501,5 @@ function test_SMTP_WhenTextIsSentWithoutCRLF_421ConnectionTimeoutIsSentAfterTime
 end
 
 
-
 -- TODO: Test if HELO command issued - session should be reset (HELO/EHLO invokes RSET) - not possible to test in current implementation
 -- TODO: Test if RSET properly resets session information - not possible to test in current implementation
--- TODO: Test if commands ended with <CR> instead of <CRLF> are not executed DONE
--- TOOD: Test if text passed to SMTP without <CR> nor <CRLF> is not executed before timeout
--- TODO: Test if wrong command produces only one 500 response DONE
--- TODO: Test if in DATA mode timeout produces 421 timeout error
