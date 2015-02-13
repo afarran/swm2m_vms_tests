@@ -3187,7 +3187,8 @@ function test_HelmPanelDisconnected_ForTerminalInHelmPanelDisconnectedStateTrueW
 end
 
 
-
+--- TC checks if when Hardware Client is connected to IDP terminal for time above HwClientDisconnectedEndDebounceTime HwDisconnected AbnormalReport is sent
+  -- and terminal leaves HwClientDisconnected state for terminal in HwDisconnected state
 function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateTrueWhenHwClientIsConnectedForTimeAboveHwClientDisconnectedEndDebounceTime_HwClientDisconnectedAbnormalReportIsSent()
 
   local HW_CLIENT_DISCONNECTED_START_DEBOUNCE_TIME = 1
@@ -3312,7 +3313,8 @@ function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateTrueWhe
 
 end
 
-
+--- TC checks if when Hardware Client is disconnected from IDP terminal for time above HwClientDisconnectedStartDebounceTime HwDisconnected AbnormalReport is sent
+  -- and terminal enters HwClientDisconnected state
 function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateFalseWhenHwClientIsDisconnectedForTimeAboveHwClientDisconnectedStartDebounceTime_HwClientDisconnectedAbnormalReportIsSent()
 
   local HW_CLIENT_DISCONNECTED_START_DEBOUNCE_TIME = 30
@@ -3449,6 +3451,8 @@ end
 
 
 
+--- TC checks if when Hardware Client is connected to IDP terminal for time below HwClientDisconnectedEndDebounceTime HwDisconnected AbnormalReport is not sent
+  -- and terminal does not leave HwClientDisconnected state
 function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateTrueWhenHwClientIsConnectedForTimeBelowHwClientDisconnectedEndDebounceTime_HwClientDisconnectedAbnormalReportIsNotSent()
 
   local HW_CLIENT_DISCONNECTED_START_DEBOUNCE_TIME = 1
@@ -3507,7 +3511,8 @@ end
 
 
 
-
+--- TC checks if when Hardware Client is disconnected from IDP terminal for time below HwClientDisconnectedStartDebounceTime HwDisconnected AbnormalReport is not sent
+  -- and terminal does not enter HwClientDisconnected state
 function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateFalseWhenHwClientIsDisconnectedForTimeBelowHwClientDisconnectedStartDebounceTime_HwClientDisconnectedAbnormalReportIsNotSent()
 
   local HW_CLIENT_DISCONNECTED_START_DEBOUNCE_TIME = 30
@@ -3574,7 +3579,7 @@ end
 
 
 
-
+--- TC checks if when Hardware Client is connected to IDP terminal for time above thresholds HwClientDisconnected AbnormalReport is not sent when sending HwClientDisconnected reports is disabled
 function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateTrueWhenHwClientIsConnectedDisconnectedForTimeAboveThresholdsButHwClientDisconnectedReportsAreDisabled_HwClientDisconnectedAbnormalReportIsNotSent()
 
   local HW_CLIENT_DISCONNECTED_START_DEBOUNCE_TIME = 1
