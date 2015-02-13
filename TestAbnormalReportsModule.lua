@@ -1093,7 +1093,7 @@ end
   -- 2. Enable sending GpsBlocked reports.
   -- 3. Simulate GPS signal blocked for time above maxFixTimeout and GpsBlockedStartDebounceTime.
   -- 4. Simulate GPS good.
-  -- 4. Wait shorter than GpsBlockedEndDebounceTime and check if GpsBlocked AbnormalReport has not been sent.
+  -- 5. Wait shorter than GpsBlockedEndDebounceTime and check if GpsBlocked AbnormalReport has not been sent.
   --
   -- Results:
   --
@@ -1101,7 +1101,7 @@ end
   -- 2. GpsBlockedSendReport set to true.
   -- 3. Terminal enters GpsBlocked state.
   -- 4. Valid fix is provided.
-  -- 4. GpsBlocked AbnormalReport is not sent by terminal.
+  -- 5. GpsBlocked AbnormalReport is not sent by terminal.
 function test_GpsBlocked_ForTerminalInGpsBlockedStateWhenGpsSignalIsNotBlockedForTimeBelowGpsBlockedEndDebouncePeriod_GpsBlockedAbnormalReportIsNotSent()
 
   -- *** Setup
@@ -1172,6 +1172,27 @@ function test_GpsBlocked_ForTerminalInGpsBlockedStateWhenGpsSignalIsNotBlockedFo
 end
 
 
+--- TC checks if terminal is in GpsBlocked state timestamps of sent reports are the same
+  -- Initial Conditions:
+  --
+  -- * GPS signal is not blocked
+  -- * Terminal not in GpsBlocked state
+  --
+  -- Steps:
+  --
+  -- 1. Configure standard report and accelerated report to be sent every minute.
+  -- 2. Simulate GPS signal good and recive two conecutive standard report and two consecutive accelerated reports.
+  -- 3. Verify if timestamps in two consecutive periodic reports are different.
+  -- 4. Put Terminal into GpsBlocked state and recive two conecutive standard report and two consecutive accelerated reports.
+  -- 5. Verify if timestamps in two consecutive periodic reports are the same.
+  --
+  -- Results:
+  --
+  -- 1. StandardReport1Interval and AcceleratedReport1Rate set to 2.
+  -- 2. Two standard reports and two accelerated reports received.
+  -- 3. Timestamps in two consecutive reports are different
+  -- 4. Terminal in GpsBlocked state, two consecutive standard and accelerated reports received.
+  -- 5. Timestamps in reports received when terminal was in GpsBlocked state are the same
 function test_GpsBlocked_WhenGpsSignalIsBlocked_TimeStampsReportedInPeriodicReportsAreTheSame()
 
   -- TODO: random selection of number of Accelerated and Standard report may be added in the future - for now it runs on report number 1
