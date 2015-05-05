@@ -1,4 +1,4 @@
-require "Service/ServiceWrapper"
+tandardReport2Interval
 
 VmsServiceWrapper = {}
   VmsServiceWrapper.__index = VmsServiceWrapper
@@ -16,20 +16,18 @@ VmsServiceWrapper = {}
     -- Possible types: "unsignedint"  "signedint"  "enum"  "string"  "boolean"  "data"
     
     local properties = {
-      { pin=1, name="StandardReport1Interval", ptype="unsignedint"},
-      { pin=2, name="AcceleratedReport1Rate", ptype="unsignedint"},
-      { pin=3, name="LogReport1Rate", ptype="unsignedint"},
-      { pin=11, name="StandardReport2Interval", ptype="unsignedint"},
-      { pin=12, name="AcceleratedReport2Rate", ptype="unsignedint"},
-      { pin=13, name="LogReport2Rate", ptype="unsignedint"},
-      { pin=21, name="StandardReport3Interval", ptype="unsignedint"},
-      { pin=22, name="AcceleratedReport3Rate", ptype="unsignedint"},
-      { pin=23, name="LogReport3Rate", ptype="unsignedint"},
+      { pin=1, name="LogReportInterval", ptype="unsignedint"},
+      { pin=2, name="StandardReport1Interval", ptype="unsignedint"},
+      { pin=3, name="AcceleratedReport1Rate", ptype="unsignedint"},
+      { pin=4, name="StandardReport2Interval", ptype="unsignedint"},
+      { pin=5, name="AcceleratedReport2Rate", ptype="unsignedint"},
+      { pin=6, name="StandardReport3Interval", ptype="unsignedint"},
+      { pin=7, name="AcceleratedReport3Rate", ptype="unsignedint"},
       { pin=30, name="GpsJammedSendReport", ptype="boolean"},
       { pin=31, name="GpsJammedStartDebounceTime", ptype="unsignedint"},
       { pin=32, name="GpsJammedEndDebounceTime", ptype="unsignedint"},
       { pin=33, name="GpsJammedState", ptype="boolean"},
-      { pin=34, name="GpsBlockedSendReport", ptype="boolean"},
+      { pin=34, name="GpsBlockedSendReport", ptype="unsignedint"},
       { pin=35, name="GpsBlockedStartDebounceTime", ptype="unsignedint"},
       { pin=36, name="GpsBlockedEndDebounceTime", ptype="unsignedint"},
       { pin=37, name="GpsBlockedState", ptype="boolean"},
@@ -41,22 +39,24 @@ VmsServiceWrapper = {}
       { pin=43, name="HwClientDisconnectedStartDebounceTime", ptype="unsignedint"},
       { pin=44, name="HwClientDisconnectedEndDebounceTime", ptype="unsignedint"},
       { pin=45, name="HwClientDisconnectedState", ptype="boolean"},
-      { pin=50, name="HelmPanelDisconnectedSendReport", ptype="boolean"},
-      { pin=51, name="HelmPanelDisconnectedStartDebounceTime", ptype="unsignedint"},
-      { pin=52, name="HelmPanelDisconnectedEndDebounceTime", ptype="unsignedint"},
-      { pin=53, name="HelmPanelDisconnectedState", ptype="boolean"},
-      { pin=54, name="ExtPowerDisconnectedSendReport", ptype="boolean"},
-      { pin=55, name="ExtPowerDisconnectedStartDebounceTime", ptype="unsignedint"},
-      { pin=56, name="ExtPowerDisconnectedEndDebounceTime", ptype="unsignedint"},
-      { pin=57, name="ExtPowerDisconnectedState", ptype="boolean"},
-      { pin=58, name="PowerDisconnectedSendReport", ptype="boolean"},
-      { pin=59, name="PowerDisconnectedStartDebounceTime", ptype="unsignedint"},
-      { pin=60, name="PowerDisconnectedEndDebounceTime", ptype="unsignedint"},
-      { pin=61, name="PowerDisconnectedState", ptype="boolean"},
-      { pin=65, name="InsideGeofenceState", ptype="boolean"},
+      { pin=46, name="InterfaceUnitDisconnectedSendReport", ptype="boolean"},
+      { pin=47, name="InterfaceUnitDisconnectedStartDebounceTime", ptype="unsignedint"},
+      { pin=48, name="InterfaceUnitDisconnectedEndDebounceTime", ptype="unsignedint"},
+      { pin=49, name="InterfaceUnitDisconnectedState", ptype="boolean"},
+      { pin=50, name="InsideGeofenceSendReport", ptype="unsignedint"},
+      { pin=51, name="InsideGeofenceStartDebounceTime", ptype="unsignedint"},
+      { pin=52, name="InsideGeofenceEndDebounceTime", ptype="unsignedint"},
+      { pin=53, name="InsideGeofenceState", ptype="boolean"},
+      { pin=54, name="PowerDisconnectedSendReport", ptype="boolean"},
+      { pin=55, name="PowerDisconnectedStartDebounceTime", ptype="unsignedint"},
+      { pin=56, name="PowerDisconnectedEndDebounceTime", ptype="unsignedint"},
+      { pin=57, name="PowerDisconnectedState", ptype="boolean"},
       { pin=100, name="PropertyChangeDebounceTime", ptype="unsignedint"},
       { pin=101, name="MinStandardReportLedFlashTime", ptype="unsignedint"},
-      { pin=102, name="SessionIdleTimeout", ptype="unsignedint"},
+      { pin=102, name="ShellTimeout", ptype="unsignedint"},
+      { pin=103, name="MailSessionIdleTimeout", ptype="unsignedint"},
+      { pin=104, name="GpsInEmails", ptype="boolean"},
+      { pin=105, name="AllowedEmailDomains", ptype="boolean"}
     }
     
     local messages_from = {
