@@ -1863,6 +1863,7 @@ function generic_test_StandardReportContent(configuration)
     preReportMessage,
     "First Report not received"
   )
+  D:log(preReportMessage)
   assert_not_nil(
     preReportMessage[firstReportKey],
     "First Report not received!"
