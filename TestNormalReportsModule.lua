@@ -53,13 +53,10 @@ function teardown()
       -- all *Rates means "divided by rate"
       StandardReport1Interval = 0,
       AcceleratedReport1Rate = 1,
-      LogReport1Rate = 1,
       StandardReport2Interval = 0,
       AcceleratedReport2Rate = 1,
-      LogReport2Rate = 1,
       StandardReport3Interval = 0,
       AcceleratedReport3Rate = 1,
-      LogReport3Rate = 1,
       -- ... and debounce time in seconds
       PropertyChangeDebounceTime=1 
   })
@@ -101,6 +98,7 @@ Annotations:register([[
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
+  -- [OK]
 function test_ATStandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues()
   generic_test_StandardReportContent({
     firstReportKey = "StandardReport1",
@@ -143,6 +141,7 @@ Annotations:register([[
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
+  -- [OK]
 function test_ATStandardReport_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues()
   generic_test_StandardReportContent({
     firstReportKey = "StandardReport2",
@@ -187,6 +186,7 @@ Annotations:register([[
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
+  -- [OK]
 function test_ATStandardReport_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues()
   generic_test_StandardReportContent({
     firstReportKey = "StandardReport3",
@@ -224,6 +224,7 @@ end
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
+  -- [OK]
 function test_TTStandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport1MessageIsSent_StandardReport1IsSentPeriodicallyWithCorrectValues()
   generic_test_StandardReportContent({
     firstReportKey = "StandardReport1",
@@ -267,6 +268,7 @@ end
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
+  -- [OK]
 function test_TTStandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport2MessageIsSent_StandardReport2IsSentPeriodicallyWithCorrectValues()
    generic_test_StandardReportContent({
     firstReportKey = "StandardReport2",
@@ -310,6 +312,7 @@ end
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
+  -- [OK]
 function test_TTStandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport3MessageIsSent_StandardReport3IsSentPeriodicallyWithCorrectValues()
 
   generic_test_StandardReportContent({
@@ -343,6 +346,7 @@ end
   --
   -- 1. Properties are correctly set.
   -- 2. Standard Report doesn't come and that is correct.
+  -- [OK]
 function test_StandardReportDisabled_WhenStandardReport1IntervalIsSetToZero_StandardReport1IsNotSent()
   vmsSW:setPropertiesByName({PropertyChangeDebounceTime=1})
   generic_test_StandardReportDisabled(
@@ -368,6 +372,7 @@ end
   --
   -- 1. Properties are correctly set.
   -- 2. Standard Report doesn't come and that is correct.
+  -- [OK]
 function test_StandardReportDisabled_WhenStandardReport2IntervalIsSetToZero_StandardReport2IsNotSent()
   vmsSW:setPropertiesByName({PropertyChangeDebounceTime=1})
   generic_test_StandardReportDisabled(
@@ -393,6 +398,7 @@ end
   --
   -- 1. Properties are correctly set.
   -- 2. Standard Report doesn't come and that is correct.
+  -- [OK]
 function test_StandardReportDisabled_WhenStandardReport3IntervalIsSetToZero_StandardReport3IsNotSent()
   vmsSW:setPropertiesByName({PropertyChangeDebounceTime=1})
   generic_test_StandardReportDisabled(
@@ -435,6 +441,7 @@ end
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
+  -- [OK]
 function test_CCStandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues()
 
   -- intervals and rates setup
@@ -489,6 +496,7 @@ end
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
+  -- [OK]
 function test_CCStandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues()
 
   -- intervals and rates setup
@@ -543,6 +551,7 @@ end
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
+  -- [OK]
 function test_CCStandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues()
 
   -- intervals and rates setup
@@ -598,6 +607,7 @@ end
   -- 6. Accelerated Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
+  -- [OK]
 function test_CCAcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport1IsSentWithCorrectValues()
   generic_test_StandardReportContent({
     firstReportKey = "StandardReport1",
@@ -635,6 +645,7 @@ end
   -- 6. Accelerated Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
+  -- [OK]
 function test_XCCAcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport2IsSentWithCorrectValues()
   generic_test_StandardReportContent({
     firstReportKey = "StandardReport2",
@@ -672,6 +683,7 @@ end
   -- 6. Accelerated Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
+  -- [OK]
 function test_CCAcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport3IsSentWithCorrectValues()
   generic_test_StandardReportContent({
     firstReportKey = "StandardReport3",
@@ -699,6 +711,7 @@ end
   -- 1. Properties are correctly set.
   -- 2. Standard Report is sent correctly.
   -- 3. Accelerated Report is not sent and that is correct.
+  -- [OK]
 function test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardReport1IntervalIsSetAboveZeroAndAcceleratedReportInterval1DisablesFeature_StandardReportIsSentAndAcceleratedReportNotSent()
   generic_test_AcceleratedReportDisabledAndStandardReportEnabled(
     "StandardReport1",
@@ -725,6 +738,7 @@ end
   -- 1. Properties are correctly set.
   -- 2. Standard Report is sent correctly.
   -- 3. Accelerated Report is not sent and that is correct.
+  -- [OK]
 function test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardReport2IntervalIsSetAboveZeroAndAcceleratedReportInterval2DisablesFeature_StandardReportIsSentAndAcceleratedReportNotSent()
   generic_test_AcceleratedReportDisabledAndStandardReportEnabled(
     "StandardReport2",
