@@ -256,12 +256,14 @@ function test_SMTP_WhenRCPTCommandCalledTooManyTimes_ServerReturns552()
   smtp:execute("MAIL FROM:<skywave@skywave.com>")
   local full_response = ""
   local response = smtp:getResponse()
+  local match
   for index=1,2000 do
     smtp:execute("RCPT TO:<receiver"..index.."@skywave.com>")
     response = smtp:getResponse(nil, 0.025)
-    full_response = full_response .. response
+    match = string.match(response, "^452.*\r\n")
+    if match then break end
   end
-  assert_match("^552.*\r\n", full_response, "RCPT TO did not return 552 Too many recipients")
+  assert_match("^452.*\r\n", match, "RCPT TO did not return 452 Too many recipients")
 end
 
 
@@ -397,7 +399,7 @@ end
 
 function test_SMTP_WhenIDLETimeoutExceeded_ServerReturns421()
   local timeout = 1
-  vmsSW:setPropertiesByName({SessionIdleTimeout = timeout})
+  vmsSW:setPropertiesByName({MailSessionIdleTimeout = timeout})
   startSmtp()
   local response, waitTime = smtp:getResponse(timeout*60 + 5)
 
@@ -408,7 +410,7 @@ end
 
 function test_SMTP_WhenIDLETimeout2MinsExceeded_ServerReturns421()
   local timeout = 2
-  vmsSW:setPropertiesByName({SessionIdleTimeout = timeout})
+  vmsSW:setPropertiesByName({MailSessionIdleTimeout = timeout})
   startSmtp()
   local response, waitTime = smtp:getResponse(timeout*60 + 5)
 
@@ -419,7 +421,7 @@ end
 
 function test_SMTP_WhenIDLETimeoutExceededInDATAMode_ServerReturns421()
   local timeout = 1
-  vmsSW:setPropertiesByName({SessionIdleTimeout = timeout})
+  vmsSW:setPropertiesByName({MailSessionIdleTimeout = timeout})
   startSmtp()
   smtp:execute("HELO")
   response = smtp:getResponse()
@@ -441,7 +443,7 @@ end
 
 function test_SMTP_WhenIDLETimeoutExceededAfterCommands_ServerReturns421()
   local timeout = 1
-  vmsSW:setPropertiesByName({SessionIdleTimeout = timeout})
+  vmsSW:setPropertiesByName({MailSessionIdleTimeout = timeout})
 
   startSmtp()
   smtp:execute("HELO")
@@ -491,7 +493,7 @@ end
 
 function test_SMTP_WhenTextIsSentWithoutCRLF_421ConnectionTimeoutIsSentAfterTimeout()
   local timeout = 1
-  vmsSW:setPropertiesByName({SessionIdleTimeout = timeout})
+  vmsSW:setPropertiesByName({MailSessionIdleTimeout = timeout})
   startSmtp()
   smtp:execute("HELO", "")
   local response = smtp:getResponse(65)
