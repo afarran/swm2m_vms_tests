@@ -1,5 +1,3 @@
-tandardReport2Interval
-
 VmsServiceWrapper = {}
   VmsServiceWrapper.__index = VmsServiceWrapper
   setmetatable(VmsServiceWrapper, {
