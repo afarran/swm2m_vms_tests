@@ -1210,42 +1210,21 @@ end
   -- 7. Spacer times between logs are correct.
   -- [OK]
 function test_LogReport_WhenGpsPositionIsSetAndLogFilterEstablished_LogEntriesShouldCollectCorrectDataInCorrectInterval()
-  local LOG_REPORT_RATE = 4
-  local STANDARD_REPORT_INTERVAL = 4
-  local LOG_REPORT_INTERVAL = STANDARD_REPORT_INTERVAL / LOG_REPORT_RATE
-  local ITEMS_IN_LOG = 2
 
   local logReportXKey = "LogReport"
-  local standardReportXKey = "StandardReport1"
 
   local properties = {
-    LogReportInterval = LOG_REPORT_RATE,
-    StandardReport1Interval = STANDARD_REPORT_INTERVAL
+    LogReportInterval = 1,
   }
 
-  local filterTimeout = LOG_REPORT_INTERVAL*60+60
-  local timeForLogging = ITEMS_IN_LOG*LOG_REPORT_INTERVAL*60+20
-  local itemsInLog = ITEMS_IN_LOG
+  local timeForLogging = 2*60+20
+  local itemsInLog = 2
 
-  generic_test_LogReports(logReportXKey, standardReportXKey, properties, filterTimeout, timeForLogging, itemsInLog, LOG_REPORT_INTERVAL)
+  generic_test_LogReports(logReportXKey, properties, timeForLogging, itemsInLog)
 end
 
-function test_LogReportNegative_WhenLogReport1IsDisabledAndLogFilterEstablished_LogEntriesShouldNotCollectData()
-
-  local logReportXKey = "LogReport1"
-  local standardReportXKey = "StandardReport1"
-
-  local properties = {
-    LogReport1Rate = 1,
-    StandardReport1Interval = 1
-  }
-
-  local timeForLogging = 60*2
-
-  generic_test_LogReportsNegative(logReportXKey, standardReportXKey, properties, timeForLogging)
-end
-
-function test_GORUNLogReportNegative_WhenLogReport2IsDisabledAndLogFilterEstablished_LogEntriesShouldNotCollectData()
+-- [OK]
+function test_LogReportNegative_WhenLogReportIsDisabledAndLogFilterEstablished_LogEntriesShouldNotCollectData()
 
   local logReportXKey = "LogReport"
 
@@ -1256,21 +1235,6 @@ function test_GORUNLogReportNegative_WhenLogReport2IsDisabledAndLogFilterEstabli
   local timeForLogging = 30
 
   generic_test_LogReportsNegative(logReportXKey, properties, timeForLogging)
-end
-
-function test_LogReportNegative_WhenLogReports3IsDisabledAndLogFilterEstablished_LogEntriesShouldNotCollectData()
-
-  local logReportXKey = "LogReport3"
-  local standardReportXKey = "StandardReport3"
-
-  local properties = {
-    LogReport3Rate = 1,
-    StandardReport3Interval = 1
-  }
-
-  local timeForLogging = 60*2
-
-  generic_test_LogReportsNegative(logReportXKey, standardReportXKey, properties, timeForLogging)
 end
 
 -----------------------------------------------------------------------------------------------
@@ -1665,7 +1629,7 @@ function generic_test_LogReportsNegative(logReportXKey, properties, timeForLoggi
   framework.delay(timeForLogging)
 
   -- get reports from log
-  logEntries = logSW:getLogEntries(itemsInLog)
+  local logEntries = logSW:getLogEntries(itemsInLog)
 
   -- it must be loop here because operand '#' doesn't count dictionary items :(
   local counter = 0
@@ -1679,7 +1643,9 @@ function generic_test_LogReportsNegative(logReportXKey, properties, timeForLoggi
 end
 
 -- generic logic for Log Reports TCs
-function generic_test_LogReports(logReportXKey, standardReportXKey, properties, filterTimeout, timeForLogging, itemsInLog, logReportInterval)
+function generic_test_LogReports(logReportXKey, properties, timeForLogging, itemsInLog)
+
+  local filterTimeout = 10
 
   -- prerequisites
   assert_lt(3,itemsInLog,0,"There should be min 2 log items! Configure TC!")
@@ -1689,27 +1655,29 @@ function generic_test_LogReports(logReportXKey, standardReportXKey, properties, 
 
   -- set position for reports
   gpsPosition = GPS:setRandom()
+  
+  --synchronize first standard report
+  vmsSW:waitForMessagesByName(logReportXKey)
+
 
   --set log filter
   logSW:setLogFilter(
     vmsSW.sin, {
     vmsSW:getMinFrom(logReportXKey)},
     os.time()+5,
-    os.time()+filterTimeout,
+    os.time()+timeForLogging+filterTimeout,
     "True"
   )
 
-  --synchronize first standard report
-  vmsSW:waitForMessagesByName(standardReportXKey)
-
   -- wait for log reports
-  framework.delay(timeForLogging)
+  framework.delay(timeForLogging+filterTimeout)
 
   -- get reports from log
-  logEntries = logSW:getLogEntries(itemsInLog)
+  local logEntries = logSW:getLogEntries(itemsInLog)
 
+  local counter = 0
   -- check if data is correct
-  for i=1, #logEntries do
+  for i,_ in pairs(logEntries) do
     D:log(logEntries[i].log,"entry "..i)
     -- latitude
     assert_equal(
@@ -1755,13 +1723,15 @@ function generic_test_LogReports(logReportXKey, standardReportXKey, properties, 
       -- check if timeout between log entries is correct
       local timeDiff = tonumber(logEntries[i-1].log.Timestamp) - tonumber(logEntries[i].log.Timestamp)
       assert_equal(
-        logReportInterval*60,
+        properties.LogReportInterval*60,
         timeDiff,
         5,
-        "Log Report Interval should be "..(logReportInterval*60)
+        "Log Report Interval should be "..(properties.LogReportInterval*60)
       )
     end
+    counter = counter + 1 
   end
+  assert_equal(itemsInLog,counter,0,"Wrong number of items in log!")
 
 end
 
