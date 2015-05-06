@@ -2316,7 +2316,7 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSource
   vmsSW:setPropertiesByName({
                              PowerDisconnectedStartDebounceTime = EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME,
                              PowerDisconnectedEndDebounceTime = EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME,
-                             ExtPowerDisconnectedSendReport = true,
+                             PowerDisconnectedSendReport = true,
                             }
   )
 
@@ -2441,7 +2441,7 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsDisconnectedFromExternalPowerS
   vmsSW:setPropertiesByName({
                              PowerDisconnectedStartDebounceTime = EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME,
                              PowerDisconnectedEndDebounceTime = EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME,
-                             ExtPowerDisconnectedSendReport = true,
+                             PowerDisconnectedSendReport = true,
                             }
   )
 
@@ -2578,7 +2578,7 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSource
   vmsSW:setPropertiesByName({
                              PowerDisconnectedStartDebounceTime = EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME,
                              PowerDisconnectedEndDebounceTime = EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME,
-                             ExtPowerDisconnectedSendReport = true,
+                             PowerDisconnectedSendReport = true,
                             }
   )
 
@@ -2628,7 +2628,7 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsDisonnectedFromExternalPowerSo
   vmsSW:setPropertiesByName({
                              PowerDisconnectedStartDebounceTime = EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME,
                              PowerDisconnectedEndDebounceTime = EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME,
-                             ExtPowerDisconnectedSendReport = true,
+                             PowerDisconnectedSendReport = true,
                             }
   )
 
@@ -2688,7 +2688,7 @@ function test_ExtPowerDisconnected_WhenExternalPowerIsConnectedAndDisconnectedFo
   vmsSW:setPropertiesByName({
                              PowerDisconnectedStartDebounceTime = EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME,
                              PowerDisconnectedEndDebounceTime = EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME,
-                             ExtPowerDisconnectedSendReport = false,
+                             PowerDisconnectedSendReport = false,
                             }
   )
 
@@ -3708,7 +3708,7 @@ function test_SetProperties_WhenSetPropertiesMessageIsSet_PropertiesIncludedInTh
       {Name="HelmPanelDisconnectedSendReport",Value=enabled},
       {Name="HelmPanelDisconnectedStartDebounceTime",Value=counter},
       {Name="HelmPanelDisconnectedEndDebounceTime",Value=counter},
-      {Name="ExtPowerDisconnectedSendReport",Value=enabled},
+      {Name="PowerDisconnectedSendReport",Value=enabled},
       {Name="PowerDisconnectedStartDebounceTime",Value=counter},
       {Name="PowerDisconnectedEndDebounceTime",Value=counter},
       {Name="PowerDisconnectedSendReport",Value=enabled},

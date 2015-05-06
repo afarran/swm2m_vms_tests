@@ -1122,8 +1122,8 @@ function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAre
 
 end
 
--- []
-function test_GORUNPropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport3AreCorrect()
+-- [OK]
+function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport3AreCorrect()
   
   generic_TimestampsInConfigChangeReports(
    "ConfigChangeReport3",
@@ -1132,7 +1132,7 @@ function test_GORUNPropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeRepor
   )
 end
 
-function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport1IsSentImmediatelyOnlyOnce()
+function test_GORUNConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport1IsSentImmediatelyOnlyOnce()
   -- get properties
   local propertiesToChange = {"StandardReport1Interval"}
   local propertiesBeforeChange = vmsSW:getPropertiesByName(propertiesToChange)
