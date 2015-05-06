@@ -1241,6 +1241,7 @@ end
 -- DEFAULT VALUES tests
 -----------------------------------------------------------------------------------------------
 
+-- [REVIEW]
 function test_DefaultValues_WhenPropertiesAreRequestedAfterPropertiesReset_CorrectDefaultValuesAreGiven()
   -- reset of properties
   systemSW:resetProperties({vmsSW.sin})
@@ -1249,25 +1250,21 @@ function test_DefaultValues_WhenPropertiesAreRequestedAfterPropertiesReset_Corre
   local propertiesToCheck = {
     "StandardReport1Interval",
     "AcceleratedReport1Rate",
-    "LogReport1Rate",
+    "LogReportInterval",
     "StandardReport2Interval",
     "AcceleratedReport2Rate",
-    "LogReport2Rate",
     "StandardReport3Interval",
     "AcceleratedReport3Rate",
-    "LogReport3Rate",
   }
 
   local propertiesValues = {
-    StandardReport1Interval = 60,
+    StandardReport1Interval = 0,
     AcceleratedReport1Rate = 1,
-    LogReport1Rate = 1,
-    StandardReport2Interval = 60,
+    LogReportInterval = 1,
+    StandardReport2Interval = 0,
     AcceleratedReport2Rate = 1,
-    LogReport2Rate = 1,
-    StandardReport3Interval = 60,
+    StandardReport3Interval = 0,
     AcceleratedReport3Rate = 1,
-    LogReport3Rate = 1
   }
 
   local propertiesFetched = vmsSW:getPropertiesByName(propertiesToCheck)
