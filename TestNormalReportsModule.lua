@@ -1245,19 +1245,17 @@ function test_LogReportNegative_WhenLogReport1IsDisabledAndLogFilterEstablished_
   generic_test_LogReportsNegative(logReportXKey, standardReportXKey, properties, timeForLogging)
 end
 
-function test_LogReportNegative_WhenLogReport2IsDisabledAndLogFilterEstablished_LogEntriesShouldNotCollectData()
+function test_GORUNLogReportNegative_WhenLogReport2IsDisabledAndLogFilterEstablished_LogEntriesShouldNotCollectData()
 
-  local logReportXKey = "LogReport2"
-  local standardReportXKey = "StandardReport2"
+  local logReportXKey = "LogReport"
 
   local properties = {
-    LogReport2Rate = 1,
-    StandardReport2Interval = 1
+    LogReportInterval = 1,
   }
 
-  local timeForLogging = 60*2
+  local timeForLogging = 30
 
-  generic_test_LogReportsNegative(logReportXKey, standardReportXKey, properties, timeForLogging)
+  generic_test_LogReportsNegative(logReportXKey, properties, timeForLogging)
 end
 
 function test_LogReportNegative_WhenLogReports3IsDisabledAndLogFilterEstablished_LogEntriesShouldNotCollectData()
@@ -1644,13 +1642,15 @@ function generic_test_PollRequestWithOthers(pollRequestMsgKey, pollResponseMsgKe
 
 end
 
-function generic_test_LogReportsNegative(logReportXKey, standardReportXKey, properties, timeForLogging)
+function generic_test_LogReportsNegative(logReportXKey, properties, timeForLogging)
 
   -- set properties for log interval calculation (StandardReportXInterval, LogReportXRate)
   vmsSW:setPropertiesByName(properties)
 
-  --synchronize first standard report
-  vmsSW:waitForMessagesByName(standardReportXKey)
+  --synchronize first log report
+  vmsSW:waitForMessagesByName(logReportXKey)
+
+  framework.delay(5)
 
   --set log filter
   logSW:setLogFilter(
@@ -1662,7 +1662,7 @@ function generic_test_LogReportsNegative(logReportXKey, standardReportXKey, prop
   )
 
   -- wait for log reports
-  framework.delay(2*timeForLogging)
+  framework.delay(timeForLogging)
 
   -- get reports from log
   logEntries = logSW:getLogEntries(itemsInLog)
