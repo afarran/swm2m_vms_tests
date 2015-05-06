@@ -157,7 +157,6 @@ ServiceWrapper = {}
   function ServiceWrapper:setPropertiesByName(propertyValues, raw, save)
     local pinValues = {}
     for pinName, value in pairs(propertyValues) do
-      print(pinName)
       pinValues[self:getPin(pinName)] = value
     end
     return self:setProperties(pinValues, raw, save)

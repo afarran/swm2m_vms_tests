@@ -1,0 +1,582 @@
+[ 08:11:48.530 ] Lua Services Framework starting (Version 9.0.10)
+[ 08:11:48.538 ] Starting svcmgr.init
+[ 08:11:48.543 ] Loading core services from /act/svc/svclist.lua
+[ 08:11:48.543 ] Ignoring 'svc.eeio'
+[ 08:11:48.543 ] Ignoring 'svc.power'
+[ 08:11:48.543 ] Ignoring 'svc.accel'
+[ 08:11:48.543 ] Ignoring 'svc.cell'
+[ 08:11:48.544 ] Ignoring 'svc.accelerometer'
+[ 08:11:48.613 ] Cannot load svc.VMS: error loading module 'svc.VMS' from file 'C:/Users/Pawe³ Pater/IDP Terminals/czq3bpra/act/svc\VMS/main.lua':
+	C:/Users/Pawe³ Pater/IDP Terminals/czq3bpra/act/svc\VMS/main.lua:1: unexpected symbol near ':'
+[ 08:11:48.617 ] Services loaded in 0 seconds
+[ 08:11:48.617 ] Starting svcmgr.startall
+[ 08:11:48.617 ] svcmgr: calling log.init()
+[ 08:11:48.617 ] svcmgr: calling system.init()
+[ 08:11:48.617 ] svcmgr: calling idp.init()
+[ 08:11:48.617 ] svcmgr: calling message.init()
+[ 08:11:48.617 ] svcmgr: calling serial.init()
+[ 08:11:48.617 ] svcmgr: calling eio.init()
+[ 08:11:48.618 ] svcmgr: calling position.init()
+[ 08:11:48.618 ] svcmgr: calling report.init()
+[ 08:11:48.618 ] svcmgr: calling filesystem.init()
+[ 08:11:48.618 ] svcmgr: calling shell.init()
+[ 08:11:48.618 ] svcmgr: calling geofence.init()
+[ 08:11:48.618 ] svcmgr: calling campaign.init()
+[ 08:11:48.618 ] svcmgr: calling ip.init()
+[ 08:11:48.618 ] svcmgr: calling UniboxInOut.init()
+[ 08:11:48.630 ] log.init() done
+[ 08:11:48.630 ] [16:INFO] Skywave package version: 7.0.10.9363
+[ 08:11:48.630 ] system.init() done
+[ 08:11:48.631 ] [27:INFO] IDP modem: === initializing communication ===
+[ 08:11:48.633 ] [27:INFO] cmd: AT%CRC=0*BBEB
+[ 08:11:48.661 ] message.init() done
+[ 08:11:48.661 ] serial.init() done
+[ 08:11:48.663 ] eio.init() done
+[ 08:11:48.663 ] position.init() done
+[ 08:11:48.664 ] report.init() done
+[ 08:11:48.664 ] filesystem.init() done
+[ 08:11:48.664 ] shell.init() done
+[ 08:11:48.665 ] geofence.init() done
+[ 08:11:48.665 ] ip.init() done
+[ 08:11:48.665 ] UniboxInOut.init() done
+[ 08:11:48.666 ] [27:INFO] res: \r\nERROR\r\n
+[ 08:11:48.666 ] [27:INFO] cmd: ATS81?
+[ 08:11:48.670 ] campaign.init() done
+[ 08:11:48.670 ] [27:INFO] res: \r\n101\r\n\r\nOK\r\n
+[ 08:11:48.670 ] [27:INFO] cmd: ATS88?
+[ 08:11:48.670 ] [27:INFO] res: \r\n00000\r\n\r\nOK\r\n
+[ 08:11:48.671 ] [27:INFO] cmd: ATS88=16
+[ 08:11:48.673 ] [27:INFO] res: \r\nOK\r\n
+[ 08:11:48.673 ] [27:INFO] cmd: AT&W
+[ 08:11:48.674 ] [27:INFO] res: \r\nOK\r\n
+[ 08:11:48.674 ] [27:INFO] cmd: AT%CRC=1
+[ 08:11:48.676 ] [27:INFO] res: \r\nOK\r\n
+[ 08:11:48.676 ] [27:INFO] cmd: ATE0*DA8C
+[ 08:11:48.677 ] [27:INFO] res: \r\nOK\r\n
+[ 08:11:48.677 ] [27:INFO] cmd: ATV1*9C8D
+[ 08:11:48.677 ] [27:INFO] res: \r\nOK\r\n
+[ 08:11:48.677 ] [27:INFO] cmd: ATQ0*153B
+[ 08:11:48.678 ] [27:INFO] res: \r\nOK\r\n
+[ 08:11:48.678 ] [27:INFO] cmd: ATS3=13*19C3
+[ 08:11:48.679 ] [27:INFO] res: \r\nOK\r\n
+[ 08:11:48.679 ] [27:INFO] cmd: ATS4=10*788D
+[ 08:11:48.679 ] [27:INFO] res: \r\nOK\r\n
+[ 08:11:48.680 ] [27:INFO] cmd: AT+GMM*EE01
+[ 08:11:48.680 ] [27:INFO] res: \r\n+GMM: IsatDataPro Modem Simulator\r\n\r\nOK\r\n
+[ 08:11:48.681 ] [27:INFO] cmd: ATS88=2047*2104
+[ 08:11:48.681 ] [27:INFO] res: \r\nOK\r\n
+[ 08:11:48.681 ] [27:INFO] IDP modem: == communication established ===
+[ 08:11:48.681 ] [27:INFO] cmd: AT+GSN*FE1E
+[ 08:11:48.682 ] [27:INFO] res: \r\n+GSN: 00000000SKYEE3D\r\n\r\nOK\r\n
+[ 08:11:48.682 ] [27:INFO] cmd: AT+GMR*0DDF
+[ 08:11:48.683 ] [27:INFO] res: \r\n+GMR: 10.000,4.2,7\r\n\r\nOK\r\n
+[ 08:11:48.683 ] [27:INFO] cmd: ATS56?*15A9
+[ 08:11:48.684 ] [27:INFO] res: \r\n001\r\n\r\nOK\r\n
+[ 08:11:48.684 ] [27:INFO] cmd: ATS57?*2698
+[ 08:11:48.684 ] [27:INFO] res: \r\n000\r\n\r\nOK\r\n
+[ 08:11:48.684 ] [27:INFO] cmd: ATS51?*8C3E
+[ 08:11:48.685 ] [27:INFO] res: \r\n000\r\n\r\nOK\r\n
+[ 08:11:48.687 ] [27:INFO] cmd: at%evmon=*778B
+[ 08:11:48.688 ] [27:INFO] res: \r\nOK\r\n
+[ 08:11:48.688 ] [27:INFO] cmd: AT%TRK=0,0*D778
+[ 08:11:48.690 ] [27:INFO] res: \r\nOK\r\n
+[ 08:11:48.690 ] [27:INFO] cmd: ATS39=0*B00D
+[ 08:11:48.690 ] [27:INFO] res: \r\nOK\r\n
+[ 08:11:48.691 ] [27:INFO] cmd: AT%TRK=0,0*D778
+[ 08:11:48.692 ] [27:INFO] res: \r\nOK\r\n
+[ 08:11:48.692 ] [27:INFO] cmd: ATS40=0*7FB1
+[ 08:11:48.693 ] [27:INFO] res: \r\nOK\r\n
+[ 08:11:48.693 ] [27:INFO] cmd: ATS41=180*8893
+[ 08:11:48.693 ] [27:INFO] res: \r\nOK\r\n
+[ 08:11:48.694 ] [27:INFO] cmd: ATS52=2500*1ADF
+[ 08:11:48.694 ] [27:INFO] res: \r\nOK\r\n
+[ 08:11:48.694 ] [27:INFO] cmd: ATS50=0*0905
+[ 08:11:48.695 ] [27:INFO] res: \r\nOK\r\n
+[ 08:11:48.695 ] [27:INFO] cmd: AT%MGRS*04F9
+[ 08:11:48.699 ] [27:INFO] res: \r\n%MGRS: \r\n\r\nOK\r\n
+[ 08:11:48.700 ] idp.init() done
+[ 08:11:48.702 ] svcmgr: spawning log.entry()
+[ 08:11:48.702 ] svcmgr: spawning system.entry()
+[ 08:11:48.702 ] svcmgr: spawning idp.entry()
+[ 08:11:48.702 ] svcmgr: spawning message.entry()
+[ 08:11:48.702 ] svcmgr: spawning serial.entry()
+[ 08:11:48.702 ] svcmgr: spawning eio.entry()
+[ 08:11:48.702 ] svcmgr: spawning position.entry()
+[ 08:11:48.702 ] svcmgr: spawning report.entry()
+[ 08:11:48.702 ] svcmgr: spawning filesystem.entry()
+[ 08:11:48.703 ] svcmgr: spawning shell.entry()
+[ 08:11:48.703 ] svcmgr: spawning geofence.entry()
+[ 08:11:48.703 ] svcmgr: spawning campaign.entry()
+[ 08:11:48.703 ] svcmgr: spawning ip.entry()
+[ 08:11:48.703 ] svcmgr: spawning UniboxInOut.entry()
+[ 08:11:48.703 ] Services loaded and initialized in 0 seconds
+[ 08:11:48.704 ] [27:INFO] cmd: ATS89?*47C6
+[ 08:11:48.707 ] [26:INFO] spawning Shell Cmd Processor
+[ 08:11:48.707 ] [26:INFO] attach
+[ 08:11:48.708 ] [22:INFO] Opening rs232main port @ 9600 baud
+[ 08:11:48.708 ] [26:INFO] spawning Shell CLI
+[ 08:11:48.710 ] [18:INFO] queuing RL msg #1 (SIN=33, bits=32)
+[ 08:11:48.711 ] [162:INFO] service started
+[ 08:11:48.711 ] [16:INFO] Hardware reset reason = SOFTWARE, software cause = CONSOLE, desc= 
+[ 08:11:48.711 ] [27:INFO] res: \r\n00001\r\n
+[ 08:11:48.711 ] [27:INFO] cmd: AT%MGFN*08D2
+[ 08:11:48.714 ] [26:INFO] CLI Thread: starting
+[ 08:11:48.715 ] [21:INFO] Setting up DB File
+[ 08:11:48.716 ] [21:INFO] Indexed 1 fences
+[ 08:11:48.717 ] [18:INFO] sending RL msg #1 trn #1 (SIN=33, bits=32)
+[ 08:11:48.717 ] [27:INFO] res: \r\n%MGFN: \r\n
+[ 08:11:48.717 ] [27:INFO] cmd: ATS85?*02AB
+[ 08:11:48.718 ] [27:INFO] res: \r\n00250\r\n\r\nOK\r\n
+[ 08:11:48.718 ] [27:INFO] cmd: AT%UTC*397D
+[ 08:11:48.720 ] [27:INFO] res: \r\n%UTC: 2015-05-06 08:11:48\r\n\r\nOK\r\n
+[ 08:11:48.721 ] [27:INFO] cmd: AT%MGRT="00000001",3,33,3,BwFK*40EB
+[ 08:11:48.724 ] [18:INFO] completed log msg #2 (SIN=16), status=Success
+[ 08:11:48.729 ] [18:INFO] queuing RL msg #3 (SIN=16, bits=344)
+[ 08:11:48.730 ] [27:INFO] res: \r\nOK\r\n
+[ 08:11:48.730 ] [18:INFO] sending RL msg #3 trn #1 (SIN=16, bits=344)
+[ 08:11:48.730 ] [27:INFO] cmd: AT%MGRT="00000003",1,16,3,CAEEBgkABwY5LjAuMTALDhAS
+[ 08:11:48.732 ] [27:INFO] res: \r\nOK\r\n
+[ 08:11:48.732 ] [27:INFO] cmd: ATS89?*47C6
+[ 08:11:48.733 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 08:11:48.733 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 08:11:48.740 ] [27:INFO] res: \r\n%GPS: $GPGGA,081148.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*3D\r\n$GPRMC,081148.000,A,0000.0000,N,00000.0000,E,0.00,000.00,060515,,,A*6D\r\n\r\nOK\r\n
+[ 08:11:50.643 ] [27:INFO] cmd: AT%EVNT=3,1*BC22
+[ 08:11:50.650 ] [27:INFO] res: \r\n%EVNT: 24,16777215,0,452592708,3,1,4,59016,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,257,0,0,0,0\r\n\r\nOK\r\n
+[ 08:11:50.652 ] [27:INFO] cmd: AT%EVNT=3,17*02E3
+[ 08:11:50.657 ] [27:INFO] res: \r\n%EVNT: 7,127,0,452592673,3,17,4,0,0,0,0,0,0,0\r\n\r\nOK\r\n
+[ 08:11:53.901 ] [27:INFO] cmd: ATS89?*47C6
+[ 08:11:53.908 ] [27:INFO] res: \r\n00004\r\n\r\nOK\r\n
+[ 08:11:53.909 ] [27:INFO] cmd: AT%MGRS*04F9
+[ 08:11:53.914 ] [27:INFO] res: \r\n%MGRS: "00000001",2.1,3,33,6,4,4\r\n"00000003",3.1,1,16,6,43,43\r\n\r\nOK\r\n
+[ 08:11:53.915 ] [18:INFO] completed RL msg #1 (SIN=33), status=Success
+[ 08:11:53.917 ] [18:INFO] completed RL msg #3 (SIN=16), status=Success
+[ 08:12:20.619 ] [27:INFO] cmd: AT%EVNT=3,1*BC22
+[ 08:12:20.622 ] [27:INFO] res: \r\n%EVNT: 24,16777215,0,452592738,3,1,4,59076,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,257,0,0,0,0\r\n\r\nOK\r\n
+[ 08:12:20.624 ] [27:INFO] cmd: AT%EVNT=3,17*02E3
+[ 08:12:20.627 ] [27:INFO] res: \r\n%EVNT: 7,127,0,452592673,3,17,4,0,0,0,0,0,0,0\r\n\r\nOK\r\n
+[ 08:12:21.273 ] [27:INFO] cmd: ATS89?*47C6
+[ 08:12:21.274 ] [27:INFO] res: \r\n00002\r\n\r\nOK\r\n
+[ 08:12:21.274 ] [27:INFO] cmd: AT%MGFN*08D2
+[ 08:12:21.275 ] [27:INFO] res: \r\n%MGFN: "FM01.01",01.01,0,16,2,2,2\r\n\r\nOK\r\n
+[ 08:12:21.275 ] [27:INFO] cmd: AT%MGFG="FM01.01",3*C22A
+[ 08:12:21.277 ] [27:INFO] res: \r\n%MGFG: "FM01.01",01.01,0,16,2,1,3,AQ==\r\n\r\nOK\r\n
+[ 08:12:21.278 ] [18:INFO] sending decoded message from transport=1 to SIN=16
+[ 08:12:21.279 ] [18:INFO] queuing RL msg #4 (SIN=16, bits=512)
+[ 08:12:21.279 ] [18:INFO] sending RL msg #4 trn #1 (SIN=16, bits=512)
+[ 08:12:21.280 ] [27:INFO] cmd: AT%MGRT="00000004",3,16,3,AQEEAAAAAAAAAAAKU0tZLUFB
+[ 08:12:21.281 ] [27:INFO] res: \r\nOK\r\n
+[ 08:12:24.350 ] [27:INFO] cmd: ATS89?*47C6
+[ 08:12:24.350 ] [27:INFO] res: \r\n00002\r\n\r\nOK\r\n
+[ 08:12:24.351 ] [27:INFO] cmd: AT%MGFN*08D2
+[ 08:12:24.351 ] [27:INFO] res: \r\n%MGFN: "FM02.01",02.01,0,16,2,5,5\r\n\r\nOK\r\n
+[ 08:12:24.352 ] [27:INFO] cmd: AT%MGFG="FM02.01",3*1AA8
+[ 08:12:24.353 ] [27:INFO] res: \r\n%MGFG: "FM02.01",02.01,0,16,2,4,3,CoC5gA==\r\n\r\nOK\r\n
+[ 08:12:24.354 ] [18:INFO] sending decoded message from transport=1 to SIN=16
+[ 08:12:24.355 ] [18:INFO] queuing RL msg #5 (SIN=18, bits=520)
+[ 08:12:24.355 ] [18:INFO] sending RL msg #5 trn #1 (SIN=18, bits=520)
+[ 08:12:24.356 ] [27:INFO] cmd: AT%MGRT="00000005",3,18,3,BDxzdmMuc3lzdGVtOiBlcnJv
+[ 08:12:24.357 ] [27:INFO] res: \r\nOK\r\n
+[ 08:12:24.370 ] [27:INFO] cmd: ATS89?*47C6
+[ 08:12:24.371 ] [27:INFO] res: \r\n00002\r\n\r\nOK\r\n
+[ 08:12:24.371 ] [27:INFO] cmd: AT%MGFN*08D2
+[ 08:12:24.372 ] [27:INFO] res: \r\n%MGFN: "FM03.01",03.01,0,16,2,8,8\r\n\r\nOK\r\n
+[ 08:12:24.372 ] [27:INFO] cmd: AT%MGFG="FM03.01",3*A2C9
+[ 08:12:24.374 ] [27:INFO] res: \r\n%MGFG: "FM03.01",03.01,0,16,2,7,3,CQFzAWRACA==\r\n\r\nOK\r\n
+[ 08:12:24.374 ] [18:INFO] sending decoded message from transport=1 to SIN=16
+[ 08:12:24.375 ] [18:INFO] queuing RL msg #6 (SIN=18, bits=504)
+[ 08:12:24.375 ] [18:INFO] sending RL msg #6 trn #1 (SIN=18, bits=504)
+[ 08:12:24.376 ] [27:INFO] cmd: AT%MGRT="00000006",3,18,3,BDpzdmMuc3lzdGVtOiBlcnJv
+[ 08:12:24.379 ] [27:INFO] res: \r\nOK\r\n
+[ 08:12:26.349 ] [27:INFO] cmd: ATS89?*47C6
+[ 08:12:26.351 ] [27:INFO] res: \r\n00004\r\n\r\nOK\r\n
+[ 08:12:26.352 ] [27:INFO] cmd: AT%MGRS*04F9
+[ 08:12:26.355 ] [27:INFO] res: \r\n%MGRS: "00000004",4.1,3,16,6,64,64\r\n"00000005",5.1,3,18,4,65,0\r\n"00000006",6.1,3,18,4,63,0\r\n\r\nOK\r\n
+[ 08:12:26.356 ] [18:INFO] completed RL msg #4 (SIN=16), status=Success
+[ 08:12:26.405 ] [27:INFO] cmd: ATS89?*47C6
+[ 08:12:26.407 ] [27:INFO] res: \r\n00002\r\n\r\nOK\r\n
+[ 08:12:26.407 ] [27:INFO] cmd: AT%MGFN*08D2
+[ 08:12:26.410 ] [27:INFO] res: \r\n%MGFN: "FM04.01",04.01,0,16,2,11,11\r\n\r\nOK\r\n
+[ 08:12:26.410 ] [27:INFO] cmd: AT%MGFG="FM04.01",3*BB8D
+[ 08:12:26.412 ] [27:INFO] res: \r\n%MGFG: "FM04.01",04.01,0,16,2,10,3,CQFzAgJAEBoAwA==\r\n\r\nOK\r\n
+[ 08:12:26.413 ] [18:INFO] sending decoded message from transport=1 to SIN=16
+[ 08:12:26.416 ] [18:INFO] queuing RL msg #7 (SIN=18, bits=504)
+[ 08:12:26.416 ] [18:INFO] sending RL msg #7 trn #1 (SIN=18, bits=504)
+[ 08:12:26.417 ] [27:INFO] cmd: AT%MGRT="00000007",3,18,3,BDpzdmMuc3lzdGVtOiBlcnJv
+[ 08:12:26.420 ] [27:INFO] res: \r\nOK\r\n
+[ 08:12:26.442 ] [27:INFO] cmd: ATS89?*47C6
+[ 08:12:26.443 ] [27:INFO] res: \r\n00002\r\n\r\nOK\r\n
+[ 08:12:26.443 ] [27:INFO] cmd: AT%MGFN*08D2
+[ 08:12:26.444 ] [27:INFO] res: \r\n%MGFN: "FM05.01",05.01,0,16,2,24,24\r\n\r\nOK\r\n
+[ 08:12:26.445 ] [27:INFO] cmd: AT%MGFG="FM05.01",3*03EC
+[ 08:12:26.446 ] [27:INFO] res: \r\n%MGFG: "FM05.01",05.01,0,16,2,23,3,CQFzBwZAABIAANACyIAQRAACoAQdACA=\r\n\r\nOK\r\n
+[ 08:12:26.446 ] [18:INFO] sending decoded message from transport=1 to SIN=16
+[ 08:12:26.451 ] [18:INFO] queuing RL msg #8 (SIN=18, bits=504)
+[ 08:12:26.451 ] [18:INFO] sending RL msg #8 trn #1 (SIN=18, bits=504)
+[ 08:12:26.452 ] [27:INFO] cmd: AT%MGRT="00000008",3,18,3,BDpzdmMuc3lzdGVtOiBlcnJv
+[ 08:12:26.453 ] [27:INFO] res: \r\nOK\r\n
+[ 08:12:29.391 ] [27:INFO] cmd: ATS89?*47C6
+[ 08:12:29.393 ] [27:INFO] res: \r\n00004\r\n\r\nOK\r\n
+[ 08:12:29.393 ] [27:INFO] cmd: AT%MGRS*04F9
+[ 08:12:29.398 ] [27:INFO] res: \r\n%MGRS: "00000005",5.1,3,18,6,65,65\r\n"00000006",6.1,3,18,6,63,63\r\n"00000007",7.1,3,18,5,63,0\r\n"00000008",8.1,3,18,5,63,0\r\n\r\nOK\r\n
+[ 08:12:29.398 ] [18:INFO] completed RL msg #5 (SIN=18), status=Success
+[ 08:12:29.399 ] [18:INFO] completed RL msg #6 (SIN=18), status=Success
+[ 08:12:32.432 ] [27:INFO] cmd: ATS89?*47C6
+[ 08:12:32.435 ] [27:INFO] res: \r\n00004\r\n\r\nOK\r\n
+[ 08:12:32.435 ] [27:INFO] cmd: AT%MGRS*04F9
+[ 08:12:32.438 ] [27:INFO] res: \r\n%MGRS: "00000007",7.1,3,18,6,63,63\r\n"00000008",8.1,3,18,6,63,63\r\n\r\nOK\r\n
+[ 08:12:32.438 ] [18:INFO] completed RL msg #8 (SIN=18), status=Success
+[ 08:12:32.439 ] [18:INFO] completed RL msg #7 (SIN=18), status=Success
+[ 08:12:49.263 ] [26:INFO] CLI Cmd: [service list]
+[ 08:12:50.585 ] [27:INFO] cmd: AT%EVNT=3,1*BC22
+[ 08:12:50.588 ] [27:INFO] res: \r\n%EVNT: 24,16777215,0,452592768,3,1,4,59136,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,257,0,0,0,0\r\n\r\nOK\r\n
+[ 08:12:50.590 ] [27:INFO] cmd: AT%EVNT=3,17*02E3
+[ 08:12:50.593 ] [27:INFO] res: \r\n%EVNT: 7,127,0,452592673,3,17,4,0,0,0,0,0,0,0\r\n\r\nOK\r\n
+[ 08:12:58.089 ] [26:INFO] CLI Cmd: [service enable VMS]
+[ 08:13:02.407 ] [27:INFO] cmd: ATS89?*47C6
+[ 08:13:02.408 ] [27:INFO] res: \r\n00000\r\n\r\nOK\r\n
+[ 08:13:12.604 ] [26:INFO] CLI Cmd: [service list]
+[ 08:13:20.605 ] [27:INFO] cmd: AT%EVNT=3,1*BC22
+[ 08:13:20.608 ] [27:INFO] res: \r\n%EVNT: 24,16777215,0,452592798,3,1,4,59196,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,257,0,0,0,0\r\n\r\nOK\r\n
+[ 08:13:20.609 ] [27:INFO] cmd: AT%EVNT=3,17*02E3
+[ 08:13:20.612 ] [27:INFO] res: \r\n%EVNT: 7,127,0,452592673,3,17,4,0,0,0,0,0,0,0\r\n\r\nOK\r\n
+[ 08:13:23.013 ] Lua Services Framework starting (Version 9.0.10)
+[ 08:13:23.016 ] Starting svcmgr.init
+[ 08:13:23.019 ] Loading core services from /act/svc/svclist.lua
+[ 08:13:23.019 ] Ignoring 'svc.eeio'
+[ 08:13:23.019 ] Ignoring 'svc.power'
+[ 08:13:23.019 ] Ignoring 'svc.accel'
+[ 08:13:23.019 ] Ignoring 'svc.cell'
+[ 08:13:23.019 ] Ignoring 'svc.accelerometer'
+[ 08:13:23.066 ] Cannot load svc.VMS: error loading module 'svc.VMS' from file 'C:/Users/Pawe³ Pater/IDP Terminals/czq3bpra/act/svc\VMS/main.lua':
+	C:/Users/Pawe³ Pater/IDP Terminals/czq3bpra/act/svc\VMS/main.lua:1: unexpected symbol near ':'
+[ 08:13:23.070 ] Services loaded in 0 seconds
+[ 08:13:23.070 ] Starting svcmgr.startall
+[ 08:13:23.070 ] svcmgr: calling log.init()
+[ 08:13:23.070 ] svcmgr: calling system.init()
+[ 08:13:23.070 ] svcmgr: calling idp.init()
+[ 08:13:23.070 ] svcmgr: calling message.init()
+[ 08:13:23.070 ] svcmgr: calling serial.init()
+[ 08:13:23.070 ] svcmgr: calling eio.init()
+[ 08:13:23.070 ] svcmgr: calling position.init()
+[ 08:13:23.070 ] svcmgr: calling report.init()
+[ 08:13:23.070 ] svcmgr: calling filesystem.init()
+[ 08:13:23.070 ] svcmgr: calling shell.init()
+[ 08:13:23.070 ] svcmgr: calling geofence.init()
+[ 08:13:23.070 ] svcmgr: calling campaign.init()
+[ 08:13:23.070 ] svcmgr: calling ip.init()
+[ 08:13:23.070 ] svcmgr: calling UniboxInOut.init()
+[ 08:13:23.079 ] log.init() done
+[ 08:13:23.079 ] [16:INFO] Skywave package version: 7.0.10.9363
+[ 08:13:23.079 ] system.init() done
+[ 08:13:23.079 ] [27:INFO] IDP modem: === initializing communication ===
+[ 08:13:23.079 ] [27:INFO] cmd: AT%CRC=0*BBEB
+[ 08:13:23.080 ] message.init() done
+[ 08:13:23.080 ] serial.init() done
+[ 08:13:23.095 ] eio.init() done
+[ 08:13:23.096 ] position.init() done
+[ 08:13:23.096 ] report.init() done
+[ 08:13:23.096 ] filesystem.init() done
+[ 08:13:23.096 ] shell.init() done
+[ 08:13:23.096 ] geofence.init() done
+[ 08:13:23.097 ] ip.init() done
+[ 08:13:23.097 ] UniboxInOut.init() done
+[ 08:13:23.097 ] [27:INFO] res: \r\nOK\r\n
+[ 08:13:23.097 ] [27:INFO] cmd: ATS88?
+[ 08:13:23.097 ] campaign.init() done
+[ 08:13:23.097 ] [27:INFO] res: \r\n02047\r\n\r\nOK\r\n
+[ 08:13:23.098 ] [27:INFO] cmd: AT%CRC=1
+[ 08:13:23.098 ] [27:INFO] res: \r\nOK\r\n
+[ 08:13:23.098 ] [27:INFO] cmd: ATE0*DA8C
+[ 08:13:23.098 ] [27:INFO] res: \r\nOK\r\n
+[ 08:13:23.099 ] [27:INFO] cmd: ATV1*9C8D
+[ 08:13:23.099 ] [27:INFO] res: \r\nOK\r\n
+[ 08:13:23.099 ] [27:INFO] cmd: ATQ0*153B
+[ 08:13:23.099 ] [27:INFO] res: \r\nOK\r\n
+[ 08:13:23.100 ] [27:INFO] cmd: ATS3=13*19C3
+[ 08:13:23.100 ] [27:INFO] res: \r\nOK\r\n
+[ 08:13:23.100 ] [27:INFO] cmd: ATS4=10*788D
+[ 08:13:23.101 ] [27:INFO] res: \r\nOK\r\n
+[ 08:13:23.101 ] [27:INFO] cmd: AT+GMM*EE01
+[ 08:13:23.101 ] [27:INFO] res: \r\n+GMM: IsatDataPro Modem Simulator\r\n\r\nOK\r\n
+[ 08:13:23.101 ] [27:INFO] cmd: ATS88=2047*2104
+[ 08:13:23.102 ] [27:INFO] res: \r\nOK\r\n
+[ 08:13:23.102 ] [27:INFO] IDP modem: == communication established ===
+[ 08:13:23.102 ] [27:INFO] cmd: AT+GSN*FE1E
+[ 08:13:23.103 ] [27:INFO] res: \r\n+GSN: 00000000SKYEE3D\r\n\r\nOK\r\n
+[ 08:13:23.104 ] [27:INFO] cmd: AT+GMR*0DDF
+[ 08:13:23.104 ] [27:INFO] res: \r\n+GMR: 10.000,4.2,7\r\n\r\nOK\r\n
+[ 08:13:23.104 ] [27:INFO] cmd: ATS56?*15A9
+[ 08:13:23.105 ] [27:INFO] res: \r\n001\r\n\r\nOK\r\n
+[ 08:13:23.105 ] [27:INFO] cmd: ATS57?*2698
+[ 08:13:23.105 ] [27:INFO] res: \r\n000\r\n\r\nOK\r\n
+[ 08:13:23.105 ] [27:INFO] cmd: ATS51?*8C3E
+[ 08:13:23.106 ] [27:INFO] res: \r\n000\r\n\r\nOK\r\n
+[ 08:13:23.106 ] [27:INFO] cmd: at%evmon=*778B
+[ 08:13:23.107 ] [27:INFO] res: \r\nOK\r\n
+[ 08:13:23.107 ] [27:INFO] cmd: AT%TRK=0,0*D778
+[ 08:13:23.107 ] [27:INFO] res: \r\nOK\r\n
+[ 08:13:23.108 ] [27:INFO] cmd: ATS39=0*B00D
+[ 08:13:23.109 ] [27:INFO] res: \r\nOK\r\n
+[ 08:13:23.109 ] [27:INFO] cmd: AT%TRK=0,0*D778
+[ 08:13:23.114 ] [27:INFO] res: \r\nOK\r\n
+[ 08:13:23.114 ] [27:INFO] cmd: ATS40=0*7FB1
+[ 08:13:23.115 ] [27:INFO] res: \r\nOK\r\n
+[ 08:13:23.115 ] [27:INFO] cmd: ATS41=180*8893
+[ 08:13:23.115 ] [27:INFO] res: \r\nOK\r\n
+[ 08:13:23.116 ] [27:INFO] cmd: ATS52=2500*1ADF
+[ 08:13:23.116 ] [27:INFO] res: \r\nOK\r\n
+[ 08:13:23.116 ] [27:INFO] cmd: ATS50=0*0905
+[ 08:13:23.117 ] [27:INFO] res: \r\nOK\r\n
+[ 08:13:23.117 ] [27:INFO] cmd: AT%MGRS*04F9
+[ 08:13:23.118 ] [27:INFO] res: \r\n%MGRS: \r\n\r\nOK\r\n
+[ 08:13:23.119 ] idp.init() done
+[ 08:13:23.121 ] svcmgr: spawning log.entry()
+[ 08:13:23.121 ] svcmgr: spawning system.entry()
+[ 08:13:23.122 ] svcmgr: spawning idp.entry()
+[ 08:13:23.122 ] svcmgr: spawning message.entry()
+[ 08:13:23.122 ] svcmgr: spawning serial.entry()
+[ 08:13:23.122 ] svcmgr: spawning eio.entry()
+[ 08:13:23.122 ] svcmgr: spawning position.entry()
+[ 08:13:23.122 ] svcmgr: spawning report.entry()
+[ 08:13:23.122 ] svcmgr: spawning filesystem.entry()
+[ 08:13:23.122 ] svcmgr: spawning shell.entry()
+[ 08:13:23.122 ] svcmgr: spawning geofence.entry()
+[ 08:13:23.122 ] svcmgr: spawning campaign.entry()
+[ 08:13:23.122 ] svcmgr: spawning ip.entry()
+[ 08:13:23.122 ] svcmgr: spawning UniboxInOut.entry()
+[ 08:13:23.122 ] Services loaded and initialized in 0 seconds
+[ 08:13:23.123 ] [27:INFO] cmd: ATS89?*47C6
+[ 08:13:23.124 ] [26:INFO] spawning Shell Cmd Processor
+[ 08:13:23.124 ] [26:INFO] attach
+[ 08:13:23.124 ] [22:INFO] Opening rs232main port @ 9600 baud
+[ 08:13:23.124 ] [26:INFO] spawning Shell CLI
+[ 08:13:23.125 ] [18:INFO] queuing RL msg #1 (SIN=33, bits=32)
+[ 08:13:23.126 ] [162:INFO] service started
+[ 08:13:23.126 ] [16:INFO] Hardware reset reason = SOFTWARE, software cause = CONSOLE, desc= 
+[ 08:13:23.126 ] [27:INFO] res: \r\n00000\r\n
+[ 08:13:23.126 ] [27:INFO] cmd: AT%MGFN*08D2
+[ 08:13:23.127 ] [26:INFO] CLI Thread: starting
+[ 08:13:23.127 ] [21:INFO] Setting up DB File
+[ 08:13:23.128 ] [21:INFO] Indexed 1 fences
+[ 08:13:23.128 ] [18:INFO] sending RL msg #1 trn #1 (SIN=33, bits=32)
+[ 08:13:23.128 ] [27:INFO] res: \r\n%MGFN: \r\n
+[ 08:13:23.128 ] [27:INFO] cmd: ATS85?*02AB
+[ 08:13:23.129 ] [27:INFO] res: \r\n00250\r\n\r\nOK\r\n
+[ 08:13:23.129 ] [27:INFO] cmd: AT%UTC*397D
+[ 08:13:23.130 ] [27:INFO] res: \r\n%UTC: 2015-05-06 08:13:23\r\n\r\nOK\r\n
+[ 08:13:23.130 ] [27:INFO] cmd: AT%MGRT="00000001",3,33,3,BwEe*D014
+[ 08:13:23.133 ] [18:INFO] completed log msg #2 (SIN=16), status=Success
+[ 08:13:23.136 ] [18:INFO] queuing RL msg #3 (SIN=16, bits=344)
+[ 08:13:23.137 ] [27:INFO] res: \r\nOK\r\n
+[ 08:13:23.137 ] [18:INFO] sending RL msg #3 trn #1 (SIN=16, bits=344)
+[ 08:13:23.138 ] [27:INFO] cmd: AT%MGRT="00000003",1,16,3,CAEEBgkABwY5LjAuMTALDhAS
+[ 08:13:23.139 ] [27:INFO] res: \r\nOK\r\n
+[ 08:13:23.140 ] [27:INFO] cmd: ATS89?*47C6
+[ 08:13:23.141 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 08:13:23.142 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 08:13:23.144 ] [27:INFO] res: \r\n%GPS: $GPGGA,081323.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*32\r\n$GPRMC,081323.000,A,0000.0000,N,00000.0000,E,0.00,000.00,060515,,,A*62\r\n\r\nOK\r\n
+[ 08:13:25.047 ] [27:INFO] cmd: AT%EVNT=3,1*BC22
+[ 08:13:25.050 ] [27:INFO] res: \r\n%EVNT: 24,16777215,0,452592803,3,1,4,59206,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,257,0,0,0,0\r\n\r\nOK\r\n
+[ 08:13:25.051 ] [27:INFO] cmd: AT%EVNT=3,17*02E3
+[ 08:13:25.055 ] [27:INFO] res: \r\n%EVNT: 7,127,0,452592673,3,17,4,0,0,0,0,0,0,0\r\n\r\nOK\r\n
+[ 08:13:28.204 ] [27:INFO] cmd: ATS89?*47C6
+[ 08:13:28.206 ] [27:INFO] res: \r\n00004\r\n\r\nOK\r\n
+[ 08:13:28.206 ] [27:INFO] cmd: AT%MGRS*04F9
+[ 08:13:28.209 ] [27:INFO] res: \r\n%MGRS: "00000001",9.1,3,33,6,4,4\r\n"00000003",10.1,1,16,6,43,43\r\n\r\nOK\r\n
+[ 08:13:28.209 ] [18:INFO] completed RL msg #1 (SIN=33), status=Success
+[ 08:13:28.211 ] [18:INFO] completed RL msg #3 (SIN=16), status=Success
+[ 08:13:44.797 ] [26:INFO] CLI Cmd: [service list]
+[ 08:13:55.012 ] [27:INFO] cmd: AT%EVNT=3,1*BC22
+[ 08:13:55.015 ] [27:INFO] res: \r\n%EVNT: 24,16777215,0,452592833,3,1,4,59266,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,257,0,0,0,0\r\n\r\nOK\r\n
+[ 08:13:55.017 ] [27:INFO] cmd: AT%EVNT=3,17*02E3
+[ 08:13:55.020 ] [27:INFO] res: \r\n%EVNT: 7,127,0,452592673,3,17,4,0,0,0,0,0,0,0\r\n\r\nOK\r\n
+[ 08:13:58.222 ] [27:INFO] cmd: ATS89?*47C6
+[ 08:13:58.224 ] [27:INFO] res: \r\n00000\r\n\r\nOK\r\n
+[ 08:14:25.025 ] [27:INFO] cmd: AT%EVNT=3,1*BC22
+[ 08:14:25.029 ] [27:INFO] res: \r\n%EVNT: 24,16777215,0,452592863,3,1,4,59326,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,257,0,0,0,0\r\n\r\nOK\r\n
+[ 08:14:25.030 ] [27:INFO] cmd: AT%EVNT=3,17*02E3
+[ 08:14:25.033 ] [27:INFO] res: \r\n%EVNT: 7,127,0,452592673,3,17,4,0,0,0,0,0,0,0\r\n\r\nOK\r\n
+[ 08:14:28.236 ] [27:INFO] cmd: ATS89?*47C6
+[ 08:14:28.238 ] [27:INFO] res: \r\n00000\r\n\r\nOK\r\n
+[ 08:14:28.410 ] Lua Services Framework starting (Version 9.0.10)
+[ 08:14:28.413 ] Starting svcmgr.init
+[ 08:14:28.416 ] Loading core services from /act/svc/svclist.lua
+[ 08:14:28.416 ] Ignoring 'svc.eeio'
+[ 08:14:28.416 ] Ignoring 'svc.power'
+[ 08:14:28.416 ] Ignoring 'svc.accel'
+[ 08:14:28.416 ] Ignoring 'svc.cell'
+[ 08:14:28.416 ] Ignoring 'svc.accelerometer'
+[ 08:14:28.464 ] Cannot load svc.VMS: error loading module 'svc.VMS' from file 'C:/Users/Pawe³ Pater/IDP Terminals/czq3bpra/act/svc\VMS/main.lua':
+	C:/Users/Pawe³ Pater/IDP Terminals/czq3bpra/act/svc\VMS/main.lua:1: unexpected symbol near ':'
+[ 08:14:28.468 ] Services loaded in 0 seconds
+[ 08:14:28.468 ] Starting svcmgr.startall
+[ 08:14:28.468 ] svcmgr: calling log.init()
+[ 08:14:28.468 ] svcmgr: calling system.init()
+[ 08:14:28.468 ] svcmgr: calling idp.init()
+[ 08:14:28.468 ] svcmgr: calling message.init()
+[ 08:14:28.469 ] svcmgr: calling serial.init()
+[ 08:14:28.469 ] svcmgr: calling eio.init()
+[ 08:14:28.469 ] svcmgr: calling position.init()
+[ 08:14:28.469 ] svcmgr: calling report.init()
+[ 08:14:28.469 ] svcmgr: calling filesystem.init()
+[ 08:14:28.469 ] svcmgr: calling shell.init()
+[ 08:14:28.469 ] svcmgr: calling geofence.init()
+[ 08:14:28.469 ] svcmgr: calling campaign.init()
+[ 08:14:28.469 ] svcmgr: calling ip.init()
+[ 08:14:28.469 ] svcmgr: calling UniboxInOut.init()
+[ 08:14:28.478 ] log.init() done
+[ 08:14:28.478 ] [16:INFO] Skywave package version: 7.0.10.9363
+[ 08:14:28.478 ] system.init() done
+[ 08:14:28.479 ] [27:INFO] IDP modem: === initializing communication ===
+[ 08:14:28.479 ] [27:INFO] cmd: AT%CRC=0*BBEB
+[ 08:14:28.479 ] message.init() done
+[ 08:14:28.480 ] serial.init() done
+[ 08:14:28.495 ] eio.init() done
+[ 08:14:28.495 ] position.init() done
+[ 08:14:28.495 ] report.init() done
+[ 08:14:28.495 ] filesystem.init() done
+[ 08:14:28.496 ] shell.init() done
+[ 08:14:28.496 ] geofence.init() done
+[ 08:14:28.497 ] ip.init() done
+[ 08:14:28.497 ] UniboxInOut.init() done
+[ 08:14:28.497 ] [27:INFO] res: \r\nOK\r\n
+[ 08:14:28.497 ] [27:INFO] cmd: ATS88?
+[ 08:14:28.497 ] campaign.init() done
+[ 08:14:28.497 ] [27:INFO] res: \r\n02047\r\n\r\nOK\r\n
+[ 08:14:28.498 ] [27:INFO] cmd: AT%CRC=1
+[ 08:14:28.498 ] [27:INFO] res: \r\nOK\r\n
+[ 08:14:28.498 ] [27:INFO] cmd: ATE0*DA8C
+[ 08:14:28.499 ] [27:INFO] res: \r\nOK\r\n
+[ 08:14:28.499 ] [27:INFO] cmd: ATV1*9C8D
+[ 08:14:28.499 ] [27:INFO] res: \r\nOK\r\n
+[ 08:14:28.499 ] [27:INFO] cmd: ATQ0*153B
+[ 08:14:28.500 ] [27:INFO] res: \r\nOK\r\n
+[ 08:14:28.500 ] [27:INFO] cmd: ATS3=13*19C3
+[ 08:14:28.500 ] [27:INFO] res: \r\nOK\r\n
+[ 08:14:28.500 ] [27:INFO] cmd: ATS4=10*788D
+[ 08:14:28.501 ] [27:INFO] res: \r\nOK\r\n
+[ 08:14:28.501 ] [27:INFO] cmd: AT+GMM*EE01
+[ 08:14:28.501 ] [27:INFO] res: \r\n+GMM: IsatDataPro Modem Simulator\r\n\r\nOK\r\n
+[ 08:14:28.502 ] [27:INFO] cmd: ATS88=2047*2104
+[ 08:14:28.503 ] [27:INFO] res: \r\nOK\r\n
+[ 08:14:28.503 ] [27:INFO] IDP modem: == communication established ===
+[ 08:14:28.503 ] [27:INFO] cmd: AT+GSN*FE1E
+[ 08:14:28.503 ] [27:INFO] res: \r\n+GSN: 00000000SKYEE3D\r\n\r\nOK\r\n
+[ 08:14:28.503 ] [27:INFO] cmd: AT+GMR*0DDF
+[ 08:14:28.504 ] [27:INFO] res: \r\n+GMR: 10.000,4.2,7\r\n\r\nOK\r\n
+[ 08:14:28.504 ] [27:INFO] cmd: ATS56?*15A9
+[ 08:14:28.505 ] [27:INFO] res: \r\n001\r\n\r\nOK\r\n
+[ 08:14:28.505 ] [27:INFO] cmd: ATS57?*2698
+[ 08:14:28.505 ] [27:INFO] res: \r\n000\r\n\r\nOK\r\n
+[ 08:14:28.505 ] [27:INFO] cmd: ATS51?*8C3E
+[ 08:14:28.505 ] [27:INFO] res: \r\n000\r\n\r\nOK\r\n
+[ 08:14:28.506 ] [27:INFO] cmd: at%evmon=*778B
+[ 08:14:28.506 ] [27:INFO] res: \r\nOK\r\n
+[ 08:14:28.506 ] [27:INFO] cmd: AT%TRK=0,0*D778
+[ 08:14:28.507 ] [27:INFO] res: \r\nOK\r\n
+[ 08:14:28.507 ] [27:INFO] cmd: ATS39=0*B00D
+[ 08:14:28.508 ] [27:INFO] res: \r\nOK\r\n
+[ 08:14:28.508 ] [27:INFO] cmd: AT%TRK=0,0*D778
+[ 08:14:28.511 ] [27:INFO] res: \r\nOK\r\n
+[ 08:14:28.511 ] [27:INFO] cmd: ATS40=0*7FB1
+[ 08:14:28.512 ] [27:INFO] res: \r\nOK\r\n
+[ 08:14:28.512 ] [27:INFO] cmd: ATS41=180*8893
+[ 08:14:28.512 ] [27:INFO] res: \r\nOK\r\n
+[ 08:14:28.512 ] [27:INFO] cmd: ATS52=2500*1ADF
+[ 08:14:28.513 ] [27:INFO] res: \r\nOK\r\n
+[ 08:14:28.513 ] [27:INFO] cmd: ATS50=0*0905
+[ 08:14:28.513 ] [27:INFO] res: \r\nOK\r\n
+[ 08:14:28.513 ] [27:INFO] cmd: AT%MGRS*04F9
+[ 08:14:28.514 ] [27:INFO] res: \r\n%MGRS: \r\n\r\nOK\r\n
+[ 08:14:28.514 ] idp.init() done
+[ 08:14:28.516 ] svcmgr: spawning log.entry()
+[ 08:14:28.516 ] svcmgr: spawning system.entry()
+[ 08:14:28.516 ] svcmgr: spawning idp.entry()
+[ 08:14:28.516 ] svcmgr: spawning message.entry()
+[ 08:14:28.516 ] svcmgr: spawning serial.entry()
+[ 08:14:28.516 ] svcmgr: spawning eio.entry()
+[ 08:14:28.516 ] svcmgr: spawning position.entry()
+[ 08:14:28.516 ] svcmgr: spawning report.entry()
+[ 08:14:28.517 ] svcmgr: spawning filesystem.entry()
+[ 08:14:28.517 ] svcmgr: spawning shell.entry()
+[ 08:14:28.517 ] svcmgr: spawning geofence.entry()
+[ 08:14:28.517 ] svcmgr: spawning campaign.entry()
+[ 08:14:28.517 ] svcmgr: spawning ip.entry()
+[ 08:14:28.517 ] svcmgr: spawning UniboxInOut.entry()
+[ 08:14:28.517 ] Services loaded and initialized in 0 seconds
+[ 08:14:28.518 ] [27:INFO] cmd: ATS89?*47C6
+[ 08:14:28.519 ] [26:INFO] spawning Shell Cmd Processor
+[ 08:14:28.519 ] [26:INFO] attach
+[ 08:14:28.519 ] [22:INFO] Opening rs232main port @ 9600 baud
+[ 08:14:28.519 ] [26:INFO] spawning Shell CLI
+[ 08:14:28.520 ] [18:INFO] queuing RL msg #1 (SIN=33, bits=32)
+[ 08:14:28.520 ] [162:INFO] service started
+[ 08:14:28.521 ] [16:INFO] Hardware reset reason = SOFTWARE, software cause = CONSOLE, desc= 
+[ 08:14:28.521 ] [27:INFO] res: \r\n00000\r\n
+[ 08:14:28.521 ] [27:INFO] cmd: AT%MGFN*08D2
+[ 08:14:28.522 ] [26:INFO] CLI Thread: starting
+[ 08:14:28.522 ] [21:INFO] Setting up DB File
+[ 08:14:28.523 ] [21:INFO] Indexed 1 fences
+[ 08:14:28.523 ] [18:INFO] sending RL msg #1 trn #1 (SIN=33, bits=32)
+[ 08:14:28.523 ] [27:INFO] res: \r\n%MGFN: \r\n
+[ 08:14:28.523 ] [27:INFO] cmd: ATS85?*02AB
+[ 08:14:28.524 ] [27:INFO] res: \r\n00250\r\n\r\nOK\r\n
+[ 08:14:28.524 ] [27:INFO] cmd: AT%UTC*397D
+[ 08:14:28.525 ] [27:INFO] res: \r\n%UTC: 2015-05-06 08:14:28\r\n\r\nOK\r\n
+[ 08:14:28.525 ] [27:INFO] cmd: AT%MGRT="00000001",3,33,3,BwCa*3A36
+[ 08:14:28.528 ] [18:INFO] completed log msg #2 (SIN=16), status=Success
+[ 08:14:28.531 ] [18:INFO] queuing RL msg #3 (SIN=16, bits=344)
+[ 08:14:28.532 ] [27:INFO] res: \r\nOK\r\n
+[ 08:14:28.532 ] [18:INFO] sending RL msg #3 trn #1 (SIN=16, bits=344)
+[ 08:14:28.533 ] [27:INFO] cmd: AT%MGRT="00000003",1,16,3,CAEEBgkABwY5LjAuMTALDhAS
+[ 08:14:28.534 ] [27:INFO] res: \r\nOK\r\n
+[ 08:14:28.534 ] [27:INFO] cmd: ATS89?*47C6
+[ 08:14:28.536 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 08:14:28.537 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 08:14:28.539 ] [27:INFO] res: \r\n%GPS: $GPGGA,081428.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*3E\r\n$GPRMC,081428.000,A,0000.0000,N,00000.0000,E,0.00,000.00,060515,,,A*6E\r\n\r\nOK\r\n
+[ 08:14:30.441 ] [27:INFO] cmd: AT%EVNT=3,1*BC22
+[ 08:14:30.445 ] [27:INFO] res: \r\n%EVNT: 24,16777215,0,452592868,3,1,4,59336,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,257,0,0,0,0\r\n\r\nOK\r\n
+[ 08:14:30.447 ] [27:INFO] cmd: AT%EVNT=3,17*02E3
+[ 08:14:30.449 ] [27:INFO] res: \r\n%EVNT: 7,127,0,452592673,3,17,4,0,0,0,0,0,0,0\r\n\r\nOK\r\n
+[ 08:14:34.114 ] [27:INFO] cmd: ATS89?*47C6
+[ 08:14:34.116 ] [27:INFO] res: \r\n00004\r\n\r\nOK\r\n
+[ 08:14:34.116 ] [27:INFO] cmd: AT%MGRS*04F9
+[ 08:14:34.119 ] [27:INFO] res: \r\n%MGRS: "00000001",11.1,3,33,6,4,4\r\n"00000003",12.1,1,16,6,43,43\r\n\r\nOK\r\n
+[ 08:14:34.120 ] [18:INFO] completed RL msg #1 (SIN=33), status=Success
+[ 08:14:34.124 ] [18:INFO] completed RL msg #3 (SIN=16), status=Success
+[ 08:15:00.425 ] [27:INFO] cmd: AT%EVNT=3,1*BC22
+[ 08:15:00.429 ] [27:INFO] res: \r\n%EVNT: 24,16777215,0,452592898,3,1,4,59396,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,257,0,0,0,0\r\n\r\nOK\r\n
+[ 08:15:00.430 ] [27:INFO] cmd: AT%EVNT=3,17*02E3
+[ 08:15:00.433 ] [27:INFO] res: \r\n%EVNT: 7,127,0,452592673,3,17,4,0,0,0,0,0,0,0\r\n\r\nOK\r\n
+[ 08:15:04.136 ] [27:INFO] cmd: ATS89?*47C6
+[ 08:15:04.138 ] [27:INFO] res: \r\n00000\r\n\r\nOK\r\n
+[ 08:15:30.432 ] [27:INFO] cmd: AT%EVNT=3,1*BC22
+[ 08:15:30.435 ] [27:INFO] res: \r\n%EVNT: 24,16777215,0,452592928,3,1,4,59456,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,257,0,0,0,0\r\n\r\nOK\r\n
+[ 08:15:30.436 ] [27:INFO] cmd: AT%EVNT=3,17*02E3
+[ 08:15:30.441 ] [27:INFO] res: \r\n%EVNT: 7,127,0,452592673,3,17,4,0,0,0,0,0,0,0\r\n\r\nOK\r\n
+[ 08:15:34.142 ] [27:INFO] cmd: ATS89?*47C6
+[ 08:15:34.143 ] [27:INFO] res: \r\n00000\r\n\r\nOK\r\n
+[ 08:16:00.444 ] [27:INFO] cmd: AT%EVNT=3,1*BC22
+[ 08:16:00.447 ] [27:INFO] res: \r\n%EVNT: 24,16777215,0,452592958,3,1,4,59516,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,257,0,0,0,0\r\n\r\nOK\r\n
+[ 08:16:00.449 ] [27:INFO] cmd: AT%EVNT=3,17*02E3
+[ 08:16:00.452 ] [27:INFO] res: \r\n%EVNT: 7,127,0,452592673,3,17,4,0,0,0,0,0,0,0\r\n\r\nOK\r\n
+[ 08:16:04.155 ] [27:INFO] cmd: ATS89?*47C6
+[ 08:16:04.157 ] [27:INFO] res: \r\n00000\r\n\r\nOK\r\n
+[ 08:16:30.459 ] [27:INFO] cmd: AT%EVNT=3,1*BC22
+[ 08:16:30.463 ] [27:INFO] res: \r\n%EVNT: 24,16777215,0,452592988,3,1,4,59576,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,257,0,0,0,0\r\n\r\nOK\r\n
+[ 08:16:30.465 ] [27:INFO] cmd: AT%EVNT=3,17*02E3
+[ 08:16:30.470 ] [27:INFO] res: \r\n%EVNT: 7,127,0,452592673,3,17,4,0,0,0,0,0,0,0\r\n\r\nOK\r\n
+[ 08:16:34.172 ] [27:INFO] cmd: ATS89?*47C6
+[ 08:16:34.177 ] [27:INFO] res: \r\n00000\r\n\r\nOK\r\n
+[ 08:17:00.478 ] [27:INFO] cmd: AT%EVNT=3,1*BC22
+[ 08:17:00.480 ] [27:INFO] res: \r\n%EVNT: 24,16777215,0,452593018,3,1,4,59636,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,257,0,0,0,0\r\n\r\nOK\r\n
+[ 08:17:00.480 ] [27:INFO] cmd: AT%EVNT=3,17*02E3
+[ 08:17:00.481 ] [27:INFO] res: \r\n%EVNT: 7,127,0,452592673,3,17,4,0,0,0,0,0,0,0\r\n\r\nOK\r\n
+[ 08:17:04.181 ] [27:INFO] cmd: ATS89?*47C6
+[ 08:17:04.182 ] [27:INFO] res: \r\n00000\r\n\r\nOK\r\n
+[ 08:17:30.484 ] [27:INFO] cmd: AT%EVNT=3,1*BC22
+[ 08:17:30.486 ] [27:INFO] res: \r\n%EVNT: 24,16777215,0,452593048,3,1,4,59696,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,257,0,0,0,0\r\n\r\nOK\r\n
+[ 08:17:30.488 ] [27:INFO] cmd: AT%EVNT=3,17*02E3
+[ 08:17:30.490 ] [27:INFO] res: \r\n%EVNT: 7,127,0,452592673,3,17,4,0,0,0,0,0,0,0\r\n\r\nOK\r\n
+[ 08:17:34.193 ] [27:INFO] cmd: ATS89?*47C6
+[ 08:17:34.196 ] [27:INFO] res: \r\n00000\r\n\r\nOK\r\n
