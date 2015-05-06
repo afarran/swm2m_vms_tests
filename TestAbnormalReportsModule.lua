@@ -32,7 +32,7 @@ function setup()
                                GpsJammedEndDebounceTime = 1,
                                StandardReport1Interval = 0,
                                ExtPowerDisconnectedStartDebounceTime = 1,
-                               ExtPowerDisconnectedEndDebounceTime = 1,
+                               PowerDisconnectedEndDebounceTime = 1,
                                HelmPanelDisconnectedStartDebounceTime = 1,
                                HelmPanelDisconnectedEndDebounceTime = 1,
                                HwClientDisconnectedStartDebounceTime = 1,
@@ -2297,9 +2297,9 @@ end
 
 
 
--- TC checks if when HelmPanel is connected to external power source for time above ExtPowerDisconnectedEndDebounceTime ExtPowerDisconnected AbnormalReport is sent
+-- TC checks if when HelmPanel is connected to external power source for time above PowerDisconnectedEndDebounceTime ExtPowerDisconnected AbnormalReport is sent
   -- and terminal leaves ExtPowerDisconnected state
-function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSourceForTimeAboveExtPowerDisconnectedEndDebounceTime_ExtPowerDisconnectedAbnormalReportIsSent()
+function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSourceForTimeAbovePowerDisconnectedEndDebounceTime_ExtPowerDisconnectedAbnormalReportIsSent()
 
   local EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME = 1
   local EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME = 30
@@ -2315,7 +2315,7 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSource
 
   vmsSW:setPropertiesByName({
                              ExtPowerDisconnectedStartDebounceTime = EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME,
-                             ExtPowerDisconnectedEndDebounceTime = EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME,
+                             PowerDisconnectedEndDebounceTime = EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME,
                              ExtPowerDisconnectedSendReport = true,
                             }
   )
@@ -2338,7 +2338,7 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSource
   -- checking ExtPowerDisconnectedState property
   local ExtPowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"ExtPowerDisconnectedState"})
   D:log(framework.dump(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"]), "ExtPowerDisconnectedState")
-  assert_true(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"], "ExtPowerDisconnectedState has changed to false before ExtPowerDisconnectedEndDebounceTime time has passed")
+  assert_true(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"], "ExtPowerDisconnectedState has changed to false before PowerDisconnectedEndDebounceTime time has passed")
 
   framework.delay(EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME)
 
@@ -2440,7 +2440,7 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsDisconnectedFromExternalPowerS
 
   vmsSW:setPropertiesByName({
                              ExtPowerDisconnectedStartDebounceTime = EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME,
-                             ExtPowerDisconnectedEndDebounceTime = EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME,
+                             PowerDisconnectedEndDebounceTime = EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME,
                              ExtPowerDisconnectedSendReport = true,
                             }
   )
@@ -2559,9 +2559,9 @@ end
 
 
 
---- TC checks if when HelmPanel is connected to external power source for time below ExtPowerDisconnectedEndDebounceTime ExtPowerDisconnected AbnormalReport is not sent
+--- TC checks if when HelmPanel is connected to external power source for time below PowerDisconnectedEndDebounceTime ExtPowerDisconnected AbnormalReport is not sent
   -- and terminal does not leave ExtPowerDisconnected state
-function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSourceForTimeBelowExtPowerDisconnectedEndDebounceTime_ExtPowerDisconnectedAbnormalReportIsNotSent()
+function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSourceForTimeBelowPowerDisconnectedEndDebounceTime_ExtPowerDisconnectedAbnormalReportIsNotSent()
 
   local EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME = 1
   local EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME = 30
@@ -2577,7 +2577,7 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSource
 
   vmsSW:setPropertiesByName({
                              ExtPowerDisconnectedStartDebounceTime = EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME,
-                             ExtPowerDisconnectedEndDebounceTime = EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME,
+                             PowerDisconnectedEndDebounceTime = EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME,
                              ExtPowerDisconnectedSendReport = true,
                             }
   )
@@ -2627,7 +2627,7 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsDisonnectedFromExternalPowerSo
 
   vmsSW:setPropertiesByName({
                              ExtPowerDisconnectedStartDebounceTime = EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME,
-                             ExtPowerDisconnectedEndDebounceTime = EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME,
+                             PowerDisconnectedEndDebounceTime = EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME,
                              ExtPowerDisconnectedSendReport = true,
                             }
   )
@@ -2687,7 +2687,7 @@ function test_ExtPowerDisconnected_WhenExternalPowerIsConnectedAndDisconnectedFo
 
   vmsSW:setPropertiesByName({
                              ExtPowerDisconnectedStartDebounceTime = EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME,
-                             ExtPowerDisconnectedEndDebounceTime = EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME,
+                             PowerDisconnectedEndDebounceTime = EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME,
                              ExtPowerDisconnectedSendReport = false,
                             }
   )
@@ -3710,7 +3710,7 @@ function test_SetProperties_WhenSetPropertiesMessageIsSet_PropertiesIncludedInTh
       {Name="HelmPanelDisconnectedEndDebounceTime",Value=counter},
       {Name="ExtPowerDisconnectedSendReport",Value=enabled},
       {Name="ExtPowerDisconnectedStartDebounceTime",Value=counter},
-      {Name="ExtPowerDisconnectedEndDebounceTime",Value=counter},
+      {Name="PowerDisconnectedEndDebounceTime",Value=counter},
       {Name="PowerDisconnectedSendReport",Value=enabled},
       {Name="PowerDisconnectedStartDebounceTime",Value=counter},
       {Name="PowerDisconnectedEndDebounceTime",Value=counter},
@@ -3773,7 +3773,7 @@ function test_MultipleAbnormalReportsEnabled_When3AbnormalReportsAreTriggered_3A
                                GpsJammedEndDebounceTime = 1,
                                StandardReport1Interval = 0,
                                ExtPowerDisconnectedStartDebounceTime = 1,
-                               ExtPowerDisconnectedEndDebounceTime = 1,
+                               PowerDisconnectedEndDebounceTime = 1,
                                HelmPanelDisconnectedStartDebounceTime = 1,
                                HelmPanelDisconnectedEndDebounceTime = 1,
                                GpsJammedSendReport = true,

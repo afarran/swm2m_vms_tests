@@ -42,7 +42,7 @@ function setup()
 
   vmsSW:setPropertiesByName({
                                ExtPowerDisconnectedStartDebounceTime = 1,
-                               ExtPowerDisconnectedEndDebounceTime = 1,
+                               PowerDisconnectedEndDebounceTime = 1,
                                GpsBlockedStartDebounceTime = 1,
                                GpsBlockedEndDebounceTime = 1,
                                GpsBlockedSendReport = false,
