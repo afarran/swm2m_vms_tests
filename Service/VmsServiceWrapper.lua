@@ -99,7 +99,7 @@ VmsServiceWrapper = {}
                       IdpBlocked = 2,
                       HwClientDisconnected = 3,
                       HelmPanelDisconnected = 4,
-                      ExtPowerDisconnected = 5,
+                      PowerDisconnected = 5,
                       InsideGeofence = 6,
                       PowerDisconnected = 7}
     }

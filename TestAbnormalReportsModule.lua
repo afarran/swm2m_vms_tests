@@ -2297,9 +2297,9 @@ end
 
 
 
--- TC checks if when HelmPanel is connected to external power source for time above PowerDisconnectedEndDebounceTime ExtPowerDisconnected AbnormalReport is sent
-  -- and terminal leaves ExtPowerDisconnected state
-function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSourceForTimeAbovePowerDisconnectedEndDebounceTime_ExtPowerDisconnectedAbnormalReportIsSent()
+-- TC checks if when HelmPanel is connected to external power source for time above PowerDisconnectedEndDebounceTime PowerDisconnected AbnormalReport is sent
+  -- and terminal leaves PowerDisconnected state
+function test_PowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSourceForTimeAbovePowerDisconnectedEndDebounceTime_PowerDisconnectedAbnormalReportIsSent()
 
   local EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME = 1
   local EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME = 30
@@ -2323,10 +2323,10 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSource
   -- *** Execute
   GPS:set(InitialPosition)
 
-  -- checking ExtPowerDisconnectedState property
-  local ExtPowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"ExtPowerDisconnectedState"})
-  D:log(framework.dump(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"]), "ExtPowerDisconnectedState")
-  assert_true(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"], "ExtPowerDisconnectedState property is incorrectly false")
+  -- checking PowerDisconnectedState property
+  local PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
+  D:log(framework.dump(PowerDisconnectedStateProperty["PowerDisconnectedState"]), "PowerDisconnectedState")
+  assert_true(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState property is incorrectly false")
 
 
   gateway.setHighWaterMark() -- to get the newest messages
@@ -2335,10 +2335,10 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSource
 
   D:log("EXTERNAL POWER SOURCE OF HELM PANEL CONNECTED")
 
-  -- checking ExtPowerDisconnectedState property
-  local ExtPowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"ExtPowerDisconnectedState"})
-  D:log(framework.dump(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"]), "ExtPowerDisconnectedState")
-  assert_true(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"], "ExtPowerDisconnectedState has changed to false before PowerDisconnectedEndDebounceTime time has passed")
+  -- checking PowerDisconnectedState property
+  local PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
+  D:log(framework.dump(PowerDisconnectedStateProperty["PowerDisconnectedState"]), "PowerDisconnectedState")
+  assert_true(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState has changed to false before PowerDisconnectedEndDebounceTime time has passed")
 
   framework.delay(EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME)
 
@@ -2353,38 +2353,38 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSource
   assert_equal(
     InitialPosition.latitude*60000,
     tonumber(ReceivedMessages["AbnormalReport"].Latitude),
-    "Wrong latitude value in ExtPowerDisconnected abnormal report"
+    "Wrong latitude value in PowerDisconnected abnormal report"
   )
 
   assert_equal(
     InitialPosition.longitude*60000,
     tonumber(ReceivedMessages["AbnormalReport"].Longitude),
-    "Wrong longitude value in ExtPowerDisconnected abnormal report"
+    "Wrong longitude value in PowerDisconnected abnormal report"
   )
 
   assert_equal(
     InitialPosition.speed,
     tonumber(ReceivedMessages["AbnormalReport"].Speed),
-    "Wrong speed value in ExtPowerDisconnected abnormal report"
+    "Wrong speed value in PowerDisconnected abnormal report"
   )
 
   assert_equal(
     361,
     tonumber(ReceivedMessages["AbnormalReport"].Course),
-    "Wrong course value in ExtPowerDisconnected abnormal report"
+    "Wrong course value in PowerDisconnected abnormal report"
   )
 
   assert_equal(
-    "ExtPowerDisconnected",
+    "PowerDisconnected",
     ReceivedMessages["AbnormalReport"].EventType,
-    "Wrong name of the received EventType in ExtPowerDisconnected abnormal report"
+    "Wrong name of the received EventType in PowerDisconnected abnormal report"
   )
 
   assert_equal(
     timeOfEvent,
     tonumber(ReceivedMessages["AbnormalReport"].Timestamp),
     10,
-    "Wrong Timestamp value in ExtPowerDisconnected abnormal report"
+    "Wrong Timestamp value in PowerDisconnected abnormal report"
   )
   --]]
   -- TODO: update this after implementation in TestFramework file
@@ -2409,7 +2409,7 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSource
   --]]
 
   local StatusBitmap = vmsSW:decodeBitmap(ReceivedMessages["AbnormalReport"].StatusBitmap, "EventStateId")
-  assert_false(StatusBitmap["ExtPowerDisconnected"], "StatusBitmap has not been correctly changed to false when external power source of helm panel was connected")
+  assert_false(StatusBitmap["PowerDisconnected"], "StatusBitmap has not been correctly changed to false when external power source of helm panel was connected")
 
 
   D:log("EXTERNAL POWER SOURCE OF HELM PANEL DISCONNECTED")
@@ -2422,9 +2422,9 @@ end
 
 
 
---- TC checks if when HelmPanel is disconnected from external power source for time above PowerDisconnectedStartDebounceTime for terminal in ExtPowerDisconnected state
-  -- ExtPowerDisconnected AbnormalReport is sent and terminal enters ExtPowerDisconnected state
-function test_ExtPowerDisconnected_WhenHelmPanelIsDisconnectedFromExternalPowerSourceForTimeAbovePowerDisconnectedStartDebounceTime_ExtPowerDisconnectedAbnormalReportIsSent()
+--- TC checks if when HelmPanel is disconnected from external power source for time above PowerDisconnectedStartDebounceTime for terminal in PowerDisconnected state
+  -- PowerDisconnected AbnormalReport is sent and terminal enters PowerDisconnected state
+function test_PowerDisconnected_WhenHelmPanelIsDisconnectedFromExternalPowerSourceForTimeAbovePowerDisconnectedStartDebounceTime_PowerDisconnectedAbnormalReportIsSent()
 
   local EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME = 30
   local EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME = 1
@@ -2448,10 +2448,10 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsDisconnectedFromExternalPowerS
   -- *** Execute
   GPS:set(InitialPosition)
 
-  -- checking ExtPowerDisconnectedState property
-  local ExtPowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"ExtPowerDisconnectedState"})
-  D:log(framework.dump(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"]), "ExtPowerDisconnectedState")
-  assert_true(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"], "ExtPowerDisconnectedState property is incorrectly false")
+  -- checking PowerDisconnectedState property
+  local PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
+  D:log(framework.dump(PowerDisconnectedStateProperty["PowerDisconnectedState"]), "PowerDisconnectedState")
+  assert_true(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState property is incorrectly false")
 
   D:log("EXTERNAL POWER SOURCE OF HELM PANEL CONNECTED")
   -- Helm Panel is connected to external power from now
@@ -2461,10 +2461,10 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsDisconnectedFromExternalPowerS
 
   framework.delay(10) -- this delay is added due to TC failing for too many messages processes at once
 
-  -- checking ExtPowerDisconnectedState property
-  ExtPowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"ExtPowerDisconnectedState"})
-  D:log(framework.dump(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"]), "ExtPowerDisconnectedStateProperty" )
-  assert_false(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"], "ExtPowerDisconnectedState property is incorrectly true")
+  -- checking PowerDisconnectedState property
+  PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
+  D:log(framework.dump(PowerDisconnectedStateProperty["PowerDisconnectedState"]), "PowerDisconnectedStateProperty" )
+  assert_false(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState property is incorrectly true")
 
   gateway.setHighWaterMark() -- to get the newest messages
 
@@ -2472,10 +2472,10 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsDisconnectedFromExternalPowerS
   -- Helm Panel is disconnected from external power from now
   helmPanel:externalPowerConnected("false")
 
-  -- checking ExtPowerDisconnectedState property
-  ExtPowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"ExtPowerDisconnectedState"})
-  D:log(framework.dump(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"]), "ExtPowerDisconnectedStateProperty")
-  assert_false(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"], "ExtPowerDisconnectedState has changed to true before PowerDisconnectedStartDebounceTime time has passed")
+  -- checking PowerDisconnectedState property
+  PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
+  D:log(framework.dump(PowerDisconnectedStateProperty["PowerDisconnectedState"]), "PowerDisconnectedStateProperty")
+  assert_false(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState has changed to true before PowerDisconnectedStartDebounceTime time has passed")
 
   framework.delay(EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME)
   timeOfEvent = os.time()
@@ -2483,48 +2483,48 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsDisconnectedFromExternalPowerS
   local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"})
   D:log(ReceivedMessages["AbnormalReport"])
 
-  -- checking ExtPowerDisconnectedState property
-  ExtPowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"ExtPowerDisconnectedState"})
-  D:log(framework.dump(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"]), "ExtPowerDisconnectedState")
-  assert_true(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"], "ExtPowerDisconnectedState property is incorrectly false after PowerDisconnectedStartDebounceTime")
+  -- checking PowerDisconnectedState property
+  PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
+  D:log(framework.dump(PowerDisconnectedStateProperty["PowerDisconnectedState"]), "PowerDisconnectedState")
+  assert_true(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState property is incorrectly false after PowerDisconnectedStartDebounceTime")
 
   assert_not_nil(ReceivedMessages["AbnormalReport"], "AbnormalReport not received")
 
   assert_equal(
     InitialPosition.latitude*60000,
     tonumber(ReceivedMessages["AbnormalReport"].Latitude),
-    "Wrong latitude value in ExtPowerDisconnected abnormal report"
+    "Wrong latitude value in PowerDisconnected abnormal report"
   )
 
   assert_equal(
     InitialPosition.longitude*60000,
     tonumber(ReceivedMessages["AbnormalReport"].Longitude),
-    "Wrong longitude value in ExtPowerDisconnected abnormal report"
+    "Wrong longitude value in PowerDisconnected abnormal report"
   )
 
   assert_equal(
     InitialPosition.speed,
     tonumber(ReceivedMessages["AbnormalReport"].Speed),
-    "Wrong speed value in ExtPowerDisconnected abnormal report"
+    "Wrong speed value in PowerDisconnected abnormal report"
   )
 
   assert_equal(
     361,
     tonumber(ReceivedMessages["AbnormalReport"].Course),
-    "Wrong course value in ExtPowerDisconnected abnormal report"
+    "Wrong course value in PowerDisconnected abnormal report"
   )
 
   assert_equal(
-    "ExtPowerDisconnected",
+    "PowerDisconnected",
     ReceivedMessages["AbnormalReport"].EventType,
-    "Wrong name of the received EventType in ExtPowerDisconnected abnormal report"
+    "Wrong name of the received EventType in PowerDisconnected abnormal report"
   )
 
   assert_equal(
     timeOfEvent,
     tonumber(ReceivedMessages["AbnormalReport"].Timestamp),
     10,
-    "Wrong Timestamp value in ExtPowerDisconnected abnormal report"
+    "Wrong Timestamp value in PowerDisconnected abnormal report"
   )
   --]]
   -- TODO: update this after implementation in TestFramework file
@@ -2550,7 +2550,7 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsDisconnectedFromExternalPowerS
 
 
   local StatusBitmap = vmsSW:decodeBitmap(ReceivedMessages["AbnormalReport"].StatusBitmap, "EventStateId")
-  assert_true(StatusBitmap["ExtPowerDisconnected"], "StatusBitmap has not been correctly changed to true when external power source of helm panel was disconnected")
+  assert_true(StatusBitmap["PowerDisconnected"], "StatusBitmap has not been correctly changed to true when external power source of helm panel was disconnected")
 
 
 end
@@ -2559,9 +2559,9 @@ end
 
 
 
---- TC checks if when HelmPanel is connected to external power source for time below PowerDisconnectedEndDebounceTime ExtPowerDisconnected AbnormalReport is not sent
-  -- and terminal does not leave ExtPowerDisconnected state
-function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSourceForTimeBelowPowerDisconnectedEndDebounceTime_ExtPowerDisconnectedAbnormalReportIsNotSent()
+--- TC checks if when HelmPanel is connected to external power source for time below PowerDisconnectedEndDebounceTime PowerDisconnected AbnormalReport is not sent
+  -- and terminal does not leave PowerDisconnected state
+function test_PowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSourceForTimeBelowPowerDisconnectedEndDebounceTime_PowerDisconnectedAbnormalReportIsNotSent()
 
   local EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME = 1
   local EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME = 30
@@ -2585,10 +2585,10 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSource
   -- *** Execute
   GPS:set(InitialPosition)
 
-  -- checking ExtPowerDisconnectedState property
-  local ExtPowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"ExtPowerDisconnectedState"})
-  D:log(framework.dump(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"]), "ExtPowerDisconnectedState")
-  assert_true(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"], "ExtPowerDisconnectedState property is incorrectly false")
+  -- checking PowerDisconnectedState property
+  local PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
+  D:log(framework.dump(PowerDisconnectedStateProperty["PowerDisconnectedState"]), "PowerDisconnectedState")
+  assert_true(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState property is incorrectly false")
 
   gateway.setHighWaterMark() -- to get the newest messages
   D:log("EXTERNAL POWER SOURCE OF HELM PANEL CONNECTED")
@@ -2598,8 +2598,8 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSource
   local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
   D:log(ReceivedMessages["AbnormalReport"])
 
-  if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "ExtPowerDisconnected" ) then
-    assert_nil(1, "ExtPowerDisconnected abnormal report sent but not expected")
+  if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "PowerDisconnected" ) then
+    assert_nil(1, "PowerDisconnected abnormal report sent but not expected")
   end
 
   D:log("EXTERNAL POWER SOURCE OF  HELM PANEL DISCONNECTED")
@@ -2609,9 +2609,9 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsConnectedToExternalPowerSource
 
 end
 
---- TC checks if when HelmPanel is disconnected from external power source for time below PowerDisconnectedStartDebounceTime for terminal in ExtPowerDisconnected state
-  -- ExtPowerDisconnected AbnormalReport is not sent and terminal does not enter ExtPowerDisconnected state
-function test_ExtPowerDisconnected_WhenHelmPanelIsDisonnectedFromExternalPowerSourceForTimeBelowPowerDisconnectedStartDebounceTime_ExtPowerDisconnectedAbnormalReportIsNotSent()
+--- TC checks if when HelmPanel is disconnected from external power source for time below PowerDisconnectedStartDebounceTime for terminal in PowerDisconnected state
+  -- PowerDisconnected AbnormalReport is not sent and terminal does not enter PowerDisconnected state
+function test_PowerDisconnected_WhenHelmPanelIsDisonnectedFromExternalPowerSourceForTimeBelowPowerDisconnectedStartDebounceTime_PowerDisconnectedAbnormalReportIsNotSent()
 
   local EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME = 30
   local EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME = 1
@@ -2635,10 +2635,10 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsDisonnectedFromExternalPowerSo
   -- *** Execute
   GPS:set(InitialPosition)
 
-  -- checking ExtPowerDisconnectedState property
-  local ExtPowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"ExtPowerDisconnectedState"})
-  D:log(framework.dump(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"]), "ExtPowerDisconnectedState")
-  assert_true(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"], "ExtPowerDisconnectedState property is incorrectly false")
+  -- checking PowerDisconnectedState property
+  local PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
+  D:log(framework.dump(PowerDisconnectedStateProperty["PowerDisconnectedState"]), "PowerDisconnectedState")
+  assert_true(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState property is incorrectly false")
 
   D:log("HELM PANEL CONNECTED")
   -- Helm Panel is connected to external power from now
@@ -2646,10 +2646,10 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsDisonnectedFromExternalPowerSo
 
   framework.delay(EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME)
 
-  -- checking ExtPowerDisconnectedState property
-  local ExtPowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"ExtPowerDisconnectedState"})
-  D:log(framework.dump(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"]), "ExtPowerDisconnectedStateProperty" )
-  assert_false(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"], "ExtPowerDisconnectedState property is incorrectly true")
+  -- checking PowerDisconnectedState property
+  local PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
+  D:log(framework.dump(PowerDisconnectedStateProperty["PowerDisconnectedState"]), "PowerDisconnectedStateProperty" )
+  assert_false(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState property is incorrectly true")
 
   gateway.setHighWaterMark() -- to get the newest messages
   D:log("EXTERNAL POWER SOURCE OF HELM PANEL DISCONNECTED")
@@ -2660,8 +2660,8 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsDisonnectedFromExternalPowerSo
   D:log(ReceivedMessages["AbnormalReport"])
 
 
-  if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "ExtPowerDisconnected" ) then
-    assert_nil(1, "ExtPowerDisconnected abnormal report sent but not expected")
+  if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "PowerDisconnected" ) then
+    assert_nil(1, "PowerDisconnected abnormal report sent but not expected")
   end
 
   framework.delay(EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME)
@@ -2670,8 +2670,8 @@ function test_ExtPowerDisconnected_WhenHelmPanelIsDisonnectedFromExternalPowerSo
 end
 
 --- TC checks if when HelmPanel is disconnected and connected to external power source for time above thresholds
-  -- ExtPowerDisconnected AbnormalReports are not sent when sending reports is disabled
-function test_ExtPowerDisconnected_WhenExternalPowerIsConnectedAndDisconnectedForTimeAboveThresholdButExtPowerDisconnectedReportsAreDisabled_ExtPowerDisconnectedAbnormalReportIsNotSent()
+  -- PowerDisconnected AbnormalReports are not sent when sending reports is disabled
+function test_PowerDisconnected_WhenExternalPowerIsConnectedAndDisconnectedForTimeAboveThresholdButPowerDisconnectedReportsAreDisabled_PowerDisconnectedAbnormalReportIsNotSent()
 
   local EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME = 1
   local EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME = 1
@@ -2695,10 +2695,10 @@ function test_ExtPowerDisconnected_WhenExternalPowerIsConnectedAndDisconnectedFo
   -- *** Execute
   GPS:set(InitialPosition)
 
-  -- checking ExtPowerDisconnectedState property
-  local ExtPowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"ExtPowerDisconnectedState"})
-  D:log(framework.dump(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"]), "ExtPowerDisconnectedState")
-  assert_true(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"], "ExtPowerDisconnectedState property is incorrectly false")
+  -- checking PowerDisconnectedState property
+  local PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
+  D:log(framework.dump(PowerDisconnectedStateProperty["PowerDisconnectedState"]), "PowerDisconnectedState")
+  assert_true(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState property is incorrectly false")
 
   D:log("EXTERNAL POWER SOURCE OF HELM PANEL CONNECTED")
   -- Helm Panel is connected to external power from now
@@ -2709,14 +2709,14 @@ function test_ExtPowerDisconnected_WhenExternalPowerIsConnectedAndDisconnectedFo
   local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 10)
   D:log(ReceivedMessages["AbnormalReport"])
 
-  if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "ExtPowerDisconnected" ) then
-    assert_nil(1, "ExtPowerDisconnected abnormal report sent but not expected - sending reports is disabled")
+  if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "PowerDisconnected" ) then
+    assert_nil(1, "PowerDisconnected abnormal report sent but not expected - sending reports is disabled")
   end
 
-  -- checking ExtPowerDisconnectedState property
-  local ExtPowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"ExtPowerDisconnectedState"})
-  D:log(framework.dump(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"]), "ExtPowerDisconnectedStateProperty" )
-  assert_false(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"], "ExtPowerDisconnectedState property is incorrectly true")
+  -- checking PowerDisconnectedState property
+  local PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
+  D:log(framework.dump(PowerDisconnectedStateProperty["PowerDisconnectedState"]), "PowerDisconnectedStateProperty" )
+  assert_false(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState property is incorrectly true")
 
   gateway.setHighWaterMark() -- to get the newest messages
 
@@ -2729,14 +2729,14 @@ function test_ExtPowerDisconnected_WhenExternalPowerIsConnectedAndDisconnectedFo
   local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 10)
   D:log(ReceivedMessages["AbnormalReport"])
 
-  if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "ExtPowerDisconnected" ) then
-    assert_nil(1, "ExtPowerDisconnected abnormal report sent but not expected - sending reports is disabled")
+  if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "PowerDisconnected" ) then
+    assert_nil(1, "PowerDisconnected abnormal report sent but not expected - sending reports is disabled")
   end
 
-  -- checking ExtPowerDisconnectedState property
-  local ExtPowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"ExtPowerDisconnectedState"})
-  D:log(framework.dump(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"]), "ExtPowerDisconnectedState")
-  assert_true(ExtPowerDisconnectedStateProperty["ExtPowerDisconnectedState"], "ExtPowerDisconnectedState property is incorrectly false after PowerDisconnectedStartDebounceTime")
+  -- checking PowerDisconnectedState property
+  local PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
+  D:log(framework.dump(PowerDisconnectedStateProperty["PowerDisconnectedState"]), "PowerDisconnectedState")
+  assert_true(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState property is incorrectly false after PowerDisconnectedStartDebounceTime")
 
 
 
@@ -3804,7 +3804,7 @@ function test_MultipleAbnormalReportsEnabled_When3AbnormalReportsAreTriggered_3A
     namesOfAbnormalReports[#namesOfAbnormalReports+1] = AllReceivedAbnormalReports[index].Payload.EventType
   end
 
-  local expectedAbnormalReports = {"ExtPowerDisconnected", "GpsJammed","HelmPanelDisconnected"}
+  local expectedAbnormalReports = {"PowerDisconnected", "GpsJammed","HelmPanelDisconnected"}
 
   D:log(expectedAbnormalReports)
   D:log(namesOfAbnormalReports)
