@@ -844,7 +844,7 @@ end
   -- 6. Accelerated Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-  -- [WORK]
+  -- [FAILS, BUG?]
 function test_CCAcceleretedReportDivisionVariant23_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport1IsSentWithCorrectValues()
   generic_test_StandardReportContent({
     firstReportKey = "StandardReport1",
@@ -876,6 +876,7 @@ end
   -- 1. Properties are set correctly.
   -- 2. Message ConfigChangeReport is received.
   -- 3. Report values are correct.
+  -- [OK]
 function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport1IsSent()
   -- get properties
   local propertiesToChange = {"StandardReport1Interval", "AcceleratedReport1Rate"}
@@ -907,6 +908,7 @@ end
   -- 1. Properties are set correctly.
   -- 2. Message ConfigChangeReport is received.
   -- 3. Report values are correct.
+  -- [OK]
 function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport2IsSent()
 
   -- get properties
@@ -939,6 +941,7 @@ end
   -- 1. Properties are set correctly.
   -- 2. Message ConfigChangeReport is received.
   -- 3. Report values are correct.
+  -- [OK]
 function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport3IsSent()
 
   -- get properties
@@ -975,6 +978,7 @@ end
   -- 3. Message SetConfigReport1 is correctly sent.
   -- 4. Message ConfigChangeReport1 is received.
   -- 5. Report values are correct.
+  -- [OK]
 function test_ConfigChangeReport_WhenSetConfigReport1MessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport1IsSent()
 
   -- get properties
@@ -1010,6 +1014,7 @@ end
   -- 3. Message SetConfigReport2 is correctly sent.
   -- 4. Message ConfigChangeReport2 is received.
   -- 5. Report values are correct.
+  -- [OK]
 function test_ConfigChangeReport_WhenSetConfigReport2MessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport2IsSent()
 
   -- get properties
@@ -1046,6 +1051,7 @@ end
   -- 3. Message SetConfigReport3 is correctly sent.
   -- 4. Message ConfigChangeReport3 is received.
   -- 5. Report values are correct.
+  -- [OK]
 function test_ConfigChangeReport_WhenSetConfigReport3MessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport3IsSent()
 
   -- get properties
@@ -1061,6 +1067,7 @@ function test_ConfigChangeReport_WhenSetConfigReport3MessageIsSentAndConfigPrope
   )
 end
 
+-- [OK]
 function test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebounceTime_ConfigChangeReport1IsNotSent()
 
  generic_test_PropertyChangeDebounceTime(
@@ -1071,6 +1078,7 @@ function test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebo
 
 end
 
+-- [OK]
 function test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebounceTime_ConfigChangeReport2IsNotSent()
 
  generic_test_PropertyChangeDebounceTime(
@@ -1081,6 +1089,7 @@ function test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebo
 
 end
 
+-- [OK]
 function test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebounceTime_ConfigChangeReport3IsNotSent()
 
  generic_test_PropertyChangeDebounceTime(
@@ -1091,6 +1100,7 @@ function test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebo
 
 end
 
+-- [OK]
 function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport1AreCorrect()
   
   generic_TimestampsInConfigChangeReports(
@@ -1101,6 +1111,7 @@ function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAre
 
 end
 
+-- [OK]
 function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport2AreCorrect()
   
   generic_TimestampsInConfigChangeReports(
@@ -1111,7 +1122,8 @@ function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAre
 
 end
 
-function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport3AreCorrect()
+-- []
+function test_GORUNPropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport3AreCorrect()
   
   generic_TimestampsInConfigChangeReports(
    "ConfigChangeReport3",
@@ -1869,8 +1881,6 @@ function generic_test_StandardReportContent(configuration)
     vmsSW:setPropertiesByName(properties)
   end
 
-  if 1 then return end
-
   -- wait for raport to ensure that values will be fetched from current gps changes
   -- and to synchronize report sequence
   D:log("Waiting for first report "..firstReportKey)
@@ -2052,7 +2062,7 @@ function generic_test_ConfigChangeReportConfigChangeReportIsSent(messageKey,prop
   D:log(configChangeMessage)
   if setConfigMsgKey then
     -- source OTA
-    assert_equal("OtaMessage",configChangeMessage[messageKey].ChangeSource,"Wrong source - should be OTA")
+    assert_equal("OTA",configChangeMessage[messageKey].ChangeSource,"Wrong source - should be OTA")
   else
     -- source console
     assert_equal("Console",configChangeMessage[messageKey].ChangeSource,"Wrong source - should be console")
