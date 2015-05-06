@@ -1132,7 +1132,8 @@ function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAre
   )
 end
 
-function test_GORUNConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport1IsSentImmediatelyOnlyOnce()
+-- [OK]
+function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport1IsSentImmediatelyOnlyOnce()
   -- get properties
   local propertiesToChange = {"StandardReport1Interval"}
   local propertiesBeforeChange = vmsSW:getPropertiesByName(propertiesToChange)
@@ -1147,6 +1148,7 @@ function test_GORUNConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServi
   )
 end
 
+-- [OK]
 function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport2IsSentImmediatelyOnlyOnce()
   -- get properties
   local propertiesToChange = {"StandardReport2Interval"}
@@ -1162,6 +1164,7 @@ function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExe
   )
 end
 
+-- [OK]
 function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport3IsSentImmediatelyOnlyOnce()
   -- get properties
   local propertiesToChange = {"StandardReport3Interval"}
@@ -1181,14 +1184,14 @@ end
 -- Test Cases for LOG REPORTS
 -----------------------------------------------------------------------------------------------
 
---- TC checks if Log Report 1 is sent periodically  and its values are correct.
+--- TC checks if Log Report is sent periodically  and its values are correct.
   -- Initial Conditions:
   --
   -- * There should be min 2 log items configured in TC setup.
   --
   -- Steps:
   --
-  -- 1. Properties are set (LogReport1,StandardReport1).
+  -- 1. Properties are set (LogReport,StandardReport1).
   -- 2. Random gps position is requested via GpsFrontend.
   -- 3. Log filter is configured (Log agent)
   -- 4. Waiting for first standard report is performed.
@@ -1205,110 +1208,19 @@ end
   -- 5. Logs are collected.
   -- 6. Logs values are correct.
   -- 7. Spacer times between logs are correct.
-function test_LogReport1_WhenGpsPositionIsSetAndLogFilterEstablished_LogEntriesShouldCollectCorrectDataInCorrectInterval()
+  -- [OK]
+function test_LogReport_WhenGpsPositionIsSetAndLogFilterEstablished_LogEntriesShouldCollectCorrectDataInCorrectInterval()
   local LOG_REPORT_RATE = 4
   local STANDARD_REPORT_INTERVAL = 4
   local LOG_REPORT_INTERVAL = STANDARD_REPORT_INTERVAL / LOG_REPORT_RATE
   local ITEMS_IN_LOG = 2
 
-  local logReportXKey = "LogReport1"
+  local logReportXKey = "LogReport"
   local standardReportXKey = "StandardReport1"
 
   local properties = {
-    LogReport1Rate = LOG_REPORT_RATE,
+    LogReportInterval = LOG_REPORT_RATE,
     StandardReport1Interval = STANDARD_REPORT_INTERVAL
-  }
-
-  local filterTimeout = LOG_REPORT_INTERVAL*60+60
-  local timeForLogging = ITEMS_IN_LOG*LOG_REPORT_INTERVAL*60+20
-  local itemsInLog = ITEMS_IN_LOG
-
-  generic_test_LogReports(logReportXKey, standardReportXKey, properties, filterTimeout, timeForLogging, itemsInLog, LOG_REPORT_INTERVAL)
-end
-
---- TC checks if Log Report 2 is sent periodically  and its values are correct.
-  -- Initial Conditions:
-  --
-  -- * There should be min 2 log items configured in TC setup.
-  --
-  -- Steps:
-  --
-  -- 1. Properties are set (LogReport2,StandardReport2).
-  -- 2. Random gps position is requested via GpsFrontend.
-  -- 3. Log filter is configured (Log agent)
-  -- 4. Waiting for first standard report is performed.
-  -- 5. Delay is performed for collecting logs.
-  -- 6. Logs values are checked.
-  -- 7. Spacer times between logs are checked.
-  --
-  -- Results:
-  --
-  -- 1. Properties are set correctly.
-  -- 2. Gps position is set.
-  -- 3. Log filter is set.
-  -- 4. Timer is synchronized to the first standard report
-  -- 5. Logs are collected.
-  -- 6. Logs values are correct.
-  -- 7. Spacer times between logs are correct.
-function test_LogReport2_WhenGpsPositionIsSetAndLogFilterEstablished_LogEntriesShouldCollectCorrectDataInCorrectInterval()
-  local LOG_REPORT_RATE = 4
-  local STANDARD_REPORT_INTERVAL = 4
-  local LOG_REPORT_INTERVAL = STANDARD_REPORT_INTERVAL / LOG_REPORT_RATE
-  local ITEMS_IN_LOG = 2
-
-  local logReportXKey = "LogReport2"
-  local standardReportXKey = "StandardReport2"
-  local properties = {}
-
-  local properties = {
-    LogReport2Rate = LOG_REPORT_RATE,
-    StandardReport2Interval = STANDARD_REPORT_INTERVAL
-  }
-
-  local filterTimeout = LOG_REPORT_INTERVAL*60+60
-  local timeForLogging = ITEMS_IN_LOG*LOG_REPORT_INTERVAL*60+20
-  local itemsInLog = ITEMS_IN_LOG
-
-  generic_test_LogReports(logReportXKey, standardReportXKey, properties, filterTimeout, timeForLogging, itemsInLog, LOG_REPORT_INTERVAL)
-end
-
---- TC checks if Log Report 3 is sent periodically  and its values are correct.
-  -- Initial Conditions:
-  --
-  -- * There should be min 2 log items configured in TC setup.
-  --
-  -- Steps:
-  --
-  -- 1. Properties are set (LogReport3,StandardReport3).
-  -- 2. Random gps position is requested via GpsFrontend.
-  -- 3. Log filter is configured (Log agent)
-  -- 4. Waiting for first standard report is performed.
-  -- 5. Delay is performed for collecting logs.
-  -- 6. Logs values are checked.
-  -- 7. Spacer times between logs are checked.
-  --
-  -- Results:
-  --
-  -- 1. Properties are set correctly.
-  -- 2. Gps position is set.
-  -- 3. Log filter is set.
-  -- 4. Timer is synchronized to the first standard report
-  -- 5. Logs are collected.
-  -- 6. Logs values are correct.
-  -- 7. Spacer times between logs are correct.
-function test_LogReport3_WhenGpsPositionIsSetAndLogFilterEstablished_LogEntriesShouldCollectCorrectDataInCorrectInterval()
-  local LOG_REPORT_RATE = 4
-  local STANDARD_REPORT_INTERVAL = 4
-  local LOG_REPORT_INTERVAL = STANDARD_REPORT_INTERVAL / LOG_REPORT_RATE
-  local ITEMS_IN_LOG = 2
-
-  local logReportXKey = "LogReport3"
-  local standardReportXKey = "StandardReport3"
-  local properties = {}
-
-  local properties = {
-    LogReport3Rate = LOG_REPORT_RATE,
-    StandardReport3Interval = STANDARD_REPORT_INTERVAL
   }
 
   local filterTimeout = LOG_REPORT_INTERVAL*60+60
