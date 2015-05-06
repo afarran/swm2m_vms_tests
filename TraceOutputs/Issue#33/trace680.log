@@ -1,0 +1,35 @@
+[   161.522:22:ltrc] [18:INFO] sending decoded message from transport=1 to SIN=16
+[   161.565:22:ltrc] [16:INFO] config changes for service 'VMS'
+[   161.593:22:ltrc] [115:INFO] Report 1. Next Std 60s Acc 60s
+[   161.610:22:ltrc] [115:INFO] Report 1. Next Std 60s Acc 60s
+[   168.586:22:ltrc] [115:INFO] Rx[6]: shell<CR>
+[   168.602:22:ltrc] [115:INFO] Tx[38]: Detaching 'mail' for 5 minutes (max)<CR><LF>
+[   168.651:22:ltrc] [22:INFO] Closed rs232main port
+[   168.661:22:ltrc] [115:INFO] Exiting 'mail' mode
+[   168.669:22:ltrc] [26:INFO] attach
+[   168.686:22:ltrc] [22:INFO] Opening rs232main port @ 9600 baud
+[   168.698:22:ltrc] [26:INFO] spawning Shell CLI
+[   168.719:22:ltrc] [26:INFO] CLI Thread: starting
+[   171.890:22:ltrc] [26:INFO] CLI Cmd: [prop get vms]
+[   175.106:22:ltrc] [26:INFO] CLI Cmd: [prop get VMS]
+[   191.869:22:ltrc] [18:INFO] queuing RL msg #8 (SIN=115, bits=110)
+[   192.462:22:ltrc] [18:INFO] sending RL msg #8 trn #1 (SIN=115, bits=110)
+[   198.651:22:ltrc] [18:INFO] completed RL msg #8 (SIN=115), status=Success
+[   221.621:22:ltrc] [115:INFO] Report 1. Next Std 60s Acc 60s
+[   221.818:22:ltrc] [18:INFO] queuing RL msg #9 (SIN=115, bits=152)
+[   221.855:22:ltrc] [18:INFO] sending RL msg #9 trn #1 (SIN=115, bits=152)
+[   228.110:22:ltrc] [18:INFO] completed RL msg #9 (SIN=115), status=Success
+[   281.631:22:ltrc] [115:INFO] Report 1. Next Std 60s Acc 60s
+[   281.757:22:ltrc] [18:INFO] queuing RL msg #10 (SIN=115, bits=152)
+[   281.785:22:ltrc] [18:INFO] sending RL msg #10 trn #1 (SIN=115, bits=152)
+[   287.434:22:ltrc] [18:INFO] completed RL msg #10 (SIN=115), status=Success
+[   341.641:22:ltrc] [115:INFO] Report 1. Next Std 60s Acc 60s
+[   341.768:22:ltrc] [18:INFO] queuing RL msg #11 (SIN=115, bits=152)
+[   341.796:22:ltrc] [18:INFO] sending RL msg #11 trn #1 (SIN=115, bits=152)
+[   347.236:22:ltrc] [18:INFO] completed RL msg #11 (SIN=115), status=Success
+[   401.652:22:ltrc] [115:INFO] Report 1. Next Std 60s Acc 60s
+[   401.779:22:ltrc] [18:INFO] queuing RL msg #12 (SIN=115, bits=152)
+[   401.808:22:ltrc] [18:INFO] sending RL msg #12 trn #1 (SIN=115, bits=152)
+[   408.081:22:ltrc] [18:INFO] completed RL msg #12 (SIN=115), status=Success
+[   455.094:22:ltrc] [18:INFO] sending decoded message from transport=1 to SIN=16
+[   455.121:22:ltrc] [16:INFO] config changes for service 'VMS'
