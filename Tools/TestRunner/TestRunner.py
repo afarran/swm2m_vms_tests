@@ -3,10 +3,14 @@ import subprocess
 import time
 
 class ModemSimulator():
-	def __init__(self, path):
+	def __init__(self, path, com_port):
 		self.path = path
 		self.default_options()
 		self.process = None
+		try:
+			self.com_port = int(com_port)
+		except:
+			self.com_port = None
 		
 	def default_options(self):
 		self.options = {
@@ -30,7 +34,7 @@ class ModemSimulator():
 			#"DisableServices" : "SIN1,SIN2,...", #Disable services (eg: 0-255)
 			"EnableServices" : "115", #Enable services (eg: 16-63,128)
 			"DeviceURL" : "url", #Open device web service (default: http://localhost:8080/DeviceWebService)
-			"RS232MainPort" : "COMx", #Map "rs232main" port to PC serial port
+			#"RS232MainPort" : "COMx", #Map "rs232main" port to PC serial port
 			#"RS232AuxPort" : "COMx", #Map "rs232aux" port to PC serial port
 			#"RS485Port" : "COMx", #Map "rs485" port to PC serial port
 			#"TraceLogFile" : "file", #Open file to log trace output
@@ -45,15 +49,19 @@ class ModemSimulator():
 		
 	def set_instance(self, instance):
 		port = str(8000 + int(instance))
-		comport = "COM" + str(200 + int(instance))
+		
+		
 		new_options = {
 			"GatewayURL" : "http://localhost:" + port,
 			"GpsURL" : "http://localhost:" + port + "/GpsWebService",
 			"DeviceURL" : "http://localhost:" + port + "/DeviceWebService",
 			"TerminalName" : "IDP680-VMS-" + instance,
-			"RS232MainPort" : comport,
+			
 		}
 		self.update_options(new_options)
+		if self.com_port:
+			comport = "COM" + str(self.com_port)
+			self.update_options({"RS232MainPort" : comport,})
 		
 		
 	def update_options(self, new_options):
@@ -91,10 +99,15 @@ class ModemSimulator():
 
 
 class TestRunner():
-	def __init__(self, luapath = "lua.exe", test_output=None):
+	def __init__(self, luapath = "lua.exe", test_output=None, com_port=None):
 		self.luapath = luapath
 		self.default_args()
 		self.test_output = test_output
+		try:
+			self.com_port = int(com_port)
+		except:
+			self.com_port = None
+		
 		try:
 			self.test_env = os.environ["WORKSPACE"]
 		except:
@@ -107,9 +120,10 @@ class TestRunner():
 	
 	def set_instance(self, instance):
 		port = str(8000 + int(instance))
-		comport = "COM" + str(200 + int(instance) + 1)
 		self.args["p"] = port
-		self.args["com"] = comport
+		if self.com_port:
+			comport = "COM" + str(self.com_port)
+			self.args["com"] = comport
 	
 	def _build_item(self, key, value):
 		if value==None:
@@ -144,9 +158,18 @@ argparser.add_argument("--instance", help="Specifies instance number of simulato
 argparser.add_argument("--suite", help="Specifies a test suite to run")
 argparser.add_argument("--test", help="Specifies a test name to run")
 argparser.add_argument("--testoutput", help="Specifies a test output file")
+argparser.add_argument("--comportA", help="Specifies com port. E.g 200 - ", default=None)
+argparser.add_argument("--comportB", help="Specifies com port. E.g 200 - ", default=None)
 
 args = argparser.parse_args()
-modemsim = ModemSimulator(args.modemsim)
+
+if (args.comportA and args.comportB) or (args.comportA == args.comportB):
+	pass
+else:
+	args.comportA = None
+	args.comportB = None
+
+modemsim = ModemSimulator(args.modemsim, com_port=args.comportB)
 modemsim.update_options(
 	{
 		"DefaultDirectory" : args.firmwaredir,
@@ -156,7 +179,7 @@ modemsim.update_options(
 modemsim.set_instance(args.instance)
 modemsim.run()
 time.sleep(5)
-test_runner = TestRunner()
+test_runner = TestRunner(test_output=args.testoutput, com_port=args.comportA)
 test_runner.set_instance(args.instance)
 
 test_runner.args["s"] = args.suite
