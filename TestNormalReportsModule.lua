@@ -1162,7 +1162,7 @@ end
 -----------------------------------------------------------------------------------------------
 
 -- [REVIEW]
-function test_DefaultValues_WhenPropertiesAreRequestedAfterPropertiesReset_CorrectDefaultValuesAreGiven()
+function test_GORUNDefaultValues_WhenPropertiesAreRequestedAfterPropertiesReset_CorrectDefaultValuesAreGiven()
   -- reset of properties
   systemSW:resetProperties({vmsSW.sin})
 
@@ -1178,9 +1178,9 @@ function test_DefaultValues_WhenPropertiesAreRequestedAfterPropertiesReset_Corre
   }
 
   local propertiesValues = {
-    StandardReport1Interval = 0,
+    StandardReport1Interval = 60,
     AcceleratedReport1Rate = 1,
-    LogReportInterval = 1,
+    LogReportInterval = 15,
     StandardReport2Interval = 0,
     AcceleratedReport2Rate = 1,
     StandardReport3Interval = 0,
