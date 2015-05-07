@@ -156,7 +156,7 @@ modemsim.update_options(
 modemsim.set_instance(args.instance)
 modemsim.run()
 time.sleep(5)
-test_runner = TestRunner()
+test_runner = TestRunner(test_output=args.testoutput)
 test_runner.set_instance(args.instance)
 
 test_runner.args["s"] = args.suite
