@@ -1161,8 +1161,8 @@ end
 -- DEFAULT VALUES tests
 -----------------------------------------------------------------------------------------------
 
--- [REVIEW]
-function test_GORUNDefaultValues_WhenPropertiesAreRequestedAfterPropertiesReset_CorrectDefaultValuesAreGiven()
+-- [OK]
+function test_DefaultValues_WhenPropertiesAreRequestedAfterPropertiesReset_CorrectDefaultValuesAreGiven()
   -- reset of properties
   systemSW:resetProperties({vmsSW.sin})
 
@@ -1200,7 +1200,7 @@ end
 -- The Report Capability shall ensure that periodic reports do not drift over time.
 -----------------------------------------------------------------------------------------------
 
-
+--[OK]
 function test_DriftOverTime_Standard1AndAccelerated()
   generic_test_DriftOverTime_StandardAndAccelerated(
     {StandardReport1Interval=4, AcceleratedReport1Rate=4},
@@ -1213,7 +1213,8 @@ function test_DriftOverTime_Standard1AndAccelerated()
   )
 end
 
-function test_DriftOverTime_Standard2AndAccelerated()
+-- [OK]
+function test_GORUNDriftOverTime_Standard2AndAccelerated()
   generic_test_DriftOverTime_StandardAndAccelerated(
     {StandardReport2Interval=4, AcceleratedReport2Rate=4},
     "ConfigChangeReport2",
@@ -1225,6 +1226,7 @@ function test_DriftOverTime_Standard2AndAccelerated()
   )
 end
 
+-- [OK]
 function test_DriftOverTime_Standard3AndAccelerated()
   generic_test_DriftOverTime_StandardAndAccelerated(
     {StandardReport3Interval=4, AcceleratedReport3Rate=4},
