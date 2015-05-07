@@ -2744,7 +2744,7 @@ end
 
 --- TC checks if when InterfaceUnit is connected to IDP terminal for time above InterfaceUnitDisconnectedEndDebounceTime HelmPannelDisconneted is sent and terminal
   -- leaves InterfaceUnitDisconnected state
-function test_InterfaceUnitDisconnected_WhenInterfaceUnitIsConnectedForTimeAboveInterfaceUnitDisconnectedEndDebounceTime_InterfaceUnitDisconnectedAbnormalReportIsSent()
+function test_GORUNInterfaceUnitDisconnected_WhenInterfaceUnitIsConnectedForTimeAboveInterfaceUnitDisconnectedEndDebounceTime_InterfaceUnitDisconnectedAbnormalReportIsSent()
 
   local HELM_PANEL_DISCONNECTED_START_DEBOUNCE_TIME = 1
   local HELM_PANEL_DISCONNECTED_END_DEBOUNCE_TIME = 30
