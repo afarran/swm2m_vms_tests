@@ -88,21 +88,21 @@ end
   --
   -- 1. Set StandardReport1Interval, StandardReport2Interval and StandardReport3Interval to 1 minute
   -- 2. Set MinStandardReportLedFlashTime to 0
-  -- 3. Wait for longer than one minute to make sure a StandardReport is sent
+  -- 3. Wait for standard report OTA message
   -- 4. Read the state of TerminalConnected LED
   --
   -- Results:
   --
   -- 1. StandardReport1Interval, StandardReport2Interval and StandardReport3Interval set to 1 minute
   -- 2. MinStandardReportLedFlashTime set to 0
-  -- 3. StandardReport is sent after 1 minute
-  -- 4. TerminalConnected LED is not flashing
+  -- 3. StandardReport is sent 
+  -- 4. TerminalConnected LED is not flashing (slow)
 Annotations:register([[
 @dependOn(helmPanel,isReady)
 @method(test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetTo0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsNotFlashing)
 @module(TestHelmPanelModule)
 ]])
-function test_GORUNTerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetTo0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsNotFlashing()
+function test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetTo0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsNotFlashing()
 
   vmsSW:setPropertiesByName({StandardReport1Interval = 1,
                              StandardReport2Interval = 0,
@@ -110,6 +110,7 @@ function test_GORUNTerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetTo
                              MinStandardReportLedFlashTime = 0}     -- 0 is for feature disabled
   )
 
+  gateway.setHighWaterMark() -- to get the newest messages
   -- wait for report
   vmsSW:waitForMessagesByName(
     {'StandardReport1'},
@@ -122,7 +123,7 @@ function test_GORUNTerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetTo
 end
 
 
---- TC checks if TerminalConnected LED is flashing fast when standard reports are being sent
+--- TC checks if TerminalConnected LED is flashing slow when standard reports are being sent
   -- Initial Conditions:
   --
   -- * Helm Panel service installed on terminal
@@ -130,7 +131,7 @@ end
   --
   -- 1. Set StandardReport1Interval to 1 minute
   -- 2. Set MinStandardReportLedFlashTime to some value (less than StandardReport1Interval)
-  -- 3. Wait for longer than one minute to make sure a StandardReport is sent
+  -- 3. Wait for standard report OTA message
   -- 4. Read the state of the TerminalConnected LED for time longer than MIN_STANDARD_REPORT_FLASH_TIME
   -- 5. Check if TerminalConnected LED was flashing for MIN_STANDARD_REPORT_FLASH_TIME period after sending StandardReport
   --
@@ -138,7 +139,7 @@ end
   --
   -- 1. StandardReport1Interval set to 1 minute
   -- 2. MinStandardReportLedFlashTime set to value above 0 but below StandardReport1Interval
-  -- 3. StandardReport is sent after 1 minute
+  -- 3. StandardReport is sent
   -- 4. State of TerminalConnected LED is read periodically every couple of seconds and timestamps when LED is flashing fast are saved
   -- 5. Assertion is performed checking if LED was flashing for correct time after sending standard report
 Annotations:register([[
@@ -146,43 +147,35 @@ Annotations:register([[
 @method(test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsFlashingForMinStandardReportLedFlashTime)
 @module(TestHelmPanelModule)
 ]])
-function test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsFlashingForMinStandardReportLedFlashTime()
+function test_GORUNTerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsFlashingForMinStandardReportLedFlashTime()
 
   -- *** Setup
   local ledFlashingStateTrueTable = {}
   local STANDARD_REPORT_1_INTERVAL = 1
-  local MIN_STANDARD_REPORT_FLASH_TIME = 30
+  local FLASH_TIME = 20
 
   vmsSW:setPropertiesByName({StandardReport1Interval = STANDARD_REPORT_1_INTERVAL,
-                             MinStandardReportLedFlashTime = MIN_STANDARD_REPORT_FLASH_TIME}     -- feature enabled
+                             StandardReport2Interval = 0,
+                             StandardReport3Interval = 0, 
+                             MinStandardReportLedFlashTime = FLASH_TIME}     -- feature enabled
   )
-  -- *** Execute
-  local standardReportEnabledStartTime = os.time()
-  D:log(standardReportEnabledStartTime)
-  local currentTime = 0
 
   gateway.setHighWaterMark() -- to get the newest messages
-  framework.delay(STANDARD_REPORT_1_INTERVAL*60 - 10)
 
-  currentTime = os.time()
-
-  while currentTime < standardReportEnabledStartTime + STANDARD_REPORT_1_INTERVAL*60 + MIN_STANDARD_REPORT_FLASH_TIME + 10  do
-      currentTime = os.time()
-      if(helmPanel:isConnectLedFlashingFast()) then
-        currentTime = os.time()
-        ledFlashingStateTrueTable[#ledFlashingStateTrueTable + 1] = currentTime
-      end
-  end
-
-  D:log(next(ledFlashingStateTrueTable))
-  assert_not_nil(next(ledFlashingStateTrueTable),"LED was not in flashing fast state at when terminal was sending StandardReports" )
-  D:log(ledFlashingStateTrueTable)
-  local lastElementIndex = table.getn(ledFlashingStateTrueTable)
-  assert_equal(ledFlashingStateTrueTable[lastElementIndex] - ledFlashingStateTrueTable[1],
-  MIN_STANDARD_REPORT_FLASH_TIME,
-  8,
-  "IDP Connected LED was flashing for incorrect period of time when MIN_STANDARD_REPORT_FLASH_TIME is set above zero"
+   -- wait for report
+  local message = vmsSW:waitForMessagesByName(
+    {'StandardReport1'},
+    120
   )
+
+  local startTime = os.time()
+  local currentTime = os.time()
+
+  while currentTime - startTime  < FLASH_TIME   do
+      assert_true(helmPanel:isConnectLedFlashingSlow(), "Slow flash has been active for improper period of time")
+      framework.delay(1)
+      local currentTime = os.time()
+  end
 
 end
 
@@ -256,6 +249,7 @@ function test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetToValue
   )
 
 end
+
 
 
 --- TC checks if TerminalConnected LED is flashing slowly when an incoming email is waiting to be read
@@ -478,3 +472,51 @@ function test_SatelliteLED_WhenIDPSignalIsNotAvailableOrIDPSignalIsGood_Satellit
   assert_true(ledState, "Satellite LED is not ON when IDP link is OK")
 
 end
+-----------------------------------------------------------------------------------------------
+-- Test Cases - TerminalConnected LED
+-----------------------------------------------------------------------------------------------
+--- TC checks if TerminalConnected LED is ON when IDP terminal is connected to Helm Panel
+  -- Initial Conditions:
+  --
+  -- * Helm Panel service installed on terminal
+  -- Steps:
+  --
+  -- 1. Simulate IDP terminal connected to Helm Panel
+  -- 2. Read the state of TerminalConnected LED
+  -- 3. Simulate IDP terminal disconnected from HelmPanel
+  -- 4. Read the state of TerminalConnected LED
+  --
+  -- Results:
+  --
+  -- 1. Terminal is connected to Helm Panel
+  -- 2. TerminalConnected LED is ON
+  -- 3. Terminal disconnected from Helm Panel
+  -- 4. TerminalConnected LED is OFF
+Annotations:register([[
+@dependOn(helmPanel,isReady)
+@method(test_TerminalConnectedLED_WhenTerminalIsConnectedOrDisconnectedFromHelmPanel_TerminalConnectedLEDIsOnOrOffAccordingToConnection)
+@module(TestHelmPanelModule)
+]])
+function test_TerminalConnectedLED_WhenTerminalIsConnectedOrDisconnectedFromHelmPanel_TerminalConnectedLEDIsOnOrOffAccordingToConnection()
+
+  -- Terminal is connected to helm panel
+  helmPanel:setConnected("true")
+  framework.delay(3)  -- wait until led state is changed
+
+  -- read TerminalConnected led when connection is estabilished
+  local ledState = helmPanel:isConnectLedOn()
+  assert_true(ledState, "Terminal Connected LED is not ON when terminal is connected to helm panel")
+  D:log(ledState, "TerminalConnected LED state for terminal connected to helm panel")
+
+  -- Helm Panel disconnected from terminal
+  helmPanel:setConnected("false")
+
+  framework.delay(3)  -- wait until led state is changed
+
+  -- check LED again after switch
+  ledState = helmPanel:isConnectLedOn()
+  assert_false(ledState, "Terminal Connected LED is not OFF when terminal is disconnected from helm panel")
+  D:log(ledState,"TerminalConnected LED state for terminal disconnected from helm panel")
+
+end
+
