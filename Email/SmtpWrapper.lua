@@ -26,7 +26,7 @@ SmtpWrapper = {}
   function SmtpWrapper:start()
     local response = self:request("")
     if not string.match(response, ".*mail>") then
-      
+      self:request("mail")
     else
       self:execute("smtp")
     end
