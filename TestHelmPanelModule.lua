@@ -48,7 +48,7 @@ function setup()
                                GpsBlockedSendReport = false,
                                IdpBlockedSendReport = false,
                                PowerDisconnectedSendReport = false,
-                               HelmPanelDisconnectedSendReport = false,
+                               InterfaceUnitDisconnectedSendReport = false,
                             }
   )
 
@@ -80,54 +80,6 @@ function teardown()
 
 end
 
------------------------------------------------------------------------------------------------
--- Test Cases - TerminalConnected LED
------------------------------------------------------------------------------------------------
---- TC checks if TerminalConnected LED is ON when IDP terminal is connected to Helm Panel
-  -- Initial Conditions:
-  --
-  -- * Helm Panel service installed on terminal
-  -- Steps:
-  --
-  -- 1. Simulate IDP terminal connected to Helm Panel
-  -- 2. Read the state of TerminalConnected LED
-  -- 3. Simulate IDP terminal disconnected from HelmPanel
-  -- 4. Read the state of TerminalConnected LED
-  --
-  -- Results:
-  --
-  -- 1. Terminal is connected to Helm Panel
-  -- 2. TerminalConnected LED is ON
-  -- 3. Terminal disconnected from Helm Panel
-  -- 4. TerminalConnected LED is OFF
-Annotations:register([[
-@dependOn(helmPanel,isReady)
-@method(test_TerminalConnectedLED_WhenTerminalIsConnectedOrDisconnectedFromHelmPanel_TerminalConnectedLEDIsOnOrOffAccordingToConnection)
-@module(TestHelmPanelModule)
-]])
-function test_TerminalConnectedLED_WhenTerminalIsConnectedOrDisconnectedFromHelmPanel_TerminalConnectedLEDIsOnOrOffAccordingToConnection()
-
-  -- Terminal is connected to helm panel
-  helmPanel:setConnected("true")
-  framework.delay(3)  -- wait until led state is changed
-
-  -- read TerminalConnected led when connection is estabilished
-  local ledState = helmPanel:isConnectLedOn()
-  assert_true(ledState, "Terminal Connected LED is not ON when terminal is connected to helm panel")
-  D:log(ledState, "TerminalConnected LED state for terminal connected to helm panel")
-
-  -- Helm Panel disconnected from terminal
-  helmPanel:setConnected("false")
-
-  framework.delay(3)  -- wait until led state is changed
-
-  -- check LED again after switch
-  ledState = helmPanel:isConnectLedOn()
-  assert_false(ledState, "Terminal Connected LED is not OFF when terminal is disconnected from helm panel")
-  D:log(ledState,"TerminalConnected LED state for terminal disconnected from helm panel")
-
-end
-
 --- TC checks if TerminalConnected LED is not flashing when feature is disabled (MinStandardReportLedFlashTime is set to 0)
   -- Initial Conditions:
   --
@@ -150,21 +102,21 @@ Annotations:register([[
 @method(test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetTo0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsNotFlashing)
 @module(TestHelmPanelModule)
 ]])
-function test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetTo0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsNotFlashing()
-
-  -- *** Setup
-  local STANDARD_REPORT_1_INTERVAL = 1
-  local STANDARD_REPORT_2_INTERVAL = 1
-  local STANDARD_REPORT_3_INTERVAL = 1
+function test_GORUNTerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetTo0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsNotFlashing()
 
   vmsSW:setPropertiesByName({StandardReport1Interval = 1,
-                             StandardReport2Interval = 1,
-                             StandardReport3Interval = 1,
+                             StandardReport2Interval = 0,
+                             StandardReport3Interval = 0,
                              MinStandardReportLedFlashTime = 0}     -- 0 is for feature disabled
   )
-  -- *** Execute
-  framework.delay(65)
-  assert_false(helmPanel:isConnectLedFlashingFast(), "Terminal Connected LED is flashing when feature is disabled")
+
+  -- wait for report
+  vmsSW:waitForMessagesByName(
+    {'StandardReport1'},
+    120
+  )
+
+  -- chack LED state
   assert_false(helmPanel:isConnectLedFlashingSlow(), "Terminal Connected LED is flashing when feature is disabled")
 
 end
