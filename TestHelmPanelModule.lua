@@ -104,19 +104,19 @@ Annotations:register([[
 ]])
 function test_GORUNTerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetTo0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsNotFlashing()
 
-  -- *** Setup
-  local STANDARD_REPORT_1_INTERVAL = 1
-  local STANDARD_REPORT_2_INTERVAL = 1
-  local STANDARD_REPORT_3_INTERVAL = 1
-
   vmsSW:setPropertiesByName({StandardReport1Interval = 1,
-                             StandardReport2Interval = 1,
-                             StandardReport3Interval = 1,
+                             StandardReport2Interval = 0,
+                             StandardReport3Interval = 0,
                              MinStandardReportLedFlashTime = 0}     -- 0 is for feature disabled
   )
-  -- *** Execute
-  framework.delay(65)
-  assert_false(helmPanel:isConnectLedFlashingFast(), "Terminal Connected LED is flashing when feature is disabled")
+
+  -- wait for report
+  vmsSW:waitForMessagesByName(
+    {'StandardReport1'},
+    120
+  )
+
+  -- chack LED state
   assert_false(helmPanel:isConnectLedFlashingSlow(), "Terminal Connected LED is flashing when feature is disabled")
 
 end
