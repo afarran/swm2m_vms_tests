@@ -25,7 +25,7 @@ VmsServiceWrapper = {}
       { pin=31, name="GpsJammedStartDebounceTime", ptype="unsignedint"},
       { pin=32, name="GpsJammedEndDebounceTime", ptype="unsignedint"},
       { pin=33, name="GpsJammedState", ptype="boolean"},
-      { pin=34, name="GpsBlockedSendReport", ptype="unsignedint"},
+      { pin=34, name="GpsBlockedSendReport", ptype="boolean"},
       { pin=35, name="GpsBlockedStartDebounceTime", ptype="unsignedint"},
       { pin=36, name="GpsBlockedEndDebounceTime", ptype="unsignedint"},
       { pin=37, name="GpsBlockedState", ptype="boolean"},

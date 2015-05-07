@@ -775,86 +775,6 @@ function test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardRepo
   )
 end
 
---- TC checks if AcceleratedReport 1 is sent periodically and its values are correct (setProperties used for setup)
---- 4/3 Accelerated Report Interval (80secs)
---- NOT TOTAL DIVISION of Accelerated Report Interval
-  -- Initial Conditions:
-  --
-  -- * StandardReport1Interval is set to 4
-  -- * AcceleratedReport1Rate is set to 3 - this will trigger accelerated report.
-  --
-  -- Steps:
-  --
-  -- 1. Properties setup is done (via setProperties).
-  -- 2. Current gps position is requested.
-  -- 3. Current gps position is checked.
-  -- 4. Waiting for Standard Report is performed.
-  -- 5. New gps position is prepared and set.
-  -- 6. Waiting for AcceleratedReport is performed.
-  -- 7. Difference between reports is calculated.
-  -- 8. Values in report are checked.
-  --
-  -- Results:
-  --
-  -- 1. Properties are set correctly.
-  -- 2. Current gps position is fetched.
-  -- 3. Current gps position is correct.
-  -- 4. Timer is synchronized to the first standard report.
-  -- 5. New gps position is correctly set.
-  -- 6. Accelerated Report is delivered.
-  -- 7. Difference between reports is correct.
-  -- 8. Values in report are correct.
-  -- [OK]
-function test_CCAcceleretedReportDivisionVariant43_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport1IsSentWithCorrectValues()
-  generic_test_StandardReportContent({
-    firstReportKey = "StandardReport1",
-    reportKey = "AcceleratedReport1",
-    properties = {StandardReport1Interval=4, AcceleratedReport1Rate=3},
-    firstReportInterval = 4,
-    reportInterval = 4/3
-  })
-end
-
---- TC checks if AcceleratedReport 1 is sent periodically and its values are correct (setProperties used for setup)
---- 2/3 Accelerated Report Interval (40secs)
---- NOT TOTAL DIVISION of Accelerated Report Interval
-  -- Initial Conditions:
-  --
-  -- * StandardReport1Interval is set to 2
-  -- * AcceleratedReport1Rate is set to 3 - this will trigger accelerated report.
-  --
-  -- Steps:
-  --
-  -- 1. Properties setup is done (via setProperties).
-  -- 2. Current gps position is requested.
-  -- 3. Current gps position is checked.
-  -- 4. Waiting for Standard Report is performed.
-  -- 5. New gps position is prepared and set.
-  -- 6. Waiting for AcceleratedReport is performed.
-  -- 7. Difference between reports is calculated.
-  -- 8. Values in report are checked.
-  --
-  -- Results:
-  --
-  -- 1. Properties are set correctly.
-  -- 2. Current gps position is fetched.
-  -- 3. Current gps position is correct.
-  -- 4. Timer is synchronized to the first standard report.
-  -- 5. New gps position is correctly set.
-  -- 6. Accelerated Report is delivered.
-  -- 7. Difference between reports is correct.
-  -- 8. Values in report are correct.
-  -- [FAILS, BUG?]
-function test_CCAcceleretedReportDivisionVariant23_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport1IsSentWithCorrectValues()
-  generic_test_StandardReportContent({
-    firstReportKey = "StandardReport1",
-    reportKey = "AcceleratedReport1",
-    properties = {StandardReport1Interval=2, AcceleratedReport1Rate=3},
-    firstReportInterval = 2,
-    reportInterval = 2/3
-  })
-end
-
 -----------------------------------------------------------------------------------------------
 -- Test Cases for CONFIG CHANGE REPORTS
 -----------------------------------------------------------------------------------------------
@@ -1132,7 +1052,8 @@ function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAre
   )
 end
 
-function test_GORUNConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport1IsSentImmediatelyOnlyOnce()
+-- [OK]
+function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport1IsSentImmediatelyOnlyOnce()
   -- get properties
   local propertiesToChange = {"StandardReport1Interval"}
   local propertiesBeforeChange = vmsSW:getPropertiesByName(propertiesToChange)
@@ -1147,6 +1068,7 @@ function test_GORUNConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServi
   )
 end
 
+-- [OK]
 function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport2IsSentImmediatelyOnlyOnce()
   -- get properties
   local propertiesToChange = {"StandardReport2Interval"}
@@ -1162,6 +1084,7 @@ function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExe
   )
 end
 
+-- [OK]
 function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport3IsSentImmediatelyOnlyOnce()
   -- get properties
   local propertiesToChange = {"StandardReport3Interval"}
@@ -1181,14 +1104,14 @@ end
 -- Test Cases for LOG REPORTS
 -----------------------------------------------------------------------------------------------
 
---- TC checks if Log Report 1 is sent periodically  and its values are correct.
+--- TC checks if Log Report is sent periodically  and its values are correct.
   -- Initial Conditions:
   --
   -- * There should be min 2 log items configured in TC setup.
   --
   -- Steps:
   --
-  -- 1. Properties are set (LogReport1,StandardReport1).
+  -- 1. Properties are set (LogReport,StandardReport1).
   -- 2. Random gps position is requested via GpsFrontend.
   -- 3. Log filter is configured (Log agent)
   -- 4. Waiting for first standard report is performed.
@@ -1205,169 +1128,41 @@ end
   -- 5. Logs are collected.
   -- 6. Logs values are correct.
   -- 7. Spacer times between logs are correct.
-function test_LogReport1_WhenGpsPositionIsSetAndLogFilterEstablished_LogEntriesShouldCollectCorrectDataInCorrectInterval()
-  local LOG_REPORT_RATE = 4
-  local STANDARD_REPORT_INTERVAL = 4
-  local LOG_REPORT_INTERVAL = STANDARD_REPORT_INTERVAL / LOG_REPORT_RATE
-  local ITEMS_IN_LOG = 2
+  -- [OK]
+function test_LogReport_WhenGpsPositionIsSetAndLogFilterEstablished_LogEntriesShouldCollectCorrectDataInCorrectInterval()
 
-  local logReportXKey = "LogReport1"
-  local standardReportXKey = "StandardReport1"
+  local logReportXKey = "LogReport"
 
   local properties = {
-    LogReport1Rate = LOG_REPORT_RATE,
-    StandardReport1Interval = STANDARD_REPORT_INTERVAL
+    LogReportInterval = 1,
   }
 
-  local filterTimeout = LOG_REPORT_INTERVAL*60+60
-  local timeForLogging = ITEMS_IN_LOG*LOG_REPORT_INTERVAL*60+20
-  local itemsInLog = ITEMS_IN_LOG
+  local timeForLogging = 2*60+20
+  local itemsInLog = 2
 
-  generic_test_LogReports(logReportXKey, standardReportXKey, properties, filterTimeout, timeForLogging, itemsInLog, LOG_REPORT_INTERVAL)
+  generic_test_LogReports(logReportXKey, properties, timeForLogging, itemsInLog)
 end
 
---- TC checks if Log Report 2 is sent periodically  and its values are correct.
-  -- Initial Conditions:
-  --
-  -- * There should be min 2 log items configured in TC setup.
-  --
-  -- Steps:
-  --
-  -- 1. Properties are set (LogReport2,StandardReport2).
-  -- 2. Random gps position is requested via GpsFrontend.
-  -- 3. Log filter is configured (Log agent)
-  -- 4. Waiting for first standard report is performed.
-  -- 5. Delay is performed for collecting logs.
-  -- 6. Logs values are checked.
-  -- 7. Spacer times between logs are checked.
-  --
-  -- Results:
-  --
-  -- 1. Properties are set correctly.
-  -- 2. Gps position is set.
-  -- 3. Log filter is set.
-  -- 4. Timer is synchronized to the first standard report
-  -- 5. Logs are collected.
-  -- 6. Logs values are correct.
-  -- 7. Spacer times between logs are correct.
-function test_LogReport2_WhenGpsPositionIsSetAndLogFilterEstablished_LogEntriesShouldCollectCorrectDataInCorrectInterval()
-  local LOG_REPORT_RATE = 4
-  local STANDARD_REPORT_INTERVAL = 4
-  local LOG_REPORT_INTERVAL = STANDARD_REPORT_INTERVAL / LOG_REPORT_RATE
-  local ITEMS_IN_LOG = 2
+-- [OK]
+function test_LogReportNegative_WhenLogReportIsDisabledAndLogFilterEstablished_LogEntriesShouldNotCollectData()
 
-  local logReportXKey = "LogReport2"
-  local standardReportXKey = "StandardReport2"
-  local properties = {}
+  local logReportXKey = "LogReport"
 
   local properties = {
-    LogReport2Rate = LOG_REPORT_RATE,
-    StandardReport2Interval = STANDARD_REPORT_INTERVAL
+    LogReportInterval = 1,
   }
 
-  local filterTimeout = LOG_REPORT_INTERVAL*60+60
-  local timeForLogging = ITEMS_IN_LOG*LOG_REPORT_INTERVAL*60+20
-  local itemsInLog = ITEMS_IN_LOG
+  local timeForLogging = 30
 
-  generic_test_LogReports(logReportXKey, standardReportXKey, properties, filterTimeout, timeForLogging, itemsInLog, LOG_REPORT_INTERVAL)
-end
-
---- TC checks if Log Report 3 is sent periodically  and its values are correct.
-  -- Initial Conditions:
-  --
-  -- * There should be min 2 log items configured in TC setup.
-  --
-  -- Steps:
-  --
-  -- 1. Properties are set (LogReport3,StandardReport3).
-  -- 2. Random gps position is requested via GpsFrontend.
-  -- 3. Log filter is configured (Log agent)
-  -- 4. Waiting for first standard report is performed.
-  -- 5. Delay is performed for collecting logs.
-  -- 6. Logs values are checked.
-  -- 7. Spacer times between logs are checked.
-  --
-  -- Results:
-  --
-  -- 1. Properties are set correctly.
-  -- 2. Gps position is set.
-  -- 3. Log filter is set.
-  -- 4. Timer is synchronized to the first standard report
-  -- 5. Logs are collected.
-  -- 6. Logs values are correct.
-  -- 7. Spacer times between logs are correct.
-function test_LogReport3_WhenGpsPositionIsSetAndLogFilterEstablished_LogEntriesShouldCollectCorrectDataInCorrectInterval()
-  local LOG_REPORT_RATE = 4
-  local STANDARD_REPORT_INTERVAL = 4
-  local LOG_REPORT_INTERVAL = STANDARD_REPORT_INTERVAL / LOG_REPORT_RATE
-  local ITEMS_IN_LOG = 2
-
-  local logReportXKey = "LogReport3"
-  local standardReportXKey = "StandardReport3"
-  local properties = {}
-
-  local properties = {
-    LogReport3Rate = LOG_REPORT_RATE,
-    StandardReport3Interval = STANDARD_REPORT_INTERVAL
-  }
-
-  local filterTimeout = LOG_REPORT_INTERVAL*60+60
-  local timeForLogging = ITEMS_IN_LOG*LOG_REPORT_INTERVAL*60+20
-  local itemsInLog = ITEMS_IN_LOG
-
-  generic_test_LogReports(logReportXKey, standardReportXKey, properties, filterTimeout, timeForLogging, itemsInLog, LOG_REPORT_INTERVAL)
-end
-
-function test_LogReportNegative_WhenLogReport1IsDisabledAndLogFilterEstablished_LogEntriesShouldNotCollectData()
-
-  local logReportXKey = "LogReport1"
-  local standardReportXKey = "StandardReport1"
-
-  local properties = {
-    LogReport1Rate = 1,
-    StandardReport1Interval = 1
-  }
-
-  local timeForLogging = 60*2
-
-  generic_test_LogReportsNegative(logReportXKey, standardReportXKey, properties, timeForLogging)
-end
-
-function test_LogReportNegative_WhenLogReport2IsDisabledAndLogFilterEstablished_LogEntriesShouldNotCollectData()
-
-  local logReportXKey = "LogReport2"
-  local standardReportXKey = "StandardReport2"
-
-  local properties = {
-    LogReport2Rate = 1,
-    StandardReport2Interval = 1
-  }
-
-  local timeForLogging = 60*2
-
-  generic_test_LogReportsNegative(logReportXKey, standardReportXKey, properties, timeForLogging)
-end
-
-function test_LogReportNegative_WhenLogReports3IsDisabledAndLogFilterEstablished_LogEntriesShouldNotCollectData()
-
-  local logReportXKey = "LogReport3"
-  local standardReportXKey = "StandardReport3"
-
-  local properties = {
-    LogReport3Rate = 1,
-    StandardReport3Interval = 1
-  }
-
-  local timeForLogging = 60*2
-
-  generic_test_LogReportsNegative(logReportXKey, standardReportXKey, properties, timeForLogging)
+  generic_test_LogReportsNegative(logReportXKey, properties, timeForLogging)
 end
 
 -----------------------------------------------------------------------------------------------
 -- DEFAULT VALUES tests
 -----------------------------------------------------------------------------------------------
 
-function test_DefaultValues_WhenPropertiesAreRequestedAfterPropertiesReset_CorrectDefaultValuesAreGiven()
+-- [REVIEW]
+function test_GORUNDefaultValues_WhenPropertiesAreRequestedAfterPropertiesReset_CorrectDefaultValuesAreGiven()
   -- reset of properties
   systemSW:resetProperties({vmsSW.sin})
 
@@ -1375,25 +1170,21 @@ function test_DefaultValues_WhenPropertiesAreRequestedAfterPropertiesReset_Corre
   local propertiesToCheck = {
     "StandardReport1Interval",
     "AcceleratedReport1Rate",
-    "LogReport1Rate",
+    "LogReportInterval",
     "StandardReport2Interval",
     "AcceleratedReport2Rate",
-    "LogReport2Rate",
     "StandardReport3Interval",
     "AcceleratedReport3Rate",
-    "LogReport3Rate",
   }
 
   local propertiesValues = {
     StandardReport1Interval = 60,
     AcceleratedReport1Rate = 1,
-    LogReport1Rate = 1,
-    StandardReport2Interval = 60,
+    LogReportInterval = 15,
+    StandardReport2Interval = 0,
     AcceleratedReport2Rate = 1,
-    LogReport2Rate = 1,
-    StandardReport3Interval = 60,
+    StandardReport3Interval = 0,
     AcceleratedReport3Rate = 1,
-    LogReport3Rate = 1
   }
 
   local propertiesFetched = vmsSW:getPropertiesByName(propertiesToCheck)
@@ -1732,13 +1523,15 @@ function generic_test_PollRequestWithOthers(pollRequestMsgKey, pollResponseMsgKe
 
 end
 
-function generic_test_LogReportsNegative(logReportXKey, standardReportXKey, properties, timeForLogging)
+function generic_test_LogReportsNegative(logReportXKey, properties, timeForLogging)
 
   -- set properties for log interval calculation (StandardReportXInterval, LogReportXRate)
   vmsSW:setPropertiesByName(properties)
 
-  --synchronize first standard report
-  vmsSW:waitForMessagesByName(standardReportXKey)
+  --synchronize first log report
+  vmsSW:waitForMessagesByName(logReportXKey)
+
+  framework.delay(5)
 
   --set log filter
   logSW:setLogFilter(
@@ -1750,10 +1543,10 @@ function generic_test_LogReportsNegative(logReportXKey, standardReportXKey, prop
   )
 
   -- wait for log reports
-  framework.delay(2*timeForLogging)
+  framework.delay(timeForLogging)
 
   -- get reports from log
-  logEntries = logSW:getLogEntries(itemsInLog)
+  local logEntries = logSW:getLogEntries(itemsInLog)
 
   -- it must be loop here because operand '#' doesn't count dictionary items :(
   local counter = 0
@@ -1767,7 +1560,9 @@ function generic_test_LogReportsNegative(logReportXKey, standardReportXKey, prop
 end
 
 -- generic logic for Log Reports TCs
-function generic_test_LogReports(logReportXKey, standardReportXKey, properties, filterTimeout, timeForLogging, itemsInLog, logReportInterval)
+function generic_test_LogReports(logReportXKey, properties, timeForLogging, itemsInLog)
+
+  local filterTimeout = 10
 
   -- prerequisites
   assert_lt(3,itemsInLog,0,"There should be min 2 log items! Configure TC!")
@@ -1777,27 +1572,29 @@ function generic_test_LogReports(logReportXKey, standardReportXKey, properties, 
 
   -- set position for reports
   gpsPosition = GPS:setRandom()
+  
+  --synchronize first standard report
+  vmsSW:waitForMessagesByName(logReportXKey)
+
 
   --set log filter
   logSW:setLogFilter(
     vmsSW.sin, {
     vmsSW:getMinFrom(logReportXKey)},
     os.time()+5,
-    os.time()+filterTimeout,
+    os.time()+timeForLogging+filterTimeout,
     "True"
   )
 
-  --synchronize first standard report
-  vmsSW:waitForMessagesByName(standardReportXKey)
-
   -- wait for log reports
-  framework.delay(timeForLogging)
+  framework.delay(timeForLogging+filterTimeout)
 
   -- get reports from log
-  logEntries = logSW:getLogEntries(itemsInLog)
+  local logEntries = logSW:getLogEntries(itemsInLog)
 
+  local counter = 0
   -- check if data is correct
-  for i=1, #logEntries do
+  for i,_ in pairs(logEntries) do
     D:log(logEntries[i].log,"entry "..i)
     -- latitude
     assert_equal(
@@ -1843,13 +1640,15 @@ function generic_test_LogReports(logReportXKey, standardReportXKey, properties, 
       -- check if timeout between log entries is correct
       local timeDiff = tonumber(logEntries[i-1].log.Timestamp) - tonumber(logEntries[i].log.Timestamp)
       assert_equal(
-        logReportInterval*60,
+        properties.LogReportInterval*60,
         timeDiff,
         5,
-        "Log Report Interval should be "..(logReportInterval*60)
+        "Log Report Interval should be "..(properties.LogReportInterval*60)
       )
     end
+    counter = counter + 1 
   end
+  assert_equal(itemsInLog,counter,0,"Wrong number of items in log!")
 
 end
 
