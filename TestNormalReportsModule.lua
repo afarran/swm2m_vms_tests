@@ -99,7 +99,7 @@ Annotations:register([[
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
   -- [OK]
-function test_ATStandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues()
+function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues()
   generic_test_StandardReportContent({
     firstReportKey = "StandardReport1",
     reportKey = "StandardReport1",
@@ -142,7 +142,7 @@ Annotations:register([[
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
   -- [OK]
-function test_ATStandardReport_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues()
+function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues()
   generic_test_StandardReportContent({
     firstReportKey = "StandardReport2",
     reportKey = "StandardReport2",
@@ -187,7 +187,7 @@ Annotations:register([[
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
   -- [OK]
-function test_ATStandardReport_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues()
+function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues()
   generic_test_StandardReportContent({
     firstReportKey = "StandardReport3",
     reportKey = "StandardReport3",
@@ -225,7 +225,7 @@ end
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
   -- [OK]
-function test_TTStandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport1MessageIsSent_StandardReport1IsSentPeriodicallyWithCorrectValues()
+function test_StandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport1MessageIsSent_StandardReport1IsSentPeriodicallyWithCorrectValues()
   generic_test_StandardReportContent({
     firstReportKey = "StandardReport1",
     reportKey ="StandardReport1",
@@ -269,7 +269,7 @@ end
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
   -- [OK]
-function test_TTStandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport2MessageIsSent_StandardReport2IsSentPeriodicallyWithCorrectValues()
+function test_StandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport2MessageIsSent_StandardReport2IsSentPeriodicallyWithCorrectValues()
    generic_test_StandardReportContent({
     firstReportKey = "StandardReport2",
     reportKey ="StandardReport2",
@@ -313,7 +313,7 @@ end
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
   -- [OK]
-function test_TTStandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport3MessageIsSent_StandardReport3IsSentPeriodicallyWithCorrectValues()
+function test_StandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport3MessageIsSent_StandardReport3IsSentPeriodicallyWithCorrectValues()
 
   generic_test_StandardReportContent({
     firstReportKey = "StandardReport3",
@@ -442,7 +442,7 @@ end
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
   -- [OK]
-function test_CCStandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues()
+function test_StandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues()
 
   -- intervals and rates setup
   -- intervals in minutes
@@ -497,7 +497,7 @@ end
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
   -- [OK]
-function test_CCStandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues()
+function test_StandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues()
 
   -- intervals and rates setup
   -- intervals in minutes
@@ -552,7 +552,7 @@ end
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
   -- [OK]
-function test_CCStandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues()
+function test_StandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues()
 
   -- intervals and rates setup
   -- intervals in minutes
@@ -608,7 +608,7 @@ end
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
   -- [OK]
-function test_CCAcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport1IsSentWithCorrectValues()
+function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport1IsSentWithCorrectValues()
   generic_test_StandardReportContent({
     firstReportKey = "StandardReport1",
     reportKey = "AcceleratedReport1",
@@ -646,7 +646,7 @@ end
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
   -- [OK]
-function test_XCCAcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport2IsSentWithCorrectValues()
+function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport2IsSentWithCorrectValues()
   generic_test_StandardReportContent({
     firstReportKey = "StandardReport2",
     reportKey = "AcceleratedReport2",
@@ -684,7 +684,7 @@ end
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
   -- [OK]
-function test_CCAcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport3IsSentWithCorrectValues()
+function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport3IsSentWithCorrectValues()
   generic_test_StandardReportContent({
     firstReportKey = "StandardReport3",
     reportKey = "AcceleratedReport3",
@@ -1214,7 +1214,7 @@ function test_DriftOverTime_Standard1AndAccelerated()
 end
 
 -- [OK]
-function test_GORUNDriftOverTime_Standard2AndAccelerated()
+function test_DriftOverTime_Standard2AndAccelerated()
   generic_test_DriftOverTime_StandardAndAccelerated(
     {StandardReport2Interval=4, AcceleratedReport2Rate=4},
     "ConfigChangeReport2",
@@ -1340,6 +1340,7 @@ end
 -- POLL REQUEST / RESPONSE Test cases
 -----------------------------------------------------------------------------------------------
 
+-- [OK]
 function test_PollRequest_WhenPollRequest1MessageIsSend_CorrectPollResponse1MessageIsReceived()
   generic_test_PollRequest(
     "PollRequest1", 
@@ -1347,6 +1348,7 @@ function test_PollRequest_WhenPollRequest1MessageIsSend_CorrectPollResponse1Mess
   )
 end
 
+-- [OK]
 function test_PollRequest_WhenPollRequest2MessageIsSend_CorrectPollResponse2MessageIsReceived()
   generic_test_PollRequest(
     "PollRequest2", 
@@ -1354,6 +1356,7 @@ function test_PollRequest_WhenPollRequest2MessageIsSend_CorrectPollResponse2Mess
   )
 end
 
+-- [OK]
 function test_PollRequest_WhenPollRequest3MessageIsSend_CorrectPollResponse3MessageIsReceived()
   generic_test_PollRequest(
     "PollRequest3", 
@@ -1361,6 +1364,7 @@ function test_PollRequest_WhenPollRequest3MessageIsSend_CorrectPollResponse3Mess
   )
 end
 
+-- [OK]
 function test_PollRequest_WhenPollRequest1IsRequestedDuringStandardAndAcceleratedReportsCycle_AcceleratedIntervalIsCorrect()
 
    generic_test_PollRequestWithOthers(
@@ -1378,6 +1382,7 @@ function test_PollRequest_WhenPollRequest1IsRequestedDuringStandardAndAccelerate
 
 end
 
+-- [OK]
 function test_PollRequest_WhenPollRequest2IsRequestedDuringStandardAndAcceleratedReportsCycle_AcceleratedIntervalIsCorrect()
 
    generic_test_PollRequestWithOthers(
@@ -1395,6 +1400,7 @@ function test_PollRequest_WhenPollRequest2IsRequestedDuringStandardAndAccelerate
 
 end
 
+-- [OK]
 function test_PollRequest_WhenPollRequest3IsRequestedDuringStandardAndAcceleratedReportsCycle_AcceleratedIntervalIsCorrect()
 
    generic_test_PollRequestWithOthers(
