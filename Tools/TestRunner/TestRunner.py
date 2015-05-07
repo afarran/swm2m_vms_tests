@@ -60,7 +60,7 @@ class ModemSimulator():
 		}
 		self.update_options(new_options)
 		if self.com_port:
-			comport = "COM" + str(self.com_port + int(instance))
+			comport = "COM" + str(self.com_port)
 			self.update_options({"RS232MainPort" : comport,})
 		
 		
@@ -122,7 +122,7 @@ class TestRunner():
 		port = str(8000 + int(instance))
 		self.args["p"] = port
 		if self.com_port:
-			comport = "COM" + str(self.com_port + int(instance) + 1)
+			comport = "COM" + str(self.com_port)
 			self.args["com"] = comport
 	
 	def _build_item(self, key, value):
@@ -158,10 +158,18 @@ argparser.add_argument("--instance", help="Specifies instance number of simulato
 argparser.add_argument("--suite", help="Specifies a test suite to run")
 argparser.add_argument("--test", help="Specifies a test name to run")
 argparser.add_argument("--testoutput", help="Specifies a test output file")
-argparser.add_argument("--comport", help="Specifies com port. E.g 200 - com 200 and 201 will be used", default=None)
+argparser.add_argument("--comportA", help="Specifies com port. E.g 200 - ", default=None)
+argparser.add_argument("--comportB", help="Specifies com port. E.g 200 - ", default=None)
 
 args = argparser.parse_args()
-modemsim = ModemSimulator(args.modemsim, com_port=args.comport)
+
+if (args.comportA and args.comportB) or (args.comportA == args.comportB):
+	pass
+else:
+	args.comportA = None
+	args.comportB = None
+
+modemsim = ModemSimulator(args.modemsim, com_port=args.comportB)
 modemsim.update_options(
 	{
 		"DefaultDirectory" : args.firmwaredir,
@@ -171,7 +179,7 @@ modemsim.update_options(
 modemsim.set_instance(args.instance)
 modemsim.run()
 time.sleep(5)
-test_runner = TestRunner(test_output=args.testoutput, com_port=args.comport)
+test_runner = TestRunner(test_output=args.testoutput, com_port=args.comportA)
 test_runner.set_instance(args.instance)
 
 test_runner.args["s"] = args.suite
