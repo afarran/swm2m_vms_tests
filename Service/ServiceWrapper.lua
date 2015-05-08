@@ -2,6 +2,7 @@ cfg, framework, gateway, lsf, device, gps = require "TestFramework"()
 require "UtilLibs/Text"
 require "UtilLibs/Array"
 require "UtilLibs/Number"
+require "Service/Message"
 
 
 ServiceWrapper = {}
@@ -252,7 +253,7 @@ ServiceWrapper = {}
         if msg then   --TODO: why would this function be called with no msg?
           for idx, min in pairs(expectedMins) do
             if msg.Payload and min == msg.Payload.MIN and msg.SIN == self.sin and msgList[min] == nil then
-              msgList[self:getMinFromName(min)] = framework.collapseMessage(msg).Payload
+              msgList[self:getMinFromName(min)] = Message(framework.collapseMessage(msg).Payload)
               msgList.count = msgList.count + 1
               break
             end

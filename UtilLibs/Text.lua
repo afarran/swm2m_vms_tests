@@ -20,3 +20,15 @@ string.split = function(str, separator)
   end
   return result
 end
+
+string.safe = function(str)
+  if str == nil then
+    return "nil"
+  elseif str == true then
+    return "true"
+  elseif str == false then
+    return "false"
+  else
+    return str
+  end
+end

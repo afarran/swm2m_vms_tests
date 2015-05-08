@@ -27,66 +27,65 @@ function teardown()
   gateway.setHighWaterMark()
   -- if some data has to be restored then handle it
   if restoreData then
-    if not restoreData.multiple then
-      
-      
-      if restoreData.restartVMS then
-        systemSW:restartService(vmsSW.sin)
-        vmsSW:waitForMessagesByName({"Version"})
-      end
-      if restoreData.restartFramework then
-        systemSW:restartFramework()
-        vmsSW:waitForMessagesByName({"Version"})
-      end
-      
-      restoreData = nil
-      
-    else
-      for idx, data in pairs(restoreData.data) do
-        local writeOK, writeMsg = filesystemSW:write(data.path, data.offset or 0, data.data, nil, true)
-        assert_true(writeOK, "Failed to restore file data in teardown! Path: " .. data.path)
-      end
+    for idx, data in pairs(restoreData.data) do
+      local writeOK, writeMsg = filesystemSW:write(data.path, data.offset or 0, data.data, nil, true)
+      assert_true(writeOK, "Failed to restore file data in teardown! Path: " .. data.path)
+    end
+    if restoreData.restartVMS then
+      systemSW:restartService(vmsSW.sin)
+      vmsSW:waitForMessagesByName({"Version"})
+    end
+    if restoreData.restartFramework then
       systemSW:restartFramework()
       vmsSW:waitForMessagesByName({"Version"})
-      restoreData = nil
     end
+    restoreData = nil
   end
+end
+
+local function queueRestoreData(restore)
+  if not restoreData then 
+    restoreData = {}
+    restoreData.data = {}
+  end
+  
+  table.insert(restoreData.data, restore)
 end
 
 -------------------------
 -- Test Cases
 -------------------------
 function test_CommonReport_WhenGetVersionMessageReceived_SendVersionInfoMessage()
-  vmsSW:sendMessageByName("GetVersion")
-  local receivedMessages = vmsSW:waitForMessagesByName({"Version"})
-  
-  local versionMessage = receivedMessages.Version
+  local receivedMessages = vmsSW:requestMessageByName("GetVersion", nil, "Version")
   
   --check if message was received
+  local versionMessage = receivedMessages.Version
   assert_not_nil(versionMessage, "Version message not received")
   
-  --check if message contains agent version
-  assert_not_nil(versionMessage.VmsAgent, "Version message does not contain VmsAgent (version) field")
+  versionMessage:_verify({
+        IdpPackage = {assert_not_nil},
+        VmsAgent = {assert_not_nil},
+        InterfaceUnit = {assert_not_nil},
+        SourceCodeHash = {assert_nil},
+        PropDefHash = {assert_not_nil},
+        MessageDefHash = {assert_not_nil},
+        -- old fields are sent only at service start, not for GetVersion request.
+        OldIdpPackage = {assert_nil},
+        OldVmsAgent = {assert_nil},
+        OldInterfaceUnit = {assert_nil},
+        OldSourceCodeHash = {assert_nil},
+        OldPropDefHash = {assert_nil},
+        OldMessageDefHash = {assert_nil},
+      })
   
-  --check if message contains 
-  assert_not_nil(versionMessage.IdpPackage, "Version message does not contain IdpPackage (LSF version) field")
-  
-  --check if message contains source code hash
-  assert_not_nil(versionMessage.SourceCodeHash, "Version message does not contain SourceCodeHash (Source verification) field")
-
 end
 
-function test_CommonReport_WhenSourceCodeHashChanged_SendVersionInfoMessage()
-  
+---
+-- reads first two characters for source file
+-- replaces them with ":)"
+-- queues to restore the data in teardown
+local function changeSourceCode()
   local sourceCodeFile = "/act/svc/VMS/main.lua"
-  vmsSW:sendMessageByName("GetVersion")
-  local receivedMessages = vmsSW:waitForMessagesByName({"Version"})
-  local versionMessage = receivedMessages.Version
-  assert_not_nil(versionMessage, "Can't get current VMS version, Version message not received when GetVersion message was sent")
-  assert_not_nil(versionMessage.VmsAgent, "Version message does not containt VmsAgent field!")
-  
-  local currentHash = versionMessage.SourceCodeHash
-  
   -- read two chars
   local readData, readResult = filesystemSW:read(sourceCodeFile, 0, 2)
   
@@ -100,28 +99,41 @@ function test_CommonReport_WhenSourceCodeHashChanged_SendVersionInfoMessage()
     readResult.result, 
     "Error during write into service version file"
   )
-  restoreData = {}
-  restoreData.path = sourceCodeFile
-  restoreData.data = readResult.data
-  restoreData.offset = 0
+  queueRestoreData(
+    { path = sourceCodeFile,
+      data = readResult.data,
+      offset = 0,
+    })
   restoreData.restartVMS = true
-  
   local writeOK, writeResult = filesystemSW:write(sourceCodeFile, 0, ":)")
-  
   assert_true(writeOK, "Writing to source code file failed")
+end
+
+function test_CommonReport_WhenSourceCodeHashChanged_SendVersionInfoMessage()
+  
+  local receivedMessages = vmsSW:requestMessageByName("GetVersion", nil, "Version")
+  local versionMessage = receivedMessages.Version
+  
+  assert_not_nil(versionMessage, "Can't get current VMS version, Version message not received when GetVersion message was sent")
+  versionMessage:_verify({
+      VmsAgent = {assert_not_nil},
+      SourceCodeHash = {assert_not_nil},
+    })
+  
+  local currentHash = versionMessage.SourceCodeHash
+  
+  changeSourceCode()
   vmsSW:setHighWaterMark()
   --restart VMS service
   systemSW:restartService(vmsSW.sin)
   
   --wait for Version message
   receivedMessages = vmsSW:waitForMessagesByName({"Version"})
-  
   --verify Version message
-  versionMessage = receivedMessages.Version
-  assert_not_nil(
-    versionMessage, 
-    "Version message not received"
-  )
+  local afterChangeVersionMessage = receivedMessages.Version
+  assert_not_nil(afterChangeVersionMessage, "After Change Version message not received")
+  
+  versionMessage:_equal(afterChangeVersionMessage)
   
   --check if message contains agent version
   assert_not_nil(
@@ -387,14 +399,14 @@ function test_CommonReport_WhenHelmPanelVersionHasChanged_VersionReportIsSent()
   local receivedMessages = vmsSW:requestMessageByName("GetVersion", nil, "Version")
   local versionMessage = receivedMessages.Version
   assert_not_nil(versionMessage, "Can't get current VMS version, Version message not received when GetVersion message was sent")
-  assert_not_nil(versionMessage.HelmPanelInterface, "Version message does not containt HelmPanelInterface field!")
+  assert_not_nil(versionMessage.InterfaceUnit, "Version message does not containt InterfaceUnit field!")
   
-  local currentHelmPanelInterface = versionMessage.HelmPanelInterface
+  local currentInterfaceUnit = versionMessage.InterfaceUnit
   local currentPropDefHash = versionMessage.PropDefHash
   local currentMessageDefHash = versionMessage.MessageDefHash
   local currentVmsAgent = versionMessage.VmsAgent
   
-  changeHelmPanelVersion(currentHelmPanelInterface)
+  changeHelmPanelVersion(currentInterfaceUnit)
   
   vmsSW:setHighWaterMark()
   systemSW:restartFramework()
@@ -402,10 +414,14 @@ function test_CommonReport_WhenHelmPanelVersionHasChanged_VersionReportIsSent()
   versionMessage = receivedMessages.Version
   
   assert_not_nil(versionMessage, "Version message not received afer VMS version changed")
-  assert_not_equal(currentHelmPanelInterface, versionMessage.HelmPanelInterface, "Reported VMS agent version is incorrect")
+  assert_not_equal(currentInterfaceUnit, versionMessage.InterfaceUnit, "Reported Unibox agent version is incorrect")
+  assert_equal(currentInterfaceUnit, versionMessage.OldInterfaceUnit, "Reported Unibox agent old version is incorrect")
   assert_equal(currentPropDefHash, versionMessage.PropDefHash, "PropDefHash is expected to be different than original one!")
   assert_equal(currentMessageDefHash, versionMessage.MessageDefHash, "Message definition has not changed but MessageDefHash is different!")
   assert_equal(currentVmsAgent, versionMessage.VmsAgent, "Vms agent has not changed but VmsAgent field is different!")
+  
+  -- Check if version message contains incorrect old values
+  assert_nil(versionMessage.OldIdpPackage, "Version message not received afer VMS version changed")
   
 end
 
