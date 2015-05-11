@@ -30,7 +30,7 @@ class ModemSimulator():
 			"TerminalName" : "TERMINAL", #Start Terminal Simulator (new terminal created if not found)
 			"TerminalType" : "IDP680", #|IDP800|IDP780    #(Default: IDP680) Type of terminal to find or create
 			#"TerminalGuid" : "guid",                   #Start Terminal Simulator (terminal with GUID must exist)
-			"PackageFiles" : "IDP-680_800_Desktop_v5.0.10.9363,VMS-Dbg-v1_4_1,Lib-Dbg-v1_0_0,UniboxInOutV2.2.5",         #Load packages into Terminal Simulator
+			"PackageFiles" : "IDP-680_800_Desktop_v5.0.10.9363,VMS-Dbg-v1_4_1,Lib-Dbg-v1_0_0,UniboxInOutV2.3.2",         #Load packages into Terminal Simulator
 			#"DisableServices" : "SIN1,SIN2,...", #Disable services (eg: 0-255)
 			"EnableServices" : "1-255", #Enable services (eg: 16-63,128)
 			"DeviceURL" : "url", #Open device web service (default: http://localhost:8080/DeviceWebService)
