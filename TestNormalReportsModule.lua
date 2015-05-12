@@ -1375,10 +1375,10 @@ end
 -- GENERIC LOGIC for test cases
 -----------------------------------------------------------------------------------------------
 
--- Generic function which can be configured in multiple ways.
+--- Generic function which can be configured in multiple ways.
 -- See the usage in TCs above.
 --
--- Checks if sending PollRequest message in the middle of other reports timeout does not affect it.
+-- It checks if sending PollRequest message in the middle of other reports timeout does not affect it.
 -- 
 -- Steps:
 --   1. Configuration is prepared (TC method passes it).
@@ -1425,6 +1425,20 @@ function generic_test_PollRequestWithOthers(pollRequestMsgKey, pollResponseMsgKe
 
 end
 
+--- Generic function which can be configured in multiple ways.
+-- See the usage in TCs above.
+--
+-- It checks if Log Reports are properly disabled.
+--
+-- Steps:
+--   1. Configuration is prepared (TC method passes it) 
+--   3. StandardReportXInterval and LogReportXRate are set in a way which disables Log Reports.
+--   2. Waiting for first Standard Report is performed.
+--   3. Log filter is configured.
+--   4. Waiting for log reports is performed.
+--   5. Log entries are fetched from log service (log service wrapper used).
+--   6. Log entries count is calculated.
+--   7. Log entries count should be equal zero.
 function generic_test_LogReportsNegative(logReportXKey, properties, timeForLogging)
 
   -- set properties for log interval calculation (StandardReportXInterval, LogReportXRate)
