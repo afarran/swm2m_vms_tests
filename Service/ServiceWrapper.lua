@@ -229,8 +229,9 @@ ServiceWrapper = {}
   function ServiceWrapper:requestMessageByName(request_message_name, fields, response_message_names, timeout)
     local previous_watermark = self:getHighWaterMark()
     
-    self:sendMessageByName(request_message_name, fields)
     self:setHighWaterMark()
+    self:sendMessageByName(request_message_name, fields)
+    
     local response
     if type(response_message_names) ~= "table" then
       response_message_names = {response_message_names}
