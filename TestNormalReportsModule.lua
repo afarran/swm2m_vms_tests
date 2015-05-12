@@ -1327,6 +1327,17 @@ end
 -- GENERIC LOGIC for test cases
 -----------------------------------------------------------------------------------------------
 
+-- Generic function which can be configured in multiple ways.
+-- See the usage in TCs above.
+--
+-- Checks if sending PollRequest message in the middle of other reports timeout does not affect it.
+-- 
+-- Steps:
+--   1. Configuration is prepared (TC method passes it).
+--   2. Waiting for first standard report is performed.
+--   3. In the middle of accelerated report interval the PollRequest message is sent.
+--   4. Waiting for accelerated report is performed.
+--   5. Correctness of timeouts is checked.
 function generic_test_PollRequestWithOthers(pollRequestMsgKey, pollResponseMsgKey, standardReportKey, acceleratedReportKey, properties, standardInterval, acceleratedInterval)
 
   -- setup standard and accelerated report intervals
