@@ -1,4 +1,4 @@
------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------
 -- VMS Normal Reporting test module
 -----------------------------------------------------------------------------------------------
 -- Contains VMS reporting features (Standard, Accelerated , Log , ConfigChange reports)
@@ -1239,102 +1239,6 @@ function test_DriftOverTime_Standard3AndAccelerated()
   )
 end
 
-function generic_test_DriftOverTime_StandardAndAccelerated(properties,configChangeMsgKey,SRKey,ARKey,SRInterval,ARInterval,ARItems)
-
-  local tolerance = 40 --secs
-  local lastTimestamp = 0
-  local dataToAnalysis = {}
-
-  -- setup for : StandardReportXInterval and AcceleratedReportXRate
-  vmsSW:setPropertiesByName(properties)
-
-  vmsSW:waitForMessagesByName(
-    {configChangeMsgKey},
-    30
-  )
-
-  D:log("Waiting for first standard report "..SRKey)
-  local message = vmsSW:waitForMessagesByName(
-    {SRKey},
-    SRInterval*60 + 2 * tolerance
-  )
-  assert_not_nil(
-    message,
-    "First Standard Report not received"
-  )
-  assert_not_nil(
-    message[SRKey],
-    "First Standard Report not received!"
-  )
-  assert_not_nil(
-    message[SRKey].Timestamp,
-    "Timestamp in Standard Report not received! "..SRKey
-  )
-
-  lastTimestamp = tonumber(message[SRKey].Timestamp)
-
-  for i=1,ARItems do
-    -- simulate system overload to trigger drift
-    if i == 1 then
-      D:log("Simulating system overload..")
-      local overloadThread = coroutine.create(
-        function()
-          shellSW:eval("local stime = os.time();while 1 do if os.time() - stime > 90 then break end end")
-        end
-      )
-      coroutine.resume(overloadThread)
-    end
-    D:log("Waiting for accelerated report "..ARKey)
-    local message = vmsSW:waitForMessagesByName(
-      {ARKey},
-      ARInterval*60 + tolerance
-    )
-    assert_not_nil(
-      message,
-      "Accelerated Report not received! Number in sequence: "..i
-    )
-    assert_not_nil(
-      message[ARKey],
-      "Accelerated Report not received! Number in sequence: "..i
-    )
-    assert_not_nil(
-      message[ARKey].Timestamp,
-      "Timestamp in Accelerated Report not received!"
-    )
-    local diff = tonumber(message[ARKey].Timestamp) - lastTimestamp
-    D:log(diff,"time-diff")
-    lastTimestamp = tonumber(message[ARKey].Timestamp)
-    table.insert(dataToAnalysis,diff)
-  end
-
-  D:log("Waiting for last standard report "..SRKey)
-  local message = vmsSW:waitForMessagesByName(
-    {SRKey},
-    ARInterval*60 + tolerance -- last report with AR interval!
-  )
-  assert_not_nil(
-    message,
-    "Last Standard Report not received"
-  )
-  assert_not_nil(
-    message[SRKey],
-    "Lat Standard Report not received!"
-  )
-  assert_not_nil(
-    message[SRKey].Timestamp,
-    "Timestamp in Standard Report not received!"
-  )
-  local diff = tonumber(message[SRKey].Timestamp) - lastTimestamp
-
-  table.insert(dataToAnalysis,diff)
-  D:log(dataToAnalysis,"final-data")
-
-  assert_true(
-    driftAnalyse:perform(dataToAnalysis,60,2,-2),
-    "Found inconsistency in scheduling reports! Reports: "..SRKey .. " / "..ARKey
-  )
-
-end
 
 -----------------------------------------------------------------------------------------------
 -- POLL REQUEST / RESPONSE Test cases
@@ -1418,80 +1322,22 @@ function test_PollRequest_WhenPollRequest3IsRequestedDuringStandardAndAccelerate
 
 end
 
-function generic_test_PollRequest(pollRequestMsgKey, pollResponseMsgKey)
-
-  -- new position setup
-  local newPosition = {
-    latitude  = 1,
-    longitude = 1,
-    speed =  0 -- km/h
-  }
-  GPS:set(newPosition)
-
-  -- sent poll message
-  vmsSW:sendMessageByName(pollRequestMsgKey)
-
-  -- wait for reponse
-  local reportMessage = vmsSW:waitForMessagesByName(pollResponseMsgKey)
-  assert_not_nil(reportMessage,"There is no poll response report message!")
-  assert_not_nil(reportMessage[pollResponseMsgKey],"There is no poll response report message!")
-
-  -- check values of the response
-  assert_equal(
-    GPS:denormalize(newPosition.latitude),
-    tonumber(reportMessage[pollResponseMsgKey].Latitude),
-    "Wrong latitude in " .. pollResponseMsgKey
-  )
-  assert_equal(
-    GPS:denormalize(newPosition.longitude),
-    tonumber(reportMessage[pollResponseMsgKey].Longitude),
-    "Wrong longitude in " .. pollResponseMsgKey
-  )
-  assert_equal(
-    GPS:denormalizeSpeed(newPosition.speed),
-    tonumber(reportMessage[pollResponseMsgKey].Speed),
-    1,
-    "Wrong speed in " .. pollResponseMsgKey
-  )
-
-  D:log(reportMessage[pollResponseMsgKey].Course)
-  assert_equal(
-    361,
-    tonumber(reportMessage[pollResponseMsgKey].Course),
-    0,
-    "Wrong course in report " .. pollResponseMsgKey
-  )
-
-  -- some of values are being checked just for their existance
-  -- TODO_not_implemented: add checking values of following fields when test framework functions will be implemented
-  assert_not_nil(
-    reportMessage[pollResponseMsgKey].Timestamp,
-    "No timestamp in " .. pollResponseMsgKey
-  )
-  assert_not_nil(
-    reportMessage[pollResponseMsgKey].Hdop,
-    "No Hdop in " .. pollResponseMsgKey
-  )
-  assert_not_nil(
-    reportMessage[pollResponseMsgKey].NumSats,
-    "No NumSats in " .. pollResponseMsgKey
-  )
-  assert_not_nil(
-    reportMessage[pollResponseMsgKey].IdpCnr,
-    "No IdpCnr in " .. pollResponseMsgKey
-  )
-  assert_not_nil(
-    reportMessage[pollResponseMsgKey].StatusBitmap,
-    "No StatusBitmap in " .. pollResponseMsgKey
-  )
-
-
-end
 
 -----------------------------------------------------------------------------------------------
 -- GENERIC LOGIC for test cases
 -----------------------------------------------------------------------------------------------
 
+-- Generic function which can be configured in multiple ways.
+-- See the usage in TCs above.
+--
+-- Checks if sending PollRequest message in the middle of other reports timeout does not affect it.
+-- 
+-- Steps:
+--   1. Configuration is prepared (TC method passes it).
+--   2. Waiting for first standard report is performed.
+--   3. In the middle of accelerated report interval the PollRequest message is sent.
+--   4. Waiting for accelerated report is performed.
+--   5. Correctness of timeouts is checked.
 function generic_test_PollRequestWithOthers(pollRequestMsgKey, pollResponseMsgKey, standardReportKey, acceleratedReportKey, properties, standardInterval, acceleratedInterval)
 
   -- setup standard and accelerated report intervals
@@ -2087,3 +1933,171 @@ function generic_setConfigViaShell(messageKey,propertiesToChange,propertiesBefor
   assert_not_nil(configChangeMessage[messageKey].Timestamp, "No timestamp in message.")
 
 end
+
+function generic_test_DriftOverTime_StandardAndAccelerated(properties,configChangeMsgKey,SRKey,ARKey,SRInterval,ARInterval,ARItems)
+
+  local tolerance = 40 --secs
+  local lastTimestamp = 0
+  local dataToAnalysis = {}
+
+  -- setup for : StandardReportXInterval and AcceleratedReportXRate
+  vmsSW:setPropertiesByName(properties)
+
+  vmsSW:waitForMessagesByName(
+    {configChangeMsgKey},
+    30
+  )
+
+  D:log("Waiting for first standard report "..SRKey)
+  local message = vmsSW:waitForMessagesByName(
+    {SRKey},
+    SRInterval*60 + 2 * tolerance
+  )
+  assert_not_nil(
+    message,
+    "First Standard Report not received"
+  )
+  assert_not_nil(
+    message[SRKey],
+    "First Standard Report not received!"
+  )
+  assert_not_nil(
+    message[SRKey].Timestamp,
+    "Timestamp in Standard Report not received! "..SRKey
+  )
+
+  lastTimestamp = tonumber(message[SRKey].Timestamp)
+
+  for i=1,ARItems do
+    -- simulate system overload to trigger drift
+    if i == 1 then
+      D:log("Simulating system overload..")
+      local overloadThread = coroutine.create(
+        function()
+          shellSW:eval("local stime = os.time();while 1 do if os.time() - stime > 90 then break end end")
+        end
+      )
+      coroutine.resume(overloadThread)
+    end
+    D:log("Waiting for accelerated report "..ARKey)
+    local message = vmsSW:waitForMessagesByName(
+      {ARKey},
+      ARInterval*60 + tolerance
+    )
+    assert_not_nil(
+      message,
+      "Accelerated Report not received! Number in sequence: "..i
+    )
+    assert_not_nil(
+      message[ARKey],
+      "Accelerated Report not received! Number in sequence: "..i
+    )
+    assert_not_nil(
+      message[ARKey].Timestamp,
+      "Timestamp in Accelerated Report not received!"
+    )
+    local diff = tonumber(message[ARKey].Timestamp) - lastTimestamp
+    D:log(diff,"time-diff")
+    lastTimestamp = tonumber(message[ARKey].Timestamp)
+    table.insert(dataToAnalysis,diff)
+  end
+
+  D:log("Waiting for last standard report "..SRKey)
+  local message = vmsSW:waitForMessagesByName(
+    {SRKey},
+    ARInterval*60 + tolerance -- last report with AR interval!
+  )
+  assert_not_nil(
+    message,
+    "Last Standard Report not received"
+  )
+  assert_not_nil(
+    message[SRKey],
+    "Lat Standard Report not received!"
+  )
+  assert_not_nil(
+    message[SRKey].Timestamp,
+    "Timestamp in Standard Report not received!"
+  )
+  local diff = tonumber(message[SRKey].Timestamp) - lastTimestamp
+
+  table.insert(dataToAnalysis,diff)
+  D:log(dataToAnalysis,"final-data")
+
+  assert_true(
+    driftAnalyse:perform(dataToAnalysis,60,2,-2),
+    "Found inconsistency in scheduling reports! Reports: "..SRKey .. " / "..ARKey
+  )
+
+end
+
+function generic_test_PollRequest(pollRequestMsgKey, pollResponseMsgKey)
+
+  -- new position setup
+  local newPosition = {
+    latitude  = 1,
+    longitude = 1,
+    speed =  0 -- km/h
+  }
+  GPS:set(newPosition)
+
+  -- sent poll message
+  vmsSW:sendMessageByName(pollRequestMsgKey)
+
+  -- wait for reponse
+  local reportMessage = vmsSW:waitForMessagesByName(pollResponseMsgKey)
+  assert_not_nil(reportMessage,"There is no poll response report message!")
+  assert_not_nil(reportMessage[pollResponseMsgKey],"There is no poll response report message!")
+
+  -- check values of the response
+  assert_equal(
+    GPS:denormalize(newPosition.latitude),
+    tonumber(reportMessage[pollResponseMsgKey].Latitude),
+    "Wrong latitude in " .. pollResponseMsgKey
+  )
+  assert_equal(
+    GPS:denormalize(newPosition.longitude),
+    tonumber(reportMessage[pollResponseMsgKey].Longitude),
+    "Wrong longitude in " .. pollResponseMsgKey
+  )
+  assert_equal(
+    GPS:denormalizeSpeed(newPosition.speed),
+    tonumber(reportMessage[pollResponseMsgKey].Speed),
+    1,
+    "Wrong speed in " .. pollResponseMsgKey
+  )
+
+  D:log(reportMessage[pollResponseMsgKey].Course)
+  assert_equal(
+    361,
+    tonumber(reportMessage[pollResponseMsgKey].Course),
+    0,
+    "Wrong course in report " .. pollResponseMsgKey
+  )
+
+  -- some of values are being checked just for their existance
+  -- TODO_not_implemented: add checking values of following fields when test framework functions will be implemented
+  assert_not_nil(
+    reportMessage[pollResponseMsgKey].Timestamp,
+    "No timestamp in " .. pollResponseMsgKey
+  )
+  assert_not_nil(
+    reportMessage[pollResponseMsgKey].Hdop,
+    "No Hdop in " .. pollResponseMsgKey
+  )
+  assert_not_nil(
+    reportMessage[pollResponseMsgKey].NumSats,
+    "No NumSats in " .. pollResponseMsgKey
+  )
+  assert_not_nil(
+    reportMessage[pollResponseMsgKey].IdpCnr,
+    "No IdpCnr in " .. pollResponseMsgKey
+  )
+  assert_not_nil(
+    reportMessage[pollResponseMsgKey].StatusBitmap,
+    "No StatusBitmap in " .. pollResponseMsgKey
+  )
+
+end
+
+
