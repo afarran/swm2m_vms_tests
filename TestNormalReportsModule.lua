@@ -1268,7 +1268,23 @@ function test_PollRequest_WhenPollRequest3MessageIsSend_CorrectPollResponse3Mess
   )
 end
 
--- [OK]
+--- TC checks requesting reports on demand (PollRequest/PollResponse) does not interfere with other reports timing.
+  --
+  -- Steps:
+  --
+  -- 1. Setup is done: StandardReport1Interval and AcceleratedReport1Rate are set to 2
+  -- 2. Waiting for first Standard Report is performed.
+  -- 3. In the middle of AcceleratedReport1 interval the PollRequest1 message is sent.
+  -- 4. Waiting for AcceleratedReport1 is performed.
+  -- 5. Timeout between reports is calculated. 
+  --
+  -- Results:
+  --
+  -- 1. Setup is correctly finished.
+  -- 2. StandardReport1 is received.
+  -- 3. PollResponse1 message is received.
+  -- 4. AcceleratedReport1 is received.
+  -- 5. Timeout between reports is correct.
 function test_PollRequest_WhenPollRequest1IsRequestedDuringStandardAndAcceleratedReportsCycle_AcceleratedIntervalIsCorrect()
 
    generic_test_PollRequestWithOthers(
