@@ -19,6 +19,7 @@ IDPBlockageFeaturesImplemented = false
 -----------------------------------------------------------------------------------------------
 function suite_setup()
   -- reset of properties
+
   systemSW:resetProperties({vmsSW.sin})
 
   vmsSW:setPropertiesByName({StandardReport1Interval = 0,   -- 0 is for feature disabled
@@ -26,7 +27,6 @@ function suite_setup()
                              StandardReport3Interval = 0,
                              MinStandardReportLedFlashTime = 0}
   )
-
 
 end
 
@@ -147,7 +147,7 @@ Annotations:register([[
 @method(test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsFlashingForMinStandardReportLedFlashTime)
 @module(TestHelmPanelModule)
 ]])
-function test_GORUNTerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsFlashingForMinStandardReportLedFlashTime()
+function test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsFlashingForMinStandardReportLedFlashTime()
 
   -- *** Setup
   local ledFlashingStateTrueTable = {}
