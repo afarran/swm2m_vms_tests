@@ -94,14 +94,15 @@ VmsServiceWrapper = {}
     }
     
     local bitmaps = {
-      EventStateId = {GpsJammed = 0,
+      EventStateId = {
+                      GpsJammed = 0,
                       GpsBlocked = 1,
                       IdpBlocked = 2,
                       HwClientDisconnected = 3,
-                      HelmPanelDisconnected = 4,
-                      PowerDisconnected = 5,
-                      InsideGeofence = 6,
-                      PowerDisconnected = 7}
+                      InterfaceUnitDisconnected = 4,
+                      InsideGeofence = 5,
+                      PowerDisconnected = 6,
+                      }
     }
     
     ServiceWrapper._init(self, {
