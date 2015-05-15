@@ -968,6 +968,11 @@ function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigProperti
   )
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,configChangeSent2,1)
+@method(test_ConfigChangeReport_WhenSetConfigReport1MessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport1IsSent)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if ConfigChangeReport 1 is sent and its values are correct (message SetConfigReport1 used for setup)
   -- Initial Conditions:
   --
@@ -1004,6 +1009,11 @@ function test_ConfigChangeReport_WhenSetConfigReport1MessageIsSentAndConfigPrope
   )
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,configChangeSent2,2)
+@method(test_ConfigChangeReport_WhenSetConfigReport2MessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport2IsSent)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if ConfigChangeReport 2 is sent and its values are correct (message SetConfigReport2 used for setup)
   -- Initial Conditions:
   --
@@ -1041,6 +1051,11 @@ function test_ConfigChangeReport_WhenSetConfigReport2MessageIsSentAndConfigPrope
   )
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,configChangeSent2,3)
+@method(test_ConfigChangeReport_WhenSetConfigReport3MessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport3IsSent)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if ConfigChangeReport 3 is sent and its values are correct (message SetConfigReport3 used for setup)
   -- Initial Conditions:
   --
@@ -1078,6 +1093,11 @@ function test_ConfigChangeReport_WhenSetConfigReport3MessageIsSentAndConfigPrope
   )
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,propertyDebounce,1)
+@method(test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebounceTime_ConfigChangeReport1IsNotSent)
+@module(TestNormalReportsModule)
+]])
 -- [OK]
 function test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebounceTime_ConfigChangeReport1IsNotSent()
 
@@ -1089,6 +1109,11 @@ function test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebo
 
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,propertyDebounce,2)
+@method(test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebounceTime_ConfigChangeReport2IsNotSent)
+@module(TestNormalReportsModule)
+]])
 -- [OK]
 function test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebounceTime_ConfigChangeReport2IsNotSent()
 
@@ -1100,6 +1125,11 @@ function test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebo
 
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,propertyDebounce,3)
+@method(test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebounceTime_ConfigChangeReport3IsNotSent)
+@module(TestNormalReportsModule)
+]])
 -- [OK]
 function test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebounceTime_ConfigChangeReport3IsNotSent()
 
@@ -1111,6 +1141,11 @@ function test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebo
 
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,propertyDebounce2,1)
+@method(test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport1AreCorrect)
+@module(TestNormalReportsModule)
+]])
 -- [OK]
 function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport1AreCorrect()
   
@@ -1122,6 +1157,11 @@ function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAre
 
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,propertyDebounce2,2)
+@method(test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport2AreCorrect)
+@module(TestNormalReportsModule)
+]])
 -- [OK]
 function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport2AreCorrect()
   
@@ -1133,16 +1173,26 @@ function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAre
 
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,propertyDebounce2,3)
+@method(test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport3AreCorrect)
+@module(TestNormalReportsModule)
+]])
 -- [OK]
 function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport3AreCorrect()
   
-  generic_TimestampsInConfigChangeReports(
+  generic_TimestampsInConfigChangeReports(3
    "ConfigChangeReport3",
     {StandardReport3Interval = 1, AcceleratedReport3Rate = 1},
     {StandardReport3Interval = 4, AcceleratedReport3Rate = 2}
   )
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,configChangeViaShell,1)
+@method(test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport1IsSentImmediatelyOnlyOnce)
+@module(TestNormalReportsModule)
+]])
 -- [OK]
 function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport1IsSentImmediatelyOnlyOnce()
   -- get properties
@@ -1159,6 +1209,11 @@ function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExe
   )
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,configChangeViaShell,2)
+@method(test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport2IsSentImmediatelyOnlyOnce)
+@module(TestNormalReportsModule)
+]])
 -- [OK]
 function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport2IsSentImmediatelyOnlyOnce()
   -- get properties
@@ -1175,6 +1230,11 @@ function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExe
   )
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,configChangeViaShell,3)
+@method(test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport3IsSentImmediatelyOnlyOnce3)
+@module(TestNormalReportsModule)
+]])
 -- [OK]
 function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport3IsSentImmediatelyOnlyOnce()
   -- get properties
