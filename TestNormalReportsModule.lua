@@ -1505,6 +1505,11 @@ end
 -- The Report Capability shall ensure that periodic reports do not drift over time.
 -----------------------------------------------------------------------------------------------
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,driftOverTime,1)
+@method(test_DriftOverTime_Standard1AndAccelerated)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if standard and accelerated reports timing do not drift over time.
   --
   -- Steps:
@@ -1534,6 +1539,11 @@ function test_DriftOverTime_Standard1AndAccelerated()
   )
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,driftOverTime,2)
+@method(test_DriftOverTime_Standard2AndAccelerated)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if standard and accelerated reports timing do not drift over time.
   --
   -- Steps:
@@ -1563,6 +1573,11 @@ function test_DriftOverTime_Standard2AndAccelerated()
   )
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,driftOverTime,3)
+@method(test_DriftOverTime_Standard3AndAccelerated)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if standard and accelerated reports timing do not drift over time.
   --
   -- Steps:
