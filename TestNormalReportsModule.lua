@@ -1446,28 +1446,41 @@ end
 -- POLL REQUEST / RESPONSE Test cases
 -----------------------------------------------------------------------------------------------
 
---- TC checks if PollResponse message is send after PollRequest.
+--- TC checks if PollResponse1 message is send after PollRequest1.
   -- Initial Conditions:
   --
   -- * Gps position is set. 
   --
   -- Steps:
   --
-  -- 1. PollRequest message is sent.
-  -- 2. Fields of PollResponse message are validated.
+  -- 1. PollRequest1 message is sent.
+  -- 2. Fields of PollResponse1 message are validated.
   --
   -- Results:
   --
-  -- 1. PollResponse message is received.
-  -- 2. Fields of PollResponse message are correct.
-function test_GORUNPollRequest_WhenPollRequest1MessageIsSend_CorrectPollResponse1MessageIsReceived()
+  -- 1. PollResponse1 message is received.
+  -- 2. Fields of PollResponse1 message are correct.
+function test_PollRequest_WhenPollRequest1MessageIsSend_CorrectPollResponse1MessageIsReceived()
   generic_test_PollRequest(
     "PollRequest1", 
     "PollResponse1"
   )
 end
 
--- [OK]
+--- TC checks if PollResponse2 message is send after PollRequest2.
+  -- Initial Conditions:
+  --
+  -- * Gps position is set. 
+  --
+  -- Steps:
+  --
+  -- 1. PollRequest2 message is sent.
+  -- 2. Fields of PollResponse2 message are validated.
+  --
+  -- Results:
+  --
+  -- 1. PollResponse2 message is received.
+  -- 2. Fields of PollResponse2 message are correct.
 function test_PollRequest_WhenPollRequest2MessageIsSend_CorrectPollResponse2MessageIsReceived()
   generic_test_PollRequest(
     "PollRequest2", 
@@ -1475,7 +1488,20 @@ function test_PollRequest_WhenPollRequest2MessageIsSend_CorrectPollResponse2Mess
   )
 end
 
--- [OK]
+--- TC checks if PollResponse3 message is send after PollRequest3.
+  -- Initial Conditions:
+  --
+  -- * Gps position is set. 
+  --
+  -- Steps:
+  --
+  -- 1. PollRequest3 message is sent.
+  -- 2. Fields of PollResponse3 message are validated.
+  --
+  -- Results:
+  --
+  -- 1. PollResponse3 message is received.
+  -- 2. Fields of PollResponse3 message are correct.
 function test_PollRequest_WhenPollRequest3MessageIsSend_CorrectPollResponse3MessageIsReceived()
   generic_test_PollRequest(
     "PollRequest3", 
