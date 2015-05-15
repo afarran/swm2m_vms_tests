@@ -199,7 +199,7 @@ end
 
 Annotations:register([[
 @randIn(tcRandomizer,batch,standardReportPeriodic2,1)
-@method(test_StandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport1MessageIsSent_StandardReport1IsSentPeriodicallyWithCorrectValues())
+@method(test_StandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport1MessageIsSent_StandardReport1IsSentPeriodicallyWithCorrectValues)
 @module(TestNormalReportsModule)
 ]])
 --- TC checks if StandardReport 1 is sent periodically and its values are correct (SetConfigReport1 used for report setup)
@@ -1181,7 +1181,7 @@ Annotations:register([[
 -- [OK]
 function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport3AreCorrect()
   
-  generic_TimestampsInConfigChangeReports(3
+  generic_TimestampsInConfigChangeReports(
    "ConfigChangeReport3",
     {StandardReport3Interval = 1, AcceleratedReport3Rate = 1},
     {StandardReport3Interval = 4, AcceleratedReport3Rate = 2}
