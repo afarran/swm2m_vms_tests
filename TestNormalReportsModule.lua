@@ -1098,7 +1098,20 @@ Annotations:register([[
 @method(test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebounceTime_ConfigChangeReport1IsNotSent)
 @module(TestNormalReportsModule)
 ]])
--- [OK]
+--- TC checks if property debounce time works properly.
+  -- Initial Conditions:
+  --
+  -- * There should be PropertyChangeDebounceTime set to 1 minute.
+  --
+  -- Steps:
+  --
+  -- 1. SetProperties message is sent with changed properties values (StandardReport1Interval and AcceleratedReport1Rate).
+  -- 2. SetProperties messsage is sent with initial properties values.
+  --
+  -- Results:
+  --
+  -- 1. No ConfigChangeReport1 message is sent.
+  -- 2. No ConfigChangeReport1 message is sent.
 function test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebounceTime_ConfigChangeReport1IsNotSent()
 
  generic_test_PropertyChangeDebounceTime(
@@ -1114,7 +1127,20 @@ Annotations:register([[
 @method(test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebounceTime_ConfigChangeReport2IsNotSent)
 @module(TestNormalReportsModule)
 ]])
--- [OK]
+--- TC checks if property debounce time works properly.
+  -- Initial Conditions:
+  --
+  -- * There should be PropertyChangeDebounceTime set to 1 minute.
+  --
+  -- Steps:
+  --
+  -- 1. SetProperties message is sent with changed properties values (StandardReport2Interval and AcceleratedReport2Rate).
+  -- 2. SetProperties messsage is sent with initial properties values.
+  --
+  -- Results:
+  --
+  -- 1. No ConfigChangeReport2 message is sent.
+  -- 2. No ConfigChangeReport2 message is sent.
 function test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebounceTime_ConfigChangeReport2IsNotSent()
 
  generic_test_PropertyChangeDebounceTime(
@@ -1130,7 +1156,20 @@ Annotations:register([[
 @method(test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebounceTime_ConfigChangeReport3IsNotSent)
 @module(TestNormalReportsModule)
 ]])
--- [OK]
+--- TC checks if property debounce time works properly.
+  -- Initial Conditions:
+  --
+  -- * There should be PropertyChangeDebounceTime set to 1 minute.
+  --
+  -- Steps:
+  --
+  -- 1. SetProperties message is sent with changed properties values (StandardReport3Interval and AcceleratedReport3Rate).
+  -- 2. SetProperties messsage is sent with initial properties values.
+  --
+  -- Results:
+  --
+  -- 1. No ConfigChangeReport3 message is sent.
+  -- 2. No ConfigChangeReport3 message is sent.
 function test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebounceTime_ConfigChangeReport3IsNotSent()
 
  generic_test_PropertyChangeDebounceTime(
@@ -2162,7 +2201,16 @@ function generic_test_AcceleratedReportDisabledAndStandardReportEnabled(standard
   assert_equal(0,tonumber(reportMessage.count),"Message"..reportKey.." should not come!")
 end
 
--- generic method to check if property change for time below PropertyChangeDebounceTime is not 'noticed'
+--- Generic function which can be configured in multiple ways.
+-- See the usage in TCs above.
+--
+-- It checks if property debounce time works properly.
+-- 
+-- Steps:
+--   1. Property change debounce time is set to 1 minute.
+--   2. Properties are changed.
+--   3. Properties are restored to previous values.
+--   4. ConfigChange message is not sent (means configuration change has had no impact)
 function generic_test_PropertyChangeDebounceTime(configChangeMsgKey,initialProperties,changedProperties)
 
   vmsSW:setPropertiesByName({PropertyChangeDebounceTime=1})
