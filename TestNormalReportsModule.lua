@@ -1371,40 +1371,72 @@ end
   -- 3. Separate thread is spawned for overload simulation.
   -- 4. Timeouts of standard/accelerated are saved for analyse.
   -- 5. There is no drift in time.
-function test_GORUNDriftOverTime_Standard1AndAccelerated()
+function test_DriftOverTime_Standard1AndAccelerated()
   generic_test_DriftOverTime_StandardAndAccelerated(
     {StandardReport1Interval=4, AcceleratedReport1Rate=4},
     "ConfigChangeReport1",
     "StandardReport1",
     "AcceleratedReport1",
-    4, --min
-    1, --min
+    4, --min (standard report interval)
+    1, --min (accelerated report interval)
     3
   )
 end
 
--- [OK]
+--- TC checks if standard and accelerated reports timing do not drift over time.
+  --
+  -- Steps:
+  --
+  -- 1. Configuration is prepared (StandardReport2Interval=4, AcceleratedReport2Rate=4)
+  -- 2. Waiting for first StandardReport2 is performed.
+  -- 3. System overload is simulated.
+  -- 4. Timeouts of standard/accelerated are being saved for analyse.
+  -- 5. Correctness of timeouts is being checked.
+  --
+  -- Results:
+  --
+  -- 1. Configuration is set.
+  -- 2. StandardReport2 is received.
+  -- 3. Separate thread is spawned for overload simulation.
+  -- 4. Timeouts of standard/accelerated are saved for analyse.
+  -- 5. There is no drift in time.
 function test_DriftOverTime_Standard2AndAccelerated()
   generic_test_DriftOverTime_StandardAndAccelerated(
     {StandardReport2Interval=4, AcceleratedReport2Rate=4},
     "ConfigChangeReport2",
     "StandardReport2",
     "AcceleratedReport2",
-    4, --min
-    1, --min
+    4, --min (standard report interval)
+    1, --min (accelerated report interval)
     3
   )
 end
 
--- [OK]
+--- TC checks if standard and accelerated reports timing do not drift over time.
+  --
+  -- Steps:
+  --
+  -- 1. Configuration is prepared (StandardReport3Interval=4, AcceleratedReport3Rate=4)
+  -- 2. Waiting for first StandardReport3 is performed.
+  -- 3. System overload is simulated.
+  -- 4. Timeouts of standard/accelerated are being saved for analyse.
+  -- 5. Correctness of timeouts is being checked.
+  --
+  -- Results:
+  --
+  -- 1. Configuration is set.
+  -- 2. StandardReport3 is received.
+  -- 3. Separate thread is spawned for overload simulation.
+  -- 4. Timeouts of standard/accelerated are saved for analyse.
+  -- 5. There is no drift in time.
 function test_DriftOverTime_Standard3AndAccelerated()
   generic_test_DriftOverTime_StandardAndAccelerated(
     {StandardReport3Interval=4, AcceleratedReport3Rate=4},
     "ConfigChangeReport3",
     "StandardReport3",
     "AcceleratedReport3",
-    4, --min
-    1, --min
+    4, --min (standard report interval)
+    1, --min (accelerated report interval)
     3
   )
 end
