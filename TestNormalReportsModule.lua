@@ -68,7 +68,7 @@ end
 
 Annotations:register([[
 @randIn(tcRandomizer,batch,standardReportPeriodic,3)
-@method(test_ATStandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues)
+@method(test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues)
 @module(TestNormalReportsModule)
 ]])
 --- TC checks if StandardReport 1 is sent periodically and its values are correct (setProperties used for report setup)
@@ -111,7 +111,7 @@ end
 
 Annotations:register([[
 @randIn(tcRandomizer,batch,standardReportPeriodic,3)
-@method(test_ATStandardReport_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues)
+@method(test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues)
 @module(TestNormalReportsModule)
 ]])
 --- TC checks if StandardReport 2 is sent periodically and its values are correct (setProperties used for report setup)
@@ -156,7 +156,7 @@ end
 
 Annotations:register([[
 @randIn(tcRandomizer,batch,standardReportPeriodic,3)
-@method(test_ATStandardReport_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues)
+@method(test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues)
 @module(TestNormalReportsModule)
 ]])
 --- TC checks if StandardReport 3 is sent periodically and its values are correct (setProperties used for report setup)
@@ -197,6 +197,11 @@ function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport3IsS
   })
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,standardReportPeriodic2,1)
+@method(test_StandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport1MessageIsSent_StandardReport1IsSentPeriodicallyWithCorrectValues())
+@module(TestNormalReportsModule)
+]])
 --- TC checks if StandardReport 1 is sent periodically and its values are correct (SetConfigReport1 used for report setup)
   -- Initial Conditions:
   --
@@ -241,6 +246,11 @@ function test_StandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport1
   })
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,standardReportPeriodic2,2)
+@method(test_StandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport2MessageIsSent_StandardReport2IsSentPeriodicallyWithCorrectValues)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if StandardReport 2 is sent periodically and its values are correct (SetConfigReport2 used for report setup)
   -- Initial Conditions:
   --
@@ -285,6 +295,11 @@ function test_StandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport2
   })
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,standardReportPeriodic2,3)
+@method(test_StandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport3MessageIsSent_StandardReport3IsSentPeriodicallyWithCorrectValues)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if StandardReport 3 is sent periodically and its values are correct (SetConfigReport3 used for report setup)
   -- Initial Conditions:
   --
@@ -331,6 +346,11 @@ function test_StandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport3
 
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,standardReportDisabled,1)
+@method(test_StandardReportDisabled_WhenStandardReport1IntervalIsSetToZero_StandardReport1IsNotSent)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if StandardReport 1 is not sent
   -- Initial Conditions:
   --
@@ -357,6 +377,11 @@ function test_StandardReportDisabled_WhenStandardReport1IntervalIsSetToZero_Stan
   )
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,standardReportDisabled,2)
+@method(test_StandardReportDisabled_WhenStandardReport2IntervalIsSetToZero_StandardReport2IsNotSent)
+@module(TestNormalReportsModule)
+]])
 -- TC checks if StandardReport 2 is not sent
   -- Initial Conditions:
   --
@@ -383,6 +408,11 @@ function test_StandardReportDisabled_WhenStandardReport2IntervalIsSetToZero_Stan
   )
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,standardReportDisabled,3)
+@method(test_StandardReportDisabled_WhenStandardReport3IntervalIsSetToZero_StandardReport3IsNotSent)
+@module(TestNormalReportsModule)
+]])
 -- TC checks if StandardReport 3 is not sent
   -- Initial Conditions:
   --
