@@ -1303,8 +1303,20 @@ end
 -- DEFAULT VALUES tests
 -----------------------------------------------------------------------------------------------
 
--- [OK]
-function test_DefaultValues_WhenPropertiesAreRequestedAfterPropertiesReset_CorrectDefaultValuesAreGiven()
+--- TC checks if reset of properties restores proper default values.
+  --
+  -- Steps:
+  --
+  -- 1.Reset of properties is requested via system service.
+  -- 2.Properties are fetched via OTA message.
+  -- 3.Each property value is compared with default value.
+  --
+  -- Results:
+  --
+  -- 1.Reset of properties is properly performed.
+  -- 2.Properties are correctly fetched.
+  -- 3.Each property has correct default value.
+function test_GORUNDefaultValues_WhenPropertiesAreRequestedAfterPropertiesReset_CorrectDefaultValuesAreGiven()
   -- reset of properties
   systemSW:resetProperties({vmsSW.sin})
 
