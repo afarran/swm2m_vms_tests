@@ -1316,7 +1316,7 @@ end
   -- 1.Reset of properties is properly performed.
   -- 2.Properties are correctly fetched.
   -- 3.Each property has correct default value.
-function test_GORUNDefaultValues_WhenPropertiesAreRequestedAfterPropertiesReset_CorrectDefaultValuesAreGiven()
+function test_DefaultValues_WhenPropertiesAreRequestedAfterPropertiesReset_CorrectDefaultValuesAreGiven()
   -- reset of properties
   systemSW:resetProperties({vmsSW.sin})
 
@@ -1354,8 +1354,31 @@ end
 -- The Report Capability shall ensure that periodic reports do not drift over time.
 -----------------------------------------------------------------------------------------------
 
---[OK]
-function test_DriftOverTime_Standard1AndAccelerated()
+--- TC checks ..
+  -- Initial Conditions:
+  --
+  -- * There should be ..
+  --
+  -- Steps:
+  --
+  -- 1.
+  -- 2.
+  -- 3.
+  -- 4.
+  -- 5.
+  -- 6.
+  -- 7.
+  --
+  -- Results:
+  --
+  -- 1.
+  -- 2.
+  -- 3.
+  -- 4.
+  -- 5.
+  -- 6.
+  -- 7.
+function test_GORUNDriftOverTime_Standard1AndAccelerated()
   generic_test_DriftOverTime_StandardAndAccelerated(
     {StandardReport1Interval=4, AcceleratedReport1Rate=4},
     "ConfigChangeReport1",
@@ -2007,6 +2030,17 @@ function generic_setConfigViaShell(messageKey,propertiesToChange,propertiesBefor
 
 end
 
+--- Generic function which can be configured in multiple ways.
+-- See the usage in TCs above.
+--
+-- It checks if standard and accelerated reports timing do not drift over time.
+-- 
+-- Steps:
+--   1. Configuration is prepared (TC method passes it).
+--   2. Waiting for first standard report is performed.
+--   3. System overload is simulated (in a separate thread)
+--   4. Waiting for accelerated report is performed.
+--   5. Correctness of timeouts is checked.
 function generic_test_DriftOverTime_StandardAndAccelerated(properties,configChangeMsgKey,SRKey,ARKey,SRInterval,ARInterval,ARItems)
 
   local tolerance = 40 --secs
