@@ -1446,8 +1446,21 @@ end
 -- POLL REQUEST / RESPONSE Test cases
 -----------------------------------------------------------------------------------------------
 
--- [OK]
-function test_PollRequest_WhenPollRequest1MessageIsSend_CorrectPollResponse1MessageIsReceived()
+--- TC checks if PollResponse message is send after PollRequest.
+  -- Initial Conditions:
+  --
+  -- * Gps position is set. 
+  --
+  -- Steps:
+  --
+  -- 1. PollRequest message is sent.
+  -- 2. Fields of PollResponse message are validated.
+  --
+  -- Results:
+  --
+  -- 1. PollResponse message is received.
+  -- 2. Fields of PollResponse message are correct.
+function test_GORUNPollRequest_WhenPollRequest1MessageIsSend_CorrectPollResponse1MessageIsReceived()
   generic_test_PollRequest(
     "PollRequest1", 
     "PollResponse1"
@@ -2163,6 +2176,16 @@ function generic_test_DriftOverTime_StandardAndAccelerated(properties,configChan
 
 end
 
+--- Generic function which can be configured in multiple ways.
+-- See the usage in TCs above.
+--
+-- It checks if PollResponse message is send after PollRequest.
+-- 
+-- Steps:
+--   1. Gps position is sent. 
+--   2. PollRequest message is set.
+--   3. PollResponse message is received.
+--   4. Fields of PollResponse message are validated.
 function generic_test_PollRequest(pollRequestMsgKey, pollResponseMsgKey)
 
   -- new position setup
