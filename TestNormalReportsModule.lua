@@ -439,6 +439,11 @@ function test_StandardReportDisabled_WhenStandardReport3IntervalIsSetToZero_Stan
   )
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,standardReportPeriodic3,1)
+@method(test_StandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if StandardReport 1 is sent periodically and its values are correct (setProperties used for report setup)
 --- Other Standard Reports are also configured for sending. 
   -- Initial Conditions:
@@ -494,6 +499,11 @@ function test_StandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport1
   })
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,standardReportPeriodic3,2)
+@method(test_StandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if StandardReport 2 is sent periodically and its values are correct (setProperties used for report setup)
 --- Other Standard Reports are also configured for sending. 
   -- Initial Conditions:
@@ -549,6 +559,11 @@ function test_StandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport2
   })
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,standardReportPeriodic3,3)
+@method(test_StandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if StandardReport 3 is sent periodically and its values are correct (setProperties used for report setup)
 --- Other Standard Reports are also configured for sending. 
   -- Initial Conditions:
