@@ -1128,7 +1128,6 @@ end
   -- 5. Logs are collected.
   -- 6. Logs values are correct.
   -- 7. Spacer times between logs are correct.
-  -- [OK]
 function test_LogReport_WhenGpsPositionIsSetAndLogFilterEstablished_LogEntriesShouldCollectCorrectDataInCorrectInterval()
 
   local logReportXKey = "LogReport"
@@ -1140,7 +1139,93 @@ function test_LogReport_WhenGpsPositionIsSetAndLogFilterEstablished_LogEntriesSh
   local timeForLogging = 2*60+20
   local itemsInLog = 2
 
-  generic_test_LogReports(logReportXKey, properties, timeForLogging, itemsInLog)
+  local filterTimeout = 10
+
+  -- prerequisites
+  assert_lt(3,itemsInLog,0,"There should be min 2 log items! Configure TC!")
+
+  -- set properties for log interval calculation (LogReportXRate, StandardReportXInterval)
+  vmsSW:setPropertiesByName(properties)
+
+  -- set position for reports
+  gpsPosition = GPS:setRandom()
+  
+  --synchronize first standard report
+  vmsSW:waitForMessagesByName(logReportXKey)
+
+  --set log filter
+  logSW:setLogFilter(
+    vmsSW.sin, {
+    vmsSW:getMinFrom(logReportXKey)},
+    os.time()+5,
+    os.time()+timeForLogging+filterTimeout,
+    "True"
+  )
+
+  -- wait for log reports
+  framework.delay(timeForLogging+filterTimeout)
+
+  -- get reports from log
+  local logEntries = logSW:getLogEntries(itemsInLog)
+
+  local counter = 0
+  -- check if data is correct
+  for i,_ in pairs(logEntries) do
+    D:log(logEntries[i].log,"entry "..i)
+    -- latitude
+    assert_equal(
+      GPS:denormalize(gpsPosition.latitude),
+      tonumber(logEntries[i].log.Latitude),
+      0,
+      "Wrong latitude in Log Report, entry: "..i
+    )
+    assert_equal(
+      GPS:denormalize(gpsPosition.longitude),
+      tonumber(logEntries[i].log.Longitude),
+      0,
+      "Wrong longitude in Log Report, entry: "..i
+    )
+    assert_equal(
+      GPS:denormalizeSpeed(gpsPosition.speed),
+      tonumber(logEntries[i].log.Speed),
+      1,
+      "Wrong speed in Log Report, entry: "..i
+    )
+    -- some of values are being checked just for their existance
+    assert_not_nil(
+      logEntries[i].log.Timestamp,
+      "No timestamp in Log Report, entry: " .. i
+    )
+    assert_not_nil(
+      logEntries[i].log.Course,
+      "No Course in Log Report, entry: " .. i
+    ) 
+    assert_not_nil(
+      logEntries[i].log.Hdop,
+      "No Hdop in Log Report, entry: " .. i
+    )
+    assert_not_nil(
+      logEntries[i].log.NumSats,
+      "No NumSats in Log Report, entry: " .. i
+    )
+    assert_not_nil(
+      logEntries[i].log.IdpCnr,
+      "No IdpCnr in Log Entry, entry: " .. i
+    )
+    if i>1 then
+      -- check if timeout between log entries is correct
+      local timeDiff = tonumber(logEntries[i-1].log.Timestamp) - tonumber(logEntries[i].log.Timestamp)
+      assert_equal(
+        properties.LogReportInterval*60,
+        timeDiff,
+        5,
+        "Log Report Interval should be "..(properties.LogReportInterval*60)
+      )
+    end
+    counter = counter + 1 
+  end
+  assert_equal(itemsInLog,counter,0,"Wrong number of items in log!")
+
 end
 
 --- TC checks if Log Reports are properly disabled.
@@ -1162,7 +1247,7 @@ end
   -- 2. Property with log interval is correctly set.
   -- 3. Log filter is correctly set.
   -- 4. There is no log items.
-function test_GORUNLogReportNegative_WhenLogReportIsDisabledAndLogFilterEstablished_LogEntriesShouldNotCollectData()
+function test_LogReportNegative_WhenLogReportIsDisabledAndLogFilterEstablished_LogEntriesShouldNotCollectData()
 
   local logReportXKey = "LogReport"
 
@@ -1479,99 +1564,6 @@ function generic_test_PollRequestWithOthers(pollRequestMsgKey, pollResponseMsgKe
   local timestampDiff = tonumber(acceleratedMsg[acceleratedReportKey].Timestamp) - tonumber(standardMsg[standardReportKey].Timestamp)
   D:log(timestampDiff)
   assert_equal(acceleratedInterval*60,timestampDiff,5,"Wrong interval of accelerated report (poll report was requested before).")
-
-end
-
--- generic logic for Log Reports TCs
-function generic_test_LogReports(logReportXKey, properties, timeForLogging, itemsInLog)
-
-  local filterTimeout = 10
-
-  -- prerequisites
-  assert_lt(3,itemsInLog,0,"There should be min 2 log items! Configure TC!")
-
-  -- set properties for log interval calculation (LogReportXRate, StandardReportXInterval)
-  vmsSW:setPropertiesByName(properties)
-
-  -- set position for reports
-  gpsPosition = GPS:setRandom()
-  
-  --synchronize first standard report
-  vmsSW:waitForMessagesByName(logReportXKey)
-
-
-  --set log filter
-  logSW:setLogFilter(
-    vmsSW.sin, {
-    vmsSW:getMinFrom(logReportXKey)},
-    os.time()+5,
-    os.time()+timeForLogging+filterTimeout,
-    "True"
-  )
-
-  -- wait for log reports
-  framework.delay(timeForLogging+filterTimeout)
-
-  -- get reports from log
-  local logEntries = logSW:getLogEntries(itemsInLog)
-
-  local counter = 0
-  -- check if data is correct
-  for i,_ in pairs(logEntries) do
-    D:log(logEntries[i].log,"entry "..i)
-    -- latitude
-    assert_equal(
-      GPS:denormalize(gpsPosition.latitude),
-      tonumber(logEntries[i].log.Latitude),
-      0,
-      "Wrong latitude in Log Report, entry: "..i
-    )
-    assert_equal(
-      GPS:denormalize(gpsPosition.longitude),
-      tonumber(logEntries[i].log.Longitude),
-      0,
-      "Wrong longitude in Log Report, entry: "..i
-    )
-    assert_equal(
-      GPS:denormalizeSpeed(gpsPosition.speed),
-      tonumber(logEntries[i].log.Speed),
-      1,
-      "Wrong speed in Log Report, entry: "..i
-    )
-    -- some of values are being checked just for their existance
-    assert_not_nil(
-      logEntries[i].log.Timestamp,
-      "No timestamp in Log Report, entry: " .. i
-    )
-    assert_not_nil(
-      logEntries[i].log.Course,
-      "No Course in Log Report, entry: " .. i
-    ) 
-    assert_not_nil(
-      logEntries[i].log.Hdop,
-      "No Hdop in Log Report, entry: " .. i
-    )
-    assert_not_nil(
-      logEntries[i].log.NumSats,
-      "No NumSats in Log Report, entry: " .. i
-    )
-    assert_not_nil(
-      logEntries[i].log.IdpCnr,
-      "No IdpCnr in Log Entry, entry: " .. i
-    )
-    if i>1 then
-      -- check if timeout between log entries is correct
-      local timeDiff = tonumber(logEntries[i-1].log.Timestamp) - tonumber(logEntries[i].log.Timestamp)
-      assert_equal(
-        properties.LogReportInterval*60,
-        timeDiff,
-        5,
-        "Log Report Interval should be "..(properties.LogReportInterval*60)
-      )
-    end
-    counter = counter + 1 
-  end
-  assert_equal(itemsInLog,counter,0,"Wrong number of items in log!")
 
 end
 
