@@ -625,6 +625,11 @@ end
 -- Test Cases for ACCELERATED REPORTS
 -----------------------------------------------------------------------------------------------
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,acceleratedReportPeriodic,1)
+@method(test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport1IsSentWithCorrectValues)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if AcceleratedReport 1 is sent periodically and its values are correct (setProperties used for setup)
   -- Initial Conditions:
   --
@@ -663,6 +668,11 @@ function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIn
   })
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,acceleratedReportPeriodic,2)
+@method(test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport2IsSentWithCorrectValues)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if AcceleratedReport 2 is sent periodically and its values are correct (setProperties used for setup)
   -- Initial Conditions:
   --
@@ -701,6 +711,11 @@ function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIn
   })
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,acceleratedReportPeriodic,3)
+@method(test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport3IsSentWithCorrectValues)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if AcceleratedReport 3 is sent periodically and its values are correct (setProperties used for setup)
   -- Initial Conditions:
   --
