@@ -1143,18 +1143,75 @@ function test_LogReport_WhenGpsPositionIsSetAndLogFilterEstablished_LogEntriesSh
   generic_test_LogReports(logReportXKey, properties, timeForLogging, itemsInLog)
 end
 
--- [OK]
-function test_LogReportNegative_WhenLogReportIsDisabledAndLogFilterEstablished_LogEntriesShouldNotCollectData()
+--- TC checks if Log Reports are properly disabled.
+  -- Initial Conditions:
+  --
+  -- * There should be firts log report received with known interval
+  -- * There should be configuration prepared in a way that disables Log Reports.
+  --
+  -- Steps:
+  --
+  -- 1. Waiting for initial log report is performed.
+  -- 2. Log interval is set to zero.
+  -- 3. Log filter is set for 2 minutes.
+  -- 4. Waiting for log items is performed.
+  --
+  -- Results:
+  --
+  -- 1. Initial log report is received.
+  -- 2. Property with log interval is correctly set.
+  -- 3. Log filter is correctly set.
+  -- 4. There is no log items.
+function test_GORUNLogReportNegative_WhenLogReportIsDisabledAndLogFilterEstablished_LogEntriesShouldNotCollectData()
 
   local logReportXKey = "LogReport"
 
+  -- set log interval to 1
   local properties = {
     LogReportInterval = 1,
   }
 
-  local timeForLogging = 30
+  -- set properties for log interval calculation (LogReportInterval)
+  vmsSW:setPropertiesByName(properties)
 
-  generic_test_LogReportsNegative(logReportXKey, properties, timeForLogging)
+  -- wait for initial log report
+  vmsSW:waitForMessagesByName(logReportXKey)
+
+  -- set log interval to 0
+  properties = {
+    LogReportInterval = 0,
+  }
+  
+  -- set properties for log interval calculation (LogReportInterval)
+  vmsSW:setPropertiesByName(properties)
+
+  -- time for logging
+  local timeForLogging = 2 * 60 -- 2 minutes
+
+  --set log filter
+  logSW:setLogFilter(
+    vmsSW.sin, {
+    vmsSW:getMinFrom(logReportXKey)},
+    os.time()+5,
+    os.time()+timeForLogging+5,
+    "True"
+  )
+
+  -- wait for log reports
+  framework.delay(timeForLogging)
+
+  -- get reports from log
+  local logEntries = logSW:getLogEntries(itemsInLog)
+
+  -- it must be loop here because operand '#' doesn't count dictionary items :(
+  local counter = 0
+  for key,value in pairs(logEntries) do
+    counter = counter + 1
+  end
+
+  -- there should be no log items
+  assert_equal(counter,0,0,"There should be not items in logs!")
+
 end
 
 -----------------------------------------------------------------------------------------------
@@ -1422,56 +1479,6 @@ function generic_test_PollRequestWithOthers(pollRequestMsgKey, pollResponseMsgKe
   local timestampDiff = tonumber(acceleratedMsg[acceleratedReportKey].Timestamp) - tonumber(standardMsg[standardReportKey].Timestamp)
   D:log(timestampDiff)
   assert_equal(acceleratedInterval*60,timestampDiff,5,"Wrong interval of accelerated report (poll report was requested before).")
-
-end
-
---- Generic function which can be configured in multiple ways.
--- See the usage in TCs above.
---
--- It checks if Log Reports are properly disabled.
---
--- Steps:
---   1. Configuration is prepared (TC method passes it) 
---   3. StandardReportXInterval and LogReportXRate are set in a way which disables Log Reports.
---   2. Waiting for first Standard Report is performed.
---   3. Log filter is configured.
---   4. Waiting for log reports is performed.
---   5. Log entries are fetched from log service (log service wrapper used).
---   6. Log entries count is calculated.
---   7. Log entries count should be equal zero.
-function generic_test_LogReportsNegative(logReportXKey, properties, timeForLogging)
-
-  -- set properties for log interval calculation (StandardReportXInterval, LogReportXRate)
-  vmsSW:setPropertiesByName(properties)
-
-  --synchronize first log report
-  vmsSW:waitForMessagesByName(logReportXKey)
-
-  framework.delay(5)
-
-  --set log filter
-  logSW:setLogFilter(
-    vmsSW.sin, {
-    vmsSW:getMinFrom(logReportXKey)},
-    os.time()+5,
-    os.time()+timeForLogging+5,
-    "True"
-  )
-
-  -- wait for log reports
-  framework.delay(timeForLogging)
-
-  -- get reports from log
-  local logEntries = logSW:getLogEntries(itemsInLog)
-
-  -- it must be loop here because operand '#' doesn't count dictionary items :(
-  local counter = 0
-  for key,value in pairs(logEntries) do
-    counter = counter + 1 
-  end
-
-  D:log(logEntries)
-  assert_equal(counter,0,0,"There should be not items in logs!")
 
 end
 
