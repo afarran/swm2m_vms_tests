@@ -754,6 +754,12 @@ function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIn
   })
 end
 
+
+Annotations:register([[
+@randIn(tcRandomizer,batch,acceleratedReportDisabled,1)
+@method(test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardReport1IntervalIsSetAboveZeroAndAcceleratedReportInterval1DisablesFeature_StandardReportIsSentAndAcceleratedReportNotSent)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if StandardReport 1 is sent and accelerated report is not sent.
   -- Initial Conditions:
   --
@@ -781,6 +787,11 @@ function test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardRepo
   )
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,acceleratedReportDisabled,2)
+@method(test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardReport2IntervalIsSetAboveZeroAndAcceleratedReportInterval2DisablesFeature_StandardReportIsSentAndAcceleratedReportNotSent)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if StandardReport 2 is sent and accelerated report is not sent.
   -- Initial Conditions:
   --
@@ -808,6 +819,11 @@ function test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardRepo
   )
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,acceleratedReportDisabled,3)
+@method(test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardReport3IntervalIsSetAboveZeroAndAcceleratedReportInterval3DisablesFeature_StandardReportIsSentAndAcceleratedReportNotSent)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if StandardReport 3 is sent and accelerated report is not sent.
   -- Initial Conditions:
   --
@@ -839,6 +855,11 @@ end
 -- Test Cases for CONFIG CHANGE REPORTS
 -----------------------------------------------------------------------------------------------
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,configChangeSent,1)
+@method(test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport1IsSent)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if ConfigChangeReport 1 is sent and its values are correct (setProperties used for setup)
   -- Initial Conditions:
   --
@@ -871,6 +892,11 @@ function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigProperti
   )
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,configChangeSent,2)
+@method(test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport2IsSent)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if ConfigChangeReport 2 is sent and its values are correct (setProperties used for setup)
   -- Initial Conditions:
   --
@@ -904,6 +930,11 @@ function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigProperti
   )
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,configChangeSent,3)
+@method(test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport3IsSent)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if ConfigChangeReport 3 is sent and its values are correct (setProperties used for setup)
   -- Initial Conditions:
   --
