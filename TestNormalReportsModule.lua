@@ -1612,6 +1612,11 @@ end
 -- POLL REQUEST / RESPONSE Test cases
 -----------------------------------------------------------------------------------------------
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,pollResponse,1)
+@method(test_PollRequest_WhenPollRequest1MessageIsSend_CorrectPollResponse1MessageIsReceived)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if PollResponse1 message is send after PollRequest1.
   -- Initial Conditions:
   --
@@ -1633,6 +1638,11 @@ function test_PollRequest_WhenPollRequest1MessageIsSend_CorrectPollResponse1Mess
   )
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,pollResponse,2)
+@method(test_PollRequest_WhenPollRequest2MessageIsSend_CorrectPollResponse2MessageIsReceived)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if PollResponse2 message is send after PollRequest2.
   -- Initial Conditions:
   --
@@ -1654,6 +1664,11 @@ function test_PollRequest_WhenPollRequest2MessageIsSend_CorrectPollResponse2Mess
   )
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,pollResponse,3)
+@method(test_PollRequest_WhenPollRequest3MessageIsSend_CorrectPollResponse3MessageIsReceived)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if PollResponse3 message is send after PollRequest3.
   -- Initial Conditions:
   --
@@ -1675,6 +1690,11 @@ function test_PollRequest_WhenPollRequest3MessageIsSend_CorrectPollResponse3Mess
   )
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,pollResponseWithOthers,1)
+@method(test_PollRequest_WhenPollRequest1IsRequestedDuringStandardAndAcceleratedReportsCycle_AcceleratedIntervalIsCorrect)
+@module(TestNormalReportsModule)
+]])
 --- TC checks requesting reports on demand (PollRequest/PollResponse) does not interfere with other reports timing.
   --
   -- Steps:
@@ -1709,6 +1729,11 @@ function test_PollRequest_WhenPollRequest1IsRequestedDuringStandardAndAccelerate
 
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,pollResponseWithOthers,2)
+@method(test_PollRequest_WhenPollRequest2IsRequestedDuringStandardAndAcceleratedReportsCycle_AcceleratedIntervalIsCorrect)
+@module(TestNormalReportsModule)
+]])
 --- TC checks requesting reports on demand (PollRequest/PollResponse) does not interfere with other reports timing.
   --
   -- Steps:
@@ -1743,6 +1768,11 @@ function test_PollRequest_WhenPollRequest2IsRequestedDuringStandardAndAccelerate
 
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,pollResponseWithOthers,3)
+@method(test_PollRequest_WhenPollRequest3IsRequestedDuringStandardAndAcceleratedReportsCycle_AcceleratedIntervalIsCorrect)
+@module(TestNormalReportsModule)
+]])
 --- TC checks requesting reports on demand (PollRequest/PollResponse) does not interfere with other reports timing.
   --
   -- Steps:
