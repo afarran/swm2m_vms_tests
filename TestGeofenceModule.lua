@@ -11,6 +11,13 @@ function suite_setup()
                                   hysteresis = 0,
                                  interval = 10})
   geofenceSW:setRectangle({
+      number = 1,
+      centerLatitude = 40.00,
+      centerLongitude = -15.00,
+      latitudeDistance = 350,
+      longitudeDistance = 350,})
+  
+  geofenceSW:setRectangle({
       number = 0,
       centerLatitude = 50.50,
       centerLongitude = 21.687,
@@ -21,6 +28,7 @@ end
 -- executed after each test suite
 function suite_teardown()
   geofenceSW:disableFence(0)
+  geofenceSW:disableFence(1)
 end
 
 --- setup function
