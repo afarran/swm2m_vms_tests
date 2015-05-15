@@ -1354,30 +1354,23 @@ end
 -- The Report Capability shall ensure that periodic reports do not drift over time.
 -----------------------------------------------------------------------------------------------
 
---- TC checks ..
-  -- Initial Conditions:
-  --
-  -- * There should be ..
+--- TC checks if standard and accelerated reports timing do not drift over time.
   --
   -- Steps:
   --
-  -- 1.
-  -- 2.
-  -- 3.
-  -- 4.
-  -- 5.
-  -- 6.
-  -- 7.
+  -- 1. Configuration is prepared (StandardReport1Interval=4, AcceleratedReport1Rate=4)
+  -- 2. Waiting for first StandardReport1 is performed.
+  -- 3. System overload is simulated.
+  -- 4. Timeouts of standard/accelerated are being saved for analyse.
+  -- 5. Correctness of timeouts is being checked.
   --
   -- Results:
   --
-  -- 1.
-  -- 2.
-  -- 3.
-  -- 4.
-  -- 5.
-  -- 6.
-  -- 7.
+  -- 1. Configuration is set.
+  -- 2. StandardReport1 is received.
+  -- 3. Separate thread is spawned for overload simulation.
+  -- 4. Timeouts of standard/accelerated are saved for analyse.
+  -- 5. There is no drift in time.
 function test_GORUNDriftOverTime_Standard1AndAccelerated()
   generic_test_DriftOverTime_StandardAndAccelerated(
     {StandardReport1Interval=4, AcceleratedReport1Rate=4},
@@ -2039,7 +2032,7 @@ end
 --   1. Configuration is prepared (TC method passes it).
 --   2. Waiting for first standard report is performed.
 --   3. System overload is simulated (in a separate thread)
---   4. Waiting for accelerated report is performed.
+--   4. Timeouts of standard/accelerated are saved for analyse.
 --   5. Correctness of timeouts is checked.
 function generic_test_DriftOverTime_StandardAndAccelerated(properties,configChangeMsgKey,SRKey,ARKey,SRInterval,ARInterval,ARItems)
 
