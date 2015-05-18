@@ -58,49 +58,54 @@ VmsServiceWrapper = {}
     }
     
     local messages_from = {
-      {name="PollResponse1", min = 1 },
-      {name="PollResponse2", min = 2 },
-      {name="PollResponse3", min = 3 },
-      {name="ConfigReport1", min = 4 },
-      {name="ConfigReport2", min = 5 },
-      {name="ConfigReport3", min = 6},
-      {name="Properties", min = 7 },
-      {name="Version", min = 8 },
-      {name="ConfigChangeReport1", min = 10 },
-      {name="ConfigChangeReport2", min = 11 },
-      {name="ConfigChangeReport3", min = 12 },
-      {name="LogReport", min = 20 },
-      {name="StandardReport1", min = 21 },
-      {name="AcceleratedReport1", min = 22 },
-      {name="StandardReport2", min = 23 },
-      {name="AcceleratedReport2", min = 24 },
-      {name="StandardReport3", min = 25 },
-      {name="AcceleratedReport3", min = 26 },
-      {name="AbnormalReport", min = 50 }, 
+      {name="PollResponse1", min=1},
+      {name="PollResponse2", min=2},
+      {name="PollResponse3", min=3},
+      {name="ConfigReport1", min=4},
+      {name="ConfigReport2", min=5},
+      {name="ConfigReport3", min=6},
+      {name="Properties", min=7},
+      {name="Version", min=8},
+      {name="ConfigChangeReport1", min=10},
+      {name="ConfigChangeReport2", min=11},
+      {name="ConfigChangeReport3", min=12},
+      {name="LogReport", min=20},
+      {name="StandardReport1", min=21},
+      {name="AcceleratedReport1", min=22},
+      {name="StandardReport2", min=23},
+      {name="AcceleratedReport2", min=24},
+      {name="StandardReport3", min=25},
+      {name="AcceleratedReport3", min=26},
+      {name="AbnormalReport", min=50},
+      {name="GeofenceEntry", min=51},
+      {name="GeofenceExit", min=52},
+      {name="Email", min=53},
     }
     local messages_to = {
-      {name="PollRequest1", min = 1},
-      {name="PollRequest2", min = 2},
-      {name="PollRequest3", min = 3},
-      {name="GetConfigReport1", min = 4},
-      {name="GetConfigReport2", min = 5},
-      {name="GetConfigReport3", min = 6},
-      {name="GetProperties", min = 7},
-      {name="GetVersion", min = 8},
-      {name="SetConfigReport1", min = 10},
-      {name="SetConfigReport2", min = 11},
-      {name="SetConfigReport3", min = 12},
-      {name="SetProperties", min = 13},
+      {name="PollRequest1", min=1},
+      {name="PollRequest2", min=2},
+      {name="PollRequest3", min=3},
+      {name="GetConfigReport1", min=4},
+      {name="GetConfigReport2", min=5},
+      {name="GetConfigReport3", min=6},
+      {name="GetProperties", min=7},
+      {name="GetVersion", min=8},
+      {name="SetConfigReport1", min=10},
+      {name="SetConfigReport2", min=11},
+      {name="SetConfigReport3", min=12},
+      {name="SetProperties", min=13},
     }
     
     local bitmaps = {
-      EventStateId = {GpsJammed = 0,
+      EventStateId = {
+                      GpsJammed = 0,
                       GpsBlocked = 1,
                       IdpBlocked = 2,
                       HwClientDisconnected = 3,
                       InterfaceUnitDisconnected = 4,
                       InsideGeofence = 5,
-                      PowerDisconnected = 6}
+                      PowerDisconnected = 6,
+                      }
     }
     
     ServiceWrapper._init(self, {
@@ -111,6 +116,17 @@ VmsServiceWrapper = {}
         properties = properties,
         bitmaps = bitmaps,
     })
+  
+    --- Converts speed from km/h to tenths of knots (?).
+    -- The max value reported by VMS is 9bit field - 511.
+    -- Any value bigger than that is trimmed to 511.
+    function VmsServiceWrapper:speedGpsToVms(value)
+      local result = value * 5.39956803
+      if result >= 511 then
+        result = 511
+      end
+      return result
+    end
 
     function VmsServiceWrapper:setPropertiesViaShell(shell,properties)
       D:log("Setting properties via shell")

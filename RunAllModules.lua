@@ -49,6 +49,10 @@ require("Service/LogServiceWrapper")
 require("Service/ShellServiceWrapper")
 require("Service/UniboxServiceWrapper")
 
+-- Gps Frontend
+require("Gps/GpsFrontend")
+GPS = GpsFrontend()
+
 positionSW = PositionServiceWrapper()
 filesystemSW = FilesystemServiceWrapper()
 systemSW = SystemServiceWrapper()
@@ -64,10 +68,6 @@ serialMain = RealSerialWrapper({name=ComPort, open=true, newline="\r\n"})
 -- Helm Panel
 helmPanelFactory = require("HelmPanelDevice/HelmPanelDeviceFactory")()
 helmPanel = helmPanelFactory.create("unibox")
-
--- Gps Frontend
-require("Gps/GpsFrontend")
-GPS = GpsFrontend()
 
 -- perform data analysis
 require("Infrastructure/DataAnalyse/DriftAnalyse")

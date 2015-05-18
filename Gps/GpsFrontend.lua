@@ -31,9 +31,25 @@ GpsFrontend = {}
     self.GPS_READ_INTERVAL = gpsReadInterval
   end
   
+  --- Generatos random GPS fix
+  -- @treturn table position
+  function GpsFrontend:getRandom()
+    local result = {}
+    
+    result.latitude = lunatest.random_float(-90, 90)
+    result.longitude = lunatest.random_float(-180, 180)
+    result.heading = lunatest.random_int(0, 359)
+    result.speed = lunatest.random_int(0, 200)
+    
+    return result
+  end
+  
   function GpsFrontend:set(position, delay)
+    D:log("New GPS position: " .. string.tableAsList(position))
     gps.set(position)    
-    if delay == nil then
+    if delay then
+      framework.delay(delay)
+    else
       framework.delay(self.GPS_PROCESS_TIME + self.GPS_READ_INTERVAL)
     end
   end
@@ -46,6 +62,17 @@ GpsFrontend = {}
     }
     self:set(gpsPosition,delay)
     return gpsPosition
+  end
+  
+  --- Returns a sum of all GPS delays.
+  -- Including position service read interval
+  -- @treturn number sum of GPS delays
+  function GpsFrontend:getFullDelay(additionalDelay)
+    local processTime = self.GPS_PROCESS_TIME or 0
+    local readInterval = self.GPS_READ_INTERVAL or 0
+    additionalDelay = additionalDelay or 0
+    
+    return processTime + readInterval + additionalDelay
   end
   
   function GpsFrontend:simulateTrack(trackInfo)
