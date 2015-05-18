@@ -2000,7 +2000,18 @@ function generic_test_PollRequestWithOthers(pollRequestMsgKey, pollResponseMsgKe
 
 end
 
+--- Generic function which can be configured in multiple ways.
+-- See the usage in TCs above.
+--
 -- This is generic function for configure and test reports (StandardReport,AcceleratedReport)
+-- 
+-- Steps:
+--   1. Configuration passed from TC is set (via config message or set properties message).
+--   2. Waiting for first report is performed to synchronize report sequence.
+--   3. New gps position is set.
+--   4. Waiting for next report is performed.
+--   5. Time difference between reports is calculated and checked.
+--   6. Values of the report are checked.
 function generic_test_StandardReportContent(configuration)
   local firstReportKey = configuration.firstReportKey  -- first report name
   local reportKey = configuration.reportKey -- second report name
@@ -2123,6 +2134,7 @@ function generic_test_StandardReportContent(configuration)
     reportMessage[reportKey].IdpCnr,
     "No IdpCnr in " .. reportKey
   )
+  -- TODO: 666
   assert_not_nil(
     reportMessage[reportKey].StatusBitmap,
     "No StatusBitmap in " .. reportKey
