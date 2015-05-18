@@ -755,11 +755,10 @@ end
   -- 2. Set GpsBlockedSendReport to true.
   -- 3. Simulate terminal in InitialPosition - GPS signal not blocked.
   -- 4. Simulate terminal in GpsBlockedPosition - no valid fix provided.
-  -- 5. Wait for maxFixTimeout period.
-  -- 6. Before GpsBlockedStartDebounceTime time passes check GpsBlockedState property.
-  -- 7. Wait longer than GpsBlockedStartDebounceTime.
-  -- 8. Check the content of received AbnormalReport.
-  -- 9. Check GpsBlockedState property.
+  -- 5. Before GpsBlockedStartDebounceTime time passes check GpsBlockedState property.
+  -- 6. Wait longer than GpsBlockedStartDebounceTime.
+  -- 7. Check the content of received AbnormalReport.
+  -- 8. Check GpsBlockedState property.
   --
   -- Results:
   --
@@ -767,11 +766,10 @@ end
   -- 2. GpsBlockedSendReport set to true.
   -- 3. Terminal in InitialPosition with good GPS quality.
   -- 4. GPS signal blocked.
-  -- 5. MaxFixTimeout time passes.
-  -- 6. GpsBlockedState property should be false before GpsBlockedStartDebounceTime passes.
-  -- 7. AbnormalReport with GpsBlocked information is sent after GpsBlockedStartDebounceTime.
-  -- 8. Report contains all required fields and StatusBitmap contains GpsBlocked bit set to true.
-  -- 9. GpsBlockedState is true after GpsBlockedStartDebounceTime has passed.
+  -- 5. GpsBlockedState property should be false before GpsBlockedStartDebounceTime passes.
+  -- 6. AbnormalReport with GpsBlocked information is sent after GpsBlockedStartDebounceTime.
+  -- 7. Report contains all required fields and StatusBitmap contains GpsBlocked bit set to true.
+  -- 8. GpsBlockedState is true after GpsBlockedStartDebounceTime has passed.
 function test_GpsBlocked_ForTerminalInGpsBlockedStateWhenGpsSignalIsNotBlockedForTimeAboveGpsBlockedEndDebouncePeriod_GpsBlockedAbnormalReportIsSent()
 
   -- *** Setup
@@ -919,9 +917,9 @@ end
   --
   -- Steps:
   --
-  -- 1. Set GpsBlockedStartDebounceTime to value A, GpsBlockedEndDebounceTime to value B and maxFixTimeout to 60 seconds
+  -- 1. Set GpsBlockedStartDebounceTime to value A, GpsBlockedEndDebounceTime to value B 
   -- 2. Disable sending GpsBlocked reports.
-  -- 3. Simulate GPS signal blocked for time above maxFixTimeout and GpsBlockedStartDebounceTime.
+  -- 3. Simulate GPS signal blocked for time above GpsBlockedStartDebounceTime.
   -- 4. Wait for GpsBlocked AbnormalReport.
   -- 5. Check GpsBlockedState property.
   --
@@ -937,8 +935,7 @@ function test_GpsBlocked_WhenGpsSignalIsBlockedForTimeAboveGpsBlockedStartDeboun
   -- *** Setup
   local GPS_BLOCKED_START_DEBOUNCE_TIME = 1    -- seconds
   local GPS_BLOCKED_END_DEBOUNCE_TIME = 1      -- seconds
-  local MAX_FIX_TIMEOUT = 60                   -- seconds (60 seconds is the minimum allowed value for this property)
-
+  
   -- terminal stationary, GPS signal good initially
   local InitialPosition = {
     speed = 0,                      -- kmh
@@ -961,18 +958,16 @@ function test_GpsBlocked_WhenGpsSignalIsBlockedForTimeAboveGpsBlockedStartDeboun
                              }
   )
 
-  positionSW:setPropertiesByName({maxFixTimeout = MAX_FIX_TIMEOUT})
-
   -- *** Execute
   -- terminal in initial position, gps signal not blocked
   GPS:set(InitialPosition)
   gateway.setHighWaterMark() -- to get the newest messages
   -- GPS signal is blocked from now
   GPS:set(GpsBlockedPosition)
-
-  -- waiting until MAX_FIX_TIMEOUT + GPS_BLOCKED_START_DEBOUNCE_TIME time passes - no new fix provided during this period
-  framework.delay(MAX_FIX_TIMEOUT + GPS_BLOCKED_START_DEBOUNCE_TIME)
-
+  framework.delay(GPS_BLOCKED_START_DEBOUNCE_TIME)
+  
+  -- waiting until GPS_BLOCKED_START_DEBOUNCE_TIME time passes - no new fix provided during this period
+  framework.delay(GPS_BLOCKED_START_DEBOUNCE_TIME)
   -- AbnormalReport with GpsBlocked information is not expected
   local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
   local GpsBlockedStateProperty = vmsSW:getPropertiesByName({"GpsBlockedState"})
@@ -1016,9 +1011,7 @@ end
 function test_GpsBlocked_WhenGpsSignalIsBlockedForTimeBelowGpsBlockedStartDebouncePeriod_GpsBlockedAbnormalReportIsNotSent()
 
   -- *** Setup
-  local GPS_BLOCKED_START_DEBOUNCE_TIME = 1    -- seconds
-  local GPS_BLOCKED_END_DEBOUNCE_TIME = 20     -- seconds
-  local MAX_FIX_TIMEOUT = 60                   -- seconds (60 seconds is the minimum allowed value for this property)
+  local GPS_BLOCKED_START_DEBOUNCE_TIME = 30    -- seconds
 
   -- terminal stationary, GPS signal good initially
   local InitialPosition = {
@@ -1037,25 +1030,19 @@ function test_GpsBlocked_WhenGpsSignalIsBlockedForTimeBelowGpsBlockedStartDeboun
   }
 
   vmsSW:setPropertiesByName({GpsBlockedStartDebounceTime = GPS_BLOCKED_START_DEBOUNCE_TIME,
-                             GpsBlockedEndDebounceTime = GPS_BLOCKED_END_DEBOUNCE_TIME,
                              GpsBlockedSendReport = true,
                              }
   )
-
-  positionSW:setPropertiesByName({maxFixTimeout = MAX_FIX_TIMEOUT})
-
+  
   -- *** Execute
   -- terminal in initial position, gps signal not blocked
   GPS:set(InitialPosition)
   gateway.setHighWaterMark() -- to get the newest messages
   -- GPS signal is blocked from now
   GPS:set(GpsBlockedPosition)
-
-  -- waiting until MAX_FIX_TIMEOUT time passes - no new fix provided during this period
-  framework.delay(MAX_FIX_TIMEOUT)
-
+  framework.delay(GPS_BLOCKED_START_DEBOUNCE_TIME)
   -- AbnormalReport with GpsBlocked information is not expected
-  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 10)
+  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 20)
 
   -- back toinitial position, gps signal not blocked
   GPS:set(InitialPosition)
@@ -1096,7 +1083,6 @@ function test_GpsBlocked_ForTerminalInGpsBlockedStateWhenGpsSignalIsNotBlockedFo
   -- *** Setup
   local GPS_BLOCKED_START_DEBOUNCE_TIME = 1     -- seconds
   local GPS_BLOCKED_END_DEBOUNCE_TIME = 20      -- seconds
-  local MAX_FIX_TIMEOUT = 60                    -- seconds (60 seconds is the minimum allowed value for this property)
 
   -- terminal stationary, GPS signal good initially
   local InitialPosition = {
@@ -1120,26 +1106,24 @@ function test_GpsBlocked_ForTerminalInGpsBlockedStateWhenGpsSignalIsNotBlockedFo
                              }
   )
 
-  positionSW:setPropertiesByName({maxFixTimeout = MAX_FIX_TIMEOUT})
-
   -- *** Execute
   -- terminal in initial position, gps signal not blocked
   GPS:set(InitialPosition)
-
+  framework.delay(GPS_BLOCKED_END_DEBOUNCE_TIME)
+  
   local GpsBlockedStateProperty = vmsSW:getPropertiesByName({"GpsBlockedState"})
   D:log(framework.dump(GpsBlockedStateProperty), "GpsBlockedStateProperty before GpsBlockedEndDebounceTime")
-  assert_false(GpsBlockedStateProperty["GpsBlockedState"], "GpsBlockedState has not been changed when GPS blockage has been not detected")
+  assert_false(GpsBlockedStateProperty["GpsBlockedState"], "GpsBlockedState has been changed when GPS blockage has been not detected")
 
   -- GPS signal is blocked from now
   GPS:set(GpsBlockedPosition)
-  -- waiting until terminal goes to GpsBlocked = true state
-  framework.delay(MAX_FIX_TIMEOUT + GPS_BLOCKED_START_DEBOUNCE_TIME)
-
+  framework.delay(GPS_BLOCKED_START_DEBOUNCE_TIME)
+ 
   -- AbnormalReport is expected with GpsBlocked information
   local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"})
   assert_not_nil(ReceivedMessages["AbnormalReport"], "AbnormalReport not received")
 
-  local GpsBlockedStateProperty = vmsSW:getPropertiesByName({"GpsBlockedState"})
+  GpsBlockedStateProperty = vmsSW:getPropertiesByName({"GpsBlockedState"})
   D:log(framework.dump(GpsBlockedStateProperty), "GpsBlockedStateProperty before GpsBlockedEndDebounceTime")
   assert_true(GpsBlockedStateProperty["GpsBlockedState"], "GpsBlockedState has not been changed when GPS blockage has been detected")
 
@@ -1148,7 +1132,7 @@ function test_GpsBlocked_ForTerminalInGpsBlockedStateWhenGpsSignalIsNotBlockedFo
   GPS:set(InitialPosition)
 
   -- AbnormalReport with GpsBlocked information is not expected
-  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 10)
+  ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 10)
 
   framework.delay(10) -- to let terminal go to GpsBlocked = false state (not to interrupt other TCs)
 
@@ -1182,14 +1166,13 @@ end
   -- 3. Timestamps in two consecutive reports are different
   -- 4. Terminal in GpsBlocked state, two consecutive standard and accelerated reports received.
   -- 5. Timestamps in reports received when terminal was in GpsBlocked state are the same
-function test_GpsBlocked_WhenGpsSignalIsBlocked_TimeStampsReportedInPeriodicReportsAreTheSame()
+function test_GpsBlocked_WhenGpsSignalIsBlockedAndBlockedStartDebounceTimeHasNotPassed_TimeStampsReportedInPeriodicReportsAreTheSame()
 
   -- TODO: random selection of number of Accelerated and Standard report may be added in the future - for now it runs on report number 1
 
   -- *** Setup
-  local GPS_BLOCKED_START_DEBOUNCE_TIME = 400   -- seconds
+  local GPS_BLOCKED_START_DEBOUNCE_TIME = 150   -- seconds
   local GPS_BLOCKED_END_DEBOUNCE_TIME = 1       -- seconds
-  local MAX_FIX_TIMEOUT = 60                    -- seconds (60 seconds is the minimum allowed value for this property)
 
   -- terminal stationary, GPS signal good initially
   local InitialPosition = {
@@ -1210,41 +1193,27 @@ function test_GpsBlocked_WhenGpsSignalIsBlocked_TimeStampsReportedInPeriodicRepo
   vmsSW:setPropertiesByName({GpsBlockedStartDebounceTime = GPS_BLOCKED_START_DEBOUNCE_TIME,
                              GpsBlockedEndDebounceTime = GPS_BLOCKED_END_DEBOUNCE_TIME,
                              GpsBlockedSendReport = true,
-                             StandardReport1Interval = 2,
-                             AcceleratedReport1Rate = 2,
+                             StandardReport1Interval = 1,
                             }
   )
-
-  positionSW:setPropertiesByName({maxFixTimeout = MAX_FIX_TIMEOUT})
-
+  
   -- *** Execute
   -- terminal in initial position, gps signal not blocked
   GPS:set(InitialPosition)
   -- GPS signal is blocked from now
   GPS:set(GpsBlockedPosition)
-
-  -- waiting until MAX_FIX_TIMEOUT time passes - no new fix provided during this period
-  framework.delay(MAX_FIX_TIMEOUT + 10)
   -----------------------------------------------------------------------------------------------------
   -- GPS is blocked but GPS_BLOCKED_START_DEBOUNCE_TIME has not passed
   -----------------------------------------------------------------------------------------------------
   gateway.setHighWaterMark() -- to get the newest messages
   -- Waiting for StandardReport
-  local ReceivedMessages = vmsSW:waitForMessagesByName({"StandardReport1"}, 125)
+  local ReceivedMessages = vmsSW:waitForMessagesByName({"StandardReport1"}, 70)
   -- getting timestamp from first StandardReport
   local StandardReportTimestamp1 = tonumber(ReceivedMessages["StandardReport1"].Timestamp)
-  -- waiting for AcceleratedReport
-  ReceivedMessages = vmsSW:waitForMessagesByName({"AcceleratedReport1"}, 125)
-  -- getting timestamp from first AcceleratedReport
-  local AcceleratedReportTimestamp1 = tonumber(ReceivedMessages["AcceleratedReport1"].Timestamp)
-  D:log({StandardReportTimestamp1, AcceleratedReportTimestamp1})
-
+  
   gateway.setHighWaterMark() -- to get the newest messages
-  ReceivedMessages = vmsSW:waitForMessagesByName({"StandardReport1"}, 125)
+  ReceivedMessages = vmsSW:waitForMessagesByName({"StandardReport1"}, 70)
   local StandardReportTimestamp2 = tonumber(ReceivedMessages["StandardReport1"].Timestamp)
-  ReceivedMessages = vmsSW:waitForMessagesByName({"AcceleratedReport1"}, 125)
-  local AcceleratedReportTimestamp2 = tonumber(ReceivedMessages["AcceleratedReport1"].Timestamp)
-  D:log({StandardReportTimestamp2, AcceleratedReportTimestamp2})
 
   -- timestamps are expected to be the same
   assert_equal(StandardReportTimestamp1,
@@ -1252,60 +1221,32 @@ function test_GpsBlocked_WhenGpsSignalIsBlocked_TimeStampsReportedInPeriodicRepo
                "When GPS is blocked but GPS_BLOCKED_START_DEBOUNCE_TIME has not passed StandardReports does not contain the same timestamps"
   )
 
-  assert_equal(AcceleratedReportTimestamp1,
-               AcceleratedReportTimestamp2,
-               "When GPS is blocked but GPS_BLOCKED_START_DEBOUNCE_TIME has not passed AcceleratedReports does not contain the same timestamps"
-  )
-
   -----------------------------------------------------------------------------------------------------
   -- waiting until GPS_BLOCKED_START_DEBOUNCE_TIME passes
   -----------------------------------------------------------------------------------------------------
-
-  ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 200)
+  ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 300)
+  
+  assert_not_nil(ReceivedMessages["AbnormalReport"], "GpsBlocked abnormal report not received")
 
   local StatusBitmap = vmsSW:decodeBitmap(ReceivedMessages["AbnormalReport"].StatusBitmap, "EventStateId")
   assert_true(StatusBitmap["GpsBlocked"], "StatusBitmap has not been correctly changed when terminal detected GPS blockage")
-
+  
   -----------------------------------------------------------------------------------------------------
   -- GPS is blocked and GPS_BLOCKED_START_DEBOUNCE_TIME has passed
   -----------------------------------------------------------------------------------------------------
   -- Waiting for StandardReport
-  ReceivedMessages = vmsSW:waitForMessagesByName({"StandardReport1"}, 125)
+  ReceivedMessages = vmsSW:waitForMessagesByName({"StandardReport1"}, 70)
   -- getting timestamp from first StandardReport
   StandardReportTimestamp1 = tonumber(ReceivedMessages["StandardReport1"].Timestamp)
-  -- waiting for AcceleratedReport
-  ReceivedMessages = vmsSW:waitForMessagesByName({"AcceleratedReport1"}, 125)
-  -- getting timestamp from first AcceleratedReport
-  AcceleratedReportTimestamp1 = tonumber(ReceivedMessages["AcceleratedReport1"].Timestamp)
-  D:log({StandardReportTimestamp1, AcceleratedReportTimestamp1})
-
-  framework.delay(65) -- wait for "next series" of Accelerated and Standard Reports
-
+  
   gateway.setHighWaterMark() -- to get the newest messages
-  ReceivedMessages = vmsSW:waitForMessagesByName({"StandardReport1"}, 125)
+  ReceivedMessages = vmsSW:waitForMessagesByName({"StandardReport1"}, 70)
   StandardReportTimestamp2 = tonumber(ReceivedMessages["StandardReport1"].Timestamp)
 
-  StatusBitmap = vmsSW:decodeBitmap(ReceivedMessages["StandardReport1"].StatusBitmap, "EventStateId")
-  assert_true(StatusBitmap["GpsBlocked"], "StatusBitmap in StandardReport has not been correctly changed when terminal detected GPS blockage")
-
-  ReceivedMessages = vmsSW:waitForMessagesByName({"AcceleratedReport1"}, 125)
-  AcceleratedReportTimestamp2 = tonumber(ReceivedMessages["AcceleratedReport1"].Timestamp)
-
-  StatusBitmap = vmsSW:decodeBitmap(ReceivedMessages["AcceleratedReport1"].StatusBitmap, "EventStateId")
-  assert_true(StatusBitmap["GpsBlocked"], "StatusBitmap in AcceleratedReport has not been correctly changed when terminal detected GPS blockage")
-
-  D:log({StandardReportTimestamp2, AcceleratedReportTimestamp2})
-
-  -- timestamps are expected to be the same
+  -- timestamps are expected not to be the same
   assert_not_equal(StandardReportTimestamp1,
                    StandardReportTimestamp2,
                   "When GPS is blocked and GPS_BLOCKED_START_DEBOUNCE_TIME has passed StandardReports still contain the same timestamps"
-  )
-
-
-  assert_not_equal(AcceleratedReportTimestamp1,
-                   AcceleratedReportTimestamp2,
-                   "When GPS is blocked and GPS_BLOCKED_START_DEBOUNCE_TIME has passed AcceleratedReports still contain the same timestamps"
   )
 
   -- back to good GPS quality
@@ -1319,7 +1260,6 @@ end
 function test_GpsBlocked_WhenGpsSignalIsBlockedAndNoFixWasObtainedByTerminal_DefaultValuesOfLattitudeAndLongitudeAreSentInReports()
 
   -- *** Setup
-  local MAX_FIX_TIMEOUT = 60                   -- seconds (60 seconds is the minimum allowed value for this property)
   local PROPERTIES_SAVE_INTERVAL = 600         -- seconds
 
   -- terminal in some position but no valid fix provided
@@ -1336,19 +1276,17 @@ function test_GpsBlocked_WhenGpsSignalIsBlockedAndNoFixWasObtainedByTerminal_Def
   ----------------------------------------------------------------------------------------
 
   local deleteParamsFileMessage = {SIN = 26, MIN = 1}
-	deleteParamsFileMessage.Fields = {{Name="tag",Value=0},{Name="data",Value="del /data/svc/VMS/params.dat"}}
+	deleteParamsFileMessage.Fields = {{Name="tag",Value=0},{Name="data",Value="del /data/svc/VMS/gps.dat"}}
 	gateway.submitForwardMessage(deleteParamsFileMessage)
 
   -- This is an alternative way of deleting the file - that caused troubles, lef
   --[[
   local deleteParamsFileMessage = {SIN = 24, MIN = 1}
-	deleteParamsFileMessage.Fields = {{Name="path",Value="/data/svc/VMS/params.dat"},{Name="offset",Value=0},{Name="flags",Value="Truncate"},{Name="data",Value=""}}
+	deleteParamsFileMessage.Fields = {{Name="path",Value="/data/svc/VMS/gps.dat"},{Name="offset",Value=0},{Name="flags",Value="Truncate"},{Name="data",Value=""}}
 	gateway.submitForwardMessage(deleteParamsFileMessage)
   --]]
 
-  positionSW:setPropertiesByName({maxFixTimeout = 60,
-                                  acquireTimeout = 1,
-                                 })
+  positionSW:setPropertiesByName({acquireTimeout = 1})
 
   vmsSW:setPropertiesByName({
                              StandardReport1Interval = 2,
@@ -1372,7 +1310,7 @@ function test_GpsBlocked_WhenGpsSignalIsBlockedAndNoFixWasObtainedByTerminal_Def
   D:log(ReceivedMessages2["AcceleratedReport1"])
 
   assert_not_nil(ReceivedMessages1["StandardReport1"], "StandardReport1 not received")
-  assert_not_nil(ReceivedMessages1["AcceleratedReport1"], "AcceleratedReport1 not received")
+  assert_not_nil(ReceivedMessages2["AcceleratedReport1"], "AcceleratedReport1 not received")
 
   assert_equal(
     5460000,
@@ -1419,10 +1357,9 @@ function test_GpsBlocked_WhenGpsSignalIsBlockedAndNoFixWasObtainedByTerminal_Def
 
   assert_equal(
     0,
-    tonumber(speed["AcceleratedReport1"].Speed),
+    tonumber(ReceivedMessages2["AcceleratedReport1"].Speed),
     "Wrong longitude value in AcceleratedReport received when no fix has been obtained by terminal"
   )
-
 
 
 end
@@ -1983,8 +1920,6 @@ end
 
 
 
-
-
 --- TC checks if two PowerDisconnected abnormal reports are sent when terminal is power cycled
   -- Initial Conditions:
   --
@@ -2019,8 +1954,8 @@ end
 function test_PowerDisconnected_WhenTerminalIsPoweCycled_OnePowerDisconnectedAbnormalReportIsSentAfterPowerDisconnectedStartDebounceTimeAndSecondPowerDisconnectedAbnormalReportIsSentAfterPowerDisconnectedEndDebounceTime()
 
   -- *** Setup
-  local POWER_DISCONNECTED_START_DEBOUNCE_TIME = 5    -- seconds
-  local POWER_DISCONNECTED_END_DEBOUNCE_TIME = 60     -- seconds
+  --local POWER_DISCONNECTED_START_DEBOUNCE_TIME = 5    -- seconds
+ -- local POWER_DISCONNECTED_END_DEBOUNCE_TIME = 60     -- seconds
   local PROPERTIES_SAVE_INTERVAL = 600                -- seconds
 
   -- terminal stationary
@@ -2038,8 +1973,8 @@ function test_PowerDisconnected_WhenTerminalIsPoweCycled_OnePowerDisconnectedAbn
     heading = 90,                   -- degrees
   }
 
-  vmsSW:setPropertiesByName({PowerDisconnectedStartDebounceTime = POWER_DISCONNECTED_START_DEBOUNCE_TIME,
-                             PowerDisconnectedEndDebounceTime = POWER_DISCONNECTED_END_DEBOUNCE_TIME,
+  vmsSW:setPropertiesByName({--PowerDisconnectedStartDebounceTime = POWER_DISCONNECTED_START_DEBOUNCE_TIME,
+                             --PowerDisconnectedEndDebounceTime = POWER_DISCONNECTED_END_DEBOUNCE_TIME,
                              PowerDisconnectedSendReport = true,
                              }, false, true
   )
@@ -2047,7 +1982,7 @@ function test_PowerDisconnected_WhenTerminalIsPoweCycled_OnePowerDisconnectedAbn
   -- *** Execute
   -- terminal in initial position
   GPS:set(InitialPosition)
-  framework.delay(PROPERTIES_SAVE_INTERVAL + 5)
+  --framework.delay(PROPERTIES_SAVE_INTERVAL + 5)
   gateway.setHighWaterMark() -- to get the newest messages
 
   -- checking PowerDisconnectedState property - this is expected to be false - terminal is powered on for time longer than
@@ -2061,17 +1996,21 @@ function test_PowerDisconnected_WhenTerminalIsPoweCycled_OnePowerDisconnectedAbn
 
   local terminalOnTimeStamp = os.time()  -- to get exact timestamp
 
-
-  framework.delay(POWER_DISCONNECTED_END_DEBOUNCE_TIME + 5)
+--  framework.delay(POWER_DISCONNECTED_END_DEBOUNCE_TIME + 5)
 
   -- receiving all from mobile messages sent after setHighWaterMark()
   local receivedMessages = gateway.getReturnMessages()
   -- look for AbnormalReport messages
   local AllReceivedAbnormalReports = framework.filterMessages(receivedMessages, framework.checkMessageType(115, 50)) -- TODO: service wrapper functions need to be modified
-
+  
+  D:log(AllReceivedAbnormalReports)
+  
   local PowerDisconnectedAbnormalReportTrue = nil
   for index = 1 , #AllReceivedAbnormalReports, 1 do
     local StatusBitmap = vmsSW:decodeBitmap(AllReceivedAbnormalReports[index].Payload.StatusBitmap, "EventStateId")
+    D:log("Status Bitmap")
+    D:log(StatusBitmap)
+    
     D:log(StatusBitmap["PowerDisconnected"] )
     if AllReceivedAbnormalReports[index].Payload.EventType == "PowerDisconnected" and StatusBitmap["PowerDisconnected"] == true then
         PowerDisconnectedAbnormalReportTrue = AllReceivedAbnormalReports[index]
@@ -2082,7 +2021,10 @@ function test_PowerDisconnected_WhenTerminalIsPoweCycled_OnePowerDisconnectedAbn
   local PowerDisconnectedAbnormalReportFalse = nil
   for index = 1 , #AllReceivedAbnormalReports, 1 do
     local StatusBitmap = vmsSW:decodeBitmap(AllReceivedAbnormalReports[index].Payload.StatusBitmap, "EventStateId")
-    D:log(StatusBitmap["PowerDisconnected"] )
+    D:log("Status Bitmap")
+    D:log(StatusBitmap)
+    
+    D:log(StatusBitmap["PowerDisconnected"])
     if AllReceivedAbnormalReports[index].Payload.EventType == "PowerDisconnected" and StatusBitmap["PowerDisconnected"] == true then
         PowerDisconnectedAbnormalReportFalse = AllReceivedAbnormalReports[index]
         break
@@ -2121,7 +2063,7 @@ function test_PowerDisconnected_WhenTerminalIsPoweCycled_OnePowerDisconnectedAbn
   )
 
   assert_equal(
-    terminalOnTimeStamp + POWER_DISCONNECTED_START_DEBOUNCE_TIME,
+    --terminalOnTimeStamp + POWER_DISCONNECTED_START_DEBOUNCE_TIME,
     tonumber(PowerDisconnectedAbnormalReportTrue.Payload.Timestamp),
     20,
     "Wrong Timestamp value in PowerDisconnected abnormal report"

@@ -68,7 +68,7 @@ end
 
 Annotations:register([[
 @randIn(tcRandomizer,batch,standardReportPeriodic,3)
-@method(test_ATStandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues)
+@method(test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues)
 @module(TestNormalReportsModule)
 ]])
 --- TC checks if StandardReport 1 is sent periodically and its values are correct (setProperties used for report setup)
@@ -111,7 +111,7 @@ end
 
 Annotations:register([[
 @randIn(tcRandomizer,batch,standardReportPeriodic,3)
-@method(test_ATStandardReport_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues)
+@method(test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues)
 @module(TestNormalReportsModule)
 ]])
 --- TC checks if StandardReport 2 is sent periodically and its values are correct (setProperties used for report setup)
@@ -156,7 +156,7 @@ end
 
 Annotations:register([[
 @randIn(tcRandomizer,batch,standardReportPeriodic,3)
-@method(test_ATStandardReport_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues)
+@method(test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues)
 @module(TestNormalReportsModule)
 ]])
 --- TC checks if StandardReport 3 is sent periodically and its values are correct (setProperties used for report setup)
@@ -197,6 +197,11 @@ function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport3IsS
   })
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,standardReportPeriodic2,1)
+@method(test_StandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport1MessageIsSent_StandardReport1IsSentPeriodicallyWithCorrectValues)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if StandardReport 1 is sent periodically and its values are correct (SetConfigReport1 used for report setup)
   -- Initial Conditions:
   --
@@ -241,6 +246,11 @@ function test_StandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport1
   })
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,standardReportPeriodic2,2)
+@method(test_StandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport2MessageIsSent_StandardReport2IsSentPeriodicallyWithCorrectValues)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if StandardReport 2 is sent periodically and its values are correct (SetConfigReport2 used for report setup)
   -- Initial Conditions:
   --
@@ -285,6 +295,11 @@ function test_StandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport2
   })
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,standardReportPeriodic2,3)
+@method(test_StandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport3MessageIsSent_StandardReport3IsSentPeriodicallyWithCorrectValues)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if StandardReport 3 is sent periodically and its values are correct (SetConfigReport3 used for report setup)
   -- Initial Conditions:
   --
@@ -331,6 +346,11 @@ function test_StandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport3
 
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,standardReportDisabled,1)
+@method(test_StandardReportDisabled_WhenStandardReport1IntervalIsSetToZero_StandardReport1IsNotSent)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if StandardReport 1 is not sent
   -- Initial Conditions:
   --
@@ -357,6 +377,11 @@ function test_StandardReportDisabled_WhenStandardReport1IntervalIsSetToZero_Stan
   )
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,standardReportDisabled,2)
+@method(test_StandardReportDisabled_WhenStandardReport2IntervalIsSetToZero_StandardReport2IsNotSent)
+@module(TestNormalReportsModule)
+]])
 -- TC checks if StandardReport 2 is not sent
   -- Initial Conditions:
   --
@@ -383,6 +408,11 @@ function test_StandardReportDisabled_WhenStandardReport2IntervalIsSetToZero_Stan
   )
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,standardReportDisabled,3)
+@method(test_StandardReportDisabled_WhenStandardReport3IntervalIsSetToZero_StandardReport3IsNotSent)
+@module(TestNormalReportsModule)
+]])
 -- TC checks if StandardReport 3 is not sent
   -- Initial Conditions:
   --
@@ -409,6 +439,11 @@ function test_StandardReportDisabled_WhenStandardReport3IntervalIsSetToZero_Stan
   )
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,standardReportPeriodic3,1)
+@method(test_StandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if StandardReport 1 is sent periodically and its values are correct (setProperties used for report setup)
 --- Other Standard Reports are also configured for sending. 
   -- Initial Conditions:
@@ -464,6 +499,11 @@ function test_StandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport1
   })
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,standardReportPeriodic3,2)
+@method(test_StandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if StandardReport 2 is sent periodically and its values are correct (setProperties used for report setup)
 --- Other Standard Reports are also configured for sending. 
   -- Initial Conditions:
@@ -519,6 +559,11 @@ function test_StandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport2
   })
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,standardReportPeriodic3,3)
+@method(test_StandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if StandardReport 3 is sent periodically and its values are correct (setProperties used for report setup)
 --- Other Standard Reports are also configured for sending. 
   -- Initial Conditions:
@@ -580,6 +625,11 @@ end
 -- Test Cases for ACCELERATED REPORTS
 -----------------------------------------------------------------------------------------------
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,acceleratedReportPeriodic,1)
+@method(test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport1IsSentWithCorrectValues)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if AcceleratedReport 1 is sent periodically and its values are correct (setProperties used for setup)
   -- Initial Conditions:
   --
@@ -618,6 +668,11 @@ function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIn
   })
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,acceleratedReportPeriodic,2)
+@method(test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport2IsSentWithCorrectValues)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if AcceleratedReport 2 is sent periodically and its values are correct (setProperties used for setup)
   -- Initial Conditions:
   --
@@ -656,6 +711,11 @@ function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIn
   })
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,acceleratedReportPeriodic,3)
+@method(test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport3IsSentWithCorrectValues)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if AcceleratedReport 3 is sent periodically and its values are correct (setProperties used for setup)
   -- Initial Conditions:
   --
@@ -694,6 +754,12 @@ function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIn
   })
 end
 
+
+Annotations:register([[
+@randIn(tcRandomizer,batch,acceleratedReportDisabled,1)
+@method(test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardReport1IntervalIsSetAboveZeroAndAcceleratedReportInterval1DisablesFeature_StandardReportIsSentAndAcceleratedReportNotSent)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if StandardReport 1 is sent and accelerated report is not sent.
   -- Initial Conditions:
   --
@@ -721,6 +787,11 @@ function test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardRepo
   )
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,acceleratedReportDisabled,2)
+@method(test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardReport2IntervalIsSetAboveZeroAndAcceleratedReportInterval2DisablesFeature_StandardReportIsSentAndAcceleratedReportNotSent)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if StandardReport 2 is sent and accelerated report is not sent.
   -- Initial Conditions:
   --
@@ -748,6 +819,11 @@ function test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardRepo
   )
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,acceleratedReportDisabled,3)
+@method(test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardReport3IntervalIsSetAboveZeroAndAcceleratedReportInterval3DisablesFeature_StandardReportIsSentAndAcceleratedReportNotSent)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if StandardReport 3 is sent and accelerated report is not sent.
   -- Initial Conditions:
   --
@@ -779,6 +855,11 @@ end
 -- Test Cases for CONFIG CHANGE REPORTS
 -----------------------------------------------------------------------------------------------
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,configChangeSent,1)
+@method(test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport1IsSent)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if ConfigChangeReport 1 is sent and its values are correct (setProperties used for setup)
   -- Initial Conditions:
   --
@@ -811,6 +892,11 @@ function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigProperti
   )
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,configChangeSent,2)
+@method(test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport2IsSent)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if ConfigChangeReport 2 is sent and its values are correct (setProperties used for setup)
   -- Initial Conditions:
   --
@@ -844,6 +930,11 @@ function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigProperti
   )
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,configChangeSent,3)
+@method(test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport3IsSent)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if ConfigChangeReport 3 is sent and its values are correct (setProperties used for setup)
   -- Initial Conditions:
   --
@@ -877,6 +968,11 @@ function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigProperti
   )
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,configChangeSent2,1)
+@method(test_ConfigChangeReport_WhenSetConfigReport1MessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport1IsSent)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if ConfigChangeReport 1 is sent and its values are correct (message SetConfigReport1 used for setup)
   -- Initial Conditions:
   --
@@ -913,6 +1009,11 @@ function test_ConfigChangeReport_WhenSetConfigReport1MessageIsSentAndConfigPrope
   )
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,configChangeSent2,2)
+@method(test_ConfigChangeReport_WhenSetConfigReport2MessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport2IsSent)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if ConfigChangeReport 2 is sent and its values are correct (message SetConfigReport2 used for setup)
   -- Initial Conditions:
   --
@@ -950,6 +1051,11 @@ function test_ConfigChangeReport_WhenSetConfigReport2MessageIsSentAndConfigPrope
   )
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,configChangeSent2,3)
+@method(test_ConfigChangeReport_WhenSetConfigReport3MessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport3IsSent)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if ConfigChangeReport 3 is sent and its values are correct (message SetConfigReport3 used for setup)
   -- Initial Conditions:
   --
@@ -987,7 +1093,25 @@ function test_ConfigChangeReport_WhenSetConfigReport3MessageIsSentAndConfigPrope
   )
 end
 
--- [OK]
+Annotations:register([[
+@randIn(tcRandomizer,batch,propertyDebounce,1)
+@method(test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebounceTime_ConfigChangeReport1IsNotSent)
+@module(TestNormalReportsModule)
+]])
+--- TC checks if property debounce time works properly.
+  -- Initial Conditions:
+  --
+  -- * There should be PropertyChangeDebounceTime set to 1 minute.
+  --
+  -- Steps:
+  --
+  -- 1. SetProperties message is sent with changed properties values (StandardReport1Interval and AcceleratedReport1Rate).
+  -- 2. SetProperties messsage is sent with initial properties values.
+  --
+  -- Results:
+  --
+  -- 1. No ConfigChangeReport1 message is sent.
+  -- 2. No ConfigChangeReport1 message is sent.
 function test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebounceTime_ConfigChangeReport1IsNotSent()
 
  generic_test_PropertyChangeDebounceTime(
@@ -998,7 +1122,25 @@ function test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebo
 
 end
 
--- [OK]
+Annotations:register([[
+@randIn(tcRandomizer,batch,propertyDebounce,2)
+@method(test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebounceTime_ConfigChangeReport2IsNotSent)
+@module(TestNormalReportsModule)
+]])
+--- TC checks if property debounce time works properly.
+  -- Initial Conditions:
+  --
+  -- * There should be PropertyChangeDebounceTime set to 1 minute.
+  --
+  -- Steps:
+  --
+  -- 1. SetProperties message is sent with changed properties values (StandardReport2Interval and AcceleratedReport2Rate).
+  -- 2. SetProperties messsage is sent with initial properties values.
+  --
+  -- Results:
+  --
+  -- 1. No ConfigChangeReport2 message is sent.
+  -- 2. No ConfigChangeReport2 message is sent.
 function test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebounceTime_ConfigChangeReport2IsNotSent()
 
  generic_test_PropertyChangeDebounceTime(
@@ -1009,7 +1151,25 @@ function test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebo
 
 end
 
--- [OK]
+Annotations:register([[
+@randIn(tcRandomizer,batch,propertyDebounce,3)
+@method(test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebounceTime_ConfigChangeReport3IsNotSent)
+@module(TestNormalReportsModule)
+]])
+--- TC checks if property debounce time works properly.
+  -- Initial Conditions:
+  --
+  -- * There should be PropertyChangeDebounceTime set to 1 minute.
+  --
+  -- Steps:
+  --
+  -- 1. SetProperties message is sent with changed properties values (StandardReport3Interval and AcceleratedReport3Rate).
+  -- 2. SetProperties messsage is sent with initial properties values.
+  --
+  -- Results:
+  --
+  -- 1. No ConfigChangeReport3 message is sent.
+  -- 2. No ConfigChangeReport3 message is sent.
 function test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebounceTime_ConfigChangeReport3IsNotSent()
 
  generic_test_PropertyChangeDebounceTime(
@@ -1020,7 +1180,29 @@ function test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebo
 
 end
 
--- [OK]
+Annotations:register([[
+@randIn(tcRandomizer,batch,propertyDebounce2,1)
+@method(test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport1AreCorrect)
+@module(TestNormalReportsModule)
+]])
+--- TC checks if two ConfigChange reports have correct timestamps.
+  -- Initial Conditions:
+  --
+  -- * Actions are performed after first/zero ConfigChangeReport1 report is received.
+  --
+  -- Steps:
+  --
+  -- 1. PropertyChangeDebounceTime is set to 60 seconds.
+  -- 2. Properties are changed (StandardReport1Interval, AcceleratedReport1Rate)
+  -- 3. Properties are changed again.
+  -- 4. Difference between timestamps in ConfigChangeReport1 reports is calculated.
+  --
+  -- Results:
+  --
+  -- 1. PropertyChangeDebounceTime is correctly set.
+  -- 2. First ConfigChangeReport1 message is sent.
+  -- 3. Second ConfigChangeReport1 message is sent.
+  -- 4. Difference between timestamps is correct.
 function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport1AreCorrect()
   
   generic_TimestampsInConfigChangeReports(
@@ -1031,7 +1213,29 @@ function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAre
 
 end
 
--- [OK]
+Annotations:register([[
+@randIn(tcRandomizer,batch,propertyDebounce2,2)
+@method(test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport2AreCorrect)
+@module(TestNormalReportsModule)
+]])
+--- TC checks if two ConfigChange reports have correct timestamps.
+  -- Initial Conditions:
+  --
+  -- * Actions are performed after first/zero ConfigChangeReport2 report is received.
+  --
+  -- Steps:
+  --
+  -- 1. PropertyChangeDebounceTime is set to 60 seconds.
+  -- 2. Properties are changed (StandardReport2Interval, AcceleratedReport2Rate)
+  -- 3. Properties are changed again.
+  -- 4. Difference between timestamps in ConfigChangeReport2 reports is calculated.
+  --
+  -- Results:
+  --
+  -- 1. PropertyChangeDebounceTime is correctly set.
+  -- 2. First ConfigChangeReport2 message is sent.
+  -- 3. Second ConfigChangeReport2 message is sent.
+  -- 4. Difference between timestamps is correct.
 function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport2AreCorrect()
   
   generic_TimestampsInConfigChangeReports(
@@ -1042,7 +1246,29 @@ function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAre
 
 end
 
--- [OK]
+Annotations:register([[
+@randIn(tcRandomizer,batch,propertyDebounce2,3)
+@method(test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport3AreCorrect)
+@module(TestNormalReportsModule)
+]])
+--- TC checks if two ConfigChange reports have correct timestamps.
+  -- Initial Conditions:
+  --
+  -- * Actions are performed after first/zero ConfigChangeReport3 report is received.
+  --
+  -- Steps:
+  --
+  -- 1. PropertyChangeDebounceTime is set to 60 seconds.
+  -- 2. Properties are changed (StandardReport3Interval, AcceleratedReport3Rate)
+  -- 3. Properties are changed again.
+  -- 4. Difference between timestamps in ConfigChangeReport3 reports is calculated.
+  --
+  -- Results:
+  --
+  -- 1. PropertyChangeDebounceTime is correctly set.
+  -- 2. First ConfigChangeReport3 message is sent.
+  -- 3. Second ConfigChangeReport3 message is sent.
+  -- 4. Difference between timestamps is correct.
 function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport3AreCorrect()
   
   generic_TimestampsInConfigChangeReports(
@@ -1052,6 +1278,11 @@ function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAre
   )
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,configChangeViaShell,1)
+@method(test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport1IsSentImmediatelyOnlyOnce)
+@module(TestNormalReportsModule)
+]])
 -- [OK]
 function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport1IsSentImmediatelyOnlyOnce()
   -- get properties
@@ -1068,6 +1299,11 @@ function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExe
   )
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,configChangeViaShell,2)
+@method(test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport2IsSentImmediatelyOnlyOnce)
+@module(TestNormalReportsModule)
+]])
 -- [OK]
 function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport2IsSentImmediatelyOnlyOnce()
   -- get properties
@@ -1084,6 +1320,11 @@ function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExe
   )
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,configChangeViaShell,3)
+@method(test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport3IsSentImmediatelyOnlyOnce3)
+@module(TestNormalReportsModule)
+]])
 -- [OK]
 function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport3IsSentImmediatelyOnlyOnce()
   -- get properties
@@ -1128,7 +1369,6 @@ end
   -- 5. Logs are collected.
   -- 6. Logs values are correct.
   -- 7. Spacer times between logs are correct.
-  -- [OK]
 function test_LogReport_WhenGpsPositionIsSetAndLogFilterEstablished_LogEntriesShouldCollectCorrectDataInCorrectInterval()
 
   local logReportXKey = "LogReport"
@@ -1139,330 +1379,6 @@ function test_LogReport_WhenGpsPositionIsSetAndLogFilterEstablished_LogEntriesSh
 
   local timeForLogging = 2*60+20
   local itemsInLog = 2
-
-  generic_test_LogReports(logReportXKey, properties, timeForLogging, itemsInLog)
-end
-
--- [OK]
-function test_LogReportNegative_WhenLogReportIsDisabledAndLogFilterEstablished_LogEntriesShouldNotCollectData()
-
-  local logReportXKey = "LogReport"
-
-  local properties = {
-    LogReportInterval = 1,
-  }
-
-  local timeForLogging = 30
-
-  generic_test_LogReportsNegative(logReportXKey, properties, timeForLogging)
-end
-
------------------------------------------------------------------------------------------------
--- DEFAULT VALUES tests
------------------------------------------------------------------------------------------------
-
--- [OK]
-function test_DefaultValues_WhenPropertiesAreRequestedAfterPropertiesReset_CorrectDefaultValuesAreGiven()
-  -- reset of properties
-  systemSW:resetProperties({vmsSW.sin})
-
-   -- get properties
-  local propertiesToCheck = {
-    "StandardReport1Interval",
-    "AcceleratedReport1Rate",
-    "LogReportInterval",
-    "StandardReport2Interval",
-    "AcceleratedReport2Rate",
-    "StandardReport3Interval",
-    "AcceleratedReport3Rate",
-  }
-
-  local propertiesValues = {
-    StandardReport1Interval = 60,
-    AcceleratedReport1Rate = 1,
-    LogReportInterval = 15,
-    StandardReport2Interval = 0,
-    AcceleratedReport2Rate = 1,
-    StandardReport3Interval = 0,
-    AcceleratedReport3Rate = 1,
-  }
-
-  local propertiesFetched = vmsSW:getPropertiesByName(propertiesToCheck)
-
-  for key,value in pairs(propertiesValues) do
-    assert_not_nil(propertiesFetched[key],"Property "..key.." not found!")
-    assert_equal(value,tonumber(propertiesFetched[key]),"Property "..key.." - wrong default ")
-  end
-end
-
------------------------------------------------------------------------------------------------
--- DRIFT OVER TIME
--- The Report Capability shall ensure that periodic reports do not drift over time.
------------------------------------------------------------------------------------------------
-
---[OK]
-function test_DriftOverTime_Standard1AndAccelerated()
-  generic_test_DriftOverTime_StandardAndAccelerated(
-    {StandardReport1Interval=4, AcceleratedReport1Rate=4},
-    "ConfigChangeReport1",
-    "StandardReport1",
-    "AcceleratedReport1",
-    4, --min
-    1, --min
-    3
-  )
-end
-
--- [OK]
-function test_DriftOverTime_Standard2AndAccelerated()
-  generic_test_DriftOverTime_StandardAndAccelerated(
-    {StandardReport2Interval=4, AcceleratedReport2Rate=4},
-    "ConfigChangeReport2",
-    "StandardReport2",
-    "AcceleratedReport2",
-    4, --min
-    1, --min
-    3
-  )
-end
-
--- [OK]
-function test_DriftOverTime_Standard3AndAccelerated()
-  generic_test_DriftOverTime_StandardAndAccelerated(
-    {StandardReport3Interval=4, AcceleratedReport3Rate=4},
-    "ConfigChangeReport3",
-    "StandardReport3",
-    "AcceleratedReport3",
-    4, --min
-    1, --min
-    3
-  )
-end
-
-
------------------------------------------------------------------------------------------------
--- POLL REQUEST / RESPONSE Test cases
------------------------------------------------------------------------------------------------
-
--- [OK]
-function test_PollRequest_WhenPollRequest1MessageIsSend_CorrectPollResponse1MessageIsReceived()
-  generic_test_PollRequest(
-    "PollRequest1", 
-    "PollResponse1"
-  )
-end
-
--- [OK]
-function test_PollRequest_WhenPollRequest2MessageIsSend_CorrectPollResponse2MessageIsReceived()
-  generic_test_PollRequest(
-    "PollRequest2", 
-    "PollResponse2"
-  )
-end
-
--- [OK]
-function test_PollRequest_WhenPollRequest3MessageIsSend_CorrectPollResponse3MessageIsReceived()
-  generic_test_PollRequest(
-    "PollRequest3", 
-    "PollResponse3"
-  )
-end
-
---- TC checks requesting reports on demand (PollRequest/PollResponse) does not interfere with other reports timing.
-  --
-  -- Steps:
-  --
-  -- 1. Setup is done: StandardReport1Interval and AcceleratedReport1Rate are set to 2
-  -- 2. Waiting for first Standard Report is performed.
-  -- 3. In the middle of AcceleratedReport1 interval the PollRequest1 message is sent.
-  -- 4. Waiting for AcceleratedReport1 is performed.
-  -- 5. Timeout between reports is calculated. 
-  --
-  -- Results:
-  --
-  -- 1. Setup is correctly finished.
-  -- 2. StandardReport1 is received.
-  -- 3. PollResponse1 message is received.
-  -- 4. AcceleratedReport1 is received.
-  -- 5. Timeout between reports is correct.
-function test_PollRequest_WhenPollRequest1IsRequestedDuringStandardAndAcceleratedReportsCycle_AcceleratedIntervalIsCorrect()
-
-   generic_test_PollRequestWithOthers(
-     "PollRequest1",
-     "PollResponse1",
-     "StandardReport1",
-     "AcceleratedReport1",
-     {
-      StandardReport1Interval = 2,
-      AcceleratedReport1Rate = 2,
-     },
-     2,
-     1
-   )
-
-end
-
---- TC checks requesting reports on demand (PollRequest/PollResponse) does not interfere with other reports timing.
-  --
-  -- Steps:
-  --
-  -- 1. Setup is done: StandardReport2Interval and AcceleratedReport1Rate are set to 2
-  -- 2. Waiting for first Standard Report is performed.
-  -- 3. In the middle of AcceleratedReport2 interval the PollRequest2 message is sent.
-  -- 4. Waiting for AcceleratedReport2 is performed.
-  -- 5. Timeout between reports is calculated. 
-  --
-  -- Results:
-  --
-  -- 1. Setup is correctly finished.
-  -- 2. StandardReport2 is received.
-  -- 3. PollResponse2 message is received.
-  -- 4. AcceleratedReport2 is received.
-  -- 5. Timeout between reports is correct.
-function test_PollRequest_WhenPollRequest2IsRequestedDuringStandardAndAcceleratedReportsCycle_AcceleratedIntervalIsCorrect()
-
-   generic_test_PollRequestWithOthers(
-     "PollRequest2",
-     "PollResponse2",
-     "StandardReport2",
-     "AcceleratedReport2",
-     {
-      StandardReport2Interval = 2,
-      AcceleratedReport2Rate = 2,
-     },
-     2,
-     1
-   )
-
-end
-
---- TC checks requesting reports on demand (PollRequest/PollResponse) does not interfere with other reports timing.
-  --
-  -- Steps:
-  --
-  -- 1. Setup is done: StandardReport3Interval and AcceleratedReport1Rate are set to 2
-  -- 2. Waiting for first Standard Report is performed.
-  -- 3. In the middle of AcceleratedReport3 interval the PollRequest3 message is sent.
-  -- 4. Waiting for AcceleratedReport1 is performed.
-  -- 5. Timeout between reports is calculated. 
-  --
-  -- Results:
-  --
-  -- 1. Setup is correctly finished.
-  -- 2. StandardReport3 is received.
-  -- 3. PollResponse3 message is received.
-  -- 4. AcceleratedReport3 is received.
-  -- 5. Timeout between reports is correct.
-function test_PollRequest_WhenPollRequest3IsRequestedDuringStandardAndAcceleratedReportsCycle_AcceleratedIntervalIsCorrect()
-
-   generic_test_PollRequestWithOthers(
-     "PollRequest3",
-     "PollResponse3",
-     "StandardReport3",
-     "AcceleratedReport3",
-     {
-      StandardReport3Interval = 2,
-      AcceleratedReport3Rate = 2,
-     },
-     2,
-     1
-   )
-
-end
-
-
------------------------------------------------------------------------------------------------
--- GENERIC LOGIC for test cases
------------------------------------------------------------------------------------------------
-
--- Generic function which can be configured in multiple ways.
--- See the usage in TCs above.
---
--- Checks if sending PollRequest message in the middle of other reports timeout does not affect it.
--- 
--- Steps:
---   1. Configuration is prepared (TC method passes it).
---   2. Waiting for first standard report is performed.
---   3. In the middle of accelerated report interval the PollRequest message is sent.
---   4. Waiting for accelerated report is performed.
---   5. Correctness of timeouts is checked.
-function generic_test_PollRequestWithOthers(pollRequestMsgKey, pollResponseMsgKey, standardReportKey, acceleratedReportKey, properties, standardInterval, acceleratedInterval)
-
-  -- setup standard and accelerated report intervals
-  vmsSW:setPropertiesByName(properties)
-  framework.delay(5)
-
-  -- wait for first standard report
-  local standardMsg = vmsSW:waitForMessagesByName(
-    standardReportKey,
-    standardInterval*60 + 20
-  )
-  D:log(standardMsg)
-  assert_not_nil(standardMsg,"Standard report not received.")
-  assert_not_nil(standardMsg[standardReportKey],"Standard report not received.")
-
-  -- poll request / response in the middle of accelerated interval
-  framework.delay(acceleratedInterval*60/2)
-  vmsSW:sendMessageByName(pollRequestMsgKey)
-  local pollMessage = vmsSW:waitForMessagesByName(pollResponseMsgKey)
-  D:log(pollMessage)
-  assert_not_nil(pollMessage,"There is no poll response report message!")
-  assert_not_nil(pollMessage[pollResponseMsgKey],"There is no poll response report message!")
-
-  -- wait for accelerated report
-  local acceleratedMsg = vmsSW:waitForMessagesByName(
-    acceleratedReportKey,
-    acceleratedInterval*60 + 20
-  )
-  D:log(acceleratedMsg)
-  assert_not_nil(acceleratedMsg,"Accelerated report not received.")
-  assert_not_nil(acceleratedMsg[acceleratedReportKey],"Accelerated report not received.")
-
-  -- check timestamp diff
-  local timestampDiff = tonumber(acceleratedMsg[acceleratedReportKey].Timestamp) - tonumber(standardMsg[standardReportKey].Timestamp)
-  D:log(timestampDiff)
-  assert_equal(acceleratedInterval*60,timestampDiff,5,"Wrong interval of accelerated report (poll report was requested before).")
-
-end
-
-function generic_test_LogReportsNegative(logReportXKey, properties, timeForLogging)
-
-  -- set properties for log interval calculation (StandardReportXInterval, LogReportXRate)
-  vmsSW:setPropertiesByName(properties)
-
-  --synchronize first log report
-  vmsSW:waitForMessagesByName(logReportXKey)
-
-  framework.delay(5)
-
-  --set log filter
-  logSW:setLogFilter(
-    vmsSW.sin, {
-    vmsSW:getMinFrom(logReportXKey)},
-    os.time()+5,
-    os.time()+timeForLogging+5,
-    "True"
-  )
-
-  -- wait for log reports
-  framework.delay(timeForLogging)
-
-  -- get reports from log
-  local logEntries = logSW:getLogEntries(itemsInLog)
-
-  -- it must be loop here because operand '#' doesn't count dictionary items :(
-  local counter = 0
-  for key,value in pairs(logEntries) do
-    counter = counter + 1 
-  end
-
-  D:log(logEntries)
-  assert_equal(counter,0,0,"There should be not items in logs!")
-
-end
-
--- generic logic for Log Reports TCs
-function generic_test_LogReports(logReportXKey, properties, timeForLogging, itemsInLog)
 
   local filterTimeout = 10
 
@@ -1477,7 +1393,6 @@ function generic_test_LogReports(logReportXKey, properties, timeForLogging, item
   
   --synchronize first standard report
   vmsSW:waitForMessagesByName(logReportXKey)
-
 
   --set log filter
   logSW:setLogFilter(
@@ -1551,6 +1466,489 @@ function generic_test_LogReports(logReportXKey, properties, timeForLogging, item
     counter = counter + 1 
   end
   assert_equal(itemsInLog,counter,0,"Wrong number of items in log!")
+
+end
+
+--- TC checks if Log Reports are properly disabled.
+  -- Initial Conditions:
+  --
+  -- * There should be firts log report received with known interval
+  -- * There should be configuration prepared in a way that disables Log Reports.
+  --
+  -- Steps:
+  --
+  -- 1. Waiting for initial log report is performed.
+  -- 2. Log interval is set to zero.
+  -- 3. Log filter is set for 2 minutes.
+  -- 4. Waiting for log items is performed.
+  --
+  -- Results:
+  --
+  -- 1. Initial log report is received.
+  -- 2. Property with log interval is correctly set.
+  -- 3. Log filter is correctly set.
+  -- 4. There is no log items.
+function test_LogReportNegative_WhenLogReportIsDisabledAndLogFilterEstablished_LogEntriesShouldNotCollectData()
+
+  local logReportXKey = "LogReport"
+
+  -- set log interval to 1
+  local properties = {
+    LogReportInterval = 1,
+  }
+
+  -- set properties for log interval calculation (LogReportInterval)
+  vmsSW:setPropertiesByName(properties)
+
+  -- wait for initial log report
+  vmsSW:waitForMessagesByName(logReportXKey)
+
+  -- set log interval to 0
+  properties = {
+    LogReportInterval = 0,
+  }
+  
+  -- set properties for log interval calculation (LogReportInterval)
+  vmsSW:setPropertiesByName(properties)
+
+  -- time for logging
+  local timeForLogging = 2 * 60 -- 2 minutes
+
+  --set log filter
+  logSW:setLogFilter(
+    vmsSW.sin, {
+    vmsSW:getMinFrom(logReportXKey)},
+    os.time()+5,
+    os.time()+timeForLogging+5,
+    "True"
+  )
+
+  -- wait for log reports
+  framework.delay(timeForLogging)
+
+  -- get reports from log
+  local logEntries = logSW:getLogEntries(itemsInLog)
+
+  -- it must be loop here because operand '#' doesn't count dictionary items :(
+  local counter = 0
+  for key,value in pairs(logEntries) do
+    counter = counter + 1
+  end
+
+  -- there should be no log items
+  assert_equal(counter,0,0,"There should be not items in logs!")
+
+end
+
+-----------------------------------------------------------------------------------------------
+-- DEFAULT VALUES tests
+-----------------------------------------------------------------------------------------------
+
+--- TC checks if reset of properties restores proper default values.
+  --
+  -- Steps:
+  --
+  -- 1.Reset of properties is requested via system service.
+  -- 2.Properties are fetched via OTA message.
+  -- 3.Each property value is compared with default value.
+  --
+  -- Results:
+  --
+  -- 1.Reset of properties is properly performed.
+  -- 2.Properties are correctly fetched.
+  -- 3.Each property has correct default value.
+function test_DefaultValues_WhenPropertiesAreRequestedAfterPropertiesReset_CorrectDefaultValuesAreGiven()
+  -- reset of properties
+  systemSW:resetProperties({vmsSW.sin})
+
+   -- get properties
+  local propertiesToCheck = {
+    "StandardReport1Interval",
+    "AcceleratedReport1Rate",
+    "LogReportInterval",
+    "StandardReport2Interval",
+    "AcceleratedReport2Rate",
+    "StandardReport3Interval",
+    "AcceleratedReport3Rate",
+  }
+
+  local propertiesValues = {
+    StandardReport1Interval = 60,
+    AcceleratedReport1Rate = 1,
+    LogReportInterval = 15,
+    StandardReport2Interval = 0,
+    AcceleratedReport2Rate = 1,
+    StandardReport3Interval = 0,
+    AcceleratedReport3Rate = 1,
+  }
+
+  local propertiesFetched = vmsSW:getPropertiesByName(propertiesToCheck)
+
+  for key,value in pairs(propertiesValues) do
+    assert_not_nil(propertiesFetched[key],"Property "..key.." not found!")
+    assert_equal(value,tonumber(propertiesFetched[key]),"Property "..key.." - wrong default ")
+  end
+end
+
+-----------------------------------------------------------------------------------------------
+-- DRIFT OVER TIME
+-- The Report Capability shall ensure that periodic reports do not drift over time.
+-----------------------------------------------------------------------------------------------
+
+Annotations:register([[
+@randIn(tcRandomizer,batch,driftOverTime,1)
+@method(test_DriftOverTime_Standard1AndAccelerated)
+@module(TestNormalReportsModule)
+]])
+--- TC checks if standard and accelerated reports timing do not drift over time.
+  --
+  -- Steps:
+  --
+  -- 1. Configuration is prepared (StandardReport1Interval=4, AcceleratedReport1Rate=4)
+  -- 2. Waiting for first StandardReport1 is performed.
+  -- 3. System overload is simulated.
+  -- 4. Timeouts of standard/accelerated are being saved for analyse.
+  -- 5. Correctness of timeouts is being checked.
+  --
+  -- Results:
+  --
+  -- 1. Configuration is set.
+  -- 2. StandardReport1 is received.
+  -- 3. Separate thread is spawned for overload simulation.
+  -- 4. Timeouts of standard/accelerated are saved for analyse.
+  -- 5. There is no drift in time.
+function test_DriftOverTime_Standard1AndAccelerated()
+  generic_test_DriftOverTime_StandardAndAccelerated(
+    {StandardReport1Interval=4, AcceleratedReport1Rate=4},
+    "ConfigChangeReport1",
+    "StandardReport1",
+    "AcceleratedReport1",
+    4, --min (standard report interval)
+    1, --min (accelerated report interval)
+    3
+  )
+end
+
+Annotations:register([[
+@randIn(tcRandomizer,batch,driftOverTime,2)
+@method(test_DriftOverTime_Standard2AndAccelerated)
+@module(TestNormalReportsModule)
+]])
+--- TC checks if standard and accelerated reports timing do not drift over time.
+  --
+  -- Steps:
+  --
+  -- 1. Configuration is prepared (StandardReport2Interval=4, AcceleratedReport2Rate=4)
+  -- 2. Waiting for first StandardReport2 is performed.
+  -- 3. System overload is simulated.
+  -- 4. Timeouts of standard/accelerated are being saved for analyse.
+  -- 5. Correctness of timeouts is being checked.
+  --
+  -- Results:
+  --
+  -- 1. Configuration is set.
+  -- 2. StandardReport2 is received.
+  -- 3. Separate thread is spawned for overload simulation.
+  -- 4. Timeouts of standard/accelerated are saved for analyse.
+  -- 5. There is no drift in time.
+function test_DriftOverTime_Standard2AndAccelerated()
+  generic_test_DriftOverTime_StandardAndAccelerated(
+    {StandardReport2Interval=4, AcceleratedReport2Rate=4},
+    "ConfigChangeReport2",
+    "StandardReport2",
+    "AcceleratedReport2",
+    4, --min (standard report interval)
+    1, --min (accelerated report interval)
+    3
+  )
+end
+
+Annotations:register([[
+@randIn(tcRandomizer,batch,driftOverTime,3)
+@method(test_DriftOverTime_Standard3AndAccelerated)
+@module(TestNormalReportsModule)
+]])
+--- TC checks if standard and accelerated reports timing do not drift over time.
+  --
+  -- Steps:
+  --
+  -- 1. Configuration is prepared (StandardReport3Interval=4, AcceleratedReport3Rate=4)
+  -- 2. Waiting for first StandardReport3 is performed.
+  -- 3. System overload is simulated.
+  -- 4. Timeouts of standard/accelerated are being saved for analyse.
+  -- 5. Correctness of timeouts is being checked.
+  --
+  -- Results:
+  --
+  -- 1. Configuration is set.
+  -- 2. StandardReport3 is received.
+  -- 3. Separate thread is spawned for overload simulation.
+  -- 4. Timeouts of standard/accelerated are saved for analyse.
+  -- 5. There is no drift in time.
+function test_DriftOverTime_Standard3AndAccelerated()
+  generic_test_DriftOverTime_StandardAndAccelerated(
+    {StandardReport3Interval=4, AcceleratedReport3Rate=4},
+    "ConfigChangeReport3",
+    "StandardReport3",
+    "AcceleratedReport3",
+    4, --min (standard report interval)
+    1, --min (accelerated report interval)
+    3
+  )
+end
+
+
+-----------------------------------------------------------------------------------------------
+-- POLL REQUEST / RESPONSE Test cases
+-----------------------------------------------------------------------------------------------
+
+Annotations:register([[
+@randIn(tcRandomizer,batch,pollResponse,1)
+@method(test_PollRequest_WhenPollRequest1MessageIsSend_CorrectPollResponse1MessageIsReceived)
+@module(TestNormalReportsModule)
+]])
+--- TC checks if PollResponse1 message is send after PollRequest1.
+  -- Initial Conditions:
+  --
+  -- * Gps position is set. 
+  --
+  -- Steps:
+  --
+  -- 1. PollRequest1 message is sent.
+  -- 2. Fields of PollResponse1 message are validated.
+  --
+  -- Results:
+  --
+  -- 1. PollResponse1 message is received.
+  -- 2. Fields of PollResponse1 message are correct.
+function test_PollRequest_WhenPollRequest1MessageIsSend_CorrectPollResponse1MessageIsReceived()
+  generic_test_PollRequest(
+    "PollRequest1", 
+    "PollResponse1"
+  )
+end
+
+Annotations:register([[
+@randIn(tcRandomizer,batch,pollResponse,2)
+@method(test_PollRequest_WhenPollRequest2MessageIsSend_CorrectPollResponse2MessageIsReceived)
+@module(TestNormalReportsModule)
+]])
+--- TC checks if PollResponse2 message is send after PollRequest2.
+  -- Initial Conditions:
+  --
+  -- * Gps position is set. 
+  --
+  -- Steps:
+  --
+  -- 1. PollRequest2 message is sent.
+  -- 2. Fields of PollResponse2 message are validated.
+  --
+  -- Results:
+  --
+  -- 1. PollResponse2 message is received.
+  -- 2. Fields of PollResponse2 message are correct.
+function test_PollRequest_WhenPollRequest2MessageIsSend_CorrectPollResponse2MessageIsReceived()
+  generic_test_PollRequest(
+    "PollRequest2", 
+    "PollResponse2"
+  )
+end
+
+Annotations:register([[
+@randIn(tcRandomizer,batch,pollResponse,3)
+@method(test_PollRequest_WhenPollRequest3MessageIsSend_CorrectPollResponse3MessageIsReceived)
+@module(TestNormalReportsModule)
+]])
+--- TC checks if PollResponse3 message is send after PollRequest3.
+  -- Initial Conditions:
+  --
+  -- * Gps position is set. 
+  --
+  -- Steps:
+  --
+  -- 1. PollRequest3 message is sent.
+  -- 2. Fields of PollResponse3 message are validated.
+  --
+  -- Results:
+  --
+  -- 1. PollResponse3 message is received.
+  -- 2. Fields of PollResponse3 message are correct.
+function test_PollRequest_WhenPollRequest3MessageIsSend_CorrectPollResponse3MessageIsReceived()
+  generic_test_PollRequest(
+    "PollRequest3", 
+    "PollResponse3"
+  )
+end
+
+Annotations:register([[
+@randIn(tcRandomizer,batch,pollResponseWithOthers,1)
+@method(test_PollRequest_WhenPollRequest1IsRequestedDuringStandardAndAcceleratedReportsCycle_AcceleratedIntervalIsCorrect)
+@module(TestNormalReportsModule)
+]])
+--- TC checks requesting reports on demand (PollRequest/PollResponse) does not interfere with other reports timing.
+  --
+  -- Steps:
+  --
+  -- 1. Setup is done: StandardReport1Interval and AcceleratedReport1Rate are set to 2
+  -- 2. Waiting for first Standard Report is performed.
+  -- 3. In the middle of AcceleratedReport1 interval the PollRequest1 message is sent.
+  -- 4. Waiting for AcceleratedReport1 is performed.
+  -- 5. Timeout between reports is calculated. 
+  --
+  -- Results:
+  --
+  -- 1. Setup is correctly finished.
+  -- 2. StandardReport1 is received.
+  -- 3. PollResponse1 message is received.
+  -- 4. AcceleratedReport1 is received.
+  -- 5. Timeout between reports is correct.
+function test_PollRequest_WhenPollRequest1IsRequestedDuringStandardAndAcceleratedReportsCycle_AcceleratedIntervalIsCorrect()
+
+   generic_test_PollRequestWithOthers(
+     "PollRequest1",
+     "PollResponse1",
+     "StandardReport1",
+     "AcceleratedReport1",
+     {
+      StandardReport1Interval = 2,
+      AcceleratedReport1Rate = 2,
+     },
+     2,
+     1
+   )
+
+end
+
+Annotations:register([[
+@randIn(tcRandomizer,batch,pollResponseWithOthers,2)
+@method(test_PollRequest_WhenPollRequest2IsRequestedDuringStandardAndAcceleratedReportsCycle_AcceleratedIntervalIsCorrect)
+@module(TestNormalReportsModule)
+]])
+--- TC checks requesting reports on demand (PollRequest/PollResponse) does not interfere with other reports timing.
+  --
+  -- Steps:
+  --
+  -- 1. Setup is done: StandardReport2Interval and AcceleratedReport1Rate are set to 2
+  -- 2. Waiting for first Standard Report is performed.
+  -- 3. In the middle of AcceleratedReport2 interval the PollRequest2 message is sent.
+  -- 4. Waiting for AcceleratedReport2 is performed.
+  -- 5. Timeout between reports is calculated. 
+  --
+  -- Results:
+  --
+  -- 1. Setup is correctly finished.
+  -- 2. StandardReport2 is received.
+  -- 3. PollResponse2 message is received.
+  -- 4. AcceleratedReport2 is received.
+  -- 5. Timeout between reports is correct.
+function test_PollRequest_WhenPollRequest2IsRequestedDuringStandardAndAcceleratedReportsCycle_AcceleratedIntervalIsCorrect()
+
+   generic_test_PollRequestWithOthers(
+     "PollRequest2",
+     "PollResponse2",
+     "StandardReport2",
+     "AcceleratedReport2",
+     {
+      StandardReport2Interval = 2,
+      AcceleratedReport2Rate = 2,
+     },
+     2,
+     1
+   )
+
+end
+
+Annotations:register([[
+@randIn(tcRandomizer,batch,pollResponseWithOthers,3)
+@method(test_PollRequest_WhenPollRequest3IsRequestedDuringStandardAndAcceleratedReportsCycle_AcceleratedIntervalIsCorrect)
+@module(TestNormalReportsModule)
+]])
+--- TC checks requesting reports on demand (PollRequest/PollResponse) does not interfere with other reports timing.
+  --
+  -- Steps:
+  --
+  -- 1. Setup is done: StandardReport3Interval and AcceleratedReport1Rate are set to 2
+  -- 2. Waiting for first Standard Report is performed.
+  -- 3. In the middle of AcceleratedReport3 interval the PollRequest3 message is sent.
+  -- 4. Waiting for AcceleratedReport1 is performed.
+  -- 5. Timeout between reports is calculated. 
+  --
+  -- Results:
+  --
+  -- 1. Setup is correctly finished.
+  -- 2. StandardReport3 is received.
+  -- 3. PollResponse3 message is received.
+  -- 4. AcceleratedReport3 is received.
+  -- 5. Timeout between reports is correct.
+function test_PollRequest_WhenPollRequest3IsRequestedDuringStandardAndAcceleratedReportsCycle_AcceleratedIntervalIsCorrect()
+
+   generic_test_PollRequestWithOthers(
+     "PollRequest3",
+     "PollResponse3",
+     "StandardReport3",
+     "AcceleratedReport3",
+     {
+      StandardReport3Interval = 2,
+      AcceleratedReport3Rate = 2,
+     },
+     2,
+     1
+   )
+
+end
+
+
+-----------------------------------------------------------------------------------------------
+-- GENERIC LOGIC for test cases
+-----------------------------------------------------------------------------------------------
+
+--- Generic function which can be configured in multiple ways.
+-- See the usage in TCs above.
+--
+-- It checks if sending PollRequest message in the middle of other reports timeout does not affect it.
+-- 
+-- Steps:
+--   1. Configuration is prepared (TC method passes it).
+--   2. Waiting for first standard report is performed.
+--   3. In the middle of accelerated report interval the PollRequest message is sent.
+--   4. Waiting for accelerated report is performed.
+--   5. Correctness of timeouts is checked.
+function generic_test_PollRequestWithOthers(pollRequestMsgKey, pollResponseMsgKey, standardReportKey, acceleratedReportKey, properties, standardInterval, acceleratedInterval)
+
+  -- setup standard and accelerated report intervals
+  vmsSW:setPropertiesByName(properties)
+  framework.delay(5)
+
+  -- wait for first standard report
+  local standardMsg = vmsSW:waitForMessagesByName(
+    standardReportKey,
+    standardInterval*60 + 20
+  )
+  D:log(standardMsg)
+  assert_not_nil(standardMsg,"Standard report not received.")
+  assert_not_nil(standardMsg[standardReportKey],"Standard report not received.")
+
+  -- poll request / response in the middle of accelerated interval
+  framework.delay(acceleratedInterval*60/2)
+  vmsSW:sendMessageByName(pollRequestMsgKey)
+  local pollMessage = vmsSW:waitForMessagesByName(pollResponseMsgKey)
+  D:log(pollMessage)
+  assert_not_nil(pollMessage,"There is no poll response report message!")
+  assert_not_nil(pollMessage[pollResponseMsgKey],"There is no poll response report message!")
+
+  -- wait for accelerated report
+  local acceleratedMsg = vmsSW:waitForMessagesByName(
+    acceleratedReportKey,
+    acceleratedInterval*60 + 20
+  )
+  D:log(acceleratedMsg)
+  assert_not_nil(acceleratedMsg,"Accelerated report not received.")
+  assert_not_nil(acceleratedMsg[acceleratedReportKey],"Accelerated report not received.")
+
+  -- check timestamp diff
+  local timestampDiff = tonumber(acceleratedMsg[acceleratedReportKey].Timestamp) - tonumber(standardMsg[standardReportKey].Timestamp)
+  D:log(timestampDiff)
+  assert_equal(acceleratedInterval*60,timestampDiff,5,"Wrong interval of accelerated report (poll report was requested before).")
 
 end
 
@@ -1854,7 +2252,16 @@ function generic_test_AcceleratedReportDisabledAndStandardReportEnabled(standard
   assert_equal(0,tonumber(reportMessage.count),"Message"..reportKey.." should not come!")
 end
 
--- generic method to check if property change for time below PropertyChangeDebounceTime is not 'noticed'
+--- Generic function which can be configured in multiple ways.
+-- See the usage in TCs above.
+--
+-- It checks if property debounce time works properly.
+-- 
+-- Steps:
+--   1. Property change debounce time is set to 1 minute.
+--   2. Properties are changed.
+--   3. Properties are restored to previous values.
+--   4. ConfigChange message is not sent (means configuration change has had no impact)
 function generic_test_PropertyChangeDebounceTime(configChangeMsgKey,initialProperties,changedProperties)
 
   vmsSW:setPropertiesByName({PropertyChangeDebounceTime=1})
@@ -1885,7 +2292,21 @@ function generic_test_PropertyChangeDebounceTime(configChangeMsgKey,initialPrope
 
 end
 
--- generic method to check if two ConfigChange reports have correct timestamps
+--- Generic function which can be configured in multiple ways.
+-- See the usage in TCs above.
+--
+-- It checks if two ConfigChange reports have correct timestamps.
+-- 
+-- Steps:
+--   1. Property change debounce time is set to 1 second. 
+--   2. Properties are changed.
+--   3. Waiting for zero ConfigChange message is performed.
+--   4. Property change debounce time is set to 60 seconds.
+--   5. Initial properties are set after 5 seconds.
+--   6. Waiting for ConfigChange first message is performed.
+--   7. Properties are changed.
+--   8. Waiting for ConfigChange second message is performed.
+--   9. Difference between timestamps is checked.
 function generic_TimestampsInConfigChangeReports(configChangeMsgKey,initialProperties,changedProperties)
 
   framework.delay(65)
@@ -1982,6 +2403,17 @@ function generic_setConfigViaShell(messageKey,propertiesToChange,propertiesBefor
 
 end
 
+--- Generic function which can be configured in multiple ways.
+-- See the usage in TCs above.
+--
+-- It checks if standard and accelerated reports timing do not drift over time.
+-- 
+-- Steps:
+--   1. Configuration is prepared (TC method passes it).
+--   2. Waiting for first standard report is performed.
+--   3. System overload is simulated (in a separate thread)
+--   4. Timeouts of standard/accelerated are saved for analyse.
+--   5. Correctness of timeouts is checked.
 function generic_test_DriftOverTime_StandardAndAccelerated(properties,configChangeMsgKey,SRKey,ARKey,SRInterval,ARInterval,ARItems)
 
   local tolerance = 40 --secs
@@ -2079,6 +2511,16 @@ function generic_test_DriftOverTime_StandardAndAccelerated(properties,configChan
 
 end
 
+--- Generic function which can be configured in multiple ways.
+-- See the usage in TCs above.
+--
+-- It checks if PollResponse message is send after PollRequest.
+-- 
+-- Steps:
+--   1. Gps position is sent. 
+--   2. PollRequest message is set.
+--   3. PollResponse message is received.
+--   4. Fields of PollResponse message are validated.
 function generic_test_PollRequest(pollRequestMsgKey, pollResponseMsgKey)
 
   -- new position setup
