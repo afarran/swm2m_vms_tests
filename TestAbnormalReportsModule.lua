@@ -54,7 +54,7 @@ function setup()
   helmPanel:externalPowerConnected("false")
 
   -- INTERFACE UNIT disconnected from terminal
-  helmPanel:setConnected("false")
+  InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = false})
 --]]
   -- disconnecting HW Client
   shellSW:postEvent(
@@ -79,7 +79,7 @@ function teardown()
   helmPanel:externalPowerConnected("false")
 
   -- INTERFACE UNIT disconnected from terminal
-  helmPanel:setConnected("false")
+  InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = false})
 --]]
   -- disconnecting HW Client
   shellSW:postEvent(
@@ -2614,7 +2614,7 @@ function test_GORUNInterfaceUnitDisconnected_WhenInterfaceUnitIsConnectedForTime
 
   gateway.setHighWaterMark() -- to get the newest messages
   -- INTERFACE UNIT is connected to terminal from now
-  helmPanel:setConnected("true")
+  InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = true})
 
   D:log("INTERFACE UNIT CONNECTED TO TERMINAL")
 
@@ -2701,7 +2701,7 @@ function test_GORUNInterfaceUnitDisconnected_WhenInterfaceUnitIsConnectedForTime
   D:log("INTERFACE UNIT DISCONNECTED FROM TERMINAL")
 
   -- back to INTERFACE UNIT disconnected
-  helmPanel:setConnected("false")
+  InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = false})
 
 
 end
@@ -2731,16 +2731,10 @@ function test_InterfaceUnitDisconnected_WhenInterfaceUnitIsDisconnectedForTimeAb
 
   -- *** Execute
   GPS:set(InitialPosition)
---[[
-  -- checking InterfaceUnitDisconnectedState property
-  local InterfaceUnitDisconnectedStateProperty = vmsSW:getPropertiesByName({"InterfaceUnitDisconnectedState"})
-  D:log(framework.dump(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"]), "InterfaceUnitDisconnectedState")
-  assert_true(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"], "InterfaceUnitDisconnectedState property is incorrectly false")
---]]
+  
   -- INTERFACE UNIT is connected to terminal from now
   InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = true})
-    
-
+  
   D:log("INTERFACE UNIT CONNECTED TO TERMINAL")
   framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME)
 
@@ -2869,7 +2863,7 @@ function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitDisconnectedSt
 
   D:log("INTERFACE UNIT CONNECTED TO TERMINAL")
   -- INTERFACE UNIT is connected to terminal from now
-  helmPanel:setConnected("true")
+  InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = true})
 
   local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
   D:log(ReceivedMessages["AbnormalReport"])
@@ -2885,7 +2879,7 @@ function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitDisconnectedSt
   assert_false(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"], "InterfaceUnitDisconnectedState property has not been changed after InterfaceUnitDisconnectedEndDebounceTime has passed")
 
   -- back to INTERFACE UNIT disconnected
-  helmPanel:setConnected("false")
+  InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = false})
 
 
 end
@@ -2921,7 +2915,7 @@ function test_InterfaceUnitDisconnected_WhenInterfaceUnitServiceIsDisabledForTim
   
   D:log("INTERFACE UNIT CONNECTED TO TERMINAL")
   -- INTERFACE UNIT is connected to terminal from now
-  helmPanel:setConnected("true")
+  InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = true})
   framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME)
   
   -- checking InterfaceUnitDisconnectedState property - unit is connected now
@@ -2950,7 +2944,7 @@ function test_InterfaceUnitDisconnected_WhenInterfaceUnitServiceIsDisabledForTim
   assert_false(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"], "InterfaceUnitDisconnectedState property has not been changed after InterfaceUnitDisconnectedEndDebounceTime has passed")
 
   -- back to INTERFACE UNIT disconnected
-  helmPanel:setConnected("false")
+  InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = false})
 
 
 end
@@ -2988,7 +2982,7 @@ function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitDisconnectedSt
 
   D:log("INTERFACE UNIT CONNECTED TO TERMINAL")
   -- INTERFACE UNIT is connected to terminal from now
-  helmPanel:setConnected("true")
+  InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = true})
 
   framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME)
 
@@ -3001,7 +2995,7 @@ function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitDisconnectedSt
 
   D:log("INTERFACE UNIT DISCONNECTED FROM TERMINAL")
   -- INTERFACE UNIT is disconnected from terminal from now
-  helmPanel:setConnected("false")
+  InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = false})
 
   local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
   D:log(ReceivedMessages["AbnormalReport"])
@@ -3053,7 +3047,7 @@ function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitDisconnectedSt
 
   D:log("INTERFACE UNIT CONNECTED TO TERMINAL")
   -- INTERFACE UNIT is connected to terminal from now
-  helmPanel:setConnected("true")
+  InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = true})
 
   framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME)
 
@@ -3067,11 +3061,11 @@ function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitDisconnectedSt
 
   gateway.setHighWaterMark() -- to get the newest messages
 
-  helmPanel:setConnected("false")
+  InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = false})
 
   D:log("INTERFACE UNIT DISCONNECTED FROM TERMINAL")
   -- INTERFACE UNIT is diconnected to terminal from now
-  helmPanel:setConnected("false")
+  InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = false})
 
   framework.delay(INTERFACE_UNIT_DISCONNECTED_START_DEBOUNCE_TIME)
 
@@ -3693,7 +3687,7 @@ function test_MultipleAbnormalReportsEnabled_When3AbnormalReportsAreTriggered_3A
   helmPanel:externalPowerConnected("true")
 
   -- INTERFACE UNIT disconnected from terminal
-  helmPanel:setConnected("true")
+  InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = true})
 
   framework.delay(35)
 

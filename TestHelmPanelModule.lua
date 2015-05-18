@@ -33,7 +33,7 @@ end
 -- executed after each test suite
 function suite_teardown()
 
-  PS:set({jammingDetect = false, fixType = 3}) -- not to interrupt other suites
+  GPS:set({jammingDetect = false, fixType = 3}) -- not to interrupt other suites
 
 end
 
