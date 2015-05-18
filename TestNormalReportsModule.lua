@@ -2134,7 +2134,6 @@ function generic_test_StandardReportContent(configuration)
     reportMessage[reportKey].IdpCnr,
     "No IdpCnr in " .. reportKey
   )
-  -- TODO: 666
   assert_not_nil(
     reportMessage[reportKey].StatusBitmap,
     "No StatusBitmap in " .. reportKey
