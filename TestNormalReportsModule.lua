@@ -67,7 +67,7 @@ end
 -----------------------------------------------------------------------------------------------
 
 Annotations:register([[
-@randIn(tcRandomizer,batch,standardReportPeriodic,3)
+@randIn(tcRandomizer,batch,standardReportPeriodic,1)
 @method(test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues)
 @module(TestNormalReportsModule)
 ]])
@@ -110,7 +110,7 @@ function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsS
 end
 
 Annotations:register([[
-@randIn(tcRandomizer,batch,standardReportPeriodic,3)
+@randIn(tcRandomizer,batch,standardReportPeriodic,2)
 @method(test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues)
 @module(TestNormalReportsModule)
 ]])
@@ -1943,6 +1943,40 @@ function test_PollRequest_WhenPollRequest3IsRequestedDuringStandardAndAccelerate
      1
    )
 
+end
+
+
+--- Test if reportInterval is still 1 minute when StandardReport1Interval / AcceleratedReport1Rate = less than 1.
+function test_StandardReport1_TheMinimumIntervalBetween2PositionReportsFromSameReportingServiceIs1minute()
+  generic_test_StandardReportContent({
+    firstReportKey = "StandardReport1",
+    reportKey = "StandardReport1",  -- Accelerated report should not come at all
+    properties = {StandardReport1Interval=1, AcceleratedReport1Rate=4}, -- 1/4
+    firstReportInterval = 2,
+    reportInterval = 1 -- report interval should be still 1 minute
+  })
+end
+
+--- Test if reportInterval is still 1 minute when StandardReport2Interval / AcceleratedReport2Rate = less than 1.
+function test_StandardReport2_TheMinimumIntervalBetween2PositionReportsFromSameReportingServiceIs1minute()
+  generic_test_StandardReportContent({
+    firstReportKey = "StandardReport2",
+    reportKey = "StandardReport2",  -- Accelerated report should not come at all
+    properties = {StandardReport2Interval=1, AcceleratedReport2Rate=4}, -- 1/4
+    firstReportInterval = 2,
+    reportInterval = 1 -- report interval should be still 1 minute
+  })
+end
+
+--- Test if reportInterval is still 1 minute when StandardReport3Interval / AcceleratedReport3Rate = less than 1.
+function test_StandardReport2_TheMinimumIntervalBetween2PositionReportsFromSameReportingServiceIs1minute()
+  generic_test_StandardReportContent({
+    firstReportKey = "StandardReport3",
+    reportKey = "StandardReport3",  -- Accelerated report should not come at all
+    properties = {StandardReport3Interval=1, AcceleratedReport3Rate=4}, -- 1/4
+    firstReportInterval = 2,
+    reportInterval = 1 -- report interval should be still 1 minute
+  })
 end
 
 
