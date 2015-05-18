@@ -1185,7 +1185,24 @@ Annotations:register([[
 @method(test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport1AreCorrect)
 @module(TestNormalReportsModule)
 ]])
--- [OK]
+--- TC checks if two ConfigChange reports have correct timestamps.
+  -- Initial Conditions:
+  --
+  -- * Actions are performed after first/zero ConfigChangeReport1 report is received.
+  --
+  -- Steps:
+  --
+  -- 1. PropertyChangeDebounceTime is set to 60 seconds.
+  -- 2. Properties are changed (StandardReport1Interval, AcceleratedReport1Rate)
+  -- 3. Properties are changed again.
+  -- 4. Difference between timestamps in ConfigChangeReport1 reports is calculated.
+  --
+  -- Results:
+  --
+  -- 1. PropertyChangeDebounceTime is correctly set.
+  -- 2. First ConfigChangeReport1 message is sent.
+  -- 3. Second ConfigChangeReport1 message is sent.
+  -- 4. Difference between timestamps is correct.
 function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport1AreCorrect()
   
   generic_TimestampsInConfigChangeReports(
@@ -1201,7 +1218,24 @@ Annotations:register([[
 @method(test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport2AreCorrect)
 @module(TestNormalReportsModule)
 ]])
--- [OK]
+--- TC checks if two ConfigChange reports have correct timestamps.
+  -- Initial Conditions:
+  --
+  -- * Actions are performed after first/zero ConfigChangeReport2 report is received.
+  --
+  -- Steps:
+  --
+  -- 1. PropertyChangeDebounceTime is set to 60 seconds.
+  -- 2. Properties are changed (StandardReport2Interval, AcceleratedReport2Rate)
+  -- 3. Properties are changed again.
+  -- 4. Difference between timestamps in ConfigChangeReport2 reports is calculated.
+  --
+  -- Results:
+  --
+  -- 1. PropertyChangeDebounceTime is correctly set.
+  -- 2. First ConfigChangeReport2 message is sent.
+  -- 3. Second ConfigChangeReport2 message is sent.
+  -- 4. Difference between timestamps is correct.
 function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport2AreCorrect()
   
   generic_TimestampsInConfigChangeReports(
@@ -1217,7 +1251,24 @@ Annotations:register([[
 @method(test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport3AreCorrect)
 @module(TestNormalReportsModule)
 ]])
--- [OK]
+--- TC checks if two ConfigChange reports have correct timestamps.
+  -- Initial Conditions:
+  --
+  -- * Actions are performed after first/zero ConfigChangeReport3 report is received.
+  --
+  -- Steps:
+  --
+  -- 1. PropertyChangeDebounceTime is set to 60 seconds.
+  -- 2. Properties are changed (StandardReport3Interval, AcceleratedReport3Rate)
+  -- 3. Properties are changed again.
+  -- 4. Difference between timestamps in ConfigChangeReport3 reports is calculated.
+  --
+  -- Results:
+  --
+  -- 1. PropertyChangeDebounceTime is correctly set.
+  -- 2. First ConfigChangeReport3 message is sent.
+  -- 3. Second ConfigChangeReport3 message is sent.
+  -- 4. Difference between timestamps is correct.
 function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport3AreCorrect()
   
   generic_TimestampsInConfigChangeReports(
@@ -2241,7 +2292,21 @@ function generic_test_PropertyChangeDebounceTime(configChangeMsgKey,initialPrope
 
 end
 
--- generic method to check if two ConfigChange reports have correct timestamps
+--- Generic function which can be configured in multiple ways.
+-- See the usage in TCs above.
+--
+-- It checks if two ConfigChange reports have correct timestamps.
+-- 
+-- Steps:
+--   1. Property change debounce time is set to 1 second. 
+--   2. Properties are changed.
+--   3. Waiting for zero ConfigChange message is performed.
+--   4. Property change debounce time is set to 60 seconds.
+--   5. Initial properties are set after 5 seconds.
+--   6. Waiting for ConfigChange first message is performed.
+--   7. Properties are changed.
+--   8. Waiting for ConfigChange second message is performed.
+--   9. Difference between timestamps is checked.
 function generic_TimestampsInConfigChangeReports(configChangeMsgKey,initialProperties,changedProperties)
 
   framework.delay(65)
