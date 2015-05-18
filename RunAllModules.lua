@@ -48,6 +48,7 @@ require("Service/GeofenceServiceWrapper")
 require("Service/LogServiceWrapper")
 require("Service/ShellServiceWrapper")
 require("Service/UniboxServiceWrapper")
+require("Service/InterfaceUnitHelpServiceWrapper")
 
 -- Gps Frontend
 require("Gps/GpsFrontend")
@@ -61,6 +62,8 @@ geofenceSW = GeofenceServiceWrapper()
 logSW = LogServiceWrapper()
 shellSW = ShellServiceWrapper()
 uniboxSW = UniboxServiceWrapper()
+InterfaceUnitHelpSW = InterfaceUnitHelpServiceWrapper()
+
 
 require("Serial/RealSerialWrapper")
 serialMain = RealSerialWrapper({name=ComPort, open=true, newline="\r\n"})

@@ -49,13 +49,13 @@ function setup()
   )
 
   GPS:set({jammingDetect = false, fixType = 3})
-
-  -- External power source disconnected from Helm panel
+--[[
+  -- External power source disconnected from INTERFACE UNIT
   helmPanel:externalPowerConnected("false")
 
-  -- Helm Panel disconnected from terminal
+  -- INTERFACE UNIT disconnected from terminal
   helmPanel:setConnected("false")
-
+--]]
   -- disconnecting HW Client
   shellSW:postEvent(
                     "\"_RS232\"",
@@ -74,13 +74,13 @@ end
 function teardown()
 
   GPS:set({jammingDetect = false, fixType = 3})
-
-  -- External power source disconnected from Helm panel
+--[[
+  -- External power source disconnected from INTERFACE UNIT
   helmPanel:externalPowerConnected("false")
 
-  -- Helm Panel disconnected from terminal
+  -- INTERFACE UNIT disconnected from terminal
   helmPanel:setConnected("false")
-
+--]]
   -- disconnecting HW Client
   shellSW:postEvent(
                     "\"_RS232\"",
@@ -1954,8 +1954,6 @@ end
 function test_PowerDisconnected_WhenTerminalIsPoweCycled_OnePowerDisconnectedAbnormalReportIsSentAfterPowerDisconnectedStartDebounceTimeAndSecondPowerDisconnectedAbnormalReportIsSentAfterPowerDisconnectedEndDebounceTime()
 
   -- *** Setup
-  --local POWER_DISCONNECTED_START_DEBOUNCE_TIME = 5    -- seconds
- -- local POWER_DISCONNECTED_END_DEBOUNCE_TIME = 60     -- seconds
   local PROPERTIES_SAVE_INTERVAL = 600                -- seconds
 
   -- terminal stationary
@@ -1973,9 +1971,8 @@ function test_PowerDisconnected_WhenTerminalIsPoweCycled_OnePowerDisconnectedAbn
     heading = 90,                   -- degrees
   }
 
-  vmsSW:setPropertiesByName({--PowerDisconnectedStartDebounceTime = POWER_DISCONNECTED_START_DEBOUNCE_TIME,
-                             --PowerDisconnectedEndDebounceTime = POWER_DISCONNECTED_END_DEBOUNCE_TIME,
-                             PowerDisconnectedSendReport = true,
+  vmsSW:setPropertiesByName({
+                              PowerDisconnectedSendReport = true,
                              }, false, true
   )
 
@@ -1983,28 +1980,24 @@ function test_PowerDisconnected_WhenTerminalIsPoweCycled_OnePowerDisconnectedAbn
   -- terminal in initial position
   GPS:set(InitialPosition)
   --framework.delay(PROPERTIES_SAVE_INTERVAL + 5)
-  gateway.setHighWaterMark() -- to get the newest messages
-
+  
   -- checking PowerDisconnectedState property - this is expected to be false - terminal is powered on for time longer than
   local PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
   assert_false(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState is incorrectly true")
   D:log(PowerDisconnectedStateProperty, "PowerDisconnectedStateProperty in the start of TC")
 
+  gateway.setHighWaterMark() -- to get the newest messages
   systemSW:restartFramework()
-
+ 
   GPS:set(AfterRebootPosition)
+  framework.delay(5)
 
   local terminalOnTimeStamp = os.time()  -- to get exact timestamp
-
---  framework.delay(POWER_DISCONNECTED_END_DEBOUNCE_TIME + 5)
-
   -- receiving all from mobile messages sent after setHighWaterMark()
   local receivedMessages = gateway.getReturnMessages()
   -- look for AbnormalReport messages
   local AllReceivedAbnormalReports = framework.filterMessages(receivedMessages, framework.checkMessageType(115, 50)) -- TODO: service wrapper functions need to be modified
-  
-  D:log(AllReceivedAbnormalReports)
-  
+   D:log(AllReceivedAbnormalReports)
   local PowerDisconnectedAbnormalReportTrue = nil
   for index = 1 , #AllReceivedAbnormalReports, 1 do
     local StatusBitmap = vmsSW:decodeBitmap(AllReceivedAbnormalReports[index].Payload.StatusBitmap, "EventStateId")
@@ -2021,11 +2014,12 @@ function test_PowerDisconnected_WhenTerminalIsPoweCycled_OnePowerDisconnectedAbn
   local PowerDisconnectedAbnormalReportFalse = nil
   for index = 1 , #AllReceivedAbnormalReports, 1 do
     local StatusBitmap = vmsSW:decodeBitmap(AllReceivedAbnormalReports[index].Payload.StatusBitmap, "EventStateId")
-    D:log("Status Bitmap")
+    D:log("Status Bitmap in False")
     D:log(StatusBitmap)
+    D:log(StatusBitmap["PowerDisconnected"] )
     
     D:log(StatusBitmap["PowerDisconnected"])
-    if AllReceivedAbnormalReports[index].Payload.EventType == "PowerDisconnected" and StatusBitmap["PowerDisconnected"] == true then
+    if AllReceivedAbnormalReports[index].Payload.EventType == "PowerDisconnected" and StatusBitmap["PowerDisconnected"] == nil then
         PowerDisconnectedAbnormalReportFalse = AllReceivedAbnormalReports[index]
         break
     end
@@ -2063,9 +2057,9 @@ function test_PowerDisconnected_WhenTerminalIsPoweCycled_OnePowerDisconnectedAbn
   )
 
   assert_equal(
-    --terminalOnTimeStamp + POWER_DISCONNECTED_START_DEBOUNCE_TIME,
+    terminalOnTimeStamp,
     tonumber(PowerDisconnectedAbnormalReportTrue.Payload.Timestamp),
-    20,
+    600,   -- this is because the exact moment of saving properties is not known
     "Wrong Timestamp value in PowerDisconnected abnormal report"
   )
 
@@ -2093,25 +2087,25 @@ function test_PowerDisconnected_WhenTerminalIsPoweCycled_OnePowerDisconnectedAbn
   assert_equal(
     InitialPosition.latitude*60000,
     tonumber(PowerDisconnectedAbnormalReportTrue.Payload.Latitude),
-    "Wrong latitude value in PowerDisconnected abnormal report send after POWER_DISCONNECTED_END_DEBOUNCE_TIME"
+    "Wrong latitude value in PowerDisconnected abnormal report send after restart"
   )
 
   assert_equal(
     InitialPosition.longitude*60000,
     tonumber(PowerDisconnectedAbnormalReportTrue.Payload.Longitude),
-    "Wrong longitude value in PowerDisconnected abnormal report send after POWER_DISCONNECTED_END_DEBOUNCE_TIME"
+    "Wrong longitude value in PowerDisconnected abnormal report send after restart"
   )
 
   assert_equal(
     InitialPosition.speed,
     tonumber(PowerDisconnectedAbnormalReportTrue.Payload.Speed),
-    "Wrong speed value in PowerDisconnected abnormal report send after POWER_DISCONNECTED_END_DEBOUNCE_TIME"
+    "Wrong speed value in PowerDisconnected abnormal report send after restart"
   )
 
   assert_equal(
     361,
     tonumber(PowerDisconnectedAbnormalReportTrue.Payload.Course),
-    "Wrong course value in PowerDisconnected abnormal report send after POWER_DISCONNECTED_END_DEBOUNCE_TIME"
+    "Wrong course value in PowerDisconnected abnormal report send after restart"
   )
 
   -- TODO: update this after implementation in TestFramework file
@@ -2141,96 +2135,9 @@ end
 
 
 
--- TC checks if when terminal is power cycled two PowerDisconnected reports are sent. One is expected after PowerDisconnectedStartDebounceTime and second after PowerDisconnectedEndDebounceTime.
-function test_PowerDisconnected_WhenTerminalIsPoweCycledMultipleTimesForShortPeriodOfTime_OnePowerDisconnectedAbnormalReportIsSentAfterPowerDisconnectedStartDebounceTimeAndSecondPowerDisconnectedAbnormalReportIsSentAfterPowerDisconnectedEndDebounceTime()
-
-  -- *** Setup
-  local POWER_DISCONNECTED_START_DEBOUNCE_TIME = 100   -- seconds
-  local POWER_DISCONNECTED_END_DEBOUNCE_TIME = 700     -- seconds
-
-  -- terminal stationary
-  local InitialPosition = {
-    speed = 0,                      -- kmh
-    latitude = 1,                   -- degrees
-    longitude = 1,                  -- degrees
-  }
-
-  -- terminal stationary
-  local AfterRebootPosition = {
-    speed = 7,                      -- kmh
-    latitude = 5,                   -- degrees
-    longitude = 5,                  -- degrees
-    heading = 90,                   -- degrees
-  }
-
-  vmsSW:setPropertiesByName({PowerDisconnectedStartDebounceTime = POWER_DISCONNECTED_START_DEBOUNCE_TIME,
-                             PowerDisconnectedEndDebounceTime = POWER_DISCONNECTED_END_DEBOUNCE_TIME,
-                             PowerDisconnectedSendReport = true,
-                             }, false, true
-  )
-
-  -- *** Execute
-  gateway.setHighWaterMark() -- to get the newest messages
-
-  -- checking PowerDisconnectedState property - this is expected to be false - terminal is powered on for time longer than
-  local PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
-  assert_false(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState is incorrectly true")
-  D:log(PowerDisconnectedStateProperty, "PowerDisconnectedStateProperty in the start of TC")
-
-  -- 3 terminal restarts simulated
-  systemSW:restartFramework()
-  framework.delay(10)
-  systemSW:restartFramework()
-  framework.delay(10)
-  systemSW:restartFramework()
-
-  framework.delay(POWER_DISCONNECTED_END_DEBOUNCE_TIME + 5)
-
-  -- receiving all from mobile messages sent after setHighWaterMark()
-  local receivedMessages = gateway.getReturnMessages()
-  -- look for AbnormalReport messages
-  local AllReceivedAbnormalReports = framework.filterMessages(receivedMessages, framework.checkMessageType(115, 50)) -- TODO: service wrapper functions need to be modified
-
-  local PowerDisconnectedAbnormalReportTrue = {}
-  local indexTrue = 1
-  for index = 1 , #AllReceivedAbnormalReports, 1 do
-    local StatusBitmap = vmsSW:decodeBitmap(AllReceivedAbnormalReports[index].Payload.StatusBitmap, "EventStateId")
-    D:log(StatusBitmap["PowerDisconnected"] )
-    if AllReceivedAbnormalReports[index].Payload.EventType == "PowerDisconnected" and StatusBitmap["PowerDisconnected"] == true then
-        PowerDisconnectedAbnormalReportTrue[indexTrue] = AllReceivedAbnormalReports[index]
-        indexTrue = indexTrue + 1
-        break
-    end
-  end
-
-  local PowerDisconnectedAbnormalReportFalse = {}
-  local indexFalse = 1
-  for index = 1 , #AllReceivedAbnormalReports, 1 do
-    local StatusBitmap = vmsSW:decodeBitmap(AllReceivedAbnormalReports[index].Payload.StatusBitmap, "EventStateId")
-    D:log(StatusBitmap["PowerDisconnected"] )
-    if AllReceivedAbnormalReports[index].Payload.EventType == "PowerDisconnected" and StatusBitmap["PowerDisconnected"] == true then
-        PowerDisconnectedAbnormalReportFalse[indexFalse] = AllReceivedAbnormalReports[index]
-        indexFalse = indexFalse + 1
-        break
-    end
-  end
-
-  D:log(PowerDisconnectedAbnormalReportTrue)
-  D:log(PowerDisconnectedAbnormalReportFalse)
-
-
-  assert_nil(next(PowerDisconnectedAbnormalReportFalse[1]), "AbnormalReport with PowerDisconnected bit = false not received more than once")
-  assert_nil(next(PowerDisconnectedAbnormalReportTrue[1]), "AbnormalReport  with PowerDisconnected bit = true not received")
-
-
-
-end
-
-
-
 -- TC checks if when InterfaceUnit is connected to external power source for time above PowerDisconnectedEndDebounceTime PowerDisconnected AbnormalReport is sent
   -- and terminal leaves PowerDisconnected state
-function test_PowerDisconnected_WhenInterfaceUnitIsConnectedToExternalPowerSourceForTimeAbovePowerDisconnectedEndDebounceTime_PowerDisconnectedAbnormalReportIsSent()
+function test_InterfaceUnitDisconnected_WhenInterfaceUnitIsConnectedToExternalPowerSourceForTimeAbovePowerDisconnectedEndDebounceTime_PowerDisconnectedAbnormalReportIsSent()
 
   local EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME = 1
   local EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME = 30
@@ -2261,10 +2168,10 @@ function test_PowerDisconnected_WhenInterfaceUnitIsConnectedToExternalPowerSourc
 
 
   gateway.setHighWaterMark() -- to get the newest messages
-  -- Helm Panel is connected to external power from now
+  -- INTERFACE UNIT is connected to external power from now
   helmPanel:externalPowerConnected("true")
 
-  D:log("EXTERNAL POWER SOURCE OF HELM PANEL CONNECTED")
+  D:log("EXTERNAL POWER SOURCE OF INTERFACE UNIT CONNECTED")
 
   -- checking PowerDisconnectedState property
   local PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
@@ -2340,10 +2247,10 @@ function test_PowerDisconnected_WhenInterfaceUnitIsConnectedToExternalPowerSourc
   --]]
 
   local StatusBitmap = vmsSW:decodeBitmap(ReceivedMessages["AbnormalReport"].StatusBitmap, "EventStateId")
-  assert_false(StatusBitmap["PowerDisconnected"], "StatusBitmap has not been correctly changed to false when external power source of helm panel was connected")
+  assert_false(StatusBitmap["PowerDisconnected"], "StatusBitmap has not been correctly changed to false when external power source of INTERFACE UNIT was connected")
 
 
-  D:log("EXTERNAL POWER SOURCE OF HELM PANEL DISCONNECTED")
+  D:log("EXTERNAL POWER SOURCE OF INTERFACE UNIT DISCONNECTED")
 
   -- back to exernal power disconnected
   helmPanel:externalPowerConnected("false")
@@ -2384,8 +2291,8 @@ function test_PowerDisconnected_WhenInterfaceUnitIsDisconnectedFromExternalPower
   D:log(framework.dump(PowerDisconnectedStateProperty["PowerDisconnectedState"]), "PowerDisconnectedState")
   assert_true(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState property is incorrectly false")
 
-  D:log("EXTERNAL POWER SOURCE OF HELM PANEL CONNECTED")
-  -- Helm Panel is connected to external power from now
+  D:log("EXTERNAL POWER SOURCE OF INTERFACE UNIT CONNECTED")
+  -- INTERFACE UNIT is connected to external power from now
   helmPanel:externalPowerConnected("true")
 
   framework.delay(EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME)
@@ -2399,8 +2306,8 @@ function test_PowerDisconnected_WhenInterfaceUnitIsDisconnectedFromExternalPower
 
   gateway.setHighWaterMark() -- to get the newest messages
 
-  D:log("EXTERNAL POWER SOURCE OF HELM PANEL DISCONNECTED")
-  -- Helm Panel is disconnected from external power from now
+  D:log("EXTERNAL POWER SOURCE OF INTERFACE UNIT DISCONNECTED")
+  -- INTERFACE UNIT is disconnected from external power from now
   helmPanel:externalPowerConnected("false")
 
   -- checking PowerDisconnectedState property
@@ -2481,7 +2388,7 @@ function test_PowerDisconnected_WhenInterfaceUnitIsDisconnectedFromExternalPower
 
 
   local StatusBitmap = vmsSW:decodeBitmap(ReceivedMessages["AbnormalReport"].StatusBitmap, "EventStateId")
-  assert_true(StatusBitmap["PowerDisconnected"], "StatusBitmap has not been correctly changed to true when external power source of helm panel was disconnected")
+  assert_true(StatusBitmap["PowerDisconnected"], "StatusBitmap has not been correctly changed to true when external power source of INTERFACE UNIT was disconnected")
 
 
 end
@@ -2522,8 +2429,8 @@ function test_PowerDisconnected_WhenInterfaceUnitIsConnectedToExternalPowerSourc
   assert_true(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState property is incorrectly false")
 
   gateway.setHighWaterMark() -- to get the newest messages
-  D:log("EXTERNAL POWER SOURCE OF HELM PANEL CONNECTED")
-  -- Helm Panel is connected to external power from now
+  D:log("EXTERNAL POWER SOURCE OF INTERFACE UNIT CONNECTED")
+  -- INTERFACE UNIT is connected to external power from now
   helmPanel:externalPowerConnected("true")
 
   local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
@@ -2533,7 +2440,7 @@ function test_PowerDisconnected_WhenInterfaceUnitIsConnectedToExternalPowerSourc
     assert_nil(1, "PowerDisconnected abnormal report sent but not expected")
   end
 
-  D:log("EXTERNAL POWER SOURCE OF  HELM PANEL DISCONNECTED")
+  D:log("EXTERNAL POWER SOURCE OF  INTERFACE UNIT DISCONNECTED")
   -- back to exernal power disconnected
   helmPanel:externalPowerConnected("false")
 
@@ -2571,8 +2478,8 @@ function test_PowerDisconnected_WhenInterfaceUnitIsDisonnectedFromExternalPowerS
   D:log(framework.dump(PowerDisconnectedStateProperty["PowerDisconnectedState"]), "PowerDisconnectedState")
   assert_true(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState property is incorrectly false")
 
-  D:log("HELM PANEL CONNECTED")
-  -- Helm Panel is connected to external power from now
+  D:log("INTERFACE UNIT CONNECTED")
+  -- INTERFACE UNIT is connected to external power from now
   helmPanel:externalPowerConnected("true")
 
   framework.delay(EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME)
@@ -2583,8 +2490,8 @@ function test_PowerDisconnected_WhenInterfaceUnitIsDisonnectedFromExternalPowerS
   assert_false(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState property is incorrectly true")
 
   gateway.setHighWaterMark() -- to get the newest messages
-  D:log("EXTERNAL POWER SOURCE OF HELM PANEL DISCONNECTED")
-  -- Helm Panel is disconnected from external power from now
+  D:log("EXTERNAL POWER SOURCE OF INTERFACE UNIT DISCONNECTED")
+  -- INTERFACE UNIT is disconnected from external power from now
   helmPanel:externalPowerConnected("false")
 
   local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
@@ -2631,8 +2538,8 @@ function test_PowerDisconnected_WhenExternalPowerIsConnectedAndDisconnectedForTi
   D:log(framework.dump(PowerDisconnectedStateProperty["PowerDisconnectedState"]), "PowerDisconnectedState")
   assert_true(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState property is incorrectly false")
 
-  D:log("EXTERNAL POWER SOURCE OF HELM PANEL CONNECTED")
-  -- Helm Panel is connected to external power from now
+  D:log("EXTERNAL POWER SOURCE OF INTERFACE UNIT CONNECTED")
+  -- INTERFACE UNIT is connected to external power from now
   helmPanel:externalPowerConnected("true")
 
   framework.delay(EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME)
@@ -2651,8 +2558,8 @@ function test_PowerDisconnected_WhenExternalPowerIsConnectedAndDisconnectedForTi
 
   gateway.setHighWaterMark() -- to get the newest messages
 
-  D:log("EXTERNAL POWER SOURCE OF  HELM PANEL DISCONNECTED")
-  -- Helm Panel is disconnected from external power from now
+  D:log("EXTERNAL POWER SOURCE OF  INTERFACE UNIT DISCONNECTED")
+  -- INTERFACE UNIT is disconnected from external power from now
   helmPanel:externalPowerConnected("false")
 
   framework.delay(EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME)
@@ -2677,8 +2584,8 @@ end
   -- leaves InterfaceUnitDisconnected state
 function test_GORUNInterfaceUnitDisconnected_WhenInterfaceUnitIsConnectedForTimeAboveInterfaceUnitDisconnectedEndDebounceTime_InterfaceUnitDisconnectedAbnormalReportIsSent()
 
-  local HELM_PANEL_DISCONNECTED_START_DEBOUNCE_TIME = 1
-  local HELM_PANEL_DISCONNECTED_END_DEBOUNCE_TIME = 30
+  local INTERFACE_UNIT_DISCONNECTED_START_DEBOUNCE_TIME = 1
+  local INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME = 30
 
   -- *** Setup
   -- terminal in some position but no valid fix provided
@@ -2690,8 +2597,8 @@ function test_GORUNInterfaceUnitDisconnected_WhenInterfaceUnitIsConnectedForTime
   }
 
   vmsSW:setPropertiesByName({
-                             InterfaceUnitDisconnectedStartDebounceTime = HELM_PANEL_DISCONNECTED_START_DEBOUNCE_TIME,
-                             InterfaceUnitDisconnectedEndDebounceTime = HELM_PANEL_DISCONNECTED_END_DEBOUNCE_TIME,
+                             InterfaceUnitDisconnectedStartDebounceTime = INTERFACE_UNIT_DISCONNECTED_START_DEBOUNCE_TIME,
+                             InterfaceUnitDisconnectedEndDebounceTime = INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME,
                              InterfaceUnitDisconnectedSendReport = true,
                             }
   )
@@ -2706,17 +2613,17 @@ function test_GORUNInterfaceUnitDisconnected_WhenInterfaceUnitIsConnectedForTime
 
 
   gateway.setHighWaterMark() -- to get the newest messages
-  -- Helm Panel is connected to terminal from now
+  -- INTERFACE UNIT is connected to terminal from now
   helmPanel:setConnected("true")
 
-  D:log("HELM PANEL CONNECTED TO TERMINAL")
+  D:log("INTERFACE UNIT CONNECTED TO TERMINAL")
 
   -- checking InterfaceUnitDisconnectedState property
   InterfaceUnitDisconnectedStateProperty = vmsSW:getPropertiesByName({"InterfaceUnitDisconnectedState"})
   D:log(framework.dump(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"]), "InterfaceUnitDisconnectedState")
   assert_true(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"], "InterfaceUnitDisconnectedState property has been changed before InterfaceUnitDisconnectedEndDebounceTime has passed")
 
-  framework.delay(HELM_PANEL_DISCONNECTED_END_DEBOUNCE_TIME)
+  framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME)
 
   timeOfEvent = os.time()
 
@@ -2789,11 +2696,11 @@ function test_GORUNInterfaceUnitDisconnected_WhenInterfaceUnitIsConnectedForTime
   --]]
 
   local StatusBitmap = vmsSW:decodeBitmap(ReceivedMessages["AbnormalReport"].StatusBitmap, "EventStateId")
-  assert_false(StatusBitmap["InterfaceUnitDisconnected"], "StatusBitmap has not been correctly changed to false when Helm panel was connected to terminal")
+  assert_false(StatusBitmap["InterfaceUnitDisconnected"], "StatusBitmap has not been correctly changed to false when INTERFACE UNIT was connected to terminal")
 
-  D:log("HELM PANEL DISCONNECTED FROM TERMINAL")
+  D:log("INTERFACE UNIT DISCONNECTED FROM TERMINAL")
 
-  -- back to helm panel disconnected
+  -- back to INTERFACE UNIT disconnected
   helmPanel:setConnected("false")
 
 
@@ -2803,8 +2710,8 @@ end
   -- and terminal enters InterfaceUnitDisconnected state
 function test_InterfaceUnitDisconnected_WhenInterfaceUnitIsDisconnectedForTimeAboveInterfaceUnitDisconnectedStartDebounceTime_InterfaceUnitDisconnectedAbnormalReportIsSent()
 
-  local HELM_PANEL_DISCONNECTED_START_DEBOUNCE_TIME = 30
-  local HELM_PANEL_DISCONNECTED_END_DEBOUNCE_TIME = 1
+  local INTERFACE_UNIT_DISCONNECTED_START_DEBOUNCE_TIME = 30
+  local INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME = 1
 
   -- *** Setup
   -- terminal in some position but no valid fix provided
@@ -2816,42 +2723,43 @@ function test_InterfaceUnitDisconnected_WhenInterfaceUnitIsDisconnectedForTimeAb
   }
 
   vmsSW:setPropertiesByName({
-                             InterfaceUnitDisconnectedStartDebounceTime = HELM_PANEL_DISCONNECTED_START_DEBOUNCE_TIME,
-                             InterfaceUnitDisconnectedEndDebounceTime = HELM_PANEL_DISCONNECTED_END_DEBOUNCE_TIME,
+                             InterfaceUnitDisconnectedStartDebounceTime = INTERFACE_UNIT_DISCONNECTED_START_DEBOUNCE_TIME,
+                             InterfaceUnitDisconnectedEndDebounceTime = INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME,
                              InterfaceUnitDisconnectedSendReport = true,
                             }
   )
 
   -- *** Execute
   GPS:set(InitialPosition)
-
+--[[
   -- checking InterfaceUnitDisconnectedState property
   local InterfaceUnitDisconnectedStateProperty = vmsSW:getPropertiesByName({"InterfaceUnitDisconnectedState"})
   D:log(framework.dump(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"]), "InterfaceUnitDisconnectedState")
   assert_true(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"], "InterfaceUnitDisconnectedState property is incorrectly false")
+--]]
+  -- INTERFACE UNIT is connected to terminal from now
+  InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = true})
+    
 
-  -- Helm Panel is connected to terminal from now
-  helmPanel:setConnected("true")
-
-  D:log("HELM PANEL CONNECTED TO TERMINAL")
-  framework.delay(HELM_PANEL_DISCONNECTED_END_DEBOUNCE_TIME)
+  D:log("INTERFACE UNIT CONNECTED TO TERMINAL")
+  framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME)
 
   -- checking InterfaceUnitDisconnectedState property
   InterfaceUnitDisconnectedStateProperty = vmsSW:getPropertiesByName({"InterfaceUnitDisconnectedState"})
   D:log(framework.dump(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"]), "InterfaceUnitDisconnectedState")
   assert_false(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"], "InterfaceUnitDisconnectedState property has not been changed after InterfaceUnitDisconnectedEndDebounceTime has passed")
 
-  D:log("HELM PANEL DISCONNECTED FROM TERMINAL")
+  D:log("INTERFACE UNIT DISCONNECTED FROM TERMINAL")
   gateway.setHighWaterMark() -- to get the newest messages
-  -- Helm Panel is disconnected from terminal from now
-  helmPanel:setConnected("false")
+  -- INTERFACE UNIT is disconnected from terminal from now
+   InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = false})
 
   -- checking InterfaceUnitDisconnectedState property
   InterfaceUnitDisconnectedStateProperty = vmsSW:getPropertiesByName({"InterfaceUnitDisconnectedState"})
   D:log(framework.dump(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"]), "InterfaceUnitDisconnectedState")
   assert_false(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"], "InterfaceUnitDisconnectedState property has been changed before InterfaceUnitDisconnectedEndDebounceTime has passed")
 
-  framework.delay(HELM_PANEL_DISCONNECTED_START_DEBOUNCE_TIME)
+  framework.delay(INTERFACE_UNIT_DISCONNECTED_START_DEBOUNCE_TIME)
 
   timeOfEvent = os.time()
 
@@ -2919,7 +2827,7 @@ function test_InterfaceUnitDisconnected_WhenInterfaceUnitIsDisconnectedForTimeAb
   --]]
 
   local StatusBitmap = vmsSW:decodeBitmap(ReceivedMessages["AbnormalReport"].StatusBitmap, "EventStateId")
-  assert_true(StatusBitmap["InterfaceUnitDisconnected"], "StatusBitmap has not been correctly changed to false when Helm panel was disconnected from terminal")
+  assert_true(StatusBitmap["InterfaceUnitDisconnected"], "StatusBitmap has not been correctly changed to false when INTERFACE UNIT was disconnected from terminal")
 
 
 end
@@ -2929,8 +2837,8 @@ end
   -- does not leave InterfaceUnitDisconnected state
 function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitDisconnectedStateTrueWhenInterfaceUnitIsConnectedForTimeBelowInterfaceUnitDisconnectedEndDebounceTime_InterfaceUnitDisconnectedAbnormalReportIsNotSent()
 
-  local HELM_PANEL_DISCONNECTED_START_DEBOUNCE_TIME = 1
-  local HELM_PANEL_DISCONNECTED_END_DEBOUNCE_TIME = 30
+  local INTERFACE_UNIT_DISCONNECTED_START_DEBOUNCE_TIME = 1
+  local INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME = 30
 
   -- *** Setup
   -- terminal in some position but no valid fix provided
@@ -2942,8 +2850,8 @@ function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitDisconnectedSt
   }
 
   vmsSW:setPropertiesByName({
-                             InterfaceUnitDisconnectedStartDebounceTime = HELM_PANEL_DISCONNECTED_START_DEBOUNCE_TIME,
-                             InterfaceUnitDisconnectedEndDebounceTime = HELM_PANEL_DISCONNECTED_END_DEBOUNCE_TIME,
+                             InterfaceUnitDisconnectedStartDebounceTime = INTERFACE_UNIT_DISCONNECTED_START_DEBOUNCE_TIME,
+                             InterfaceUnitDisconnectedEndDebounceTime = INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME,
                              InterfaceUnitDisconnectedSendReport = true,
                             }
   )
@@ -2959,14 +2867,14 @@ function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitDisconnectedSt
 
   gateway.setHighWaterMark() -- to get the newest messages
 
-  D:log("HELM PANEL CONNECTED TO TERMINAL")
-  -- Helm Panel is connected to terminal from now
+  D:log("INTERFACE UNIT CONNECTED TO TERMINAL")
+  -- INTERFACE UNIT is connected to terminal from now
   helmPanel:setConnected("true")
 
   local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
   D:log(ReceivedMessages["AbnormalReport"])
 
-  framework.delay(HELM_PANEL_DISCONNECTED_END_DEBOUNCE_TIME)
+  framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME)
 
   if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "InterfaceUnitDisconnected" ) then
     assert_nil(1, "InterfaceUnitDisconnected abnormal report sent but not expected - sending reports disabled")
@@ -2976,18 +2884,18 @@ function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitDisconnectedSt
   D:log(framework.dump(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"]), "InterfaceUnitDisconnectedState")
   assert_false(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"], "InterfaceUnitDisconnectedState property has not been changed after InterfaceUnitDisconnectedEndDebounceTime has passed")
 
-  -- back to helm panel disconnected
+  -- back to INTERFACE UNIT disconnected
   helmPanel:setConnected("false")
 
 
 end
 
---- TC checks if when InterfaceUnit is disconnected from IDP terminal for time below InterfaceUnitDisconnectedStartDebounceTime InterfaceUnitDisconnected AbnormalReport is not sent
-  -- and terminal does not enter InterfaceUnitDisconnected state
-function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitDisconnectedStateFalseWhenInterfaceUnitIsDisconnectedForTimeBelowInterfaceUnitDisconnectedStartDebounceTime_InterfaceUnitDisconnectedAbnormalReportIsNotSent()
 
-  local HELM_PANEL_DISCONNECTED_START_DEBOUNCE_TIME = 30
-  local HELM_PANEL_DISCONNECTED_END_DEBOUNCE_TIME = 1
+--- TC checks if when InterfaceUnit is connected to IDP terminal for time below InterfaceUnitDisconnectedEndDebounceTime HelmPannelDisconneted is sent not and terminal
+  -- does not leave InterfaceUnitDisconnected state
+function test_InterfaceUnitDisconnected_WhenInterfaceUnitServiceIsDisabledForTimeLongerThanwInterfaceUnitDisconnectedStartDebounceTime_InterfaceUnitDisconnectedAbnormalReportIsSent() 
+  local INTERFACE_UNIT_DISCONNECTED_START_DEBOUNCE_TIME = 1
+  local INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME = 1
 
   -- *** Setup
   -- terminal in some position but no valid fix provided
@@ -2999,8 +2907,73 @@ function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitDisconnectedSt
   }
 
   vmsSW:setPropertiesByName({
-                             InterfaceUnitDisconnectedStartDebounceTime = HELM_PANEL_DISCONNECTED_START_DEBOUNCE_TIME,
-                             InterfaceUnitDisconnectedEndDebounceTime = HELM_PANEL_DISCONNECTED_END_DEBOUNCE_TIME,
+                             InterfaceUnitDisconnectedStartDebounceTime = INTERFACE_UNIT_DISCONNECTED_START_DEBOUNCE_TIME,
+                             InterfaceUnitDisconnectedEndDebounceTime = INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME,
+                             InterfaceUnitDisconnectedSendReport = true,
+                            }
+  )
+
+  -- *** Execute
+  GPS:set(InitialPosition)
+
+   
+  gateway.setHighWaterMark() -- to get the newest messages
+  
+  D:log("INTERFACE UNIT CONNECTED TO TERMINAL")
+  -- INTERFACE UNIT is connected to terminal from now
+  helmPanel:setConnected("true")
+  framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME)
+  
+  -- checking InterfaceUnitDisconnectedState property - unit is connected now
+  local InterfaceUnitDisconnectedStateProperty = vmsSW:getPropertiesByName({"InterfaceUnitDisconnectedState"})
+  D:log(framework.dump(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"]), "InterfaceUnitDisconnectedState")
+  assert_false(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"], "InterfaceUnitDisconnectedState property is incorrectly true")
+
+  local DisableInterfaceUnitMessage = {SIN = 16, MIN = 15}
+	DisableInterfaceUnitMessage.Fields = {{Name="sin",Value=162},{Name="disable",Value=true}}
+	gateway.submitForwardMessage(DisableInterfaceUnitMessage)
+  
+  framework.delay(INTERFACE_UNIT_DISCONNECTED_START_DEBOUNCE_TIME)
+      
+  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"})
+  D:log(ReceivedMessages["AbnormalReport"])
+  
+
+  framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME)
+
+  if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "InterfaceUnitDisconnected" ) then
+    assert_nil(1, "InterfaceUnitDisconnected abnormal report sent but not expected - sending reports disabled")
+  end
+  -- checking InterfaceUnitDisconnectedState property
+  InterfaceUnitDisconnectedStateProperty = vmsSW:getPropertiesByName({"InterfaceUnitDisconnectedState"})
+  D:log(framework.dump(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"]), "InterfaceUnitDisconnectedState")
+  assert_false(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"], "InterfaceUnitDisconnectedState property has not been changed after InterfaceUnitDisconnectedEndDebounceTime has passed")
+
+  -- back to INTERFACE UNIT disconnected
+  helmPanel:setConnected("false")
+
+
+end
+
+--- TC checks if when InterfaceUnit is disconnected from IDP terminal for time below InterfaceUnitDisconnectedStartDebounceTime InterfaceUnitDisconnected AbnormalReport is not sent
+  -- and terminal does not enter InterfaceUnitDisconnected state
+function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitDisconnectedStateFalseWhenInterfaceUnitIsDisconnectedForTimeBelowInterfaceUnitDisconnectedStartDebounceTime_InterfaceUnitDisconnectedAbnormalReportIsNotSent()
+
+  local INTERFACE_UNIT_DISCONNECTED_START_DEBOUNCE_TIME = 30
+  local INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME = 1
+
+  -- *** Setup
+  -- terminal in some position but no valid fix provided
+  local InitialPosition = {
+                             speed = 0,                      -- kmh
+                             latitude = 1,                   -- degrees
+                             longitude = 1,                  -- degrees
+                             fixType = 3,                    -- valid fix
+  }
+
+  vmsSW:setPropertiesByName({
+                             InterfaceUnitDisconnectedStartDebounceTime = INTERFACE_UNIT_DISCONNECTED_START_DEBOUNCE_TIME,
+                             InterfaceUnitDisconnectedEndDebounceTime = INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME,
                              InterfaceUnitDisconnectedSendReport = true,
                             }
   )
@@ -3013,11 +2986,11 @@ function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitDisconnectedSt
   D:log(framework.dump(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"]), "InterfaceUnitDisconnectedState")
   assert_true(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"], "InterfaceUnitDisconnectedState property is incorrectly false")
 
-  D:log("HELM PANEL CONNECTED TO TERMINAL")
-  -- Helm Panel is connected to terminal from now
+  D:log("INTERFACE UNIT CONNECTED TO TERMINAL")
+  -- INTERFACE UNIT is connected to terminal from now
   helmPanel:setConnected("true")
 
-  framework.delay(HELM_PANEL_DISCONNECTED_END_DEBOUNCE_TIME)
+  framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME)
 
   -- checking InterfaceUnitDisconnectedState property
   InterfaceUnitDisconnectedStateProperty = vmsSW:getPropertiesByName({"InterfaceUnitDisconnectedState"})
@@ -3026,14 +2999,14 @@ function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitDisconnectedSt
 
   gateway.setHighWaterMark() -- to get the newest messages
 
-  D:log("HELM PANEL DISCONNECTED FROM TERMINAL")
-  -- Helm Panel is disconnected from terminal from now
+  D:log("INTERFACE UNIT DISCONNECTED FROM TERMINAL")
+  -- INTERFACE UNIT is disconnected from terminal from now
   helmPanel:setConnected("false")
 
   local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
   D:log(ReceivedMessages["AbnormalReport"])
 
-  framework.delay(HELM_PANEL_DISCONNECTED_START_DEBOUNCE_TIME)
+  framework.delay(INTERFACE_UNIT_DISCONNECTED_START_DEBOUNCE_TIME)
 
   if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "InterfaceUnitDisconnected" ) then
     assert_nil(1, "InterfaceUnitDisconnected abnormal report sent but not expected - sending reports disabled")
@@ -3051,8 +3024,8 @@ end
 --- TC checks if when InterfaceUnit is connected and disconnected for time above thresholds InterfaceUnitDisconnected AbnormalReports are not sent when sending is disabled
 function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitDisconnectedStateTrueWhenInterfaceUnitIsConnectedAndConnectedForTimeAboveThresholdAndInterfaceUnitDisconnectedReportsAreDisabled_InterfaceUnitDisconnectedAbnormalReportIsNotSent()
 
-  local HELM_PANEL_DISCONNECTED_START_DEBOUNCE_TIME = 1
-  local HELM_PANEL_DISCONNECTED_END_DEBOUNCE_TIME = 1
+  local INTERFACE_UNIT_DISCONNECTED_START_DEBOUNCE_TIME = 1
+  local INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME = 1
 
   -- *** Setup
   -- terminal in some position but no valid fix provided
@@ -3064,8 +3037,8 @@ function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitDisconnectedSt
   }
 
   vmsSW:setPropertiesByName({
-                             InterfaceUnitDisconnectedStartDebounceTime = HELM_PANEL_DISCONNECTED_START_DEBOUNCE_TIME,
-                             InterfaceUnitDisconnectedEndDebounceTime = HELM_PANEL_DISCONNECTED_END_DEBOUNCE_TIME,
+                             InterfaceUnitDisconnectedStartDebounceTime = INTERFACE_UNIT_DISCONNECTED_START_DEBOUNCE_TIME,
+                             InterfaceUnitDisconnectedEndDebounceTime = INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME,
                              InterfaceUnitDisconnectedSendReport = false,
                             }
   )
@@ -3078,11 +3051,11 @@ function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitDisconnectedSt
   D:log(framework.dump(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"]), "InterfaceUnitDisconnectedState")
   assert_true(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"], "InterfaceUnitDisconnectedState property is incorrectly false")
 
-  D:log("HELM PANEL CONNECTED TO TERMINAL")
-  -- Helm Panel is connected to terminal from now
+  D:log("INTERFACE UNIT CONNECTED TO TERMINAL")
+  -- INTERFACE UNIT is connected to terminal from now
   helmPanel:setConnected("true")
 
-  framework.delay(HELM_PANEL_DISCONNECTED_END_DEBOUNCE_TIME)
+  framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME)
 
   local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
   D:log(ReceivedMessages["AbnormalReport"])
@@ -3096,11 +3069,11 @@ function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitDisconnectedSt
 
   helmPanel:setConnected("false")
 
-  D:log("HELM PANEL DISCONNECTED FROM TERMINAL")
-  -- Helm Panel is diconnected to terminal from now
+  D:log("INTERFACE UNIT DISCONNECTED FROM TERMINAL")
+  -- INTERFACE UNIT is diconnected to terminal from now
   helmPanel:setConnected("false")
 
-  framework.delay(HELM_PANEL_DISCONNECTED_START_DEBOUNCE_TIME)
+  framework.delay(INTERFACE_UNIT_DISCONNECTED_START_DEBOUNCE_TIME)
 
   ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
   D:log(ReceivedMessages["AbnormalReport"])
@@ -3716,10 +3689,10 @@ function test_MultipleAbnormalReportsEnabled_When3AbnormalReportsAreTriggered_3A
   gateway.setHighWaterMark() -- to get the newest messages
   GPS:set({jammingDetect = true, fixType = 3})
 
-  -- External power source disconnected from Helm panel
+  -- External power source disconnected from INTERFACE UNIT
   helmPanel:externalPowerConnected("true")
 
-  -- Helm Panel disconnected from terminal
+  -- INTERFACE UNIT disconnected from terminal
   helmPanel:setConnected("true")
 
   framework.delay(35)
