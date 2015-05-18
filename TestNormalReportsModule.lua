@@ -1283,7 +1283,23 @@ Annotations:register([[
 @method(test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport1IsSentImmediatelyOnlyOnce)
 @module(TestNormalReportsModule)
 ]])
--- [OK]
+--- TC checks if ConfigChangeReport1 is sent after changes made via console.
+  --
+  -- Steps:
+  --
+  -- 1. Changed properties are set via shell.
+  -- 2. Waiting for other reports is performed.
+  -- 3. Values in ConfigChangeReport1 are checked.
+  -- 4. Change source string is checked.
+  -- 5. Timestamp of the report is checked.
+  --
+  -- Results:
+  --
+  -- 1. ConfigChangeReport1 message is performed.
+  -- 2. No other reports are sent. 
+  -- 3. Values in ConfigChangeReport1 are correct.
+  -- 4. Change source string is correct.
+  -- 5. Timestamp of the report is correct.
 function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport1IsSentImmediatelyOnlyOnce()
   -- get properties
   local propertiesToChange = {"StandardReport1Interval"}
@@ -1304,7 +1320,23 @@ Annotations:register([[
 @method(test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport2IsSentImmediatelyOnlyOnce)
 @module(TestNormalReportsModule)
 ]])
--- [OK]
+--- TC checks if ConfigChangeReport2 is sent after changes made via console.
+  --
+  -- Steps:
+  --
+  -- 1. Changed properties are set via shell.
+  -- 2. Waiting for other reports is performed.
+  -- 3. Values in ConfigChangeReport2 are checked.
+  -- 4. Change source string is checked.
+  -- 5. Timestamp of the report is checked.
+  --
+  -- Results:
+  --
+  -- 1. ConfigChangeReport2 message is performed.
+  -- 2. No other reports are sent. 
+  -- 3. Values in ConfigChangeReport2 are correct.
+  -- 4. Change source string is correct.
+  -- 5. Timestamp of the report is correct.
 function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport2IsSentImmediatelyOnlyOnce()
   -- get properties
   local propertiesToChange = {"StandardReport2Interval"}
@@ -1325,7 +1357,23 @@ Annotations:register([[
 @method(test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport3IsSentImmediatelyOnlyOnce3)
 @module(TestNormalReportsModule)
 ]])
--- [OK]
+--- TC checks if ConfigChangeReport3 is sent after changes made via console.
+  --
+  -- Steps:
+  --
+  -- 1. Changed properties are set via shell.
+  -- 2. Waiting for other reports is performed.
+  -- 3. Values in ConfigChangeReport3 are checked.
+  -- 4. Change source string is checked.
+  -- 5. Timestamp of the report is checked.
+  --
+  -- Results:
+  --
+  -- 1. ConfigChangeReport3 message is performed.
+  -- 2. No other reports are sent. 
+  -- 3. Values in ConfigChangeReport3 are correct.
+  -- 4. Change source string is correct.
+  -- 5. Timestamp of the report is correct.
 function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport3IsSentImmediatelyOnlyOnce()
   -- get properties
   local propertiesToChange = {"StandardReport3Interval"}
