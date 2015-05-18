@@ -26,8 +26,9 @@ local geofenceSettings = {
   interval = 10
 }
 
+--- Set two geofence zones.
+-- Set gps position to outside geofecne.
 function suite_setup()
-  
   geofenceSW:setPropertiesByName(geofenceSettings)
   geofenceSW:setRectangle(zone1)
   geofenceSW:setRectangle(zone0)
@@ -58,6 +59,11 @@ end
 -- Test Cases
 -------------------------
 
+--- Checks if StandardReport message is sent with correct StatusBitmap when terminal is inside and outside geofence zone
+-- 1. Set StandardReport configuration
+-- 2. Terminal is outside geofence zone, wait for StandardReport and check if statusbitmap.insidegeofence is false
+-- 3. Go inside geofence zone,
+-- 4. Wait for StandardReport and check if statusbitmap.insidegeofence is true
 function test_GeofenceFeatures_WhenInsideGeofenceZone_StandardReportStatusBitmapInsideGeofenceBitIsSet()
   local currentReport1Interval = vmsSW:getPropertiesByName({"StandardReport1Interval"})["StandardReport1Interval"]
   vmsSW:setPropertiesByName({StandardReport1Interval = 1})
@@ -79,6 +85,10 @@ function test_GeofenceFeatures_WhenInsideGeofenceZone_StandardReportStatusBitmap
   assert_true(state.InsideGeofence, "Terminal incorrectly repored as NOT inside geofence zone")  
 end
 
+--- Check if InsideGeofenceState property is set correctly when inside and outside geofence zone
+-- 1. Terminal is outside geofence zone, Check if InsideGeofenceState is set to false
+-- 2. Go inside geofence zone
+-- 3. Check if InsideGeofenceState is set to true
 function test_GeofenceFeatures_WhenInsideGeofenceZone_VMSPropertyInsideGeofenceIsSetToTrue()
   GPS:set({latitude = 0, longitude = 0})
   local status, properties = vmsSW:waitForProperties({InsideGeofenceState = false})
@@ -90,6 +100,11 @@ function test_GeofenceFeatures_WhenInsideGeofenceZone_VMSPropertyInsideGeofenceI
   
 end
 
+--- Checks if AcceleratedReport message is sent with correct StatusBitmap when terminal is inside and outside geofence zone
+-- 1. Set Accelerated report configuration
+-- 2. Terminal is outside geofence zone, wait for AcceleratedReport and check if statusbitmap.insidegeofence is false
+-- 3. Go inside geofence zone,
+-- 4. Wait for AcceleratedReport and check if statusbitmap.insidegeofence is true
 function test_GeofenceFeatures_WhenInsideGeofenceZone_AcceleratedReportStatusBitmapInsideGeofenceBitIsSet()
   local Report1Properties = vmsSW:getPropertiesByName({"StandardReport1Interval", "AcceleratedReport1Rate"})
   local currentStandardReport1Interval = Report1Properties["StandardReport1Interval"]
@@ -129,7 +144,7 @@ function test_GeofenceFeatures_WhenInsideGeofenceZone_AcceleratedReportStatusBit
 end
 
 --- Chekcs if GeofenceEntry message is sent correctly.
--- Verifies: fence id, status bitmap, longitude, latitude
+-- Verifies: fence id, status bitmap, longitude, latitude, speed, course.
 -- 1. Go inside geofence zone
 -- 2. Wait for GeofenceEntry message
 function test_GeofenceFeatures_WhenInsideGeofenceZone_GeofenceEntryIsSent()
@@ -139,11 +154,11 @@ function test_GeofenceFeatures_WhenInsideGeofenceZone_GeofenceEntryIsSent()
   geofenceSW:goInside(zone1, fix)
   
   local receivedMessages = vmsSW:waitForMessagesByName("GeofenceEntry")
-  local geofecneEntry = receivedMessages.GeofenceEntry
+  local geofenceEntry = receivedMessages.GeofenceEntry
   
-  assert_not_nil(geofecneEntry, "GeofenceEntry not received")
+  assert_not_nil(geofenceEntry, "GeofenceEntry not received")
   
-  geofecneEntry:_verify({
+  geofenceEntry:_verify({
     Timestamp =      {assert_not_nil},
     Latitude =        {assert_not_nil},
     Longitude =   {assert_not_nil},
@@ -156,7 +171,7 @@ function test_GeofenceFeatures_WhenInsideGeofenceZone_GeofenceEntryIsSent()
     FenceId = {assert_not_nil}
   })
   
-  geofecneEntry:_verify({
+  geofenceEntry:_verify({
     FenceId = {assert_equal, zone1.number},
     Latitude = {assert_equal, GPS:denormalize(zone1.centerLatitude)},
     Longitude = {assert_equal, GPS:denormalize(zone1.centerLongitude)},
@@ -164,24 +179,34 @@ function test_GeofenceFeatures_WhenInsideGeofenceZone_GeofenceEntryIsSent()
     Speed = {assert_equal, vmsSW:speedGpsToVms(fix.speed), 1},
     })
   
-  local state = vmsSW:decodeBitmap(geofecneEntry.StatusBitmap, "EventStateId")
+  local state = vmsSW:decodeBitmap(geofenceEntry.StatusBitmap, "EventStateId")
   assert_true(state.InsideGeofence, "Terminal incorrectly repored as NOT inside geofence zone")  
 end
 
 
 --- Check if GeofenceExit is sent correctly.
---
+-- Verifies: fence id, status bitmap, longitude, latitude, speed, course.
+-- 1. Enter geofence
+-- 2. Exit geofence
+-- 3. Wait for GoefenceExit message
 function test_GeofenceFeatures_WhenInsideGeofenceZoneGoesOutside_GeofenceExitIsSent()
   vmsSW:setHighWaterMark()
   
   geofenceSW:goInside(zone1)
   
   local receivedMessages = vmsSW:waitForMessagesByName("GeofenceEntry")
-  local geofecneEntry = receivedMessages.GeofenceEntry
+  local geofenceEntry = receivedMessages.GeofenceEntry
+  assert_not_nil(geofenceEntry, "GeofenceEntry not received")
   
-  assert_not_nil(geofecneEntry, "GeofenceEntry not received")
   
-  geofecneEntry:_verify({
+  vmsSW:setHighWaterMark()
+  local geofenceExitFix = {latitude = 1, longitude = 2}
+  GPS:set(geofenceExitFix)
+  receivedMessages = vmsSW:waitForMessagesByName("GeofenceExit")
+  local geofenceExit = receivedMessages.GeofenceExit
+  assert_not_nil(geofenceExit, "GeofenceExit not received")
+    
+  geofenceExit:_verify({
     Timestamp =      {assert_not_nil},
     Latitude =        {assert_not_nil},
     Longitude =   {assert_not_nil},
@@ -193,17 +218,16 @@ function test_GeofenceFeatures_WhenInsideGeofenceZoneGoesOutside_GeofenceExitIsS
     StatusBitmap = {assert_not_nil},
     FenceId = {assert_not_nil}
   })
+
+  geofenceExit:_equal(geofenceEntry, nil, {"Timestamp", "Latitude", "Longitude", "StatusBitmap", "MIN", "Name"})
   
+  geofenceExit:_verify({
+    Latitude = {assert_equal, GPS:denormalize(geofenceExitFix.latitude)},
+    Longitude = {assert_equal, GPS:denormalize(geofenceExitFix.longitude)},
+  })
   
-  
-  geofecneEntry:_verify({
-    FenceId = {assert_equal, zone1.number},
-    Latitude = {assert_equal, GPS:denormalize(zone1.centerLatitude)},
-    Longitude = {assert_equal, GPS:denormalize(zone1.centerLongitude)},
-    })
-  
-  local state = vmsSW:decodeBitmap(geofecneEntry.StatusBitmap, "EventStateId")
-  assert_true(state.InsideGeofence, "Terminal incorrectly repored as NOT inside geofence zone")  
+  local state = vmsSW:decodeBitmap(geofenceExit.StatusBitmap, "EventStateId")
+  assert_false(state.InsideGeofence, "Terminal incorrectly repored as inside geofence zone")  
 end
 
 -- TODO: Test HDOP, NumSats, IdpCnr - currently not supported by simulator
