@@ -151,6 +151,7 @@ GeofenceServiceWrapper = {}
   -- @tparam gpsInfo.speed
   -- @tparam gpsInfo.heading
   function GeofenceServiceWrapper:goInside(zone, gpsInfo)
+    gpsInfo = gpsInfo or {}
     GPS:set({latitude = zone.centerLatitude, longitude = zone.centerLongitude, heading = gpsInfo.heading, speed = gpsInfo.speed})
     geofenceSW:waitForRefresh()
   end

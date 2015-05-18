@@ -20,7 +20,6 @@ Message = {}
   
   --- fields is table of pairs
   -- {fieldname = fieldvalue, fieldname = {assertfunction, fieldvalue, tolerance}}
-  
   function Message:_verify(fields)
     local callerInfo = debug.getinfo(2)
     local callerMsg = ", in " .. callerInfo.short_src .. ":" .. callerInfo.currentline
