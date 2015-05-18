@@ -2141,7 +2141,20 @@ function generic_test_StandardReportContent(configuration)
 
 end
 
--- this is generic function for testing Config Change Reports
+-- Generic function which can be configured in multiple ways.
+-- See the usage in TCs above.
+--
+-- This is generic function for testing Config Change Reports.
+-- 
+-- Steps:
+--   1. Properties values are incremented. 
+--   2. Properties are sent (via setPropertiesByName or setConfig message).
+--   3. Waiting for ConfigChange report is performed.
+--   4. Properties are fetched.
+--   5. Raport values are checked.
+--   6. Raport values are compared to fetched properties.
+--   7. Change source is checked.
+--   8. Timestamp is checked.
 function generic_test_ConfigChangeReportConfigChangeReportIsSent(messageKey,propertiesToChange,propertiesBeforeChange,setConfigMsgKey)
 
   propertiesToChangeValues = {}
@@ -2231,7 +2244,15 @@ function generic_test_ConfigChangeReportConfigChangeReportIsSent(messageKey,prop
 
 end
 
--- This is generic function for disabled standard reports test
+--- Generic function which can be configured in multiple ways.
+-- See the usage in TCs above.
+--
+-- This checkes if standard reports are disabled properly.
+-- 
+-- Steps:
+--   1. Properties are set (via system service or vms) in a way that disables reports.
+--   2. Standard report is checked (should not come).
+--   3. Accelerated report is checked (should not come).
 function generic_test_StandardReportDisabled(reportKey,properties,reportInterval,acceleratedReportKey)
 
   -- setup
@@ -2269,6 +2290,13 @@ function generic_test_StandardReportDisabled(reportKey,properties,reportInterval
 end
 
 -- This is generic function for disabled accelerated reports test (and standard reports enabled)
+-- 
+-- Steps:
+--   1. Properties are set (via system service or vms) in a way that disables accelerated reports and enables standard reports.
+--   2. Waiting for standard report is performed.
+--   3. Standard report is received.
+--   4. Waiting for accelerated report is performed.
+--   5. Accelerated report should not come.
 function generic_test_AcceleratedReportDisabledAndStandardReportEnabled(standardReportKey, reportKey,properties,reportInterval,setConfigMsgKey,configChangeMsgKey,fields)
 
   -- setup
