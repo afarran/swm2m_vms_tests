@@ -1283,7 +1283,23 @@ Annotations:register([[
 @method(test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport1IsSentImmediatelyOnlyOnce)
 @module(TestNormalReportsModule)
 ]])
--- [OK]
+--- TC checks if ConfigChangeReport1 is sent after changes made via console.
+  --
+  -- Steps:
+  --
+  -- 1. Changed properties are set via shell.
+  -- 2. Waiting for other reports is performed.
+  -- 3. Values in ConfigChangeReport1 are checked.
+  -- 4. Change source string is checked.
+  -- 5. Timestamp of the report is checked.
+  --
+  -- Results:
+  --
+  -- 1. ConfigChangeReport1 message is performed.
+  -- 2. No other reports are sent. 
+  -- 3. Values in ConfigChangeReport1 are correct.
+  -- 4. Change source string is correct.
+  -- 5. Timestamp of the report is correct.
 function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport1IsSentImmediatelyOnlyOnce()
   -- get properties
   local propertiesToChange = {"StandardReport1Interval"}
@@ -1304,7 +1320,23 @@ Annotations:register([[
 @method(test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport2IsSentImmediatelyOnlyOnce)
 @module(TestNormalReportsModule)
 ]])
--- [OK]
+--- TC checks if ConfigChangeReport2 is sent after changes made via console.
+  --
+  -- Steps:
+  --
+  -- 1. Changed properties are set via shell.
+  -- 2. Waiting for other reports is performed.
+  -- 3. Values in ConfigChangeReport2 are checked.
+  -- 4. Change source string is checked.
+  -- 5. Timestamp of the report is checked.
+  --
+  -- Results:
+  --
+  -- 1. ConfigChangeReport2 message is performed.
+  -- 2. No other reports are sent. 
+  -- 3. Values in ConfigChangeReport2 are correct.
+  -- 4. Change source string is correct.
+  -- 5. Timestamp of the report is correct.
 function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport2IsSentImmediatelyOnlyOnce()
   -- get properties
   local propertiesToChange = {"StandardReport2Interval"}
@@ -1325,7 +1357,23 @@ Annotations:register([[
 @method(test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport3IsSentImmediatelyOnlyOnce3)
 @module(TestNormalReportsModule)
 ]])
--- [OK]
+--- TC checks if ConfigChangeReport3 is sent after changes made via console.
+  --
+  -- Steps:
+  --
+  -- 1. Changed properties are set via shell.
+  -- 2. Waiting for other reports is performed.
+  -- 3. Values in ConfigChangeReport3 are checked.
+  -- 4. Change source string is checked.
+  -- 5. Timestamp of the report is checked.
+  --
+  -- Results:
+  --
+  -- 1. ConfigChangeReport3 message is performed.
+  -- 2. No other reports are sent. 
+  -- 3. Values in ConfigChangeReport3 are correct.
+  -- 4. Change source string is correct.
+  -- 5. Timestamp of the report is correct.
 function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport3IsSentImmediatelyOnlyOnce()
   -- get properties
   local propertiesToChange = {"StandardReport3Interval"}
@@ -1952,7 +2000,18 @@ function generic_test_PollRequestWithOthers(pollRequestMsgKey, pollResponseMsgKe
 
 end
 
+--- Generic function which can be configured in multiple ways.
+-- See the usage in TCs above.
+--
 -- This is generic function for configure and test reports (StandardReport,AcceleratedReport)
+-- 
+-- Steps:
+--   1. Configuration passed from TC is set (via config message or set properties message).
+--   2. Waiting for first report is performed to synchronize report sequence.
+--   3. New gps position is set.
+--   4. Waiting for next report is performed.
+--   5. Time difference between reports is calculated and checked.
+--   6. Values of the report are checked.
 function generic_test_StandardReportContent(configuration)
   local firstReportKey = configuration.firstReportKey  -- first report name
   local reportKey = configuration.reportKey -- second report name
@@ -2350,6 +2409,19 @@ function generic_TimestampsInConfigChangeReports(configChangeMsgKey,initialPrope
 
 end
 
+--- Generic function which can be configured in multiple ways.
+-- See the usage in TCs above.
+--
+-- It checks if ConfigChangeReport is sent after changes made via console.
+-- 
+-- Steps:
+--   1. Properties to change are incremented.
+--   2. Properties are set via shell (vms service wrapper has such functionality)
+--   3. Waiting for ConfigChangeReportX message is performed.
+--   4. It is checked if no others reports comming.
+--   5. Values in ConfigChangeReportX are checked.
+--   6. Change source is checked for console string.
+--   7. Timestamp of the report is checked.
 function generic_setConfigViaShell(messageKey,propertiesToChange,propertiesBeforeChange)
 
   propertiesToChangeValues = {}
