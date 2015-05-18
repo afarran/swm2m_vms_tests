@@ -37,7 +37,7 @@ function suite_setup()
   geofenceSW:waitForRefresh()
 end
 
--- executed after each test suite
+--- Disable two geofence zones
 function suite_teardown()
   geofenceSW:disableFence(0)
   geofenceSW:disableFence(1)
@@ -148,7 +148,6 @@ end
 -- 1. Go inside geofence zone
 -- 2. Wait for GeofenceEntry message
 function test_GeofenceFeatures_WhenInsideGeofenceZone_GeofenceEntryIsSent()
-  vmsSW:setHighWaterMark()
   
   local fix = GPS:getRandom()
   geofenceSW:goInside(zone1, fix)
@@ -190,7 +189,6 @@ end
 -- 2. Exit geofence
 -- 3. Wait for GoefenceExit message
 function test_GeofenceFeatures_WhenInsideGeofenceZoneGoesOutside_GeofenceExitIsSent()
-  vmsSW:setHighWaterMark()
   
   geofenceSW:goInside(zone1)
   
@@ -230,6 +228,81 @@ function test_GeofenceFeatures_WhenInsideGeofenceZoneGoesOutside_GeofenceExitIsS
   assert_false(state.InsideGeofence, "Terminal incorrectly repored as inside geofence zone")  
 end
 
+--- Check if correct sequence of GeofenceEntry and GeofenceExit messages are sent when terminal goes inside zone1 then inside zone2 then outside
+-- Verifies: fence id, status bitmap, longitude, latitude, speed, course.
+-- 1. Go inside zone A
+-- 2. Verify GeofenceEntry message
+-- 3. Go inside zone B
+-- 4. Verify GeofenceExit for zone A
+-- 5. Verify GeofenceEntry for zone B
+-- 6. Go outside zones
+-- 7. Verify GeofenceExit for zone B
+function test_GeofenceFeatures_WhenTerminalGoesInsideGeofence1ThenInsideGeofence2_GeofenceEnterGeofenceExitMessagesAreSentCorrectly()
+  -- 1. Go inside zone A
+  local fix = GPS:getRandom()
+  geofenceSW:goInside(zone1, fix)
+  local receivedMessages = vmsSW:waitForMessagesByName("GeofenceEntry")
+  local geofenceEntry = receivedMessages.GeofenceEntry
+  -- 2. Verify GeofenceEntry message
+  assert_not_nil(geofenceEntry, "GeofenceEntry not received")
+  
+  -- Enter second geofence, GeofenceEntry and GeofenceExit messages should be received
+  -- 3. Go inside zone B
+  vmsSW:setHighWaterMark()
+  geofenceSW:goInside(zone0)
+  
+  -- 4. Verify GeofenceExit for zone A
+  receivedMessages = vmsSW:waitForMessagesByName({"GeofenceExit", "GeofenceEntry"})
+  local geofenceExit = receivedMessages.GeofenceExit
+  assert_not_nil(geofenceExit, "GeofenceExit not received")
+
+  geofenceExit:_equal(geofenceEntry, nil, {"Timestamp", "Latitude", "Longitude", "MIN", "Name"})
+  
+  geofenceExit:_verify({
+    Latitude = {assert_equal, GPS:denormalize(zone0.centerLatitude)},
+    Longitude = {assert_equal, GPS:denormalize(zone0.centerLongitude)},
+  })
+
+  local state = vmsSW:decodeBitmap(geofenceExit.StatusBitmap, "EventStateId")
+  assert_true(state.InsideGeofence, "Terminal incorrectly repored as outside geofence zone") 
+  
+  -- 5. Verify GeofenceEntry for zone B
+  local geofenceEntry2 = receivedMessages.GeofenceEntry
+  assert_not_nil(geofenceEntry, "GeofenceEntry2 not received")
+    
+  geofenceEntry2:_verify({
+    FenceId = {assert_equal, zone0.number},
+    Latitude = {assert_equal, GPS:denormalize(zone0.centerLatitude)},
+    Longitude = {assert_equal, GPS:denormalize(zone0.centerLongitude)},
+    Course  = {assert_equal, fix.heading},
+    Speed = {assert_equal, vmsSW:speedGpsToVms(fix.speed), 1},
+  })
+  
+  state = vmsSW:decodeBitmap(geofenceEntry2.StatusBitmap, "EventStateId")
+  assert_true(state.InsideGeofence, "Terminal incorrectly repored as outside geofence zone") 
+  
+  -- Exit second geofence
+  -- 6. Go outside zones
+  vmsSW:setHighWaterMark()
+  local geofenceExitFix = {latitude = 1, longitude = 2}
+  GPS:set(geofenceExitFix)
+  
+  -- 7. Verify GeofenceExit for zone B
+  receivedMessages = vmsSW:waitForMessagesByName("GeofenceExit")
+  local geofenceExit2 = receivedMessages.GeofenceExit
+  assert_not_nil(geofenceExit2, "GeofenceExit not received")
+
+  geofenceExit2:_equal(geofenceEntry2, nil, {"Timestamp", "Latitude", "Longitude", "StatusBitmap", "MIN", "Name"})
+  
+  geofenceExit2:_verify({
+    Latitude = {assert_equal, GPS:denormalize(geofenceExitFix.latitude)},
+    Longitude = {assert_equal, GPS:denormalize(geofenceExitFix.longitude)},
+  })
+  
+  state = vmsSW:decodeBitmap(geofenceExit2.StatusBitmap, "EventStateId")
+  assert_false(state.InsideGeofence, "Terminal incorrectly repored as inside geofence zone")  
+  
+end
+
 -- TODO: Test HDOP, NumSats, IdpCnr - currently not supported by simulator
 -- TODO: test when terminal inside more than one geofence
--- TODO: test inside geofence LED? 
