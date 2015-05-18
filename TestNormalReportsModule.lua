@@ -2350,6 +2350,19 @@ function generic_TimestampsInConfigChangeReports(configChangeMsgKey,initialPrope
 
 end
 
+--- Generic function which can be configured in multiple ways.
+-- See the usage in TCs above.
+--
+-- It checks if ConfigChangeReport is sent after changes made via console.
+-- 
+-- Steps:
+--   1. Properties to change are incremented.
+--   2. Properties are set via shell (vms service wrapper has such functionality)
+--   3. Waiting for ConfigChangeReportX message is performed.
+--   4. It is checked if no others reports comming.
+--   5. Values in ConfigChangeReportX are checked.
+--   6. Change source is checked for console string.
+--   7. Timestamp of the report is checked.
 function generic_setConfigViaShell(messageKey,propertiesToChange,propertiesBeforeChange)
 
   propertiesToChangeValues = {}

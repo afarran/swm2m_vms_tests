@@ -12,13 +12,13 @@ print "FORWARD  MSGs:"
 
 for msg in forwardMessages:
   outputForward.append({ "name" : msg.Name.string, "Min" : msg.MIN.string })
-  print "{ name =\"%s\", min=%s}"%(msg.Name.string,msg.MIN.string)
+  print "{name=\"%s\", min=%s},"%(msg.Name.string,msg.MIN.string)
 
 print "****"
 print "RETURN  MSGs:"
 
 for msg in returnMessages:
   outputReturn.append({ "name" : msg.Name.string, "Min" : msg.MIN.string })
-  print "{ name =\"%s\", min=%s}"%(msg.Name.string,msg.MIN.string)
+  print "{name=\"%s\", min=%s},"%(msg.Name.string,msg.MIN.string)
 
 

@@ -744,13 +744,16 @@ local function run_suite(hooks, opts, results, sname, tests)
       local res = result_table(sname)
 
       if ssetup then
+        if opts.verbose then D:log("Starting test suite setup of " .. sname) end
          local ok, err = pcall(ssetup)
          if not ok or (ok and err == false) then
             run_suite = false
             local msg = fmt("Error in %s's suite_setup: %s", sname, tostring(err))
+            if opts.verbose then D:log(msg) end
             failed_suites[#failed_suites+1] = sname
             results.err[sname] = Error{msg=msg}
          end
+        if opts.verbose then D:log("Finished test suite setup of " .. sname) end
       end
       
       if run_suite and count(tests) > 0 then
@@ -767,7 +770,15 @@ local function run_suite(hooks, opts, results, sname, tests)
                run_test(name, test, res, hooks, setup, teardown)
             end
          end
-         if steardown then pcall(steardown) end
+         if steardown then 
+           if opts.verbose then D:log("Starting test suite teardown of " .. sname) end
+           local ok, err = pcall(steardown) 
+           if err then
+             local msg = fmt("Error in %s's suite_teardown: %s. Tests will continue.", sname, tostring(err))
+             print(msg)
+           end
+           if opts.verbose then D:log("Finished test suite teardown of " .. sname) end
+         end
          if hooks.end_suite then hooks.end_suite(res) end
          combine_results(results, res)
       end

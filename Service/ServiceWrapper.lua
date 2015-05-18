@@ -14,6 +14,21 @@ ServiceWrapper = {}
       return self
     end,})
 
+  --- Checks for required objects in global scope
+  -- throws an error if one of dependencies is not met
+  function ServiceWrapper:_checkDependiencies()
+    if self.dependencies then
+      for _, objectName in pairs(self.dependencies) do
+        if _G[objectName] == nil then
+          local message = "Required object is missing: " .. objectName
+          print(message)
+          assert(false, message)
+        end
+      end
+    end
+  end
+
+
   function ServiceWrapper:__processProperties(properties)
     properties = properties or {}
     local pins = {}
@@ -42,6 +57,16 @@ ServiceWrapper = {}
     return mins, mins_named
   end
 
+
+  --- Adds depepdency which is checked at objects creation
+  -- e.g. "framework", "GPS" etc.
+  function ServiceWrapper:_addDependency(requiredObjectName)
+    if not self.dependencies then
+      self.dependencies = {}
+    end
+    table.insert(self.dependencies, requiredObjectName)
+  end
+
   -- args is a table of named arguments,
   -- args.sin - service SIN
   -- args.name - service name
@@ -49,6 +74,8 @@ ServiceWrapper = {}
   -- args.messages_to - TO-MOBILE message definitions
   -- args.messages_from - FROM-MOBILE message definitions
   function ServiceWrapper:_init(args)
+    self:_addDependency("framework")
+    self:_checkDependiencies()
     self.sin = args.sin
     self.name = args.name
     -- ptype can be set to: unsignedint, signedint, string, boolean, enum, data
@@ -141,6 +168,7 @@ ServiceWrapper = {}
 
   -- pinValues = {pin1 = val1, pin2 = val2}
   function ServiceWrapper:setProperties(pinValues, raw, save)
+    self:log("Setting new properies: " .. string.tableAsList(self:__processPinValues(pinValues)))
     raw = raw or false
     local pinValueTypes = {}
     for pin, value in pairs(pinValues) do
@@ -378,3 +406,7 @@ ServiceWrapper = {}
     end
   end
 
+  function ServiceWrapper:log(data)
+    local swName = self.name or "UnnamedServiceWrapper"
+    D:log(swName .. ": " .. data)
+  end

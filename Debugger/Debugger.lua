@@ -24,6 +24,6 @@ Debugger = {}
     if info == nil then info = "nil" end
     if not tag then tag="info" end
     if DEBUG_MODE == 1 then
-      print(tag.." | "..info)
+      print("\t" .. tag .. " | [" .. os.date("%c") .. "] " .. info)
     end 
   end
