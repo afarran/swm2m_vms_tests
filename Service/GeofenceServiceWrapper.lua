@@ -12,6 +12,8 @@ GeofenceServiceWrapper = {}
   })
   
   function GeofenceServiceWrapper:_init(gpsConversion, distanceConversion)
+    -- Check if dependencies are met
+    self:_addDependency("GPS")
     
     -- Possible types: "unsignedint"  "signedint"  "enum"  "string"  "boolean"  "data"
     
@@ -99,16 +101,24 @@ GeofenceServiceWrapper = {}
     return value * self.distanceConversion
   end
   
-  -- in kilometers and degrees
-  -- args = {number, centerLatitude, centerLongitude, latitudeDistance, longitudeDistance, enabled, Alarm}
-  function GeofenceServiceWrapper:setRectangle(args)
-    local number = args.number or 0
-    local centerLatitude = self:__normalizeGPS(args.centerLatitude)
-    local centerLongitude = self:__normalizeGPS(args.centerLongitude)
-    local latitudeDistance = self:__normalizeDistance(args.latitudeDistance)
-    local longitudeDistance = self:__normalizeDistance(args.longitudeDistance)
-    local enabled = args.enabled or true
-    local alarm = args.alarm or "Both" --(both - on entry alarm and on exit alarm)
+  --- Sets new fence in geofence module. 
+  -- Uses setRectangle message
+  -- @tparam table zone
+  -- @param zone.number id number of fence
+  -- @param zone.centerLatitude center latitude in degrees
+  -- @param zone.centerLongitude center longitude in degrees
+  -- @param zone.latitudeDistance distance from center latitude in kilomenters
+  -- @param zone.longitudeDistance distance from center longitude in kilomenters
+  -- @tparam boolean zone.enabled disable or enable fence
+  -- @tparam string zone.alarm when to alarm, enum Both
+  function GeofenceServiceWrapper:setRectangle(zone)
+    local number = zone.number or 0
+    local centerLatitude = self:__normalizeGPS(zone.centerLatitude)
+    local centerLongitude = self:__normalizeGPS(zone.centerLongitude)
+    local latitudeDistance = self:__normalizeDistance(zone.latitudeDistance)
+    local longitudeDistance = self:__normalizeDistance(zone.longitudeDistance)
+    local enabled = zone.enabled or true
+    local alarm = zone.alarm or "Both" --(both - on entry alarm and on exit alarm)
     
     local Fields = {{Name="number",Value=number},
                     {Name="enabled",Value=enabled},
@@ -119,15 +129,40 @@ GeofenceServiceWrapper = {}
                     {Name="longitudeDistance",Value=longitudeDistance}}
                   
     self:sendMessageByName("setRectangle", Fields)
-	
+    self:log("New zone set " .. string.tableAsList(zone))
   end
 
   function GeofenceServiceWrapper:enableFence(number)
     local Fields = {{Name="number",Value=number},{Name="enable",Value=true}}
     self:sendMessageByName("enableFence", Fields)
+    self:log("Fence " .. number .. " enabled")
   end
 
   function GeofenceServiceWrapper:disableFence(number)
     local Fields = {{Name="number",Value=number},{Name="enable",Value=false}}
     self:sendMessageByName("enableFence", Fields)
+    self:log("Fence " .. number .. " disabled")
+  end
+  
+  --- Sets GPS position to inside geofence zone.
+  -- @{zone} - @{setRectangle}
+  -- @tparam zone zone
+  -- @tparam table gpsInfo 
+  -- @tparam gpsInfo.speed
+  -- @tparam gpsInfo.heading
+  function GeofenceServiceWrapper:goInside(zone, gpsInfo)
+    GPS:set({latitude = zone.centerLatitude, longitude = zone.centerLongitude, heading = gpsInfo.heading, speed = gpsInfo.speed})
+    geofenceSW:waitForRefresh()
+  end
+  
+  function GeofenceServiceWrapper:getDelay()
+    return self.hysteresis + self.interval    
+  end
+  
+  --- Waits till all geofence calculations are completed
+  -- including gps setting and processing time
+  function GeofenceServiceWrapper:waitForRefresh()
+    local delay = GPS:getFullDelay(self:getDelay())
+    self:log("Waiting " .. delay .. "s for geofence refresh")
+    framework.delay(delay)
   end

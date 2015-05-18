@@ -14,7 +14,7 @@ Message = {}
   
   function Message:_init(args)
     for key, val in pairs(args) do
-      self[key] = val
+      self[key] = tonumber(val) or val
     end
   end
   
@@ -23,7 +23,7 @@ Message = {}
   
   function Message:_verify(fields)
     local callerInfo = debug.getinfo(2)
-    local callerMsg = ", at line " .. callerInfo.currentline .. " in " .. callerInfo.short_src
+    local callerMsg = ", in " .. callerInfo.short_src .. ":" .. callerInfo.currentline
     if fields then
       for fieldName, fieldValue in pairs(fields) do
         if type(fieldValue) == "table" then

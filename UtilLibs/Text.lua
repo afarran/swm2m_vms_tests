@@ -32,3 +32,13 @@ string.safe = function(str)
     return str
   end
 end
+
+string.tableAsList = function(inTable)
+  local msg = ""
+  if inTable then
+    for key, val in pairs(inTable) do
+      msg = msg .. "[" .. key .. "] = " .. string.safe(val) .. " "
+    end
+  end
+  return msg
+end

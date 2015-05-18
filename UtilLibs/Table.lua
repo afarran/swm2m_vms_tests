@@ -38,6 +38,8 @@ table.trueList = function(inTable)
   return result
 end
 
+
+
 --
 --local a = {1,2,3,4,5}
 --local b, c = table.split(a, 3)
