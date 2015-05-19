@@ -22,7 +22,13 @@ end
 
 --- setup function
 function setup()
-  --gateway.setHighWaterMark()
+  -- Starts shell , turns it to shell mode if mail mode detected.
+  D:log("Preparing shell")
+  if not shell:ready() then
+    skip("Shell is not ready - serial port not opened (".. serialMain.name .. ")")
+  end
+  assert_true(shell:ready(), "Shell is not ready - serial port not opened")
+  shell:start()
 end
 
 -----------------------------------------------------------------------------------------------
@@ -33,15 +39,6 @@ end
 -------------------------
 -- Test Cases
 -------------------------
-
--- Starts shell , turns it to shell mode if mail mode detected.
-local function startShell()
-  if not shell:ready() then
-    skip("Shell is not ready - serial port not opened (".. serialMain.name .. ")")
-  end
-  assert_true(shell:ready(), "Shell is not ready - serial port not opened")
-  shell:start()
-end
 
 
 --- TC checks VMS shell command: servicelist.
@@ -61,12 +58,6 @@ end
   -- 2. All dependant services are detected on the fetched list.
 function test_ShellCommandServicelist_WhenServiceListCommandIsSendAProperServiceListIsFetched()
   
-  -- preparing shell
-  D:log("Preparing shell")
-  startShell()
-
-  -- fetching service list
-  D:log("Fetching service list")
   local result = shell:request("servicelist")
 
   -- services that should be on the list
@@ -87,3 +78,46 @@ function test_ShellCommandServicelist_WhenServiceListCommandIsSendAProperService
     assert_not_nil(string.find(result,service[1]..'%s*'..service[2]),"There should be "..service[2].." service on the list.") 
   end
 end
+
+--- TC checks VMS shell command: idpstatus.
+  --
+  -- Initial Conditions:
+  --
+  -- * There should be VMS shell mode turned on.
+  --
+  -- Steps:
+  --
+  -- 1. 
+  -- 2. 
+  --
+  -- Results:
+  --
+  -- 1. 
+  -- 2. 
+function test_ShellCommandIdpStatus_WhenIdpStatusCommandIsSendXXXXX()
+
+  -- fetching idp status
+  D:log("Fetching idp status")
+  local result = shell:request("idpstatus")
+
+  -- necessary headers in response
+  local headers = {
+    "Global Status:",
+    "Last GPS info:",
+    "Virtual Carrier ID:",
+    "Subframe number:",
+    "Configuration ID:",
+    "Fix type:",
+    "Latitude:",
+    "Longitude:",
+    "Number of PRNs:",
+    "Beam number:",
+  }
+
+  -- checking each header , if it exists in the response
+  for _,header in pairs(headers) do
+    D:log("Checking header: "..header)
+    assert_not_nil(string.find(result,header),"There should be '"..header.."' header in the response of shell command 'idpstatus'") 
+  end
+end
+
