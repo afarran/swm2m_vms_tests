@@ -49,12 +49,12 @@ end
   --
   -- Steps:
   --
-  -- 1. Servicelist shell command is requested.
-  -- 2. Result of the servicelist shell command is checked for existance of necessary services.
+  -- 1. 'servicelist' shell command is requested.
+  -- 2. Result of the 'servicelist' shell command is checked for existance of necessary services.
   --
   -- Results:
   --
-  -- 1. Result of the servicelist shell command is fetched.
+  -- 1. Result of the 'servicelist' shell command is fetched.
   -- 2. All dependant services are detected on the fetched list.
 function test_ShellCommandServicelist_WhenServiceListCommandIsSendAProperServiceListIsFetched()
   
@@ -87,13 +87,13 @@ end
   --
   -- Steps:
   --
-  -- 1. 
-  -- 2. 
+  -- 1. 'idpstatus' shell command is requested.
+  -- 2. Result of the 'idpstatus' shell command is checked for existance of necessary headers.
   --
   -- Results:
   --
-  -- 1. 
-  -- 2. 
+  -- 1. Result of the 'idpstatus' shell command is fetched.
+  -- 2. All necessary headers are found on the fetched list.
 function test_ShellCommandIdpStatus_WhenIdpStatusCommandIsSendXXXXX()
 
   -- fetching idp status
