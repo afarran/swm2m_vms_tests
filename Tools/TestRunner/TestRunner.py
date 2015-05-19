@@ -158,12 +158,12 @@ argparser.add_argument("--instance", help="Specifies instance number of simulato
 argparser.add_argument("--suite", help="Specifies a test suite to run")
 argparser.add_argument("--test", help="Specifies a test name to run")
 argparser.add_argument("--testoutput", help="Specifies a test output file")
-argparser.add_argument("--comportA", help="Specifies com port. E.g 200 - ", default=None)
-argparser.add_argument("--comportB", help="Specifies com port. E.g 200 - ", default=None)
+argparser.add_argument("--comportA", help="Specifies com port. E.g 200 ", default=None)
+argparser.add_argument("--comportB", help="Specifies com port. E.g 201 ", default=None)
 
 args = argparser.parse_args()
 
-if (args.comportA and args.comportB) or (args.comportA == args.comportB):
+if (args.comportA and args.comportB) or (args.comportA != args.comportB):
 	pass
 else:
 	args.comportA = None

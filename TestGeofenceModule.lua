@@ -538,4 +538,4 @@ function test_GeofenceFeatures_WhenTerminalGoesOutsideGeofenceZoneWithInsideGeof
   
 end
 -- TODO: Test HDOP, NumSats, IdpCnr - currently not supported by simulator
--- TODO: test when terminal inside more than one geofence
+-- TODO: GeofenceEntry/Exit with debounce time tests

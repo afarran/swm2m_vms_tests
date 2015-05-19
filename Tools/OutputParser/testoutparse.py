@@ -114,8 +114,12 @@ def create_xml(data):
 				test_case_name = "%s: %s - %s" % (test_group, test_condition, test_expected_result)
 			except:
 				test_case_name = test_case["name"]
-			xml_test_case.set("name", test_case_name)	
-			xml_test_case.set("time", test_case["time"])
+			xml_test_case.set("name", test_case_name)
+			#no idea why next line failed. test_case["time"] should never be none
+			try:
+				xml_test_case.set("time", test_case["time"])
+			except:
+				pass
 			
 			if test_case["result"] == "FAIL":
 				xml_test_case_failure = ET.SubElement(xml_test_case, "failure")
