@@ -94,7 +94,7 @@ end
   --
   -- 1. Result of the 'idpstatus' shell command is fetched.
   -- 2. All necessary headers are found on the fetched list.
-function test_ShellCommandIdpStatus_WhenIdpStatusCommandIsSendXXXXX()
+function test_ShellCommandIdpStatus_WhenIdpStatusCommandIsSendThenTheResponseContainsAllNeccessaryHeaders()
 
   -- fetching idp status
   D:log("Fetching idp status")
@@ -136,7 +136,7 @@ end
   --
   -- 1. Result of the 'idpinfo' shell command is fetched.
   -- 2. All necessary headers are found on the fetched list.
-function test_ShellCommandIdpInfo_WhenIdpInfoCommandIsSendXXXXX()
+function test_ShellCommandIdpInfo_WhenIdpInfoCommandIsSendThenTheResponseContainsAllNeccessaryHeaders()
 
   -- fetching idp info
   D:log("Fetching idp info")
@@ -174,8 +174,8 @@ end
   -- Results:
   --
   -- 1. Result of the 'propget' shell command is fetched.
-  -- 2. All necessary properties are found on the fetched list.
-function test_ShellCommandPropget_WhenPropgetCommandIsSendXXXXX()
+  -- 2. All necessary properties are found on the fetched list (comparing to VMS properties definitions)
+function test_ShellCommandPropget_WhenPropgetCommandIsSendThenAllPropertiesAreFoundInTheResponse()
 
   -- fetching idp info
   D:log("Fetching: propget VMS")
