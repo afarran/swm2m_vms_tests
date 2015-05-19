@@ -49,6 +49,7 @@ end
 --- setup function
 function setup()
   gateway.setHighWaterMark()
+  D:log("Setup complete")
 end
 
 -----------------------------------------------------------------------------------------------
