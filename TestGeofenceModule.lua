@@ -54,6 +54,7 @@ end
 -----------------------------------------------------------------------------------------------
 --- Exit all geofences
 function teardown()
+  D:log("Invoking teardown")
   vmsSW:setPropertiesByName({InsideGeofenceSendReport = false, InsideGeofenceStartDebounceTime = 0, InsideGeofenceEndDebounceTime = 0})
   GPS:set({latitude = 0, longitude = 0})
   geofenceSW:waitForRefresh()
@@ -68,7 +69,7 @@ end
 -- 2. Terminal is outside geofence zone, wait for StandardReport and check if statusbitmap.insidegeofence is false
 -- 3. Go inside geofence zone,
 -- 4. Wait for StandardReport and check if statusbitmap.insidegeofence is true
-function test_GeofenceFeatures_WhenInsideGeofenceZone_StandardReportStatusBitmapInsideGeofenceBitIsSet()
+function test_GeofenceFeatures_WhenTerminalGoesInsideGeofenceZone_StandardReportStatusBitmapInsideGeofenceBitIsSet()
   local currentReport1Interval = vmsSW:getPropertiesByName({"StandardReport1Interval"})["StandardReport1Interval"]
   vmsSW:setPropertiesByName({StandardReport1Interval = 1})
   local receivedMessages = vmsSW:waitForMessagesByName("StandardReport1", currentReport1Interval*60)
@@ -93,7 +94,7 @@ end
 -- 1. Terminal is outside geofence zone, Check if InsideGeofenceState is set to false
 -- 2. Go inside geofence zone
 -- 3. Check if InsideGeofenceState is set to true
-function test_GeofenceFeatures_WhenInsideGeofenceZone_VMSPropertyInsideGeofenceIsSetToTrue()
+function test_GeofenceFeatures_WhenTerminalGoesInsideGeofenceZone_VMSPropertyInsideGeofenceIsSetToTrue()
   GPS:set({latitude = 0, longitude = 0})
   local status, properties = vmsSW:waitForProperties({InsideGeofenceState = false})
   assert_false(properties.InsideGeofenceState, "Property InsideGeofenceState incorreclty remains set to true while terminal is not in geofence zone")
@@ -109,7 +110,7 @@ end
 -- 2. Terminal is outside geofence zone, wait for AcceleratedReport and check if statusbitmap.insidegeofence is false
 -- 3. Go inside geofence zone,
 -- 4. Wait for AcceleratedReport and check if statusbitmap.insidegeofence is true
-function test_GeofenceFeatures_WhenInsideGeofenceZone_AcceleratedReportStatusBitmapInsideGeofenceBitIsSet()
+function test_GeofenceFeatures_WhenTerminalGoesInsideGeofenceZone_AcceleratedReportStatusBitmapInsideGeofenceBitIsSet()
   local Report1Properties = vmsSW:getPropertiesByName({"StandardReport1Interval", "AcceleratedReport1Rate"})
   local currentStandardReport1Interval = Report1Properties["StandardReport1Interval"]
   local currentAcceleratedReport1Rate = Report1Properties["AcceleratedReport1Rate"]
@@ -192,7 +193,7 @@ end
 -- 1. Enter geofence
 -- 2. Exit geofence
 -- 3. Wait for GoefenceExit message
-function test_GeofenceFeatures_WhenInsideGeofenceZoneGoesOutside_GeofenceExitIsSent()
+function test_GeofenceFeatures_WhenTerminalGoesInsideGeofenceZoneThenGoesOutside_GeofenceExitIsSent()
   
   geofenceSW:goInside(zone1)
   
@@ -454,7 +455,7 @@ end
 -- 1. Set InsideGeofenceStartDebounceTime to 15-20 sec, geofence+gps processing time is about 10-11seconds 
 -- 2. Go inside geofence zone 
 -- 3. Wait for Debounce time - 3 sec and check InsideGeofenceState property remains false
--- 4. Check if AbnormalReport was not sent
+-- 4. Check if AbnormalReport was not sent before debounce
 -- 5. Check if AbnormalReport was sent after debounce
 -- 6. Check if InsideGeofenceState property becomes true
 function test_GeofenceFeatures_WhenTerminalGoesInsideGeofenceZoneWithInsideGeofenceStartDebounceTime_InsideGeofenceStateIsSetAfterDebounce()
@@ -494,7 +495,7 @@ end
 -- 1. Set InsideGeofenceEndDebounceTime to 15-20 sec, geofence+gps processing time is about 10-11seconds 
 -- 2. Go inside geofence zone 
 -- 3. Wait for Debounce time - 3 sec and check InsideGeofenceState property remains false
--- 4. Check if AbnormalReport was not sent
+-- 4. Check if AbnormalReport was not sent before debounce
 -- 5. Check if AbnormalReport was sent after debounce
 -- 6. Check if InsideGeofenceState property becomes true
 function test_GeofenceFeatures_WhenTerminalGoesOutsideGeofenceZoneWithInsideGeofenceEndDebounceTime_InsideGeofenceStateIsSetAfterDebounce()
