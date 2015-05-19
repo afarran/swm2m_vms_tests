@@ -56,7 +56,7 @@ end
   --
   -- 1. Result of the 'servicelist' shell command is fetched.
   -- 2. All dependant services are detected on the fetched list.
-function test_ShellCommandServicelist_WhenServiceListCommandIsSendAProperServiceListIsFetched()
+function test_ShellCommandServicelist_WhenServiceListCommandIsSentAProperServiceListIsFetched()
   
   local result = shell:request("servicelist")
 
@@ -94,7 +94,7 @@ end
   --
   -- 1. Result of the 'idpstatus' shell command is fetched.
   -- 2. All necessary headers are found on the fetched list.
-function test_ShellCommandIdpStatus_WhenIdpStatusCommandIsSendThenTheResponseContainsAllNeccessaryHeaders()
+function test_ShellCommandIdpStatus_WhenIdpStatusCommandIsSentThenTheResponseContainsAllNeccessaryHeaders()
 
   -- fetching idp status
   D:log("Fetching idp status")
@@ -136,7 +136,7 @@ end
   --
   -- 1. Result of the 'idpinfo' shell command is fetched.
   -- 2. All necessary headers are found on the fetched list.
-function test_ShellCommandIdpInfo_WhenIdpInfoCommandIsSendThenTheResponseContainsAllNeccessaryHeaders()
+function test_ShellCommandIdpInfo_WhenIdpInfoCommandIsSentThenTheResponseContainsAllNeccessaryHeaders()
 
   -- fetching idp info
   D:log("Fetching idp info")
@@ -175,7 +175,7 @@ end
   --
   -- 1. Result of the 'propget' shell command is fetched.
   -- 2. All necessary properties are found on the fetched list (comparing to VMS properties definitions)
-function test_ShellCommandPropget_WhenPropgetCommandIsSendThenAllPropertiesAreFoundInTheResponse()
+function test_ShellCommandPropget_WhenPropgetCommandIsSentThenAllPropertiesAreFoundInTheResponse()
 
   -- fetching idp info
   D:log("Fetching: propget VMS")
@@ -191,5 +191,35 @@ function test_ShellCommandPropget_WhenPropgetCommandIsSendThenAllPropertiesAreFo
   end
 
 end
+
+--- TC checks VMS shell command: mail (entering mail mode).
+  --
+  -- Initial Conditions:
+  --
+  -- * There should be VMS shell mode turned on.
+  --
+  -- Steps:
+  --
+  --
+  -- Results:
+  --
+function test_ShellCommandMail_WhenMailCommandIsSentShellIsSwitchedToMailMode()
+
+  -- Requesting mail mode
+  D:log("Requesting mail mode")
+  local result = shell:request("mail")
+  assert_not_nil(string.find(result,"mail>"),"shell should be in 'mail' mode")
+
+  -- Requesting shell mode
+  D:log("Requesting shell mode")
+  local result = shell:request("shell")
+  assert_not_nil(string.find(result,"shell>"),"shell should be in 'shell' mode")
+
+  -- Requesting mail mode
+  D:log("Requesting mail mode again")
+  local result = shell:request("mail")
+  assert_not_nil(string.find(result,"mail>"),"shell should be in 'mail' mode")
+end
+
 
 
