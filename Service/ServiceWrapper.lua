@@ -148,6 +148,15 @@ ServiceWrapper = {}
     end
     return result
   end
+  
+  function ServiceWrapper:__minListToNameList(minList)
+    local result = {}
+    for idx, min in pairs(minList) do
+      table.insert(result, self:getMinFromName(min))
+    end
+    return result
+  end
+
 
   function ServiceWrapper:getProperties(pinList, raw)
     raw = raw or false
@@ -241,6 +250,7 @@ ServiceWrapper = {}
   end
 
   function ServiceWrapper:sendMessage(min, fields)
+    self:log("Sending message: " .. self:getMinToName(min))
     local message = {}
     message.SIN = self.sin
     message.MIN = min
@@ -271,18 +281,21 @@ ServiceWrapper = {}
 
   --retrieved message list can be accessed via indexes - list[min] or by message name list.getByName("min_name")
   function ServiceWrapper:waitForMessages(expectedMins, timeout)
+    local startTime = os.time()
     if type(expectedMins) ~= "table" then
       expectedMins = {expectedMins}
     end
     timeout = tonumber(timeout) or GATEWAY_TIMEOUT
-
+    self:log("Waiting for " .. timeout .. "s. for messages: " .. string.listAsRow(self:__minListToNameList(expectedMins)))
     local msgList = {count = 0}
 
       local function UpdateMsgMatchingList(msg)
         if msg then   --TODO: why would this function be called with no msg?
           for idx, min in pairs(expectedMins) do
             if msg.Payload and min == msg.Payload.MIN and msg.SIN == self.sin and msgList[min] == nil then
-              msgList[self:getMinFromName(min)] = Message(framework.collapseMessage(msg).Payload)
+              local msgName = self:getMinFromName(min)
+              self:log("Received message: " .. msgName)
+              msgList[msgName] = Message(framework.collapseMessage(msg).Payload)
               msgList.count = msgList.count + 1
               break
             end
@@ -301,7 +314,7 @@ ServiceWrapper = {}
           return nil
         end
       end
-
+    self:log("Waiting for messages done after " .. (os.time() - startTime) .. " seconds.")
     return msgList
   end
 
@@ -318,6 +331,8 @@ ServiceWrapper = {}
   end
 
   function ServiceWrapper:waitForProperties(property_values, timeout, sleep)
+    self:log("Waiting for properties: " .. string.tableAsList(property_values))
+    local start_time = os.time()
     sleep = sleep or 1
     timeout = timeout or DEFAULT_TIMEOUT or 60
     local current_properties = {}
@@ -327,7 +342,7 @@ ServiceWrapper = {}
       request_properties[#request_properties+1] = property_name
     end
 
-    local start_time = os.time()
+    
     current_properties = self:getPropertiesByName(request_properties)
     while not valid do
       valid = true
@@ -343,6 +358,7 @@ ServiceWrapper = {}
       end
       if (os.time() - start_time) >  timeout then break end
     end
+    self:log("Waiting for properties done in ".. os.time() - start_time .. "s.")
     return valid, current_properties
   end
 
