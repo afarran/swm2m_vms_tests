@@ -12,7 +12,8 @@ shell:setTimeout(5)
 module("TestShellModule", package.seeall)
 
 function suite_setup()
-
+  -- wait for VMS shell
+  framework.delay(5)
 end
 
 -- executed after each test suite
