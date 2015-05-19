@@ -512,10 +512,9 @@ function test_GeofenceFeatures_WhenTerminalGoesOutsideGeofenceZoneWithInsideGeof
   assert_not_nil(geofenceEntry, "GeofenceEntry message not received")
   
   GPS:set({latitude = 0, longitude = 0})
-  geofenceSW:waitForRefresh()
-  
+    
   -- 3. Wait for Debounce time - 3 sec and check InsideGeofenceState property remains true
-  local status, properties = vmsSW:waitForProperties({InsideGeofenceState = true}, endDebounce-3)
+  local status, properties = vmsSW:waitForProperties({InsideGeofenceState = true}, endDebounce)
   assert_true(properties.InsideGeofenceState, "InsideGeofenceState set to false before debounce time")
   
   -- 4. Check if AbnormalReport was not sent
