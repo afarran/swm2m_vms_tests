@@ -2582,7 +2582,7 @@ end
 
 --- TC checks if when InterfaceUnit is connected to IDP terminal for time above InterfaceUnitDisconnectedEndDebounceTime HelmPannelDisconneted is sent and terminal
   -- leaves InterfaceUnitDisconnected state
-function test_GORUNInterfaceUnitDisconnected_WhenInterfaceUnitIsConnectedForTimeAboveInterfaceUnitDisconnectedEndDebounceTime_InterfaceUnitDisconnectedAbnormalReportIsSent()
+function test_InterfaceUnitDisconnected_WhenInterfaceUnitIsConnectedForTimeAboveInterfaceUnitDisconnectedEndDebounceTime_InterfaceUnitDisconnectedAbnormalReportIsSent()
 
   local INTERFACE_UNIT_DISCONNECTED_START_DEBOUNCE_TIME = 1
   local INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME = 30
@@ -2603,15 +2603,19 @@ function test_GORUNInterfaceUnitDisconnected_WhenInterfaceUnitIsConnectedForTime
                             }
   )
 
-  -- *** Execute
   GPS:set(InitialPosition)
+  
+  -- INTERFACE UNIT is disconnected from terminal from now
+  InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = false})
+  
+  framework.delay(INTERFACE_UNIT_DISCONNECTED_START_DEBOUNCE_TIME)
 
   -- checking InterfaceUnitDisconnectedState property
   local InterfaceUnitDisconnectedStateProperty = vmsSW:getPropertiesByName({"InterfaceUnitDisconnectedState"})
   D:log(framework.dump(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"]), "InterfaceUnitDisconnectedState")
   assert_true(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"], "InterfaceUnitDisconnectedState property is incorrectly false")
 
-
+  -- *** Execute
   gateway.setHighWaterMark() -- to get the newest messages
   -- INTERFACE UNIT is connected to terminal from now
   InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = true})
