@@ -397,5 +397,32 @@ function test_GeofenceFeatures_WhenTerminalGoesInsideGeofenceZoneThenInsideOther
   
 end
 
+--- Check if correct AbnormalReport is not sent on geofence entry/exit when InsideGeofenceSendReport is set to false
+-- Verifies: EventType, StatusBitmap
+-- 1. Disable InsideGeofenceSendReport
+-- 2. Go inside zone A
+-- 3. Wait for AbnormalReport
+-- 4. Go outside zone A
+-- 5. Wait for AbnormalReport
+function test_GeofenceFeatures_WhenTerminalGoesInsideGeofenceZoneThenOutsideGeofenceZoneAndInsideGeofenceSendReportFalse_AbnormalReportIsNotSent()
+  vmsSW:setPropertiesByName({InsideGeofenceSendReport = false})
+
+  local fix = GPS:getRandom()
+  geofenceSW:goInside(zone1, fix)
+  
+  local receivedMessages = vmsSW:waitForMessagesByName("AbnormalReport", 10)
+  local abnormalReportOnEnter = receivedMessages.AbnormalReport
+
+  assert_nil(abnormalReportOnEnter, "AbnormalReport on Geofence entry received")
+  
+  GPS:set({latitude = 0, longitude = 0})
+  
+  receivedMessages = vmsSW:waitForMessagesByName("AbnormalReport", 10)
+  local abnormalReportOnExit = receivedMessages.AbnormalReport
+  
+  assert_nil(abnormalReportOnExit, "AbnormalReport on Geofence exit received")
+  
+end
+
 -- TODO: Test HDOP, NumSats, IdpCnr - currently not supported by simulator
 -- TODO: test when terminal inside more than one geofence

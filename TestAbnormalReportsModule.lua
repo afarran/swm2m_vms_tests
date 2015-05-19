@@ -49,13 +49,7 @@ function setup()
   )
 
   GPS:set({jammingDetect = false, fixType = 3})
---[[
-  -- External power source disconnected from INTERFACE UNIT
-  helmPanel:externalPowerConnected("false")
-
-  -- INTERFACE UNIT disconnected from terminal
-  InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = false})
---]]
+  
   -- disconnecting HW Client
   shellSW:postEvent(
                     "\"_RS232\"",
@@ -74,13 +68,7 @@ end
 function teardown()
 
   GPS:set({jammingDetect = false, fixType = 3})
---[[
-  -- External power source disconnected from INTERFACE UNIT
-  helmPanel:externalPowerConnected("false")
 
-  -- INTERFACE UNIT disconnected from terminal
-  InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = false})
---]]
   -- disconnecting HW Client
   shellSW:postEvent(
                     "\"_RS232\"",
@@ -2582,7 +2570,7 @@ end
 
 --- TC checks if when InterfaceUnit is connected to IDP terminal for time above InterfaceUnitDisconnectedEndDebounceTime HelmPannelDisconneted is sent and terminal
   -- leaves InterfaceUnitDisconnected state
-function test_InterfaceUnitDisconnected_WhenInterfaceUnitIsConnectedForTimeAboveInterfaceUnitDisconnectedEndDebounceTime_InterfaceUnitDisconnectedAbnormalReportIsSent()
+function test_InterfaceUnitDisconnected_WhenInterfaceUnitIsConnectedForTimeAboveInterfaceUnitDisconnectedEndDebounceTimeForTerminalInInterfaceUnitDisconnectedState_InterfaceUnitDisconnectedAbnormalReportIsSent()
 
   local INTERFACE_UNIT_DISCONNECTED_START_DEBOUNCE_TIME = 1
   local INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME = 30
@@ -2712,7 +2700,7 @@ end
 
 --- TC checks if when InterfaceUnit is disconnected from IDP terminal for time above InterfaceUnitDisconnectedStartDebounceTime InterfaceUnitDisconnected AbnormalReport is sent
   -- and terminal enters InterfaceUnitDisconnected state
-function test_InterfaceUnitDisconnected_WhenInterfaceUnitIsDisconnectedForTimeAboveInterfaceUnitDisconnectedStartDebounceTime_InterfaceUnitDisconnectedAbnormalReportIsSent()
+function test_InterfaceUnitDisconnected_WhenInterfaceUnitIsDisconnectedForTimeAboveInterfaceUnitDisconnectedStartDebounceTimeForTerminalInInterfaceUnitConnectedState_InterfaceUnitDisconnectedAbnormalReportIsSent()
 
   local INTERFACE_UNIT_DISCONNECTED_START_DEBOUNCE_TIME = 30
   local INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME = 1
@@ -2750,7 +2738,7 @@ function test_InterfaceUnitDisconnected_WhenInterfaceUnitIsDisconnectedForTimeAb
   D:log("INTERFACE UNIT DISCONNECTED FROM TERMINAL")
   gateway.setHighWaterMark() -- to get the newest messages
   -- INTERFACE UNIT is disconnected from terminal from now
-   InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = false})
+  InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = false})
 
   -- checking InterfaceUnitDisconnectedState property
   InterfaceUnitDisconnectedStateProperty = vmsSW:getPropertiesByName({"InterfaceUnitDisconnectedState"})
@@ -2853,16 +2841,19 @@ function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitDisconnectedSt
                              InterfaceUnitDisconnectedSendReport = true,
                             }
   )
-
-  -- *** Execute
+  
   GPS:set(InitialPosition)
+  
+  -- INTERFACE UNIT is disconnected from terminal from now
+  InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = false})
+  framework.delay(INTERFACE_UNIT_DISCONNECTED_START_DEBOUNCE_TIME)
 
   -- checking InterfaceUnitDisconnectedState property
   local InterfaceUnitDisconnectedStateProperty = vmsSW:getPropertiesByName({"InterfaceUnitDisconnectedState"})
   D:log(framework.dump(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"]), "InterfaceUnitDisconnectedState")
   assert_true(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"], "InterfaceUnitDisconnectedState property is incorrectly false")
 
-
+  -- *** Execute
   gateway.setHighWaterMark() -- to get the newest messages
 
   D:log("INTERFACE UNIT CONNECTED TO TERMINAL")
@@ -2892,7 +2883,7 @@ end
 --- TC checks if when InterfaceUnit is connected to IDP terminal for time below InterfaceUnitDisconnectedEndDebounceTime HelmPannelDisconneted is sent not and terminal
   -- does not leave InterfaceUnitDisconnected state
 function test_InterfaceUnitDisconnected_WhenInterfaceUnitServiceIsDisabledForTimeLongerThanwInterfaceUnitDisconnectedStartDebounceTime_InterfaceUnitDisconnectedAbnormalReportIsSent() 
-  local INTERFACE_UNIT_DISCONNECTED_START_DEBOUNCE_TIME = 1
+  local INTERFACE_UNIT_DISCONNECTED_START_DEBOUNCE_TIME = 5
   local INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME = 1
 
   -- *** Setup
@@ -2913,8 +2904,6 @@ function test_InterfaceUnitDisconnected_WhenInterfaceUnitServiceIsDisabledForTim
 
   -- *** Execute
   GPS:set(InitialPosition)
-
-   
   gateway.setHighWaterMark() -- to get the newest messages
   
   D:log("INTERFACE UNIT CONNECTED TO TERMINAL")
@@ -2926,36 +2915,31 @@ function test_InterfaceUnitDisconnected_WhenInterfaceUnitServiceIsDisabledForTim
   local InterfaceUnitDisconnectedStateProperty = vmsSW:getPropertiesByName({"InterfaceUnitDisconnectedState"})
   D:log(framework.dump(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"]), "InterfaceUnitDisconnectedState")
   assert_false(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"], "InterfaceUnitDisconnectedState property is incorrectly true")
-
-  local DisableInterfaceUnitMessage = {SIN = 16, MIN = 15}
-	DisableInterfaceUnitMessage.Fields = {{Name="sin",Value=162},{Name="disable",Value=true}}
-	gateway.submitForwardMessage(DisableInterfaceUnitMessage)
   
+  systemSW:sendMessageByName("disableService", {{Name="sin",Value=162},{Name="disable",Value=true}}) 
+   
   framework.delay(INTERFACE_UNIT_DISCONNECTED_START_DEBOUNCE_TIME)
       
   local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"})
   D:log(ReceivedMessages["AbnormalReport"])
-  
-
-  framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME)
 
   if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "InterfaceUnitDisconnected" ) then
     assert_nil(1, "InterfaceUnitDisconnected abnormal report sent but not expected - sending reports disabled")
   end
+  
   -- checking InterfaceUnitDisconnectedState property
   InterfaceUnitDisconnectedStateProperty = vmsSW:getPropertiesByName({"InterfaceUnitDisconnectedState"})
   D:log(framework.dump(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"]), "InterfaceUnitDisconnectedState")
-  assert_false(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"], "InterfaceUnitDisconnectedState property has not been changed after InterfaceUnitDisconnectedEndDebounceTime has passed")
-
-  -- back to INTERFACE UNIT disconnected
-  InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = false})
-
+  assert_false(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"], "InterfaceUnitDisconnectedState property has not been changed after  InterfaceUnitDisconnectedEndDebounceTime has passed")
+  
+  -- enabling InterfaceUnit Service not to interrupt other TCs
+  systemSW:sendMessageByName("setEnabledServices", {{Name="sinList",Value="og=="}}) 
 
 end
 
 --- TC checks if when InterfaceUnit is disconnected from IDP terminal for time below InterfaceUnitDisconnectedStartDebounceTime InterfaceUnitDisconnected AbnormalReport is not sent
   -- and terminal does not enter InterfaceUnitDisconnected state
-function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitDisconnectedStateFalseWhenInterfaceUnitIsDisconnectedForTimeBelowInterfaceUnitDisconnectedStartDebounceTime_InterfaceUnitDisconnectedAbnormalReportIsNotSent()
+function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitConnectedWhenInterfaceUnitIsDisconnectedForTimeBelowInterfaceUnitDisconnectedStartDebounceTime_InterfaceUnitDisconnectedAbnormalReportIsNotSent()
 
   local INTERFACE_UNIT_DISCONNECTED_START_DEBOUNCE_TIME = 30
   local INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME = 1
@@ -2976,7 +2960,7 @@ function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitDisconnectedSt
                             }
   )
 
-  -- *** Execute
+  
   GPS:set(InitialPosition)
 
   -- checking InterfaceUnitDisconnectedState property
@@ -2994,7 +2978,8 @@ function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitDisconnectedSt
   InterfaceUnitDisconnectedStateProperty = vmsSW:getPropertiesByName({"InterfaceUnitDisconnectedState"})
   D:log(framework.dump(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"]), "InterfaceUnitDisconnectedState")
   assert_false(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"], "InterfaceUnitDisconnectedState property has not been changed after InterfaceUnitDisconnectedEndDebounceTime has passed")
-
+  
+  -- *** Execute
   gateway.setHighWaterMark() -- to get the newest messages
 
   D:log("INTERFACE UNIT DISCONNECTED FROM TERMINAL")
@@ -3041,9 +3026,8 @@ function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitDisconnectedSt
                             }
   )
 
-  -- *** Execute
   GPS:set(InitialPosition)
-
+  -- *** Execute
   -- checking InterfaceUnitDisconnectedState property
   local InterfaceUnitDisconnectedStateProperty = vmsSW:getPropertiesByName({"InterfaceUnitDisconnectedState"})
   D:log(framework.dump(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"]), "InterfaceUnitDisconnectedState")
