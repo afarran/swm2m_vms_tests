@@ -430,21 +430,23 @@ function test_GeofenceFeatures_WhenTerminalGoesInsideGeofenceZoneThenOutsideGeof
 end
 
 --- Checks if InsideGeofenceStartDebounceTime propery works fine on GeofenceEntry
--- 1. Set Debounce to 15-20 sec, geofence+gps processing time is about 10-11seconds 
+-- 1. Set Debounce to 20-25 sec, geofence+gps processing time is about 10-11seconds 
 -- 2. Go inside geofence zone 
--- 3. Wait for GeofenceEntry message for Debounce - 1 seconds
+-- 3. Wait for GeofenceEntry message for Debounce - 5 seconds
+-- Maxmimum geofence processing time is 10 seconds, Minimum is 0. In that case debounce will be somewhere between 20 and 30 secs
+-- So wait for at least 20-5 = 15 seconds to make sure that geofence was processed and some debounce time has passed
 -- 4. Check if InsideGeofenceState is set to false
 -- 5. Check if GeofenceEntry was not received,
 -- 6. Wait for GeofenceEntry message, it should be received since debounce has passed
 -- 7. Check if InsideGeofenceState is set to true
 function test_GeofenceFeatures_WhenTerminalGoesInsideGeofenceZoneWithInsideGeofenceStartDebounceTime_GeofenceEntryIsSentAfterDebounce()
-  local startDebounce = lunatest.random_int(16,20)
+  local startDebounce = lunatest.random_int(20,25)
   vmsSW:setPropertiesByName({InsideGeofenceStartDebounceTime = startDebounce, InsideGeofenceSendReport = false})
 
   local fix = GPS:getRandom()
   geofenceSW:goInside(zone1, fix, 0)
   
-  local receivedMessages = vmsSW:waitForMessagesByName("GeofenceEntry", startDebounce-1)
+  local receivedMessages = vmsSW:waitForMessagesByName("GeofenceEntry", startDebounce-5)
   local geofenceEntry = receivedMessages.GeofenceEntry
   assert_nil(geofenceEntry, "GeofenceEntry received before debounce time")
   
@@ -453,15 +455,17 @@ function test_GeofenceFeatures_WhenTerminalGoesInsideGeofenceZoneWithInsideGeofe
 end
 
 --- Check if InsideGeofenceState property is set correctly after debounce time when entered geofence
--- 1. Set InsideGeofenceStartDebounceTime to 15-20 sec, geofence+gps processing time is about 10-11seconds 
+-- 1. Set InsideGeofenceStartDebounceTime to 20-25 sec, geofence+gps processing time is about 10-11seconds 
 -- 2. Go inside geofence zone 
--- 3. Wait for Debounce time - 3 sec and check InsideGeofenceState property remains false
+-- 3. Wait for Debounce time - 5 sec and check InsideGeofenceState property remains false. 
+-- Maxmimum geofence processing time is 10 seconds, Minimum is 0. In that case debounce will be somewhere between 20 and 30 secs
+-- So wait for at least 20-5 = 15 seconds to make sure that geofence was processed and some debounce time has passed
 -- 4. Check if AbnormalReport was not sent before debounce
 -- 5. Check if AbnormalReport was sent after debounce
 -- 6. Check if InsideGeofenceState property becomes true
 function test_GeofenceFeatures_WhenTerminalGoesInsideGeofenceZoneWithInsideGeofenceStartDebounceTime_InsideGeofenceStateIsSetAfterDebounce()
   -- 1. Set Debounce to 15-20 sec, geofence+gps processing time is about 10-11seconds 
-  local startDebounce = lunatest.random_int(16,20)
+  local startDebounce = lunatest.random_int(20,25)
   vmsSW:setPropertiesByName({InsideGeofenceStartDebounceTime = startDebounce, InsideGeofenceSendReport = true})
 
   -- 2. Go inside geofence zone 
@@ -469,7 +473,7 @@ function test_GeofenceFeatures_WhenTerminalGoesInsideGeofenceZoneWithInsideGeofe
   geofenceSW:goInside(zone1, fix, 0)
   
   -- 3. Wait for Debounce time - 3 sec and check InsideGeofenceState property remains false
-  local status, properties = vmsSW:waitForProperties({InsideGeofenceState = true}, startDebounce-3)
+  local status, properties = vmsSW:waitForProperties({InsideGeofenceState = true}, startDebounce - 5)
   assert_false(properties.InsideGeofenceState, "InsideGeofenceState set to true before debounce time")
   
   -- 4. Check if AbnormalReport was not sent
@@ -493,17 +497,19 @@ function test_GeofenceFeatures_WhenTerminalGoesInsideGeofenceZoneWithInsideGeofe
 end
 
 --- Check if InsideGeofenceState property is set correctly after debounce time when exit geofence 
--- 1. Set InsideGeofenceEndDebounceTime to 15-20 sec, geofence+gps processing time is about 10-11seconds 
+-- 1. Set InsideGeofenceEndDebounceTime to 20-25 sec, geofence+gps processing time is about 10-11seconds 
 -- 2. Go inside geofence zone
 -- 3. Wait for geofence entry
 -- 4. Exit geofence zone
--- 5. Wait for Debounce time -3 sec and check InsideGeofenceState property remains false
+-- 5. Wait for Debounce time - 5 sec and check InsideGeofenceState property remains false
+-- Maxmimum geofence processing time is 10 seconds, Minimum is 0. In that case debounce will be somewhere between 20 and 30 secs
+-- So wait for at least 20-5 = 15 seconds to make sure that geofence was processed and some debounce time has passed
 -- 6. Check if AbnormalReport was not sent before debounce
 -- 7. Check if AbnormalReport was sent after debounce
 -- 8. Check if InsideGeofenceState property becomes false
 function test_GeofenceFeatures_WhenTerminalGoesOutsideGeofenceZoneWithInsideGeofenceEndDebounceTime_InsideGeofenceStateIsSetAfterDebounce()
   -- 1. Set Debounce to 15-20 sec, geofence+gps processing time is about 10-11seconds 
-  local endDebounce = lunatest.random_int(16,20)
+  local endDebounce = lunatest.random_int(20,25)
   vmsSW:setPropertiesByName({InsideGeofenceEndDebounceTime = endDebounce, InsideGeofenceSendReport = true})
 
   -- 2. Go inside geofence zone 
@@ -517,7 +523,7 @@ function test_GeofenceFeatures_WhenTerminalGoesOutsideGeofenceZoneWithInsideGeof
   GPS:set({latitude = 0, longitude = 0})
     
   -- 5. Wait for Debounce time sec and check InsideGeofenceState property remains true
-  local status, properties = vmsSW:waitForProperties({InsideGeofenceState = true}, endDebounce-3)
+  local status, properties = vmsSW:waitForProperties({InsideGeofenceState = true}, endDebounce-5)
   assert_true(properties.InsideGeofenceState, "InsideGeofenceState set to false before debounce time")
   
   -- 6. Check if AbnormalReport was not sent before debounce
