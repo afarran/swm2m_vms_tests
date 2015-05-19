@@ -67,7 +67,7 @@ end
 -----------------------------------------------------------------------------------------------
 
 Annotations:register([[
-@randIn(tcRandomizer,batch,standardReportPeriodic,3)
+@randIn(tcRandomizer,batch,standardReportPeriodic,1)
 @method(test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues)
 @module(TestNormalReportsModule)
 ]])
@@ -110,7 +110,7 @@ function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsS
 end
 
 Annotations:register([[
-@randIn(tcRandomizer,batch,standardReportPeriodic,3)
+@randIn(tcRandomizer,batch,standardReportPeriodic,2)
 @method(test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues)
 @module(TestNormalReportsModule)
 ]])
@@ -1946,6 +1946,40 @@ function test_PollRequest_WhenPollRequest3IsRequestedDuringStandardAndAccelerate
 end
 
 
+--- Test if reportInterval is still 1 minute when StandardReport1Interval / AcceleratedReport1Rate = less than 1.
+function test_StandardReport1_TheMinimumIntervalBetween2PositionReportsFromSameReportingServiceIs1minute()
+  generic_test_StandardReportContent({
+    firstReportKey = "StandardReport1",
+    reportKey = "StandardReport1",  -- Accelerated report should not come at all
+    properties = {StandardReport1Interval=1, AcceleratedReport1Rate=4}, -- 1/4
+    firstReportInterval = 2,
+    reportInterval = 1 -- report interval should be still 1 minute
+  })
+end
+
+--- Test if reportInterval is still 1 minute when StandardReport2Interval / AcceleratedReport2Rate = less than 1.
+function test_StandardReport2_TheMinimumIntervalBetween2PositionReportsFromSameReportingServiceIs1minute()
+  generic_test_StandardReportContent({
+    firstReportKey = "StandardReport2",
+    reportKey = "StandardReport2",  -- Accelerated report should not come at all
+    properties = {StandardReport2Interval=1, AcceleratedReport2Rate=4}, -- 1/4
+    firstReportInterval = 2,
+    reportInterval = 1 -- report interval should be still 1 minute
+  })
+end
+
+--- Test if reportInterval is still 1 minute when StandardReport3Interval / AcceleratedReport3Rate = less than 1.
+function test_StandardReport2_TheMinimumIntervalBetween2PositionReportsFromSameReportingServiceIs1minute()
+  generic_test_StandardReportContent({
+    firstReportKey = "StandardReport3",
+    reportKey = "StandardReport3",  -- Accelerated report should not come at all
+    properties = {StandardReport3Interval=1, AcceleratedReport3Rate=4}, -- 1/4
+    firstReportInterval = 2,
+    reportInterval = 1 -- report interval should be still 1 minute
+  })
+end
+
+
 -----------------------------------------------------------------------------------------------
 -- GENERIC LOGIC for test cases
 -----------------------------------------------------------------------------------------------
@@ -2141,7 +2175,20 @@ function generic_test_StandardReportContent(configuration)
 
 end
 
--- this is generic function for testing Config Change Reports
+-- Generic function which can be configured in multiple ways.
+-- See the usage in TCs above.
+--
+-- This is generic function for testing Config Change Reports.
+-- 
+-- Steps:
+--   1. Properties values are incremented. 
+--   2. Properties are sent (via setPropertiesByName or setConfig message).
+--   3. Waiting for ConfigChange report is performed.
+--   4. Properties are fetched.
+--   5. Raport values are checked.
+--   6. Raport values are compared to fetched properties.
+--   7. Change source is checked.
+--   8. Timestamp is checked.
 function generic_test_ConfigChangeReportConfigChangeReportIsSent(messageKey,propertiesToChange,propertiesBeforeChange,setConfigMsgKey)
 
   propertiesToChangeValues = {}
@@ -2231,7 +2278,15 @@ function generic_test_ConfigChangeReportConfigChangeReportIsSent(messageKey,prop
 
 end
 
--- This is generic function for disabled standard reports test
+--- Generic function which can be configured in multiple ways.
+-- See the usage in TCs above.
+--
+-- This checkes if standard reports are disabled properly.
+-- 
+-- Steps:
+--   1. Properties are set (via system service or vms) in a way that disables reports.
+--   2. Standard report is checked (should not come).
+--   3. Accelerated report is checked (should not come).
 function generic_test_StandardReportDisabled(reportKey,properties,reportInterval,acceleratedReportKey)
 
   -- setup
@@ -2269,6 +2324,13 @@ function generic_test_StandardReportDisabled(reportKey,properties,reportInterval
 end
 
 -- This is generic function for disabled accelerated reports test (and standard reports enabled)
+-- 
+-- Steps:
+--   1. Properties are set (via system service or vms) in a way that disables accelerated reports and enables standard reports.
+--   2. Waiting for standard report is performed.
+--   3. Standard report is received.
+--   4. Waiting for accelerated report is performed.
+--   5. Accelerated report should not come.
 function generic_test_AcceleratedReportDisabledAndStandardReportEnabled(standardReportKey, reportKey,properties,reportInterval,setConfigMsgKey,configChangeMsgKey,fields)
 
   -- setup

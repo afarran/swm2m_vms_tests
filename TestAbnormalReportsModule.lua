@@ -3609,9 +3609,6 @@ function test_SetProperties_WhenSetPropertiesMessageIsSet_PropertiesIncludedInTh
       {Name="PowerDisconnectedSendReport",Value=enabled},
       {Name="PowerDisconnectedStartDebounceTime",Value=counter},
       {Name="PowerDisconnectedEndDebounceTime",Value=counter},
-      {Name="PowerDisconnectedSendReport",Value=enabled},
-      {Name="PowerDisconnectedStartDebounceTime",Value=counter},
-      {Name="PowerDisconnectedEndDebounceTime",Value=counter},
       {Name="PropertyChangeDebounceTime",Value=counter},
       {Name="MinStandardReportLedFlashTime",Value=counter}
     }
