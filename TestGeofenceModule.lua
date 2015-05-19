@@ -49,7 +49,7 @@ function setup()
 end
 
 -----------------------------------------------------------------------------------------------
---- teardown function executed after each unit test
+--- Exit all geofences
 function teardown()
   GPS:set({latitude = 0, longitude = 0})
   geofenceSW:waitForRefresh()
