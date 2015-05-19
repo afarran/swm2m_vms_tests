@@ -121,3 +121,42 @@ function test_ShellCommandIdpStatus_WhenIdpStatusCommandIsSendXXXXX()
   end
 end
 
+--- TC checks VMS shell command: idpinfo.
+  --
+  -- Initial Conditions:
+  --
+  -- * There should be VMS shell mode turned on.
+  --
+  -- Steps:
+  --
+  -- 1. 'idpinfo' shell command is requested.
+  -- 2. Result of the 'idpinfo' shell command is checked for existance of necessary headers.
+  --
+  -- Results:
+  --
+  -- 1. Result of the 'idpinfo' shell command is fetched.
+  -- 2. All necessary headers are found on the fetched list.
+function test_ShellCommandIdpInfo_WhenIdpInfoCommandIsSendXXXXX()
+
+  -- fetching idp info
+  D:log("Fetching idp info")
+  local result = shell:request("idpinfo")
+
+  -- necessary headers in response
+  local headers = {
+    "Modem model:",
+    "Firmware version:",
+    "Mobile ID:",
+    "Hardware version:",
+    "Protocol version:",
+    "Release version:",
+  }
+
+  -- checking each header , if it exists in the response
+  for _,header in pairs(headers) do
+    D:log("Checking header: "..header)
+    assert_not_nil(string.find(result,header),"There should be '"..header.."' header in the response of shell command 'idpstatus'")
+  end
+
+end
+
