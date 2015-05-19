@@ -20,6 +20,7 @@ SerialWrapper = {}
   end
   
   function SerialWrapper:configure(args)
+    D:log("Configure serial port")
     args.baud = args.baud or 9600
     args.bits = args.bits or 8
     args.stops = args.stops or 0
