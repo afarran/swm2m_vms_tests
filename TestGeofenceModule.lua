@@ -29,6 +29,7 @@ local geofenceSettings = {
 --- Set two geofence zones.
 -- Set gps position to outside geofecne.
 function suite_setup()
+  vmsSW:setPropertiesByName({InsideGeofenceSendReport = false, InsideGeofenceStartDebounceTime = 0, InsideGeofenceEndDebounceTime = 0})
   geofenceSW:setPropertiesByName(geofenceSettings)
   geofenceSW:setRectangle(zone1)
   geofenceSW:setRectangle(zone0)
@@ -147,7 +148,7 @@ end
 -- Verifies: fence id, status bitmap, longitude, latitude, speed, course.
 -- 1. Go inside geofence zone
 -- 2. Wait for GeofenceEntry message
-function test_GeofenceFeatures_WhenInsideGeofenceZone_GeofenceEntryIsSent()
+function test_GeofenceFeatures_WhenTerminalGoesInsideGeofenceZone_GeofenceEntryIsSent()
   
   local fix = GPS:getRandom()
   geofenceSW:goInside(zone1, fix)
@@ -300,6 +301,98 @@ function test_GeofenceFeatures_WhenTerminalGoesInsideGeofence1ThenInsideGeofence
   })
   
   state = vmsSW:decodeBitmap(geofenceExit2.StatusBitmap, "EventStateId")
+  assert_false(state.InsideGeofence, "Terminal incorrectly repored as inside geofence zone")  
+  
+end
+
+--- Check if correct AbnormalReport is sent on geofence entry when InsideGeofenceSendReport is set to true
+-- Verifies: EventType, StatusBitmap
+-- 1. Enable InsideGeofenceSendReport
+-- 2. Go inside zone A
+-- 3. Wait for AbnormalReport
+function test_GeofenceFeatures_WhenTerminalGoesInsideGeofenceZoneAndInsideGeofenceSendReportTrue_AbnormalReportIsSent()
+  vmsSW:setPropertiesByName({InsideGeofenceSendReport = true})
+
+  local fix = GPS:getRandom()
+  geofenceSW:goInside(zone1, fix)
+  
+  local receivedMessages = vmsSW:waitForMessagesByName("AbnormalReport")
+  local abnormalReport = receivedMessages.AbnormalReport
+  
+  assert_not_nil(abnormalReport, "AbnormalReport on Geofence entry not received")
+  assert_equal(abnormalReport.EventType, "InsideGeofence", "Incorrect abnormal report event type")
+  
+  local state = vmsSW:decodeBitmap(abnormalReport.StatusBitmap, "EventStateId")
+  assert_true(state.InsideGeofence, "Terminal incorrectly repored as NOT inside geofence zone")  
+end
+
+--- Check if correct AbnormalReport is sent on geofence exit when InsideGeofenceSendReport is set to true
+-- Verifies: EventType, StatusBitmap
+-- 1. Enable InsideGeofenceSendReport
+-- 2. Go inside zone A
+-- 3. Wait for AbnormalReport
+-- 4. Go outside zone A
+-- 5. Wait for AbnormalReport
+function test_GeofenceFeatures_WhenTerminalGoesOutsideGeofenceZoneAndInsideGeofenceSendReportTrue_AbnormalReportIsSent()
+  vmsSW:setPropertiesByName({InsideGeofenceSendReport = true})
+
+  local fix = GPS:getRandom()
+  geofenceSW:goInside(zone1, fix)
+  
+  local receivedMessages = vmsSW:waitForMessagesByName("AbnormalReport")
+  local abnormalReportOnEnter = receivedMessages.AbnormalReport
+  
+  assert_not_nil(abnormalReportOnEnter, "AbnormalReport on Geofence entry not received")
+  
+  vmsSW:setHighWaterMark()
+  GPS:set({latitude = 0, longitude = 0})
+  receivedMessages = vmsSW:waitForMessagesByName("AbnormalReport")
+  local abnormalReportOnExit = receivedMessages.AbnormalReport
+  
+  assert_not_nil(abnormalReportOnExit, "AbnormalReport on Geofence exit not received")
+  
+  assert_equal(abnormalReportOnExit.EventType, "InsideGeofence", "Incorrect abnormal report event type")
+  
+  local state = vmsSW:decodeBitmap(abnormalReportOnExit.StatusBitmap, "EventStateId")
+  assert_false(state.InsideGeofence, "Terminal incorrectly repored as inside geofence zone")  
+  
+end
+
+--- Check if correct AbnormalReport sequence is sent on Geofence A enter, then Geofence B enter, then Geofence Exit when InsideGeofenceSendReport is set to true
+-- Verifies: EventType, StatusBitmap
+-- 1. Enable InsideGeofenceSendReport
+-- 2. Go inside zone A
+-- 3. Wait for AbnormalReport
+-- 4. Go inside zone B
+-- 5. Wait for AbnormalReport - should not be received
+-- 6. Go outside zone B
+-- 7. Wait for AbnormalReport
+function test_GeofenceFeatures_WhenTerminalGoesInsideGeofenceZoneThenInsideOtherGeofenceZoneAndInsideGeofenceSendReportTrue_AbnormalReportIsSent()
+  vmsSW:setPropertiesByName({InsideGeofenceSendReport = true})
+
+  local fix = GPS:getRandom()
+  geofenceSW:goInside(zone1, fix)
+  
+  local receivedMessages = vmsSW:waitForMessagesByName("AbnormalReport")
+  local abnormalReportOnEnter1 = receivedMessages.AbnormalReport
+  assert_not_nil(abnormalReportOnEnter1, "AbnormalReport on Geofence A entry not received")
+  
+  vmsSW:setHighWaterMark()
+  geofenceSW:goInside(zone0)
+  receivedMessages = vmsSW:waitForMessagesByName("AbnormalReport", 10)
+  local abnormalReportOnEnter2 = receivedMessages.AbnormalReport
+  assert_nil(abnormalReportOnEnter2, "AbnormalReport received on Geofence B entry")
+  
+  vmsSW:setHighWaterMark()
+  GPS:set({latitude = 0, longitude = 0})
+  receivedMessages = vmsSW:waitForMessagesByName("AbnormalReport")
+  local abnormalReportOnExit = receivedMessages.AbnormalReport
+  
+  assert_not_nil(abnormalReportOnExit, "AbnormalReport on Geofence exit not received")
+  
+  assert_equal(abnormalReportOnExit.EventType, "InsideGeofence", "Incorrect abnormal report event type")
+  
+  local state = vmsSW:decodeBitmap(abnormalReportOnExit.StatusBitmap, "EventStateId")
   assert_false(state.InsideGeofence, "Terminal incorrectly repored as inside geofence zone")  
   
 end
