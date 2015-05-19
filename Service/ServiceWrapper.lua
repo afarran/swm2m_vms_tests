@@ -410,3 +410,7 @@ ServiceWrapper = {}
     local swName = self.name or "UnnamedServiceWrapper"
     D:log(swName .. ": " .. data)
   end
+
+  function ServiceWrapper:getPropertiesDefinition()
+    return self.properties
+  end

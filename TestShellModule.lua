@@ -160,3 +160,36 @@ function test_ShellCommandIdpInfo_WhenIdpInfoCommandIsSendXXXXX()
 
 end
 
+--- TC checks VMS shell command: propget.
+  --
+  -- Initial Conditions:
+  --
+  -- * There should be VMS shell mode turned on.
+  --
+  -- Steps:
+  --
+  -- 1. 'propget VMS' shell command is requested.
+  -- 2. Result of the 'propget' shell command is checked for existance of necessary properties.
+  --
+  -- Results:
+  --
+  -- 1. Result of the 'propget' shell command is fetched.
+  -- 2. All necessary properties are found on the fetched list.
+function test_ShellCommandPropget_WhenPropgetCommandIsSendXXXXX()
+
+  -- fetching idp info
+  D:log("Fetching: propget VMS")
+  local result = shell:request("propget VMS")
+
+  -- get properties definitions
+  local propDefs = vmsSW:getPropertiesDefinition()
+
+  -- checking each property if it exists int the response
+  for _,property in pairs(propDefs) do
+    local query = "PIN="..property.pin.."%("..property.name.."%)"
+    assert_not_nil(string.find(result,query),"There should be '"..query.."' query in the response of shell command 'prop get VMS'")
+  end
+
+end
+
+
