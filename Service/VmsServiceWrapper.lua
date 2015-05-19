@@ -41,7 +41,7 @@ VmsServiceWrapper = {}
       { pin=47, name="InterfaceUnitDisconnectedStartDebounceTime", ptype="unsignedint"},
       { pin=48, name="InterfaceUnitDisconnectedEndDebounceTime", ptype="unsignedint"},
       { pin=49, name="InterfaceUnitDisconnectedState", ptype="boolean"},
-      { pin=50, name="InsideGeofenceSendReport", ptype="unsignedint"},
+      { pin=50, name="InsideGeofenceSendReport", ptype="boolean"},
       { pin=51, name="InsideGeofenceStartDebounceTime", ptype="unsignedint"},
       { pin=52, name="InsideGeofenceEndDebounceTime", ptype="unsignedint"},
       { pin=53, name="InsideGeofenceState", ptype="boolean"},
