@@ -34,6 +34,7 @@ end
 -- Test Cases
 -------------------------
 
+-- Starts shell , turns it to shell mode if mail mode detected.
 local function startShell()
   if not shell:ready() then
     skip("Shell is not ready - serial port not opened (".. serialMain.name .. ")")
@@ -42,6 +43,22 @@ local function startShell()
   shell:start()
 end
 
+
+--- TC checks VMS shell command: servicelist.
+  --
+  -- Initial Conditions:
+  --
+  -- * There should be VMS shell mode turned on.
+  --
+  -- Steps:
+  --
+  -- 1. Servicelist shell command is requested.
+  -- 2. Result of the servicelist shell command is checked for existance of necessary services.
+  --
+  -- Results:
+  --
+  -- 1. Result of the servicelist shell command is fetched.
+  -- 2. All dependant services are detected on the fetched list.
 function test_ShellCommandServicelist_WhenServiceListCommandIsSendAProperServiceListIsFetched()
   
   -- preparing shell
