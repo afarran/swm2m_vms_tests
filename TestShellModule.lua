@@ -200,9 +200,15 @@ end
   --
   -- Steps:
   --
+  -- 1. 'mail' shell command is requested.
+  -- 2. 'shell' shell command is requested.
+  -- 3. 'mail' shell command is requested again.
   --
   -- Results:
   --
+  -- 1. 'mail' mode is correctly established.
+  -- 2. 'shell' mode is correctly established.
+  -- 3. 'mail' mode is correctly established.
 function test_ShellCommandMail_WhenMailCommandIsSentShellIsSwitchedToMailMode()
 
   -- Requesting mail mode
@@ -220,6 +226,3 @@ function test_ShellCommandMail_WhenMailCommandIsSentShellIsSwitchedToMailMode()
   local result = shell:request("mail")
   assert_not_nil(string.find(result,"mail>"),"shell should be in 'mail' mode")
 end
-
-
-
