@@ -323,7 +323,6 @@ Annotations:register([[
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-
 function test_StandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport3MessageIsSent_StandardReport3IsSentPeriodicallyWithCorrectValues()
 
   generic_test_StandardReportContent({
@@ -356,7 +355,7 @@ Annotations:register([[
   -- Steps:
   --
   -- 1. Properties are sent.
-  -- 2. Waiting for Standard Report is performed.
+  -- 2. Waiting for Standard Report is performed  (Accelerated Report should not come as well)
   --
   -- Results:
   --
@@ -386,13 +385,12 @@ Annotations:register([[
   -- Steps:
   --
   -- 1. Properties are sent.
-  -- 2. Waiting for Standard Report is performed.
+  -- 2. Waiting for Standard Report is performed (Accelerated Report should not come as well)
   --
   -- Results:
   --
   -- 1. Properties are correctly set.
   -- 2. Standard Report doesn't come and that is correct.
-  -- [OK]
 function test_StandardReportDisabled_WhenStandardReport2IntervalIsSetToZero_StandardReport2IsNotSent()
   vmsSW:setPropertiesByName({PropertyChangeDebounceTime=1})
   generic_test_StandardReportDisabled(
@@ -417,19 +415,18 @@ Annotations:register([[
   -- Steps:
   --
   -- 1. Properties are sent.
-  -- 2. Waiting for Standard Report is performed.
+  -- 2. Waiting for Standard Report is performed  (Accelerated Report should not come as well)
   --
   -- Results:
   --
   -- 1. Properties are correctly set.
   -- 2. Standard Report doesn't come and that is correct.
-  -- [OK]
 function test_StandardReportDisabled_WhenStandardReport3IntervalIsSetToZero_StandardReport3IsNotSent()
   vmsSW:setPropertiesByName({PropertyChangeDebounceTime=1})
   generic_test_StandardReportDisabled(
     "StandardReport3",
     {StandardReport3Interval=0, AcceleratedReport3Rate=1},
-    120,
+    120, -- waiting until report not come
     "AcceleratedReport3"
   )
 end
@@ -2346,6 +2343,7 @@ function generic_test_StandardReportDisabled(reportKey,properties,reportInterval
 
   -- setup
   if setConfigMsgKey then
+    D:log("Setup is done via setConfigMsg - "..setConfigMsgKey)
     --setting for: StandardReportXInterval, AcceleratedReportXRate
     vmsSW:sendMessageByName(
       setConfigMsgKey,
@@ -2356,6 +2354,7 @@ function generic_test_StandardReportDisabled(reportKey,properties,reportInterval
       30
     )
   else
+    D:log("Setup is done via setProperties")
     --setting for: StandardReportXInterval, AcceleratedReportXRate
     vmsSW:setPropertiesByName(properties)
   end
@@ -2367,8 +2366,8 @@ function generic_test_StandardReportDisabled(reportKey,properties,reportInterval
     {reportKey,acceleratedReportKey},
     reportInterval
   )
-  D:log(reportMessage,"reportMessage")
   assert_equal(0,tonumber(reportMessage.count),"Message"..reportKey.." should not come!")
+  D:log("No message received. That is ok.")
 
 end
 
