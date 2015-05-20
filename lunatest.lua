@@ -768,6 +768,7 @@ local function run_suite(hooks, opts, results, sname, tests)
             if not opts.test_pat or name:match(opts.test_pat) then
               if opts.verbose then
                 print("[STARTING]: " .. name)
+                D:log("Executing test: " .. name)
               end
                run_test(name, test, res, hooks, setup, teardown)
             end

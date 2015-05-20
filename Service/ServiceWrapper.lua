@@ -380,13 +380,13 @@ ServiceWrapper = {}
 
     for index, value in pairs(bitset) do
       if value == 1 then
-        local state = bitmap.bits[index-1]
-        if not state then
+        local fieldState = bitmap.bits[index-1]
+        if not fieldState then
           printf("Missing bit definition %d in bitmap %s", index-1, bitmap_name)
+          -- if adequate state cant be find in bitmap, save it as bit index inestead of state name
+          fieldState = index-1
         end
-        -- if adequate state cant be find in bitmap, save it as bit index inestead of state name
-        if not state then state = index-1 end
-        result[state] = true
+        result[fieldState] = true
       end
     end
     return result
