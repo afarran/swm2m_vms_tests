@@ -13,7 +13,7 @@ module("TestShellModule", package.seeall)
 
 function suite_setup()
   -- wait for VMS shell
-  framework.delay(25)
+  framework.delay(15)
 end
 
 -- executed after each test suite
@@ -226,4 +226,42 @@ function test_ShellCommandMail_WhenMailCommandIsSentShellIsSwitchedToMailMode()
   D:log("Requesting mail mode again")
   local result = shell:request("mail")
   assert_not_nil(string.find(result,"mail>"),"shell should be in 'mail' mode")
+end
+
+--- TC checks VMS if setting MailSessioinIdleTimeout switches to mail mode (from smtp mode).
+  --
+  -- Initial Conditions:
+  --
+  -- * There should be VMS shell mode turned on and MailSessionIdleTimeout set to 1 minute.
+  --
+  -- Steps:
+  --
+  -- 1. 'smtp' shell command is requested.
+  -- 2.  Waiting for 1 minute is performed.
+  --
+  -- Results:
+  --
+  -- 1. 'smtp' mode is correctly established.
+  -- 2. Shell is switched to 'mail' mode.
+function test_GORUNMailSessionIdleTimeout_WhenMailSessionIdleTimeoutIsSetToOneMinuteAndShellModeIsSetToSmtp_AfterTimeoutShellIsSwitchedToMailMode()
+  
+  D:log("Requesting mail mode")
+  local result = shell:request("mail")
+  
+  -- MailSessionIdleTimeout set to 1 minute.
+  vmsSW:setPropertiesByName({
+    MailSessionIdleTimeout  = 1,
+  })
+
+  D:log("Requesting smtp mode")
+  local result = shell:request("smtp")
+  assert_not_nil(string.find(result,"SMTP Service Ready"),"SMTP service is not ready")
+
+  D:log("Waiting for mail session idle timeout (60s)")
+  framework.delay(60+5)
+  
+  D:log("Checking shell mode")
+  local result = shell:request("")	
+  assert_not_nil(string.find(result,"mail>"),"Idle timeout has not been executed")
+  
 end

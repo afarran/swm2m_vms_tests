@@ -449,10 +449,10 @@ Annotations:register([[
   --
   -- Steps:
   --
-  -- 1. Properties setup is done (via setProperties) .
-  -- 2. Current gps position is requested.
-  -- 3. Current gps position is checked.
-  -- 4. Waiting for first Standard Report is performed.
+  -- 1. New gps position is prepared and set.
+  -- 2. Properties setup is done (via setProperties) .
+  -- 3. Waiting for first Standard Report is performed.
+  -- 4. Values in report are checked.
   -- 5. New gps position is prepared and set.
   -- 6. Waiting for second Standard Report is performed.
   -- 7. Difference between reports is calculated.
@@ -460,16 +460,14 @@ Annotations:register([[
   --
   -- Results:
   --
-  -- 1. Properties are set correctly.
-  -- 2. Current gps position is fetched.
-  -- 3. Current gps position is correct.
-  -- 4. Timer is synchronized to the first standard report
+  -- 1. New gps position is correctly set.
+  -- 2. Properties are set correctly.
+  -- 3. Timer is synchronized to the first standard report
+  -- 4. Values in report are correct.
   -- 5. New gps position is correctly set.
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-  -- TODO: docs!
-  -- [OK]
 function test_StandardReport_WhenAllStandardReportsAreEnabledAndSendWithPeriodOfOneMinute_ReportsDoesNotInterfereWithEachOtherAndStandardReport1IsSendWithSetInterval()
 
   -- intervals and rates setup
@@ -510,27 +508,25 @@ Annotations:register([[
   --
   -- Steps:
   --
-  -- 1. Properties setup is done (via setProperties) .
-  -- 2. Current gps position is requested.
-  -- 3. Current gps position is checked.
-  -- 4. Waiting for first Standard Report is performed.
+  -- 1. New gps position is prepared and set.
+  -- 2. Properties setup is done (via setProperties) .
+  -- 3. Waiting for first Standard Report is performed.
+  -- 4. Values in report are checked.
   -- 5. New gps position is prepared and set.
   -- 6. Waiting for second Standard Report is performed.
   -- 7. Difference between reports is calculated.
   -- 8. Values in report are checked.
-  -- TODO: docs
   --
   -- Results:
   --
-  -- 1. Properties are set correctly.
-  -- 2. Current gps position is fetched.
-  -- 3. Current gps position is correct.
-  -- 4. Timer is synchronized to the first standard report
+  -- 1. New gps position is correctly set.
+  -- 2. Properties are set correctly.
+  -- 3. Timer is synchronized to the first standard report
+  -- 4. Values in report are correct.
   -- 5. New gps position is correctly set.
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-  -- [OK]
 function test_StandardReport_WhenAllStandardReportsAreEnabledAndSendWithPeriodOfOneMinute_ReportsDoesNotInterfereWithEachOtherAndStandardReport2IsSendWithSetInterval()
 
   -- intervals and rates setup
@@ -571,10 +567,10 @@ Annotations:register([[
   --
   -- Steps:
   --
-  -- 1. Properties setup is done (via setProperties) .
-  -- 2. Current gps position is requested.
-  -- 3. Current gps position is checked.
-  -- 4. Waiting for first Standard Report is performed.
+  -- 1. New gps position is prepared and set.
+  -- 2. Properties setup is done (via setProperties) .
+  -- 3. Waiting for first Standard Report is performed.
+  -- 4. Values in report are checked.
   -- 5. New gps position is prepared and set.
   -- 6. Waiting for second Standard Report is performed.
   -- 7. Difference between reports is calculated.
@@ -582,16 +578,14 @@ Annotations:register([[
   --
   -- Results:
   --
-  -- 1. Properties are set correctly.
-  -- 2. Current gps position is fetched.
-  -- 3. Current gps position is correct.
-  -- 4. Timer is synchronized to the first standard report
+  -- 1. New gps position is correctly set.
+  -- 2. Properties are set correctly.
+  -- 3. Timer is synchronized to the first standard report
+  -- 4. Values in report are correct.
   -- 5. New gps position is correctly set.
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-  -- [OK]
-  -- TODO: docs
 function test_StandardReport_WhenAllStandardReportsAreEnabledAndSendWithPeriodOfOneMinute_ReportsDoesNotInterfereWithEachOtherAndStandardReport3IsSendWithSetInterval()
 
   -- intervals and rates setup
@@ -615,7 +609,6 @@ function test_StandardReport_WhenAllStandardReportsAreEnabledAndSendWithPeriodOf
 end
 
 
-
 -----------------------------------------------------------------------------------------------
 -- Test Cases for ACCELERATED REPORTS
 -----------------------------------------------------------------------------------------------
@@ -633,28 +626,27 @@ Annotations:register([[
   --
   -- Steps:
   --
-  -- 1. Properties setup is done (via setProperties).
-  -- 2. Current gps position is requested.
-  -- 3. Current gps position is checked.
-  -- 4. Waiting for Standard Report is performed.
+  -- 1. New gps position is prepared and set.
+  -- 2. Properties setup is done (via setProperties) .
+  -- 3. Waiting for first StandardReport1 is performed.
+  -- 4. Values in report are checked.
   -- 5. New gps position is prepared and set.
-  -- 6. Waiting for AcceleratedReport is performed.
+  -- 6. Waiting AcceleratedReport1 is performed.
   -- 7. Difference between reports is calculated.
   -- 8. Values in report are checked.
   --
   -- Results:
   --
-  -- 1. Properties are set correctly.
-  -- 2. Current gps position is fetched.
-  -- 3. Current gps position is correct.
-  -- 4. Timer is synchronized to the first standard report.
+  -- 1. New gps position is correctly set.
+  -- 2. Properties are set correctly.
+  -- 3. Timer is synchronized to the first standard report
+  -- 4. Values in report are correct.
   -- 5. New gps position is correctly set.
   -- 6. Accelerated Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-  -- TODO: docs
-  -- [OK]
-function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport1IsSentAccordingToSetIntervalWithCorrectValues()
+
+function test_AcceleretedReport_GORUNWhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport1IsSentAccordingToSetIntervalWithCorrectValues()
   generic_test_StandardReportContent({
     firstReportKey = "StandardReport1",
     reportKey = "AcceleratedReport1",
@@ -677,27 +669,25 @@ Annotations:register([[
   --
   -- Steps:
   --
-  -- 1. Properties setup is done (via setProperties) .
-  -- 2. Current gps position is requested.
-  -- 3. Current gps position is checked.
-  -- 4. Waiting for Standard Report is performed.
+  -- 1. New gps position is prepared and set.
+  -- 2. Properties setup is done (via setProperties) .
+  -- 3. Waiting for first StandardReport2 is performed.
+  -- 4. Values in report are checked.
   -- 5. New gps position is prepared and set.
-  -- 6. Waiting for AcceleratedReport is performed.
+  -- 6. Waiting AcceleratedReport2 is performed.
   -- 7. Difference between reports is calculated.
   -- 8. Values in report are checked.
   --
   -- Results:
   --
-  -- 1. Properties are set correctly.
-  -- 2. Current gps position is fetched.
-  -- 3. Current gps position is correct.
-  -- 4. Timer is synchronized to the first standard report.
+  -- 1. New gps position is correctly set.
+  -- 2. Properties are set correctly.
+  -- 3. Timer is synchronized to the first standard report
+  -- 4. Values in report are correct.
   -- 5. New gps position is correctly set.
   -- 6. Accelerated Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-  -- TODO: docs
-  -- [OK]
 function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport2IsSentAccordingToSetIntervalWithCorrectValues()
   generic_test_StandardReportContent({
     firstReportKey = "StandardReport2",
@@ -721,27 +711,26 @@ Annotations:register([[
   --
   -- Steps:
   --
-  -- 1. Properties setup is done (via setProperties) .
-  -- 2. Current gps position is requested.
-  -- 3. Current gps position is checked.
-  -- 4. Waiting for Standard Report is performed.
+  -- 1. New gps position is prepared and set.
+  -- 2. Properties setup is done (via setProperties) .
+  -- 3. Waiting for first StandardReport3 is performed.
+  -- 4. Values in report are checked.
   -- 5. New gps position is prepared and set.
-  -- 6. Waiting for AcceleratedReport is performed.
+  -- 6. Waiting AcceleratedReport3 is performed.
   -- 7. Difference between reports is calculated.
   -- 8. Values in report are checked.
   --
   -- Results:
   --
-  -- 1. Properties are set correctly.
-  -- 2. Current gps position is fetched.
-  -- 3. Current gps position is correct.
-  -- 4. Timer is synchronized to the first standard report.
+  -- 1. New gps position is correctly set.
+  -- 2. Properties are set correctly.
+  -- 3. Timer is synchronized to the first standard report
+  -- 4. Values in report are correct.
   -- 5. New gps position is correctly set.
   -- 6. Accelerated Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-  -- TODO: docs
-  -- [OK]
+
 function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport3IsSentAccordingToSetIntervalWithCorrectValues()
   generic_test_StandardReportContent({
     firstReportKey = "StandardReport3",
@@ -775,7 +764,6 @@ Annotations:register([[
   -- 1. Properties are correctly set.
   -- 2. Standard Report is sent correctly.
   -- 3. Accelerated Report is not sent and that is correct.
-  -- [OK]
 function test_AcceleratedReport_WhenStandardReport1IntervalIsSetAboveZeroAndAcceleratedReportInterval1DisablesFeature_StandardReportIsSentAndAcceleratedReportNotSent()
   generic_test_AcceleratedReportDisabledAndStandardReportEnabled(
     "StandardReport1",
@@ -807,7 +795,6 @@ Annotations:register([[
   -- 1. Properties are correctly set.
   -- 2. Standard Report is sent correctly.
   -- 3. Accelerated Report is not sent and that is correct.
-  -- [OK]
 function test_AcceleratedReport_WhenStandardReport2IntervalIsSetAboveZeroAndAcceleratedReportInterval2DisablesFeature_StandardReportIsSentAndAcceleratedReportNotSent()
   generic_test_AcceleratedReportDisabledAndStandardReportEnabled(
     "StandardReport2",
@@ -839,7 +826,6 @@ Annotations:register([[
   -- 1. Properties are correctly set.
   -- 2. Standard Report is sent correctly.
   -- 3. Accelerated Report is not sent and that is correct.
-  -- [OK?]
 function test_AcceleratedReport_WhenStandardReport3IntervalIsSetAboveZeroAndAcceleratedReportInterval3DisablesFeature_StandardReportIsSentAndAcceleratedReportNotSent()
   generic_test_AcceleratedReportDisabledAndStandardReportEnabled(
     "StandardReport3",
@@ -877,7 +863,6 @@ Annotations:register([[
   -- 1. Properties are set correctly.
   -- 2. Message ConfigChangeReport is received.
   -- 3. Report values are correct.
-  -- [OK]
 function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport1IsSent()
   -- get properties
   local propertiesToChange = {"StandardReport1Interval", "AcceleratedReport1Rate"}
@@ -914,7 +899,6 @@ Annotations:register([[
   -- 1. Properties are set correctly.
   -- 2. Message ConfigChangeReport is received.
   -- 3. Report values are correct.
-  -- [OK]
 function test_ConfigChangeReport_WhenSetPropertiesMessageIsSentAndConfigPropertiesAreChanged_ConfigChangeReport2IsSent()
 
   -- get properties
