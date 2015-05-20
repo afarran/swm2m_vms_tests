@@ -24,6 +24,10 @@ end
 string.safe = function(str)
   if str == nil then
     return "nil"
+  elseif type(str) == "function" then
+    return "function"
+  elseif type(str) == "table" then
+    return "table"
   elseif str == true then
     return "true"
   elseif str == false then
@@ -38,6 +42,16 @@ string.tableAsList = function(inTable)
   if inTable then
     for key, val in pairs(inTable) do
       msg = msg .. "[" .. key .. "] = " .. string.safe(val) .. " "
+    end
+  end
+  return msg
+end
+
+string.listAsRow = function(inList)
+  local msg = ""
+  if inList then
+    for index, val in pairs(inList) do
+      msg = msg .. string.safe(val) .. " "
     end
   end
   return msg

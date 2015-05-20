@@ -148,12 +148,13 @@ GeofenceServiceWrapper = {}
   -- @{zone} - @{setRectangle}
   -- @tparam zone zone
   -- @tparam table gpsInfo 
-  -- @tparam gpsInfo.speed
-  -- @tparam gpsInfo.heading
-  function GeofenceServiceWrapper:goInside(zone, gpsInfo)
+  -- @tparam number gpsInfo.speed
+  -- @tparam number gpsInfo.heading
+  -- @tparam number delay in seconds
+  function GeofenceServiceWrapper:goInside(zone, gpsInfo, delay)
     gpsInfo = gpsInfo or {}
     GPS:set({latitude = zone.centerLatitude, longitude = zone.centerLongitude, heading = gpsInfo.heading, speed = gpsInfo.speed})
-    geofenceSW:waitForRefresh()
+    geofenceSW:waitForRefresh(delay)
   end
   
   function GeofenceServiceWrapper:getDelay()
@@ -162,8 +163,8 @@ GeofenceServiceWrapper = {}
   
   --- Waits till all geofence calculations are completed
   -- including gps setting and processing time
-  function GeofenceServiceWrapper:waitForRefresh()
-    local delay = GPS:getFullDelay(self:getDelay())
+  function GeofenceServiceWrapper:waitForRefresh(delay)
+    delay = delay or GPS:getFullDelay(self:getDelay())
     self:log("Waiting " .. delay .. "s for geofence refresh")
     framework.delay(delay)
   end
