@@ -152,6 +152,7 @@ GeofenceServiceWrapper = {}
   -- @tparam number gpsInfo.heading
   -- @tparam number delay in seconds
   function GeofenceServiceWrapper:goInside(zone, gpsInfo, delay)
+    self:log("Going inside geofence zone " .. zone.number)
     gpsInfo = gpsInfo or {}
     GPS:set({latitude = zone.centerLatitude, longitude = zone.centerLongitude, heading = gpsInfo.heading, speed = gpsInfo.speed})
     geofenceSW:waitForRefresh(delay)
@@ -159,6 +160,13 @@ GeofenceServiceWrapper = {}
   
   function GeofenceServiceWrapper:getDelay()
     return self.hysteresis + self.interval    
+  end
+  
+  function GeofenceServiceWrapper:goOutside(delay)
+    -- assume that this is point outside all defined geofences
+    self:log("Going outside all geofences")
+    GPS:set({latitude = -89, longitude = -179})
+    self:waitForRefresh(delay)
   end
   
   --- Waits till all geofence calculations are completed

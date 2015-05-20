@@ -683,9 +683,11 @@ local function run_test(name, test, suite, hooks, setup, teardown)
 
       if is_func(teardown) then
          if ok then
+            D:log("Invoking teardown, test OK")
             ok, err = xpcall(function() teardown(name, elapsed) end,
                              err_handler(name))
          else
+            D:log("Invoking teardown, test FAIL")
             xpcall(function() teardown(name, elapsed) end,
                    function(info)
                       print "\n==============================================="
@@ -766,6 +768,7 @@ local function run_suite(hooks, opts, results, sname, tests)
             if not opts.test_pat or name:match(opts.test_pat) then
               if opts.verbose then
                 print("[STARTING]: " .. name)
+                D:log("Executing test: " .. name)
               end
                run_test(name, test, res, hooks, setup, teardown)
             end
