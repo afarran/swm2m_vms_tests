@@ -2047,7 +2047,7 @@ function test_PowerDisconnected_WhenTerminalIsPoweCycled_OnePowerDisconnectedAbn
   assert_equal(
     terminalOnTimeStamp,
     tonumber(PowerDisconnectedAbnormalReportTrue.Payload.Timestamp),
-    600,   -- this is because the exact moment of saving properties is not known
+    0,   -- this is because the exact moment of saving properties is not known
     "Wrong Timestamp value in PowerDisconnected abnormal report"
   )
 

@@ -68,7 +68,7 @@ end
 
 Annotations:register([[
 @randIn(tcRandomizer,batch,standardReportPeriodic,1)
-@method(test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues)
+@method(test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentAccordingToSetIntervalAndContainsCorrectValues)
 @module(TestNormalReportsModule)
 ]])
 --- TC checks if StandardReport 1 is sent periodically and its values are correct (setProperties used for report setup)
@@ -79,10 +79,10 @@ Annotations:register([[
   --
   -- Steps:
   --
-  -- 1. Properties setup is done (via setProperties) .
-  -- 2. Current gps position is requested.
-  -- 3. Current gps position is checked.
-  -- 4. Waiting for first Standard Report is performed.
+  -- 1. New gps position is prepared and set.
+  -- 2. Properties setup is done (via setProperties) .
+  -- 3. Waiting for first Standard Report is performed.
+  -- 4. Values in report are checked.
   -- 5. New gps position is prepared and set.
   -- 6. Waiting for second Standard Report is performed.
   -- 7. Difference between reports is calculated.
@@ -90,16 +90,15 @@ Annotations:register([[
   --
   -- Results:
   --
-  -- 1. Properties are set correctly.
-  -- 2. Current gps position is fetched.
-  -- 3. Current gps position is correct.
-  -- 4. Timer is synchronized to the first standard report
+  -- 1. New gps position is correctly set.
+  -- 2. Properties are set correctly.
+  -- 3. Timer is synchronized to the first standard report
+  -- 4. Values in report are correct.
   -- 5. New gps position is correctly set.
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-  -- [OK]
-function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues()
+function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentAccordingToSetIntervalAndContainsCorrectValues()
   generic_test_StandardReportContent({
     firstReportKey = "StandardReport1",
     reportKey = "StandardReport1",
@@ -111,21 +110,22 @@ end
 
 Annotations:register([[
 @randIn(tcRandomizer,batch,standardReportPeriodic,2)
-@method(test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues)
+@method(test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentAccordingToSetIntervalAndContainsCorrectValues)
 @module(TestNormalReportsModule)
 ]])
+
 --- TC checks if StandardReport 2 is sent periodically and its values are correct (setProperties used for report setup)
   -- Initial Conditions:
   --
   -- * StandardReport2Interval is set above zero.
-  -- * AcceleratedReport2Rate is set to 1 - accelerated reports are not triggered
+  -- * AcceleratedReport1Rate is set to 2 - accelerated reports are not triggered
   --
   -- Steps:
   --
-  -- 1. Properties setup is done (via setProperties) .
-  -- 2. Current gps position is requested.
-  -- 3. Current gps position is checked.
-  -- 4. Waiting for first Standard Report is performed.
+  -- 1. New gps position is prepared and set.
+  -- 2. Properties setup is done (via setProperties) .
+  -- 3. Waiting for first Standard Report is performed.
+  -- 4. Values in report are checked.
   -- 5. New gps position is prepared and set.
   -- 6. Waiting for second Standard Report is performed.
   -- 7. Difference between reports is calculated.
@@ -133,16 +133,15 @@ Annotations:register([[
   --
   -- Results:
   --
-  -- 1. Properties are set correctly.
-  -- 2. Current gps position is fetched.
-  -- 3. Current gps position is correct.
-  -- 4. Timer is synchronized to the first standard report
+  -- 1. New gps position is correctly set.
+  -- 2. Properties are set correctly.
+  -- 3. Timer is synchronized to the first standard report
+  -- 4. Values in report are correct.
   -- 5. New gps position is correctly set.
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-  -- [OK]
-function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues()
+function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentAccordingToSetIntervalAndContainsCorrectValues()
   generic_test_StandardReportContent({
     firstReportKey = "StandardReport2",
     reportKey = "StandardReport2",
@@ -156,7 +155,7 @@ end
 
 Annotations:register([[
 @randIn(tcRandomizer,batch,standardReportPeriodic,3)
-@method(test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues)
+@method(test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentAccordingToSetIntervalAndContainsCorrectValues)
 @module(TestNormalReportsModule)
 ]])
 --- TC checks if StandardReport 3 is sent periodically and its values are correct (setProperties used for report setup)
@@ -167,10 +166,10 @@ Annotations:register([[
   --
   -- Steps:
   --
-  -- 1. Properties setup is done (via setProperties) .
-  -- 2. Current gps position is requested.
-  -- 3. Current gps position is checked.
-  -- 4. Waiting for first Standard Report is performed.
+  -- 1. New gps position is prepared and set.
+  -- 2. Properties setup is done (via setProperties) .
+  -- 3. Waiting for first Standard Report is performed.
+  -- 4. Values in report are checked.
   -- 5. New gps position is prepared and set.
   -- 6. Waiting for second Standard Report is performed.
   -- 7. Difference between reports is calculated.
@@ -178,16 +177,15 @@ Annotations:register([[
   --
   -- Results:
   --
-  -- 1. Properties are set correctly.
-  -- 2. Current gps position is fetched.
-  -- 3. Current gps position is correct.
-  -- 4. Timer is synchronized to the first standard report
+  -- 1. New gps position is correctly set.
+  -- 2. Properties are set correctly.
+  -- 3. Timer is synchronized to the first standard report
+  -- 4. Values in report are correct.
   -- 5. New gps position is correctly set.
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-  -- [OK]
-function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues()
+function test_StandardReport_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentAccordingToSetIntervalAndContainsCorrectValues()
   generic_test_StandardReportContent({
     firstReportKey = "StandardReport3",
     reportKey = "StandardReport3",
@@ -210,10 +208,10 @@ Annotations:register([[
   --
   -- Steps:
   --
-  -- 1. SetConfigReport1 message is sent .
-  -- 2. Current gps position is requested.
-  -- 3. Current gps position is checked.
-  -- 4. Waiting for first Standard Report is performed.
+  -- 1. New gps position is prepared and set.
+  -- 2. SetConfigReport1 message is sent .
+  -- 3. Waiting for first Standard Report is performed.
+  -- 4. Values in report are checked.
   -- 5. New gps position is prepared and set.
   -- 6. Waiting for second Standard Report is performed.
   -- 7. Difference between reports is calculated.
@@ -221,15 +219,14 @@ Annotations:register([[
   --
   -- Results:
   --
-  -- 1. ConfigChangeReport1 is received.
-  -- 2. Current gps position is fetched.
-  -- 3. Current gps position is correct.
-  -- 4. Timer is synchronized to the first standard report
+  -- 1. New gps position is correctly set.
+  -- 2. ConfigChangeReport1 is received.
+  -- 3. Timer is synchronized to the first standard report
+  -- 4. Values in report are correct.
   -- 5. New gps position is correctly set.
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-  -- [OK]
 function test_StandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport1MessageIsSent_StandardReport1IsSentPeriodicallyWithCorrectValues()
   generic_test_StandardReportContent({
     firstReportKey = "StandardReport1",
@@ -251,7 +248,7 @@ Annotations:register([[
 @method(test_StandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport2MessageIsSent_StandardReport2IsSentPeriodicallyWithCorrectValues)
 @module(TestNormalReportsModule)
 ]])
---- TC checks if StandardReport 2 is sent periodically and its values are correct (SetConfigReport2 used for report setup)
+--- TC checks if StandardReport 2 is sent periodically and its values are correct (SetConfigReport1 used for report setup)
   -- Initial Conditions:
   --
   -- * StandardReport2Interval is set above zero.
@@ -259,10 +256,10 @@ Annotations:register([[
   --
   -- Steps:
   --
-  -- 1. SetConfigReport2 message is sent .
-  -- 2. Current gps position is requested.
-  -- 3. Current gps position is checked.
-  -- 4. Waiting for first Standard Report is performed.
+  -- 1. New gps position is prepared and set.
+  -- 2. SetConfigReport2 message is sent .
+  -- 3. Waiting for first Standard Report is performed.
+  -- 4. Values in report are checked.
   -- 5. New gps position is prepared and set.
   -- 6. Waiting for second Standard Report is performed.
   -- 7. Difference between reports is calculated.
@@ -270,15 +267,14 @@ Annotations:register([[
   --
   -- Results:
   --
-  -- 1. ConfigChangeReport2 is received.
-  -- 2. Current gps position is fetched.
-  -- 3. Current gps position is correct.
-  -- 4. Timer is synchronized to the first standard report
+  -- 1. New gps position is correctly set.
+  -- 2. ConfigChangeReport2 is received.
+  -- 3. Timer is synchronized to the first standard report
+  -- 4. Values in report are correct.
   -- 5. New gps position is correctly set.
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-  -- [OK]
 function test_StandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport2MessageIsSent_StandardReport2IsSentPeriodicallyWithCorrectValues()
    generic_test_StandardReportContent({
     firstReportKey = "StandardReport2",
@@ -300,7 +296,7 @@ Annotations:register([[
 @method(test_StandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport3MessageIsSent_StandardReport3IsSentPeriodicallyWithCorrectValues)
 @module(TestNormalReportsModule)
 ]])
---- TC checks if StandardReport 3 is sent periodically and its values are correct (SetConfigReport3 used for report setup)
+--- TC checks if StandardReport 3 is sent periodically and its values are correct (SetConfigReport1 used for report setup)
   -- Initial Conditions:
   --
   -- * StandardReport3Interval is set above zero.
@@ -308,10 +304,10 @@ Annotations:register([[
   --
   -- Steps:
   --
-  -- 1. SetConfigReport3 message is sent .
-  -- 2. Current gps position is requested.
-  -- 3. Current gps position is checked.
-  -- 4. Waiting for first Standard Report is performed.
+  -- 1. New gps position is prepared and set.
+  -- 2. SetConfigReport3 message is sent .
+  -- 3. Waiting for first Standard Report is performed.
+  -- 4. Values in report are checked.
   -- 5. New gps position is prepared and set.
   -- 6. Waiting for second Standard Report is performed.
   -- 7. Difference between reports is calculated.
@@ -319,15 +315,14 @@ Annotations:register([[
   --
   -- Results:
   --
-  -- 1. ConfigChangeReport3 is received.
-  -- 2. Current gps position is fetched.
-  -- 3. Current gps position is correct.
-  -- 4. Timer is synchronized to the first standard report
+  -- 1. New gps position is correctly set.
+  -- 2. ConfigChangeReport3 is received.
+  -- 3. Timer is synchronized to the first standard report
+  -- 4. Values in report are correct.
   -- 5. New gps position is correctly set.
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
-  -- [OK]
 function test_StandardReport_WhenReportIntervalIsSetAboveZeroAndSetConfigReport3MessageIsSent_StandardReport3IsSentPeriodicallyWithCorrectValues()
 
   generic_test_StandardReportContent({
@@ -360,13 +355,12 @@ Annotations:register([[
   -- Steps:
   --
   -- 1. Properties are sent.
-  -- 2. Waiting for Standard Report is performed.
+  -- 2. Waiting for Standard Report is performed  (Accelerated Report should not come as well)
   --
   -- Results:
   --
   -- 1. Properties are correctly set.
   -- 2. Standard Report doesn't come and that is correct.
-  -- [OK]
 function test_StandardReportDisabled_WhenStandardReport1IntervalIsSetToZero_StandardReport1IsNotSent()
   vmsSW:setPropertiesByName({PropertyChangeDebounceTime=1})
   generic_test_StandardReportDisabled(
@@ -391,13 +385,12 @@ Annotations:register([[
   -- Steps:
   --
   -- 1. Properties are sent.
-  -- 2. Waiting for Standard Report is performed.
+  -- 2. Waiting for Standard Report is performed (Accelerated Report should not come as well)
   --
   -- Results:
   --
   -- 1. Properties are correctly set.
   -- 2. Standard Report doesn't come and that is correct.
-  -- [OK]
 function test_StandardReportDisabled_WhenStandardReport2IntervalIsSetToZero_StandardReport2IsNotSent()
   vmsSW:setPropertiesByName({PropertyChangeDebounceTime=1})
   generic_test_StandardReportDisabled(
@@ -422,26 +415,25 @@ Annotations:register([[
   -- Steps:
   --
   -- 1. Properties are sent.
-  -- 2. Waiting for Standard Report is performed.
+  -- 2. Waiting for Standard Report is performed  (Accelerated Report should not come as well)
   --
   -- Results:
   --
   -- 1. Properties are correctly set.
   -- 2. Standard Report doesn't come and that is correct.
-  -- [OK]
 function test_StandardReportDisabled_WhenStandardReport3IntervalIsSetToZero_StandardReport3IsNotSent()
   vmsSW:setPropertiesByName({PropertyChangeDebounceTime=1})
   generic_test_StandardReportDisabled(
     "StandardReport3",
     {StandardReport3Interval=0, AcceleratedReport3Rate=1},
-    120,
+    120, -- waiting until report not come
     "AcceleratedReport3"
   )
 end
 
 Annotations:register([[
 @randIn(tcRandomizer,batch,standardReportPeriodic3,1)
-@method(test_StandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues)
+@method(test_StandardReport_WhenAllStandardReportsAreEnabledAndSendWithPeriodOfOneMinute_ReportsDoesNotInterfereWithEachOtherAndStandardReport1IsSendWithSetInterval)
 @module(TestNormalReportsModule)
 ]])
 --- TC checks if StandardReport 1 is sent periodically and its values are correct (setProperties used for report setup)
@@ -476,8 +468,9 @@ Annotations:register([[
   -- 6. Standard Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
+  -- TODO: docs!
   -- [OK]
-function test_StandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport1IsSentPeriodicallyWithCorrectValues()
+function test_StandardReport_WhenAllStandardReportsAreEnabledAndSendWithPeriodOfOneMinute_ReportsDoesNotInterfereWithEachOtherAndStandardReport1IsSendWithSetInterval()
 
   -- intervals and rates setup
   -- intervals in minutes
@@ -501,7 +494,7 @@ end
 
 Annotations:register([[
 @randIn(tcRandomizer,batch,standardReportPeriodic3,2)
-@method(test_StandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues)
+@method(test_StandardReport_WhenAllStandardReportsAreEnabledAndSendWithPeriodOfOneMinute_ReportsDoesNotInterfereWithEachOtherAndStandardReport2IsSendWithSetInterval)
 @module(TestNormalReportsModule)
 ]])
 --- TC checks if StandardReport 2 is sent periodically and its values are correct (setProperties used for report setup)
@@ -525,6 +518,7 @@ Annotations:register([[
   -- 6. Waiting for second Standard Report is performed.
   -- 7. Difference between reports is calculated.
   -- 8. Values in report are checked.
+  -- TODO: docs
   --
   -- Results:
   --
@@ -537,7 +531,7 @@ Annotations:register([[
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
   -- [OK]
-function test_StandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport2IsSentPeriodicallyWithCorrectValues()
+function test_StandardReport_WhenAllStandardReportsAreEnabledAndSendWithPeriodOfOneMinute_ReportsDoesNotInterfereWithEachOtherAndStandardReport2IsSendWithSetInterval()
 
   -- intervals and rates setup
   -- intervals in minutes
@@ -561,7 +555,7 @@ end
 
 Annotations:register([[
 @randIn(tcRandomizer,batch,standardReportPeriodic3,3)
-@method(test_StandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues)
+@method(test_StandardReport_WhenAllStandardReportsAreEnabledAndSendWithPeriodOfOneMinute_ReportsDoesNotInterfereWithEachOtherAndStandardReport3IsSendWithSetInterval)
 @module(TestNormalReportsModule)
 ]])
 --- TC checks if StandardReport 3 is sent periodically and its values are correct (setProperties used for report setup)
@@ -597,7 +591,8 @@ Annotations:register([[
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
   -- [OK]
-function test_StandardReportAll_WhenReportIntervalIsSetAboveZero_StandardReport3IsSentPeriodicallyWithCorrectValues()
+  -- TODO: docs
+function test_StandardReport_WhenAllStandardReportsAreEnabledAndSendWithPeriodOfOneMinute_ReportsDoesNotInterfereWithEachOtherAndStandardReport3IsSendWithSetInterval()
 
   -- intervals and rates setup
   -- intervals in minutes
@@ -627,7 +622,7 @@ end
 
 Annotations:register([[
 @randIn(tcRandomizer,batch,acceleratedReportPeriodic,1)
-@method(test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport1IsSentWithCorrectValues)
+@method(test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport1IsSentAccordingToSetIntervalWithCorrectValues)
 @module(TestNormalReportsModule)
 ]])
 --- TC checks if AcceleratedReport 1 is sent periodically and its values are correct (setProperties used for setup)
@@ -657,8 +652,9 @@ Annotations:register([[
   -- 6. Accelerated Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
+  -- TODO: docs
   -- [OK]
-function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport1IsSentWithCorrectValues()
+function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport1IsSentAccordingToSetIntervalWithCorrectValues()
   generic_test_StandardReportContent({
     firstReportKey = "StandardReport1",
     reportKey = "AcceleratedReport1",
@@ -670,7 +666,7 @@ end
 
 Annotations:register([[
 @randIn(tcRandomizer,batch,acceleratedReportPeriodic,2)
-@method(test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport2IsSentWithCorrectValues)
+@method(test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport2IsSentAccordingToSetIntervalWithCorrectValues)
 @module(TestNormalReportsModule)
 ]])
 --- TC checks if AcceleratedReport 2 is sent periodically and its values are correct (setProperties used for setup)
@@ -700,8 +696,9 @@ Annotations:register([[
   -- 6. Accelerated Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
+  -- TODO: docs
   -- [OK]
-function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport2IsSentWithCorrectValues()
+function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport2IsSentAccordingToSetIntervalWithCorrectValues()
   generic_test_StandardReportContent({
     firstReportKey = "StandardReport2",
     reportKey = "AcceleratedReport2",
@@ -713,7 +710,7 @@ end
 
 Annotations:register([[
 @randIn(tcRandomizer,batch,acceleratedReportPeriodic,3)
-@method(test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport3IsSentWithCorrectValues)
+@method(test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport3IsSentAccordingToSetIntervalWithCorrectValues)
 @module(TestNormalReportsModule)
 ]])
 --- TC checks if AcceleratedReport 3 is sent periodically and its values are correct (setProperties used for setup)
@@ -743,8 +740,9 @@ Annotations:register([[
   -- 6. Accelerated Report is delivered.
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
+  -- TODO: docs
   -- [OK]
-function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport3IsSentWithCorrectValues()
+function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport3IsSentAccordingToSetIntervalWithCorrectValues()
   generic_test_StandardReportContent({
     firstReportKey = "StandardReport3",
     reportKey = "AcceleratedReport3",
@@ -757,7 +755,7 @@ end
 
 Annotations:register([[
 @randIn(tcRandomizer,batch,acceleratedReportDisabled,1)
-@method(test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardReport1IntervalIsSetAboveZeroAndAcceleratedReportInterval1DisablesFeature_StandardReportIsSentAndAcceleratedReportNotSent)
+@method(test_AcceleratedReport_WhenStandardReport1IntervalIsSetAboveZeroAndAcceleratedReportInterval1DisablesFeature_StandardReportIsSentAndAcceleratedReportNotSent)
 @module(TestNormalReportsModule)
 ]])
 --- TC checks if StandardReport 1 is sent and accelerated report is not sent.
@@ -778,7 +776,7 @@ Annotations:register([[
   -- 2. Standard Report is sent correctly.
   -- 3. Accelerated Report is not sent and that is correct.
   -- [OK]
-function test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardReport1IntervalIsSetAboveZeroAndAcceleratedReportInterval1DisablesFeature_StandardReportIsSentAndAcceleratedReportNotSent()
+function test_AcceleratedReport_WhenStandardReport1IntervalIsSetAboveZeroAndAcceleratedReportInterval1DisablesFeature_StandardReportIsSentAndAcceleratedReportNotSent()
   generic_test_AcceleratedReportDisabledAndStandardReportEnabled(
     "StandardReport1",
     "AcceleratedReport1",
@@ -789,7 +787,7 @@ end
 
 Annotations:register([[
 @randIn(tcRandomizer,batch,acceleratedReportDisabled,2)
-@method(test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardReport2IntervalIsSetAboveZeroAndAcceleratedReportInterval2DisablesFeature_StandardReportIsSentAndAcceleratedReportNotSent)
+@method(test_AcceleratedReport_WhenStandardReport2IntervalIsSetAboveZeroAndAcceleratedReportInterval2DisablesFeature_StandardReportIsSentAndAcceleratedReportNotSent)
 @module(TestNormalReportsModule)
 ]])
 --- TC checks if StandardReport 2 is sent and accelerated report is not sent.
@@ -810,7 +808,7 @@ Annotations:register([[
   -- 2. Standard Report is sent correctly.
   -- 3. Accelerated Report is not sent and that is correct.
   -- [OK]
-function test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardReport2IntervalIsSetAboveZeroAndAcceleratedReportInterval2DisablesFeature_StandardReportIsSentAndAcceleratedReportNotSent()
+function test_AcceleratedReport_WhenStandardReport2IntervalIsSetAboveZeroAndAcceleratedReportInterval2DisablesFeature_StandardReportIsSentAndAcceleratedReportNotSent()
   generic_test_AcceleratedReportDisabledAndStandardReportEnabled(
     "StandardReport2",
     "AcceleratedReport2",
@@ -821,7 +819,7 @@ end
 
 Annotations:register([[
 @randIn(tcRandomizer,batch,acceleratedReportDisabled,3)
-@method(test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardReport3IntervalIsSetAboveZeroAndAcceleratedReportInterval3DisablesFeature_StandardReportIsSentAndAcceleratedReportNotSent)
+@method(test_AcceleratedReport_WhenStandardReport3IntervalIsSetAboveZeroAndAcceleratedReportInterval3DisablesFeature_StandardReportIsSentAndAcceleratedReportNotSent)
 @module(TestNormalReportsModule)
 ]])
 --- TC checks if StandardReport 3 is sent and accelerated report is not sent.
@@ -842,7 +840,7 @@ Annotations:register([[
   -- 2. Standard Report is sent correctly.
   -- 3. Accelerated Report is not sent and that is correct.
   -- [OK?]
-function test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardReport3IntervalIsSetAboveZeroAndAcceleratedReportInterval3DisablesFeature_StandardReportIsSentAndAcceleratedReportNotSent()
+function test_AcceleratedReport_WhenStandardReport3IntervalIsSetAboveZeroAndAcceleratedReportInterval3DisablesFeature_StandardReportIsSentAndAcceleratedReportNotSent()
   generic_test_AcceleratedReportDisabledAndStandardReportEnabled(
     "StandardReport3",
     "AcceleratedReport3",
@@ -850,6 +848,8 @@ function test_AcceleratedReportDisabledAndStandardReportEnabled_WhenStandardRepo
     80 -- waiting until report not come
   )
 end
+
+--TODO: TC for interfering with abnormal reports
 
 -----------------------------------------------------------------------------------------------
 -- Test Cases for CONFIG CHANGE REPORTS
@@ -1095,7 +1095,7 @@ end
 
 Annotations:register([[
 @randIn(tcRandomizer,batch,propertyDebounce,1)
-@method(test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebounceTime_ConfigChangeReport1IsNotSent)
+@method(test_ConfigChangeReport_WhenPropertiesAreChangedTwiceDuringPropertyChangeDebounceTime_ConfigChangeReport1IsNotSent)
 @module(TestNormalReportsModule)
 ]])
 --- TC checks if property debounce time works properly.
@@ -1112,7 +1112,7 @@ Annotations:register([[
   --
   -- 1. No ConfigChangeReport1 message is sent.
   -- 2. No ConfigChangeReport1 message is sent.
-function test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebounceTime_ConfigChangeReport1IsNotSent()
+function test_ConfigChangeReport_WhenPropertiesAreChangedTwiceDuringPropertyChangeDebounceTime_ConfigChangeReport1IsNotSent()
 
  generic_test_PropertyChangeDebounceTime(
    "ConfigChangeReport1",
@@ -1124,7 +1124,7 @@ end
 
 Annotations:register([[
 @randIn(tcRandomizer,batch,propertyDebounce,2)
-@method(test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebounceTime_ConfigChangeReport2IsNotSent)
+@method(test_ConfigChangeReport_WhenPropertiesAreChangedTwiceDuringPropertyChangeDebounceTime_ConfigChangeReport2IsNotSent)
 @module(TestNormalReportsModule)
 ]])
 --- TC checks if property debounce time works properly.
@@ -1141,7 +1141,7 @@ Annotations:register([[
   --
   -- 1. No ConfigChangeReport2 message is sent.
   -- 2. No ConfigChangeReport2 message is sent.
-function test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebounceTime_ConfigChangeReport2IsNotSent()
+function  test_ConfigChangeReport_WhenPropertiesAreChangedTwiceDuringPropertyChangeDebounceTime_ConfigChangeReport2IsNotSent()
 
  generic_test_PropertyChangeDebounceTime(
    "ConfigChangeReport2",
@@ -1153,7 +1153,7 @@ end
 
 Annotations:register([[
 @randIn(tcRandomizer,batch,propertyDebounce,3)
-@method(test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebounceTime_ConfigChangeReport3IsNotSent)
+@method(test_ConfigChangeReport_WhenPropertiesAreChangedTwiceDuringPropertyChangeDebounceTime_ConfigChangeReport3IsNotSent)
 @module(TestNormalReportsModule)
 ]])
 --- TC checks if property debounce time works properly.
@@ -1170,7 +1170,7 @@ Annotations:register([[
   --
   -- 1. No ConfigChangeReport3 message is sent.
   -- 2. No ConfigChangeReport3 message is sent.
-function test_PropertyChangeDebounceTime_WhenPropertiesAreChangedTwiceDuringDebounceTime_ConfigChangeReport3IsNotSent()
+function  test_ConfigChangeReport_WhenPropertiesAreChangedTwiceDuringPropertyChangeDebounceTime_ConfigChangeReport3IsNotSent()
 
  generic_test_PropertyChangeDebounceTime(
    "ConfigChangeReport3",
@@ -1182,7 +1182,7 @@ end
 
 Annotations:register([[
 @randIn(tcRandomizer,batch,propertyDebounce2,1)
-@method(test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport1AreCorrect)
+@method(test_ConfigChangeReport_WhenTwoConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimestampsOfConfigChangeReport1AreCorrect)
 @module(TestNormalReportsModule)
 ]])
 --- TC checks if two ConfigChange reports have correct timestamps.
@@ -1203,7 +1203,7 @@ Annotations:register([[
   -- 2. First ConfigChangeReport1 message is sent.
   -- 3. Second ConfigChangeReport1 message is sent.
   -- 4. Difference between timestamps is correct.
-function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport1AreCorrect()
+function test_ConfigChangeReport_WhenTwoConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimestampsOfConfigChangeReport1AreCorrect()
   
   generic_TimestampsInConfigChangeReports(
    "ConfigChangeReport1",
@@ -1215,7 +1215,7 @@ end
 
 Annotations:register([[
 @randIn(tcRandomizer,batch,propertyDebounce2,2)
-@method(test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport2AreCorrect)
+@method(test_ConfigChangeReport_WhenTwoConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimestampsOfConfigChangeReport2AreCorrect)
 @module(TestNormalReportsModule)
 ]])
 --- TC checks if two ConfigChange reports have correct timestamps.
@@ -1236,7 +1236,7 @@ Annotations:register([[
   -- 2. First ConfigChangeReport2 message is sent.
   -- 3. Second ConfigChangeReport2 message is sent.
   -- 4. Difference between timestamps is correct.
-function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport2AreCorrect()
+function test_ConfigChangeReport_WhenTwoConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimestampsOfConfigChangeReport2AreCorrect()
   
   generic_TimestampsInConfigChangeReports(
    "ConfigChangeReport2",
@@ -1248,7 +1248,7 @@ end
 
 Annotations:register([[
 @randIn(tcRandomizer,batch,propertyDebounce2,3)
-@method(test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport3AreCorrect)
+@method(test_ConfigChangeReport_WhenTwoConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimestampsOfConfigChangeReport3AreCorrect)
 @module(TestNormalReportsModule)
 ]])
 --- TC checks if two ConfigChange reports have correct timestamps.
@@ -1269,7 +1269,7 @@ Annotations:register([[
   -- 2. First ConfigChangeReport3 message is sent.
   -- 3. Second ConfigChangeReport3 message is sent.
   -- 4. Difference between timestamps is correct.
-function test_PropertyChangeDebounceTimeTimestampDiff_WhenConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimeoutsOfConfigChangeReport3AreCorrect()
+function test_ConfigChangeReport_WhenTwoConfigChangeReportsAreSentInDebouncePeriod_DifferencesBetweenTimestampsOfConfigChangeReport3AreCorrect()
   
   generic_TimestampsInConfigChangeReports(
    "ConfigChangeReport3",
@@ -1300,6 +1300,7 @@ Annotations:register([[
   -- 3. Values in ConfigChangeReport1 are correct.
   -- 4. Change source string is correct.
   -- 5. Timestamp of the report is correct.
+  -- REVIEW:endshere
 function test_ConfigChangeViaShell_WhenConfigChangeIsTriggeredViaShellServiceExecuteCommand_ConfigChangeReport1IsSentImmediatelyOnlyOnce()
   -- get properties
   local propertiesToChange = {"StandardReport1Interval"}
@@ -2040,13 +2041,17 @@ end
 -- This is generic function for configure and test reports (StandardReport,AcceleratedReport)
 -- 
 -- Steps:
---   1. Configuration passed from TC is set (via config message or set properties message).
---   2. Waiting for first report is performed to synchronize report sequence.
---   3. New gps position is set.
---   4. Waiting for next report is performed.
---   5. Time difference between reports is calculated and checked.
---   6. Values of the report are checked.
+--   1. New gps position is set.
+--   2. Configuration passed from TC is set (via config message or set properties message).
+--   3. Waiting for first report is performed to synchronize report sequence.
+--   4. Values of the report are checked.
+--   5. New gps position is set.
+--   6. Waiting for next report is performed.
+--   6. Time difference between reports is calculated and checked.
+--   7. Values of the report are checked.
 function generic_test_StandardReportContent(configuration)
+
+  -- setting values from configuration
   local firstReportKey = configuration.firstReportKey  -- first report name
   local reportKey = configuration.reportKey -- second report name
   local properties = configuration.properties -- StandardReportXInterval, AcceleratedReportXRate
@@ -2056,8 +2061,20 @@ function generic_test_StandardReportContent(configuration)
   local fields = configuration.fields -- fields for setConfig message
   local configChangeMsgKey = configuration.configChangeMsgKey -- configChange message name
 
+  -- new position setup
+  D:log("Setting initial gps position")
+  local newPosition = {
+    latitude  = 1,
+    longitude = 1,
+    speed =  1,
+    heading = 1
+  }
+  GPS:set(newPosition)
+  framework.delay(GPS_READ_INTERVAL + GPS_PROCESS_TIME)
+
   -- testing via message
   if setConfigMsgKey then
+    D:log("Using setConfigMsg for setup")
     -- change config to trigger ConfigChange message (SetConfigReportX used)
     -- setting :  StandardReportXInterval, AcceleratedReportXRate
     vmsSW:sendMessageByName(
@@ -2070,6 +2087,7 @@ function generic_test_StandardReportContent(configuration)
     )
   else
     -- setting :  StandardReportXInterval, AcceleratedReportXRate
+    D:log("Using setProperties for setup")
     vmsSW:setPropertiesByName(properties)
   end
 
@@ -2088,14 +2106,43 @@ function generic_test_StandardReportContent(configuration)
     preReportMessage[firstReportKey],
     "First Report not received!"
   )
+  D:log("First report "..firstReportKey.." is sent")
+
+  -- check values from first report
+  D:log("Checking values from first report -  "..firstReportKey)
+  assert_equal(
+    GPS:denormalize(newPosition.latitude),
+    tonumber(preReportMessage[firstReportKey].Latitude),
+    "Wrong latitude in " .. firstReportKey
+  )
+  assert_equal(
+    GPS:denormalize(newPosition.longitude),
+    tonumber(preReportMessage[firstReportKey].Longitude),
+    "Wrong longitude in " .. firstReportKey
+  )
+  assert_equal(
+    GPS:denormalizeSpeed(newPosition.speed),
+    tonumber(preReportMessage[firstReportKey].Speed),
+    1,
+    "Wrong speed in " .. firstReportKey
+  )
+  assert_equal(
+    1,
+    tonumber(preReportMessage[firstReportKey].Course),
+    0,
+    "Wrong course in report " .. firstReportKey
+  )
+
+  -- saving timestamp for diff calculations
   local timestampStart = preReportMessage[firstReportKey].Timestamp
 
   -- new position setup
+  D:log("Setting second gps position")
   local newPosition = {
-    latitude  = 1,
-    longitude = 1,
-    speed =  0,
-    heading = 0
+    latitude  = 2,
+    longitude = 2,
+    speed =  2,
+    heading = 2
   }
   GPS:set(newPosition)
   framework.delay(GPS_READ_INTERVAL + GPS_PROCESS_TIME)
@@ -2114,8 +2161,10 @@ function generic_test_StandardReportContent(configuration)
     reportMessage[reportKey],
     "Second Report not received"
   )
+  D:log("Second report "..firstReportKey.." is sent")
 
   -- calculate time diff
+  D:log("Checking diff between timestamps of two reports")
   local timestampEnd = reportMessage[reportKey].Timestamp
   local timestampDiff = timestampEnd - timestampStart
   assert_equal(
@@ -2125,6 +2174,7 @@ function generic_test_StandardReportContent(configuration)
     "Wrong time diff between raports"
   )
 
+  D:log("Checking values from second report -  "..reportKey)
   -- check values
   assert_equal(
     GPS:denormalize(newPosition.latitude),
@@ -2142,9 +2192,8 @@ function generic_test_StandardReportContent(configuration)
     1,
     "Wrong speed in " .. reportKey
   )
-  D:log(reportMessage[reportKey].Course)
   assert_equal(
-    361,
+    2,
     tonumber(reportMessage[reportKey].Course),
     0,
     "Wrong course in report " .. reportKey
@@ -2195,17 +2244,19 @@ function generic_test_ConfigChangeReportConfigChangeReportIsSent(messageKey,prop
   propertiesToChangeValues2 = {}
   propertiesToChangeValuesForMessage = {}
 
+  -- setting properties to change
   for i=1, #propertiesToChange do
-    propertiesToChangeValues[propertiesToChange[i]] = propertiesBeforeChange[propertiesToChange[i]] + 1
-    propertiesToChangeValues2[propertiesToChange[i]] = propertiesBeforeChange[propertiesToChange[i]] + 2
+    -- values for first setup (by setPropertiesByName)
+    propertiesToChangeValues[propertiesToChange[i]] = propertiesBeforeChange[propertiesToChange[i]] + 1 
+    -- values for second setup (by setConfigReportX message)
+    propertiesToChangeValues2[propertiesToChange[i]] = propertiesBeforeChange[propertiesToChange[i]] + 2 
     table.insert(
       propertiesToChangeValuesForMessage,
       { Name = propertiesToChange[i],  Value = (propertiesBeforeChange[propertiesToChange[i]] + 2) }
     )
   end
 
-  -- properties must be changed anyway (the same value after and before properties reset doesn't trigger report)
-  -- setting: StandardReportXInterval, AcceleratedReportXRate
+  -- first setup (by setPropertiesByName)
   vmsSW:setPropertiesByName(propertiesToChangeValues)
 
   -- testing via message
@@ -2215,7 +2266,7 @@ function generic_test_ConfigChangeReportConfigChangeReportIsSent(messageKey,prop
       {messageKey},
       30
     )
-    -- change config to trigger ConfigChange message (SetConfigReportX used)
+    -- values for second setup (by setConfigReportX message)
     vmsSW:sendMessageByName(
       setConfigMsgKey,
       propertiesToChangeValuesForMessage
@@ -2262,6 +2313,7 @@ function generic_test_ConfigChangeReportConfigChangeReportIsSent(messageKey,prop
       0,
       "Property " .. propertiesToChange[i] .. " is different than property fetched from lsf!"
     )
+    --TODO: check fields in ConfigChangeReport (previous and current)
   end
 
   D:log(configChangeMessage)
@@ -2291,6 +2343,7 @@ function generic_test_StandardReportDisabled(reportKey,properties,reportInterval
 
   -- setup
   if setConfigMsgKey then
+    D:log("Setup is done via setConfigMsg - "..setConfigMsgKey)
     --setting for: StandardReportXInterval, AcceleratedReportXRate
     vmsSW:sendMessageByName(
       setConfigMsgKey,
@@ -2301,26 +2354,21 @@ function generic_test_StandardReportDisabled(reportKey,properties,reportInterval
       30
     )
   else
+    D:log("Setup is done via setProperties")
     --setting for: StandardReportXInterval, AcceleratedReportXRate
     vmsSW:setPropertiesByName(properties)
   end
-  
-  framework.delay(65) -- for timer from previous setup, that's hard to test
 
-  D:log("Waiting for standard report - should not come - "..reportKey)
-  local reportMessage = vmsSW:waitForMessagesByName(
-    {reportKey},
-    reportInterval
-  )
-  D:log(reportMessage,"reportMessage")
-  assert_equal(0,tonumber(reportMessage.count),"Message"..reportKey.." should not come!")
+  vmsSW:setHighWaterMark()
 
-  D:log("Waiting for accelerated report - should not come - "..acceleratedReportKey)
+  D:log("Waiting for standard/accelerated report - should not come")
   local reportMessage = vmsSW:waitForMessagesByName(
-    {acceleratedReportKey},
+    {reportKey,acceleratedReportKey},
     reportInterval
   )
   assert_equal(0,tonumber(reportMessage.count),"Message"..reportKey.." should not come!")
+  D:log("No message received. That is ok.")
+
 end
 
 -- This is generic function for disabled accelerated reports test (and standard reports enabled)
@@ -2429,8 +2477,8 @@ end
 --   8. Waiting for ConfigChange second message is performed.
 --   9. Difference between timestamps is checked.
 function generic_TimestampsInConfigChangeReports(configChangeMsgKey,initialProperties,changedProperties)
-
-  framework.delay(65)
+ 
+  framework.delay(65) -- because previous TC could have had longer debounce time
   vmsSW:setHighWaterMark()
 
   vmsSW:setPropertiesByName({PropertyChangeDebounceTime=1})
