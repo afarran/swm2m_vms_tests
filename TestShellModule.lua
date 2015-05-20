@@ -243,7 +243,7 @@ end
   --
   -- 1. 'smtp' mode is correctly established.
   -- 2. Shell is switched to 'mail' mode.
-function test_GORUNMailSessionIdleTimeout_WhenMailSessionIdleTimeoutIsSetToOneMinuteAndShellModeIsSetToSmtp_AfterTimeoutShellIsSwitchedToMailMode()
+function test_MailSessionIdleTimeout_WhenMailSessionIdleTimeoutIsSetToOneMinuteAndShellModeIsSetToSmtp_AfterTimeoutShellIsSwitchedToMailMode()
   
   D:log("Requesting mail mode")
   local result = shell:request("mail")
@@ -265,3 +265,43 @@ function test_GORUNMailSessionIdleTimeout_WhenMailSessionIdleTimeoutIsSetToOneMi
   assert_not_nil(string.find(result,"mail>"),"Idle timeout has not been executed")
   
 end
+
+--- TC checks VMS if setting MailSessioinIdleTimeout switches to mail mode (from pop3 mode).
+  --
+  -- Initial Conditions:
+  --
+  -- * There should be VMS shell mode turned on and MailSessionIdleTimeout set to 1 minute.
+  --
+  -- Steps:
+  --
+  -- 1. 'pop3' shell command is requested.
+  -- 2.  Waiting for 1 minute is performed.
+  --
+  -- Results:
+  --
+  -- 1. 'pop3' mode is correctly established.
+  -- 2. Shell is switched to 'mail' mode.
+function test_MailSessionIdleTimeout_WhenMailSessionIdleTimeoutIsSetToOneMinuteAndShellModeIsSetToSmtp_AfterTimeoutShellIsSwitchedToMailMode()
+
+  D:log("Requesting mail mode")
+  local result = shell:request("mail")
+
+  -- MailSessionIdleTimeout set to 1 minute.
+  vmsSW:setPropertiesByName({
+    MailSessionIdleTimeout  = 1,
+  })
+
+  D:log("Requesting pop3 mode")
+  local result = shell:request("pop3")
+  D:log(result)
+  assert_not_nil(string.find(result,"POP3 Service Ready"),"POP3 service is not ready")
+  
+  D:log("Waiting for mail session idle timeout (60s)")
+  framework.delay(60+5)
+
+  D:log("Checking shell mode")
+  local result = shell:request("")
+  assert_not_nil(string.find(result,"mail>"),"Idle timeout has not been executed")
+  
+end
+
