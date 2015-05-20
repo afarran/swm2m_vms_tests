@@ -2,7 +2,8 @@ cfg, framework, gateway, lsf, device, gps = require "TestFramework"()
 require "UtilLibs/Text"
 require "UtilLibs/Array"
 require "UtilLibs/Number"
-require "Service/Message"
+require "Service/MessageVerifier"
+require "Service/PropertiesVerifier"
 
 
 ServiceWrapper = {}
@@ -159,16 +160,19 @@ ServiceWrapper = {}
 
 
   function ServiceWrapper:getProperties(pinList, raw)
+    self:log("Fetching properties.")
+    pinList = pinList or {}
     raw = raw or false
     if raw then
       return propertiesToTable(lsf.getProperties(self.sin, pinList))
     else
-      return self:__processPinValues(propertiesToTable(lsf.getProperties(self.sin, pinList)))
+      return PropertiesVerifier(self:__processPinValues(propertiesToTable(lsf.getProperties(self.sin, pinList))))
     end
   end
 
   function ServiceWrapper:getPropertiesByName(propertiesList, raw)
     local pinList = {}
+    propertiesList = propertiesList or {}
     for index, propertyName in pairs(propertiesList) do
       pinList[#pinList + 1] = self:getPin(propertyName)
     end
@@ -295,7 +299,7 @@ ServiceWrapper = {}
             if msg.Payload and min == msg.Payload.MIN and msg.SIN == self.sin and msgList[min] == nil then
               local msgName = self:getMinFromName(min)
               self:log("Received message: " .. msgName)
-              msgList[msgName] = Message(framework.collapseMessage(msg).Payload)
+              msgList[msgName] = MessageVerifier(framework.collapseMessage(msg).Payload)
               msgList.count = msgList.count + 1
               break
             end

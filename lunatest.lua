@@ -683,9 +683,11 @@ local function run_test(name, test, suite, hooks, setup, teardown)
 
       if is_func(teardown) then
          if ok then
+            D:log("Invoking teardown, test OK")
             ok, err = xpcall(function() teardown(name, elapsed) end,
                              err_handler(name))
          else
+            D:log("Invoking teardown, test FAIL")
             xpcall(function() teardown(name, elapsed) end,
                    function(info)
                       print "\n==============================================="
