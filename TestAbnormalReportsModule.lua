@@ -2311,7 +2311,7 @@ function test_PowerDisconnected_WhenTerminalIsPoweCycledAndFixIsNotObtainedForMa
     InitialPosition.speed,
     tonumber(PowerDisconnectedAbnormalReportTrue.Payload.Speed),
     "Wrong speed value in PowerDisconnected abnormal report send after restart"
-  )s
+  )
 
   assert_equal(
     InitialPosition.heading,
