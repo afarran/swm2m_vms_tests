@@ -29,7 +29,12 @@ local geofenceSettings = {
 --- Set two geofence zones.
 -- Set gps position to outside geofecne.
 function suite_setup()
-  vmsSW:setPropertiesByName({InsideGeofenceSendReport = false, InsideGeofenceStartDebounceTime = 0, InsideGeofenceEndDebounceTime = 0})
+  vmsSW:setPropertiesByName({
+      InsideGeofenceSendReport = false, 
+      InsideGeofenceStartDebounceTime = 0, 
+      InsideGeofenceEndDebounceTime = 0,
+      StandardReport1Interval = 1,
+    })
   geofenceSW:setPropertiesByName(geofenceSettings)
   geofenceSW:setRectangle(zone1)
   geofenceSW:setRectangle(zone0)
@@ -41,9 +46,14 @@ end
 --- Disable two geofence zones.
 -- Restore VMS Geofence properties.
 function suite_teardown()
-  geofenceSW:disableFence(0)
-  geofenceSW:disableFence(1)
-  vmsSW:setPropertiesByName({InsideGeofenceSendReport = false, InsideGeofenceStartDebounceTime = 0, InsideGeofenceEndDebounceTime = 0})  
+  geofenceSW:disableFence(zone0.number)
+  geofenceSW:disableFence(zone1.number)
+  vmsSW:setPropertiesByName({
+      InsideGeofenceSendReport = false, 
+      InsideGeofenceStartDebounceTime = 0, 
+      InsideGeofenceEndDebounceTime = 0,
+      StandardReport1Interval = 1,
+    })  
 end
 
 --- setup function
@@ -55,7 +65,6 @@ end
 -----------------------------------------------------------------------------------------------
 --- Exit all geofences
 function teardown()
-  D:log("Invoking teardown")
   vmsSW:setPropertiesByName({InsideGeofenceSendReport = false, InsideGeofenceStartDebounceTime = 0, InsideGeofenceEndDebounceTime = 0})
   GPS:set({latitude = 0, longitude = 0})
   geofenceSW:waitForRefresh()
@@ -88,7 +97,7 @@ function test_GeofenceFeatures_WhenTerminalGoesInsideGeofenceZone_StandardReport
   assert_not_nil(standardReport, "Standard Report not received")
   
   state = vmsSW:decodeBitmap(standardReport.StatusBitmap, "EventStateId")
-  assert_true(state.InsideGeofence, "Terminal incorrectly repored as NOT inside geofence zone")  
+  assert_true(state.InsideGeofence, "Terminal incorrectly repored as NOT inside geofence zone")
 end
 
 --- Check if InsideGeofenceState property is set correctly when inside and outside geofence zone
@@ -429,121 +438,104 @@ function test_GeofenceFeatures_WhenTerminalGoesInsideGeofenceZoneThenOutsideGeof
   
 end
 
---- Checks if InsideGeofenceStartDebounceTime propery works fine on GeofenceEntry
--- 1. Set Debounce to 20-25 sec, geofence+gps processing time is about 10-11seconds 
--- 2. Go inside geofence zone 
--- 3. Wait for GeofenceEntry message for Debounce - 5 seconds
--- Maxmimum geofence processing time is 10 seconds, Minimum is 0. In that case debounce will be somewhere between 20 and 30 secs
--- So wait for at least 20-5 = 15 seconds to make sure that geofence was processed and some debounce time has passed
--- 4. Check if InsideGeofenceState is set to false
--- 5. Check if GeofenceEntry was not received,
--- 6. Wait for GeofenceEntry message, it should be received since debounce has passed
--- 7. Check if InsideGeofenceState is set to true
-function test_GeofenceFeatures_WhenTerminalGoesInsideGeofenceZoneWithInsideGeofenceStartDebounceTime_GeofenceEntryIsSentAfterDebounce()
-  local startDebounce = lunatest.random_int(20,25)
-  vmsSW:setPropertiesByName({InsideGeofenceStartDebounceTime = startDebounce, InsideGeofenceSendReport = false})
-
-  local fix = GPS:getRandom()
-  geofenceSW:goInside(zone1, fix, 0)
-  
-  local receivedMessages = vmsSW:waitForMessagesByName("GeofenceEntry", startDebounce-5)
-  local geofenceEntry = receivedMessages.GeofenceEntry
-  assert_nil(geofenceEntry, "GeofenceEntry received before debounce time")
-  
-  -- TODO: after answer for https://github.com/afarran/swm2m_vms_tests/issues/38
-  
-end
-
---- Check if InsideGeofenceState property is set correctly after debounce time when entered geofence
--- 1. Set InsideGeofenceStartDebounceTime to 20-25 sec, geofence+gps processing time is about 10-11seconds 
--- 2. Go inside geofence zone 
--- 3. Wait for Debounce time - 5 sec and check InsideGeofenceState property remains false. 
--- Maxmimum geofence processing time is 10 seconds, Minimum is 0. In that case debounce will be somewhere between 20 and 30 secs
--- So wait for at least 20-5 = 15 seconds to make sure that geofence was processed and some debounce time has passed
--- 4. Check if AbnormalReport was not sent before debounce
--- 5. Check if AbnormalReport was sent after debounce
--- 6. Check if InsideGeofenceState property becomes true
+--- Check if InsideGeofenceState property is set correctly and 
+-- StatusBitmap indicates Inside Geofence after debounce time when entered geofence
+-- 1. Set InsideGeofenceStartDebounceTime to 10-15 sec, and InsideGeofenceSendReport to true
+-- 2. Go inside Geofence zone and wait for GeofenceEntry
+-- 3. Check if InsideGeofenceState property remains false
+-- 4. Wait for AbnormalReport which will be sent after debounce time
+-- 5. Check if time difference between GeofenceEntry and AbnormalReport matches debounce time
+-- 6. Check if status bitmap indicates that terminal is in geofence zone
+-- 7. Check if InsideGeofenceState property was set to true
 function test_GeofenceFeatures_WhenTerminalGoesInsideGeofenceZoneWithInsideGeofenceStartDebounceTime_InsideGeofenceStateIsSetAfterDebounce()
-  -- 1. Set Debounce to 15-20 sec, geofence+gps processing time is about 10-11seconds 
-  local startDebounce = lunatest.random_int(20,25)
+  -- 1. Set InsideGeofenceStartDebounceTime to 10-15 sec, and InsideGeofenceSendReport to true  
+  local startDebounce = lunatest.random_int(10, 15)
   vmsSW:setPropertiesByName({InsideGeofenceStartDebounceTime = startDebounce, InsideGeofenceSendReport = true})
 
-  -- 2. Go inside geofence zone 
+  -- 2. Go inside Geofence zone and wait for GeofenceEntry
   local fix = GPS:getRandom()
   geofenceSW:goInside(zone1, fix, 0)
+  local geofenceEntry = vmsSW:waitForMessagesByName("GeofenceEntry")["GeofenceEntry"]
+  assert_not_nil(geofenceEntry, "GeofenceEntry message not received")
+
+  -- 3. Check if InsideGeofenceState property remains false
+  local properties = vmsSW:getProperties()
+  properties:_verify({InsideGeofenceState = false})
+  local insideGeofence = vmsSW:decodeBitmap(geofenceEntry.StatusBitmap, "EventStateId").InsideGeofence
+  assert_false(insideGeofence, "InsideGeofence in status bitmap is incorrect")
+
+  -- 4. Wait for AbnormalReport which will be sent after debounce time
+  local abnormalReport = vmsSW:waitForMessagesByName("AbnormalReport")["AbnormalReport"]
+  assert_not_nil(abnormalReport, "AbnormalReport not received")
   
-  -- 3. Wait for Debounce time - 3 sec and check InsideGeofenceState property remains false
-  local status, properties = vmsSW:waitForProperties({InsideGeofenceState = true}, startDebounce - 5)
-  assert_false(properties.InsideGeofenceState, "InsideGeofenceState set to true before debounce time")
+  -- 5. Check if time difference between GeofenceEntry and AbnormalReport matches debounce time
+  assert_equal(abnormalReport.Timestamp - startDebounce, geofenceEntry.Timestamp, 3, "Timestamp of AbnormalReport indicates incorrect Debounce time")
   
-  -- 4. Check if AbnormalReport was not sent
-  local receivedMessages = vmsSW:waitForMessagesByName("AbnormalReport", 1)
-  local abnormalReportOnEnterBeforeDebounce = receivedMessages.AbnormalReport  
-  assert_nil(abnormalReportOnEnterBeforeDebounce, "AbnormalReport received before debounce time")
+  -- 6. Check if status bitmap indicates that terminal is in geofence zone
+  insideGeofence = vmsSW:decodeBitmap(abnormalReport.StatusBitmap, "EventStateId").InsideGeofence
+  assert_true(insideGeofence, "InsideGeofence in status bitmap is incorrect")  
   
-  
-  -- 5. Check if AbnormalReport was sent after debounce
-  vmsSW:setHighWaterMark()
-  receivedMessages = vmsSW:waitForMessagesByName("AbnormalReport")
-  local abnormalReportOnEnterAfterDebounce = receivedMessages.AbnormalReport  
-  assert_not_nil(abnormalReportOnEnterAfterDebounce, "AbnormalReport received before debounce time")
-  local state = vmsSW:decodeBitmap(abnormalReportOnEnterAfterDebounce.StatusBitmap, "EventStateId")
-  assert_true(state.InsideGeofence, "Terminal incorrectly repored as outside geofence zone")
-  
-  -- 6. Check if InsideGeofenceState property becomes true
-  properties = vmsSW:getPropertiesByName({"InsideGeofenceState"})
-  assert_true(properties.InsideGeofenceState, "InsideGeofenceState set to false after debounce time")
-  
+  -- 7. Check if InsideGeofenceState property was set to true
+  properties = vmsSW:getProperties()
+  properties:_verify({InsideGeofenceState = true})
 end
 
---- Check if InsideGeofenceState property is set correctly after debounce time when exit geofence 
--- 1. Set InsideGeofenceEndDebounceTime to 20-25 sec, geofence+gps processing time is about 10-11seconds 
--- 2. Go inside geofence zone
--- 3. Wait for geofence entry
--- 4. Exit geofence zone
--- 5. Wait for Debounce time - 5 sec and check InsideGeofenceState property remains false
--- Maxmimum geofence processing time is 10 seconds, Minimum is 0. In that case debounce will be somewhere between 20 and 30 secs
--- So wait for at least 20-5 = 15 seconds to make sure that geofence was processed and some debounce time has passed
--- 6. Check if AbnormalReport was not sent before debounce
--- 7. Check if AbnormalReport was sent after debounce
--- 8. Check if InsideGeofenceState property becomes false
-function test_GeofenceFeatures_WhenTerminalGoesOutsideGeofenceZoneWithInsideGeofenceEndDebounceTime_InsideGeofenceStateIsSetAfterDebounce()
-  -- 1. Set Debounce to 15-20 sec, geofence+gps processing time is about 10-11seconds 
-  local endDebounce = lunatest.random_int(20,25)
+
+--- Check if InsideGeofenceState property is set correctly and 
+-- StatusBitmap indicates Inside Geofence false after debounce time when exit geofence
+-- 1. Set InsideGeofenceEndDebounceTime to 10-15 sec, and InsideGeofenceSendReport to true
+-- 2. Go inside Geofence zone and wait for GeofenceEntry
+-- 3. Check if InsideGeofenceState property is set to true
+-- 4. Go outside Geofence zone and wait for GeofenceExit
+-- 5. Check if InsideGeofenceStarte property is set to true and GeofenceExit.StatusBitmap indicates InsideGeofence true
+-- 6. Wait for AbnormalReport
+-- 7. Check if time difference between GeofenceExit and AbnormalReport matches debounce time
+-- 8. Check if InsideGeofenceStarte property is set to false and AbnormalReport.StatusBitmap indicates InsideGeofence false
+function test_GeofenceFeatures_WhenTerminalGoesInsideGeofenceZoneWithOutsideGeofenceEndDebounceTime_InsideGeofenceStateIsSetAfterDebounce()
+  -- 1. Set InsideGeofenceEndDebounceTime to 10-15 sec, and InsideGeofenceSendReport to true
+  local endDebounce = lunatest.random_int(10, 15)
   vmsSW:setPropertiesByName({InsideGeofenceEndDebounceTime = endDebounce, InsideGeofenceSendReport = true})
 
-  -- 2. Go inside geofence zone 
+
+  -- 2. Go inside Geofence zone and wait for GeofenceEntry
   local fix = GPS:getRandom()
-  geofenceSW:goInside(zone1, fix)
-  -- 3. Wait for geofence entry
-  local receivedMessages = vmsSW:waitForMessagesByName("GeofenceEntry")
-  local geofenceEntry = receivedMessages.GeofenceEntry
+  geofenceSW:goInside(zone1, fix, 0)
+  local geofenceEntry = vmsSW:waitForMessagesByName("GeofenceEntry")["GeofenceEntry"]
   assert_not_nil(geofenceEntry, "GeofenceEntry message not received")
-  -- 4. Exit geofence zone
-  GPS:set({latitude = 0, longitude = 0})
+  
+  -- 3. Check if InsideGeofenceState property is set to true
+  local properties = vmsSW:getProperties()
+  properties:_verify({InsideGeofenceState = true})
+  local insideGeofence = vmsSW:decodeBitmap(geofenceEntry.StatusBitmap, "EventStateId").InsideGeofence
+  assert_true(insideGeofence, "InsideGeofence in status bitmap is incorrect")
     
-  -- 5. Wait for Debounce time sec and check InsideGeofenceState property remains true
-  local status, properties = vmsSW:waitForProperties({InsideGeofenceState = true}, endDebounce-5)
-  assert_true(properties.InsideGeofenceState, "InsideGeofenceState set to false before debounce time")
-  
-  -- 6. Check if AbnormalReport was not sent before debounce
-  receivedMessages = vmsSW:waitForMessagesByName("AbnormalReport", 1)
-  local abnormalReportOnExitBeforeDebounce = receivedMessages.AbnormalReport  
-  assert_nil(abnormalReportOnExitBeforeDebounce, "AbnormalReport received before debounce time")
-  
-  
-  -- 7. Check if AbnormalReport was sent after debounce
+  -- 4. Go outside Geofence zone and wait for GeofenceExit
   vmsSW:setHighWaterMark()
-  receivedMessages = vmsSW:waitForMessagesByName("AbnormalReport")
-  local abnormalReportOnExitAfterDebounce = receivedMessages.AbnormalReport  
-  assert_not_nil(abnormalReportOnExitAfterDebounce, "AbnormalReport received before debounce time")
-  local state = vmsSW:decodeBitmap(abnormalReportOnExitAfterDebounce.StatusBitmap, "EventStateId")
-  assert_false(state.InsideGeofence, "Terminal incorrectly repored as inside geofence zone")
+  geofenceSW:goOutside(0)
+  local geofenceExit = vmsSW:waitForMessagesByName("GeofenceExit")["GeofenceExit"]
+  assert_not_nil(geofenceExit, "GeofenceExit message not received")
   
-  -- 8. Check if InsideGeofenceState property becomes false
-  properties = vmsSW:getPropertiesByName({"InsideGeofenceState"})
-  assert_false(properties.InsideGeofenceState, "InsideGeofenceState set to true after debounce time")
+  -- 5. Check if InsideGeofenceStarte property is set to true and GeofenceExit.StatusBitmap indicates InsideGeofence true
+  properties = vmsSW:getProperties()
+  properties:_verify({InsideGeofenceState = true})
+  insideGeofence = vmsSW:decodeBitmap(geofenceExit.StatusBitmap, "EventStateId").InsideGeofence
+  assert_true(insideGeofence, "InsideGeofence in status bitmap is incorrect")
+  
+  -- 6. Wait for AbnormalReport
+  local abnormalReport = vmsSW:waitForMessagesByName("AbnormalReport")["AbnormalReport"]
+  assert_not_nil(abnormalReport, "AbnormalReport not received")
+  
+  -- 7. Check if time difference between GeofenceExit and AbnormalReport matches debounce time
+  assert_equal(abnormalReport.Timestamp - endDebounce, geofenceExit.Timestamp, 3, "Timestamp of AbnormalReport indicates incorrect Debounce time")
+  
+  -- 8. Check if InsideGeofenceStarte property is set to false and AbnormalReport.StatusBitmap indicates InsideGeofence false
+  insideGeofence = vmsSW:decodeBitmap(abnormalReport.StatusBitmap, "EventStateId").InsideGeofence
+  assert_false(insideGeofence, "InsideGeofence in status bitmap is incorrect")
   
 end
+
+
+
+
 -- TODO: Test HDOP, NumSats, IdpCnr - currently not supported by simulator
 -- TODO: GeofenceEntry/Exit with debounce time tests
