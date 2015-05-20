@@ -56,6 +56,9 @@ function setup()
                     "DTECONNECTED",
                     "false"
   )
+  
+  -- INTERFACE UNIT is disconnected from external power 
+  helmPanel:externalPowerConnected("false")
 
   framework.delay(2)
 
@@ -1908,6 +1911,41 @@ end
 
 
 
+
+function test_PowerDisconnected_WhenExternalPowerIsConnectedAndDisconnectedForTimeAboveThresholdButPowerDisconnectedReportsAreDisabled_PowerDisconnectedAbnormalReportIsNotSent()
+
+  local POWER_DISCONNECTED_START_DEBOUNCE_TIME = 1 
+  local POWER_DISCONNECTED_END_DEBOUNCE_TIME = 20
+  
+  vmsSW:setPropertiesByName({
+                              PowerDisconnectedSendReport = false,
+                              PowerDisconnectedStartDebounceTime = POWER_DISCONNECTED_START_DEBOUNCE_TIME,
+                              PowerDisconnectedEndDebounceTime = POWER_DISCONNECTED_END_DEBOUNCE_TIME,
+                             }, false, true
+  )
+
+  -- *** Execute
+
+  -- checking PowerDisconnectedState property - this is expected to be false
+  local PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
+  assert_false(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState is incorrectly true")
+  D:log(PowerDisconnectedStateProperty, "PowerDisconnectedStateProperty in the start of TC")
+
+  gateway.setHighWaterMark() -- to get the newest messages
+  systemSW:restartFramework()
+  
+  -- receiving all from mobile messages sent after setHighWaterMark()
+  local receivedMessages = gateway.getReturnMessages()
+  -- look for AbnormalReport messages
+  if(receivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "PowerDisconnected" ) then
+    assert_nil(1, "PowerDisconnected abnormal report sent but not expected - sending reports is disabled")
+  end 
+  
+
+end
+
+
+
 --- TC checks if two PowerDisconnected abnormal reports are sent when terminal is power cycled
   -- Initial Conditions:
   --
@@ -1916,30 +1954,29 @@ end
   --
   -- Steps:
   --
-  -- 1. Set PowerDisconnectedStartDebounceTime to value A, PowerDisconnectedEndDebounceTime to value B
-  -- 2. Enable sending PowerDisconnected reports.
-  -- 3. Simulate terminal in InitialPosition.
-  -- 4. Wait longer than properties save interval (10 minutes) to make sure properties are saved.
-  -- 5. Perform lsf framework restart (terminal power cycle simulated).
-  -- 6. Simulate terminal in AfterRebootPosition.
-  -- 7. Wait longer than PowerDisconnectedStartDebounceTime and PowerDisconnectedEndDebounceTime and receive all the messages after reboot.
-  -- 8. Check if two PowerDisconnected reports are sent - one after PowerDisconnectedStartDebounceTime and one after PowerDisconnectedEndDebounceTime.
-  -- 9. Verify content of PowerDisconnected with PowerDisconnected state true.
-  -- 10. Verify content of PowerDisconnected with PowerDisconnected state false.
+  -- 1. Enable sending PowerDisconnected reports.
+  -- 2. Simulate terminal in InitialPosition.
+  -- 3. Wait longer than properties save interval (10 minutes) to make sure properties are saved.
+  -- 4. Perform lsf framework restart (terminal power cycle simulated).
+  -- 5. Simulate terminal in AfterRebootPosition.
+  -- 6. Receive all the messages after reboot.
+  -- 7. Check if two PowerDisconnected reports are sent 
+  -- 8. Verify content of PowerDisconnected with PowerDisconnected state true.
+  -- 9. Verify content of PowerDisconnected with PowerDisconnected state false.
   --
   -- Results:
   --
-  -- 1. Settings applied successfully.
-  -- 2. PowerDisconnectedSendReport set to true.
-  -- 3. Terminal in InitialPosition.
-  -- 4. Properties saved after 10 minutes.
-  -- 5. Lsf framework performed - terminal power cycled.
-  -- 6. Terminal in AfterRebootPosition.
-  -- 7. All messages after reboot received.
-  -- 8. There are two PowerDisconnected reports - one with PowerDisconnected bit true and one with PowerDisconnected bit false
-  -- 9. PowerDisconnected Abnormal Report with PowerDisconnected bit true contains InitialPosition GPS information
-  -- 10. PowerDisconnected Abnormal Report with PowerDisconnected bit false contains AfterRebootPosition GPS information
-function test_PowerDisconnected_WhenTerminalIsPoweCycled_OnePowerDisconnectedAbnormalReportIsSentAfterPowerDisconnectedStartDebounceTimeAndSecondPowerDisconnectedAbnormalReportIsSentAfterPowerDisconnectedEndDebounceTime()
+  -- 1. PowerDisconnectedSendReport set to true.
+  -- 2. Terminal in InitialPosition.
+  -- 3. Properties saved after 10 minutes.
+  -- 4. Lsf framework performed - terminal power cycled.
+  -- 5. Terminal in AfterRebootPosition.
+  -- 6. All messages after reboot received.
+  -- 7. There are two PowerDisconnected reports - one with PowerDisconnected bit true and one with PowerDisconnected bit false
+  -- 8. PowerDisconnected Abnormal Report with PowerDisconnected bit true contains InitialPosition GPS information
+  -- 9. PowerDisconnected Abnormal Report with PowerDisconnected bit false contains AfterRebootPosition GPS information
+function 
+test_PowerDisconnected_WhenTerminalIsPoweCycled_TwoPowerDisconnectedAbnormalReportsAreSentOneWithCurrentGpsPositionAndOneWithLastSavedGpsPosition()
 
   -- *** Setup
   local PROPERTIES_SAVE_INTERVAL = 600                -- seconds
@@ -1967,7 +2004,7 @@ function test_PowerDisconnected_WhenTerminalIsPoweCycled_OnePowerDisconnectedAbn
   -- *** Execute
   -- terminal in initial position
   GPS:set(InitialPosition)
-  --framework.delay(PROPERTIES_SAVE_INTERVAL + 5)
+  framework.delay(PROPERTIES_SAVE_INTERVAL + 5)
   
   -- checking PowerDisconnectedState property - this is expected to be false - terminal is powered on for time longer than
   local PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
@@ -2117,456 +2154,197 @@ function test_PowerDisconnected_WhenTerminalIsPoweCycled_OnePowerDisconnectedAbn
   )
   --]]
 
-
-
 end
 
 
-
--- TC checks if when InterfaceUnit is connected to external power source for time above PowerDisconnectedEndDebounceTime PowerDisconnected AbnormalReport is sent
-  -- and terminal leaves PowerDisconnected state
-function test_InterfaceUnitDisconnected_WhenInterfaceUnitIsConnectedToExternalPowerSourceForTimeAbovePowerDisconnectedEndDebounceTime_PowerDisconnectedAbnormalReportIsSent()
-
-  local EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME = 1
-  local EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME = 30
+function test_PowerDisconnected_WhenTerminalIsPoweCycledAndFixIsNotObtainedForMaxFixTimeoutPeriod_TwoPowerDisconnectedAbnormalReportsAreSentContainingLastSavedPositionInformation()
 
   -- *** Setup
-  -- terminal in some position but no valid fix provided
+  local PROPERTIES_SAVE_INTERVAL = 600                -- seconds
+  local MAX_FIX_TIMEOUT = 100                         -- seconds
+
+  -- terminal stationary
   local InitialPosition = {
-                              speed = 0,                      -- kmh
-                              latitude = 1,                   -- degrees
-                              longitude = 1,                  -- degrees
-                              fixType = 3,                    -- valid fix
+    speed = 1,                      -- kmh
+    latitude = 1,                   -- degrees
+    longitude = 1,                  -- degrees
+    heading = 78,                   -- degrees
   }
 
+  -- terminal stationary
+  local AfterRebootPosition = {
+    speed = 7,                      -- kmh
+    latitude = 5,                   -- degrees
+    longitude = 5,                  -- degrees
+    heading = 90,                   -- degrees
+    fixType = 1,                    -- no fix - GPS BLOCKED
+  }
+
+
   vmsSW:setPropertiesByName({
-                             PowerDisconnectedStartDebounceTime = EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME,
-                             PowerDisconnectedEndDebounceTime = EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME,
-                             PowerDisconnectedSendReport = true,
-                            }
+                              PowerDisconnectedSendReport = true,
+                             }, false, true
   )
+  
+  positionSW:setPropertiesByName({maxFixTimeout = MAX_FIX_TIMEOUT}, false, true)
 
   -- *** Execute
+  -- terminal in initial position
   GPS:set(InitialPosition)
-
-  -- checking PowerDisconnectedState property
+  framework.delay(PROPERTIES_SAVE_INTERVAL + 5)
+  
+  -- checking PowerDisconnectedState property - this is expected to be false - terminal is powered on for time longer than
   local PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
-  D:log(framework.dump(PowerDisconnectedStateProperty["PowerDisconnectedState"]), "PowerDisconnectedState")
-  assert_true(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState property is incorrectly false")
-
+  assert_false(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState is incorrectly true")
+  D:log(PowerDisconnectedStateProperty, "PowerDisconnectedStateProperty in the start of TC")
 
   gateway.setHighWaterMark() -- to get the newest messages
-  -- INTERFACE UNIT is connected to external power from now
-  helmPanel:externalPowerConnected("true")
+  systemSW:restartFramework()
+  GPS:set(AfterRebootPosition)  -- GPS blocked from this moment 
+  framework.delay(MAX_FIX_TIMEOUT)
 
-  D:log("EXTERNAL POWER SOURCE OF INTERFACE UNIT CONNECTED")
+  local terminalOnTimeStamp = os.time()  -- to get exact timestamp
+  -- receiving all from mobile messages sent after setHighWaterMark()
+  local receivedMessages = gateway.getReturnMessages()
+  -- look for AbnormalReport messages
+  local AllReceivedAbnormalReports = framework.filterMessages(receivedMessages, framework.checkMessageType(115, 50)) -- TODO: service wrapper functions need to be modified
+   D:log(AllReceivedAbnormalReports)
+  local PowerDisconnectedAbnormalReportTrue = nil
+  for index = 1 , #AllReceivedAbnormalReports, 1 do
+    local StatusBitmap = vmsSW:decodeBitmap(AllReceivedAbnormalReports[index].Payload.StatusBitmap, "EventStateId")
+    D:log("Status Bitmap")
+    D:log(StatusBitmap)
+    
+    D:log(StatusBitmap["PowerDisconnected"] )
+    if AllReceivedAbnormalReports[index].Payload.EventType == "PowerDisconnected" and StatusBitmap["PowerDisconnected"] == true then
+        PowerDisconnectedAbnormalReportTrue = AllReceivedAbnormalReports[index]
+        break
+    end
+  end
 
-  -- checking PowerDisconnectedState property
-  local PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
-  D:log(framework.dump(PowerDisconnectedStateProperty["PowerDisconnectedState"]), "PowerDisconnectedState")
-  assert_true(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState has changed to false before PowerDisconnectedEndDebounceTime time has passed")
+  local PowerDisconnectedAbnormalReportFalse = nil
+  for index = 1 , #AllReceivedAbnormalReports, 1 do
+    local StatusBitmap = vmsSW:decodeBitmap(AllReceivedAbnormalReports[index].Payload.StatusBitmap, "EventStateId")
+    D:log("Status Bitmap in False")
+    D:log(StatusBitmap)
+    D:log(StatusBitmap["PowerDisconnected"] )
+    
+    D:log(StatusBitmap["PowerDisconnected"])
+    if AllReceivedAbnormalReports[index].Payload.EventType == "PowerDisconnected" and StatusBitmap["PowerDisconnected"] == nil then
+        PowerDisconnectedAbnormalReportFalse = AllReceivedAbnormalReports[index]
+        break
+    end
+  end
 
-  framework.delay(EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME)
+  D:log(PowerDisconnectedAbnormalReportTrue)
+  D:log(PowerDisconnectedAbnormalReportFalse)
 
-
-  timeOfEvent = os.time()
-
-  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"})
-  D:log(ReceivedMessages["AbnormalReport"])
-
-  assert_not_nil(ReceivedMessages["AbnormalReport"], "AbnormalReport not received")
+  assert_not_nil(PowerDisconnectedAbnormalReportFalse, "AbnormalReport with PowerDisconnected bit = false not received")
+  assert_not_nil(PowerDisconnectedAbnormalReportTrue, "AbnormalReport  with PowerDisconnected bit = true not received")
 
   assert_equal(
     InitialPosition.latitude*60000,
-    tonumber(ReceivedMessages["AbnormalReport"].Latitude),
+    tonumber(PowerDisconnectedAbnormalReportFalse.Payload.Latitude),
     "Wrong latitude value in PowerDisconnected abnormal report"
   )
 
   assert_equal(
     InitialPosition.longitude*60000,
-    tonumber(ReceivedMessages["AbnormalReport"].Longitude),
+    tonumber(PowerDisconnectedAbnormalReportFalse.Payload.Longitude),
     "Wrong longitude value in PowerDisconnected abnormal report"
   )
 
   assert_equal(
-    InitialPosition.speed,
-    tonumber(ReceivedMessages["AbnormalReport"].Speed),
+    InitialPosition.speed*5.39956803,
+    tonumber(PowerDisconnectedAbnormalReportFalse.Payload.Speed),
+    2,
     "Wrong speed value in PowerDisconnected abnormal report"
   )
 
   assert_equal(
-    361,
-    tonumber(ReceivedMessages["AbnormalReport"].Course),
+    InitialPosition.heading,
+    tonumber(PowerDisconnectedAbnormalReportFalse.Payload.Course),
     "Wrong course value in PowerDisconnected abnormal report"
   )
 
   assert_equal(
-    "PowerDisconnected",
-    ReceivedMessages["AbnormalReport"].EventType,
-    "Wrong name of the received EventType in PowerDisconnected abnormal report"
-  )
-
-  assert_equal(
-    timeOfEvent,
-    tonumber(ReceivedMessages["AbnormalReport"].Timestamp),
-    10,
+    terminalOnTimeStamp,
+    tonumber(PowerDisconnectedAbnormalReportTrue.Payload.Timestamp),
+    600,   -- this is because the exact moment of saving properties is not known
     "Wrong Timestamp value in PowerDisconnected abnormal report"
   )
-  --]]
+
   -- TODO: update this after implementation in TestFramework file
   --[[
   assert_equal(
     InitialPosition.hdop,
-    PowerDisconnectedAbnormalReport.Payload.Hdop,
+    PowerDisconnectedAbnormalReportFalse.Payload.Hdop,
     "Wrong HDOP value in IdpBlocked abnormal report"
   )
 
   assert_equal(
     InitialPosition.idpsnr,
-    PowerDisconnectedAbnormalReport.Payload.IdpSnr,
+    PowerDisconnectedAbnormalReportFalse.Payload.IdpSnr,
     "Wrong IdpSnr value in IdpBlocked abnormal report"
   )
 
   assert_equal(
     InitialPosition.numsats,
-    PowerDisconnectedAbnormalReport.Payload.NumSats,
+    PowerDisconnectedAbnormalReportFalse.Payload.NumSats,
     "Wrong NumSats value in IdpBlocked abnormal report"
   )
   --]]
 
-  local StatusBitmap = vmsSW:decodeBitmap(ReceivedMessages["AbnormalReport"].StatusBitmap, "EventStateId")
-  assert_false(StatusBitmap["PowerDisconnected"], "StatusBitmap has not been correctly changed to false when external power source of INTERFACE UNIT was connected")
-
-
-  D:log("EXTERNAL POWER SOURCE OF INTERFACE UNIT DISCONNECTED")
-
-  -- back to exernal power disconnected
-  helmPanel:externalPowerConnected("false")
-
-end
-
-
-
-
---- TC checks if when InterfaceUnit is disconnected from external power source for time above PowerDisconnectedStartDebounceTime for terminal in PowerDisconnected state
-  -- PowerDisconnected AbnormalReport is sent and terminal enters PowerDisconnected state
-function test_PowerDisconnected_WhenInterfaceUnitIsDisconnectedFromExternalPowerSourceForTimeAbovePowerDisconnectedStartDebounceTime_PowerDisconnectedAbnormalReportIsSent()
-
-  local EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME = 30
-  local EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME = 1
-
-  -- *** Setup
-  -- terminal in some position but no valid fix provided
-  local InitialPosition = {
-                              speed = 0,                      -- kmh
-                              latitude = 1,                   -- degrees
-                              longitude = 1,                  -- degrees
-                              fixType = 3,                    -- valid fix
-  }
-
-  vmsSW:setPropertiesByName({
-                             PowerDisconnectedStartDebounceTime = EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME,
-                             PowerDisconnectedEndDebounceTime = EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME,
-                             PowerDisconnectedSendReport = true,
-                            }
-  )
-
-  -- *** Execute
-  GPS:set(InitialPosition)
-
-  -- checking PowerDisconnectedState property
-  local PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
-  D:log(framework.dump(PowerDisconnectedStateProperty["PowerDisconnectedState"]), "PowerDisconnectedState")
-  assert_true(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState property is incorrectly false")
-
-  D:log("EXTERNAL POWER SOURCE OF INTERFACE UNIT CONNECTED")
-  -- INTERFACE UNIT is connected to external power from now
-  helmPanel:externalPowerConnected("true")
-
-  framework.delay(EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME)
-
-  framework.delay(10) -- this delay is added due to TC failing for too many messages processes at once
-
-  -- checking PowerDisconnectedState property
-  PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
-  D:log(framework.dump(PowerDisconnectedStateProperty["PowerDisconnectedState"]), "PowerDisconnectedStateProperty" )
-  assert_false(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState property is incorrectly true")
-
-  gateway.setHighWaterMark() -- to get the newest messages
-
-  D:log("EXTERNAL POWER SOURCE OF INTERFACE UNIT DISCONNECTED")
-  -- INTERFACE UNIT is disconnected from external power from now
-  helmPanel:externalPowerConnected("false")
-
-  -- checking PowerDisconnectedState property
-  PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
-  D:log(framework.dump(PowerDisconnectedStateProperty["PowerDisconnectedState"]), "PowerDisconnectedStateProperty")
-  assert_false(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState has changed to true before PowerDisconnectedStartDebounceTime time has passed")
-
-  framework.delay(EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME)
-  timeOfEvent = os.time()
-
-  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"})
-  D:log(ReceivedMessages["AbnormalReport"])
-
-  -- checking PowerDisconnectedState property
-  PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
-  D:log(framework.dump(PowerDisconnectedStateProperty["PowerDisconnectedState"]), "PowerDisconnectedState")
-  assert_true(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState property is incorrectly false after PowerDisconnectedStartDebounceTime")
-
-  assert_not_nil(ReceivedMessages["AbnormalReport"], "AbnormalReport not received")
-
   assert_equal(
     InitialPosition.latitude*60000,
-    tonumber(ReceivedMessages["AbnormalReport"].Latitude),
-    "Wrong latitude value in PowerDisconnected abnormal report"
+    tonumber(PowerDisconnectedAbnormalReportTrue.Payload.Latitude),
+    "Wrong latitude value in PowerDisconnected abnormal report send after restart"
   )
 
   assert_equal(
     InitialPosition.longitude*60000,
-    tonumber(ReceivedMessages["AbnormalReport"].Longitude),
-    "Wrong longitude value in PowerDisconnected abnormal report"
+    tonumber(PowerDisconnectedAbnormalReportTrue.Payload.Longitude),
+    "Wrong longitude value in PowerDisconnected abnormal report send after restart"
   )
 
   assert_equal(
     InitialPosition.speed,
-    tonumber(ReceivedMessages["AbnormalReport"].Speed),
-    "Wrong speed value in PowerDisconnected abnormal report"
-  )
+    tonumber(PowerDisconnectedAbnormalReportTrue.Payload.Speed),
+    "Wrong speed value in PowerDisconnected abnormal report send after restart"
+  )s
 
   assert_equal(
-    361,
-    tonumber(ReceivedMessages["AbnormalReport"].Course),
-    "Wrong course value in PowerDisconnected abnormal report"
+    InitialPosition.heading,
+    tonumber(PowerDisconnectedAbnormalReportTrue.Payload.Course),
+    "Wrong course value in PowerDisconnected abnormal report send after restart"
   )
-
-  assert_equal(
-    "PowerDisconnected",
-    ReceivedMessages["AbnormalReport"].EventType,
-    "Wrong name of the received EventType in PowerDisconnected abnormal report"
-  )
-
-  assert_equal(
-    timeOfEvent,
-    tonumber(ReceivedMessages["AbnormalReport"].Timestamp),
-    10,
-    "Wrong Timestamp value in PowerDisconnected abnormal report"
-  )
-  --]]
+  
+  
   -- TODO: update this after implementation in TestFramework file
   --[[
   assert_equal(
     InitialPosition.hdop,
-    PowerDisconnectedAbnormalReport.Payload.Hdop,
+    PowerDisconnectedAbnormalReportTrue.Payload.Hdop,
     "Wrong HDOP value in IdpBlocked abnormal report"
   )
 
   assert_equal(
     InitialPosition.idpsnr,
-    PowerDisconnectedAbnormalReport.Payload.IdpSnr,
+    PowerDisconnectedAbnormalReportTrue.Payload.IdpSnr,
     "Wrong IdpSnr value in IdpBlocked abnormal report"
   )
 
   assert_equal(
     InitialPosition.numsats,
-    PowerDisconnectedAbnormalReport.Payload.NumSats,
+    PowerDisconnectedAbnormalReportTrue.Payload.NumSats,
     "Wrong NumSats value in IdpBlocked abnormal report"
   )
   --]]
 
 
-  local StatusBitmap = vmsSW:decodeBitmap(ReceivedMessages["AbnormalReport"].StatusBitmap, "EventStateId")
-  assert_true(StatusBitmap["PowerDisconnected"], "StatusBitmap has not been correctly changed to true when external power source of INTERFACE UNIT was disconnected")
-
 
 end
 
-
-
-
-
---- TC checks if when InterfaceUnit is connected to external power source for time below PowerDisconnectedEndDebounceTime PowerDisconnected AbnormalReport is not sent
-  -- and terminal does not leave PowerDisconnected state
-function test_PowerDisconnected_WhenInterfaceUnitIsConnectedToExternalPowerSourceForTimeBelowPowerDisconnectedEndDebounceTime_PowerDisconnectedAbnormalReportIsNotSent()
-
-  local EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME = 1
-  local EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME = 30
-
-  -- *** Setup
-  -- terminal in some position but no valid fix provided
-  local InitialPosition = {
-                              speed = 0,                      -- kmh
-                              latitude = 1,                   -- degrees
-                              longitude = 1,                  -- degrees
-                              fixType = 3,                    -- valid fix
-  }
-
-  vmsSW:setPropertiesByName({
-                             PowerDisconnectedStartDebounceTime = EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME,
-                             PowerDisconnectedEndDebounceTime = EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME,
-                             PowerDisconnectedSendReport = true,
-                            }
-  )
-
-  -- *** Execute
-  GPS:set(InitialPosition)
-
-  -- checking PowerDisconnectedState property
-  local PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
-  D:log(framework.dump(PowerDisconnectedStateProperty["PowerDisconnectedState"]), "PowerDisconnectedState")
-  assert_true(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState property is incorrectly false")
-
-  gateway.setHighWaterMark() -- to get the newest messages
-  D:log("EXTERNAL POWER SOURCE OF INTERFACE UNIT CONNECTED")
-  -- INTERFACE UNIT is connected to external power from now
-  helmPanel:externalPowerConnected("true")
-
-  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
-  D:log(ReceivedMessages["AbnormalReport"])
-
-  if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "PowerDisconnected" ) then
-    assert_nil(1, "PowerDisconnected abnormal report sent but not expected")
-  end
-
-  D:log("EXTERNAL POWER SOURCE OF  INTERFACE UNIT DISCONNECTED")
-  -- back to exernal power disconnected
-  helmPanel:externalPowerConnected("false")
-
-
-end
-
---- TC checks if when InterfaceUnit is disconnected from external power source for time below PowerDisconnectedStartDebounceTime for terminal in PowerDisconnected state
-  -- PowerDisconnected AbnormalReport is not sent and terminal does not enter PowerDisconnected state
-function test_PowerDisconnected_WhenInterfaceUnitIsDisonnectedFromExternalPowerSourceForTimeBelowPowerDisconnectedStartDebounceTime_PowerDisconnectedAbnormalReportIsNotSent()
-
-  local EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME = 30
-  local EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME = 1
-
-  -- *** Setup
-  -- terminal in some position but no valid fix provided
-  local InitialPosition = {
-                              speed = 0,                      -- kmh
-                              latitude = 1,                   -- degrees
-                              longitude = 1,                  -- degrees
-                              fixType = 3,                    -- valid fix
-  }
-
-  vmsSW:setPropertiesByName({
-                             PowerDisconnectedStartDebounceTime = EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME,
-                             PowerDisconnectedEndDebounceTime = EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME,
-                             PowerDisconnectedSendReport = true,
-                            }
-  )
-
-  -- *** Execute
-  GPS:set(InitialPosition)
-
-  -- checking PowerDisconnectedState property
-  local PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
-  D:log(framework.dump(PowerDisconnectedStateProperty["PowerDisconnectedState"]), "PowerDisconnectedState")
-  assert_true(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState property is incorrectly false")
-
-  D:log("INTERFACE UNIT CONNECTED")
-  -- INTERFACE UNIT is connected to external power from now
-  helmPanel:externalPowerConnected("true")
-
-  framework.delay(EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME)
-
-  -- checking PowerDisconnectedState property
-  local PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
-  D:log(framework.dump(PowerDisconnectedStateProperty["PowerDisconnectedState"]), "PowerDisconnectedStateProperty" )
-  assert_false(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState property is incorrectly true")
-
-  gateway.setHighWaterMark() -- to get the newest messages
-  D:log("EXTERNAL POWER SOURCE OF INTERFACE UNIT DISCONNECTED")
-  -- INTERFACE UNIT is disconnected from external power from now
-  helmPanel:externalPowerConnected("false")
-
-  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
-  D:log(ReceivedMessages["AbnormalReport"])
-
-
-  if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "PowerDisconnected" ) then
-    assert_nil(1, "PowerDisconnected abnormal report sent but not expected")
-  end
-
-  framework.delay(EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME)
-
-
-end
-
---- TC checks if when InterfaceUnit is disconnected and connected to external power source for time above thresholds
-  -- PowerDisconnected AbnormalReports are not sent when sending reports is disabled
-function test_PowerDisconnected_WhenExternalPowerIsConnectedAndDisconnectedForTimeAboveThresholdButPowerDisconnectedReportsAreDisabled_PowerDisconnectedAbnormalReportIsNotSent()
-
-  local EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME = 1
-  local EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME = 1
-
-  -- *** Setup
-  -- terminal in some position but no valid fix provided
-  local InitialPosition = {
-                              speed = 0,                      -- kmh
-                              latitude = 1,                   -- degrees
-                              longitude = 1,                  -- degrees
-                              fixType = 3,                    -- valid fix
-  }
-
-  vmsSW:setPropertiesByName({
-                             PowerDisconnectedStartDebounceTime = EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME,
-                             PowerDisconnectedEndDebounceTime = EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME,
-                             PowerDisconnectedSendReport = false,
-                            }
-  )
-
-  -- *** Execute
-  GPS:set(InitialPosition)
-
-  -- checking PowerDisconnectedState property
-  local PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
-  D:log(framework.dump(PowerDisconnectedStateProperty["PowerDisconnectedState"]), "PowerDisconnectedState")
-  assert_true(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState property is incorrectly false")
-
-  D:log("EXTERNAL POWER SOURCE OF INTERFACE UNIT CONNECTED")
-  -- INTERFACE UNIT is connected to external power from now
-  helmPanel:externalPowerConnected("true")
-
-  framework.delay(EXT_POWER_DISCONNECTED_END_DEBOUNCE_TIME)
-
-  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 10)
-  D:log(ReceivedMessages["AbnormalReport"])
-
-  if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "PowerDisconnected" ) then
-    assert_nil(1, "PowerDisconnected abnormal report sent but not expected - sending reports is disabled")
-  end
-
-  -- checking PowerDisconnectedState property
-  local PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
-  D:log(framework.dump(PowerDisconnectedStateProperty["PowerDisconnectedState"]), "PowerDisconnectedStateProperty" )
-  assert_false(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState property is incorrectly true")
-
-  gateway.setHighWaterMark() -- to get the newest messages
-
-  D:log("EXTERNAL POWER SOURCE OF  INTERFACE UNIT DISCONNECTED")
-  -- INTERFACE UNIT is disconnected from external power from now
-  helmPanel:externalPowerConnected("false")
-
-  framework.delay(EXT_POWER_DISCONNECTED_START_DEBOUNCE_TIME)
-
-  local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 10)
-  D:log(ReceivedMessages["AbnormalReport"])
-
-  if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "PowerDisconnected" ) then
-    assert_nil(1, "PowerDisconnected abnormal report sent but not expected - sending reports is disabled")
-  end
-
-  -- checking PowerDisconnectedState property
-  local PowerDisconnectedStateProperty = vmsSW:getPropertiesByName({"PowerDisconnectedState"})
-  D:log(framework.dump(PowerDisconnectedStateProperty["PowerDisconnectedState"]), "PowerDisconnectedState")
-  assert_true(PowerDisconnectedStateProperty["PowerDisconnectedState"], "PowerDisconnectedState property is incorrectly false after PowerDisconnectedStartDebounceTime")
-
-
-
-end
 
 --- TC checks if when InterfaceUnit is connected to IDP terminal for time above InterfaceUnitDisconnectedEndDebounceTime HelmPannelDisconneted is sent and terminal
   -- leaves InterfaceUnitDisconnected state
