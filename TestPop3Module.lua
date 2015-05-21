@@ -14,7 +14,7 @@ smtp:setTimeout(5)
 
 module("TestPop3Module", package.seeall)
 
-USER = "pblo@pblo.com"
+USER = "pblo@skywave.com"
 PASSWD = "abcd123"
 
 function suite_setup()
