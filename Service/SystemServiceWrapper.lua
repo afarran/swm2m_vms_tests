@@ -88,6 +88,13 @@ SystemServiceWrapper = {}
     self:sendMessageByName("restartFramework")
   end
 
+  function SystemServiceWrapper:getTerminalId() 
+    self:sendMessageByName("getTerminalInfo")
+    local receivedMessages = self:waitForMessagesByName({"terminalInfo"})
+    local terminalInfo = receivedMessages.terminalInfo
+    return terminalInfo.hardwareManufacturingID
+  end
+
   function SystemServiceWrapper:getTerminalHardwareVersion(resolveHW)
 
     -- if we are not resolving variant (for example when only 690 is available)
