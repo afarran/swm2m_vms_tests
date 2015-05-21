@@ -858,7 +858,7 @@ end
   -- 3. Standard Report is sent correctly and time diff is correct.
   -- 4. GpsJammed Abnormal Report will be triggered in 20 secs.
   -- 5. Standard Report is sent correctly.
-  -- 6. Standard Report is sent correctly and time diff is correct.
+  -- 6. Standard Report is sent correctly.
 function test_GORUNInterfereWithAbnormal()
 
   -- abnormal 
@@ -2205,18 +2205,18 @@ function generic_test_StandardReportContent(configuration)
   )
   D:log("Second report "..firstReportKey.." is sent")
 
-  -- calculate time diff
-  D:log("Checking diff between timestamps of two reports")
-  local timestampEnd = reportMessage[reportKey].Timestamp
-  local timestampDiff = timestampEnd - timestampStart
-  assert_equal(
-    reportInterval*60,
-    timestampDiff,
-    5,
-    "Wrong time diff between raports"
-  )
 
   if ASSERT_POSITION then
+    -- calculate time diff
+    D:log("Checking diff between timestamps of two reports")
+    local timestampEnd = reportMessage[reportKey].Timestamp
+    local timestampDiff = timestampEnd - timestampStart
+    assert_equal(
+      reportInterval*60,
+      timestampDiff,
+      5,
+      "Wrong time diff between raports"
+    )
     D:log("Checking values from second report -  "..reportKey)
     -- check values
     assert_equal(
