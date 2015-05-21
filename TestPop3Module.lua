@@ -48,24 +48,33 @@ end
 -- Test Cases
 -------------------------
 
-function test_POP3_WhenUserNameAndPasswordIsSent_CorrectServerResponseIsReceived()
-  D:log("POP3 login test")
-  login()
-end
+function test_Login_WhenUserNameAndPasswordIsSent_CorrectServerResponseIsReceived()
 
-function test_POP3_ServerLogin()
-  D:log("POP3 login test")
-  login()
-end
---- LOGIC
-
-function login()
   D:log("Login to POP3 server")
   local result = pop3:request("USER pblo")
-  assert_not_nil(string.find(result,"+OK%s*pblo%s*accepted"),"POP3 USER command failed")
+  assert_not_nil(string.find(result,"+OK%s*pblo%s*accepted"),"POP3 USER command failed ")
   D:log("Correct user name")
+
   local result = pop3:request("PASS abcd123")
   assert_not_nil(string.find(result,"+OK%s*password%s*accepted"),"POP3 PASS command failed")
   D:log("Correct password")
 end
+
+function test_List_WhenListRequested_CorrectServerResponseIsReceived()
+  
+  D:log("Login to POP3 server")
+  local result = pop3:request("USER pblo")
+  assert_not_nil(string.find(result,"+OK%s*pblo%s*accepted"),"POP3 USER command failed ")
+  D:log("Correct user name")
+  local result = pop3:request("PASS abcd123")
+  assert_not_nil(string.find(result,"+OK%s*password%s*accepted"),"POP3 PASS command failed")
+  D:log("Correct password")
+
+  local result = pop3:request("LIST")
+  assert_not_nil(string.find(result,"+OK%s*%d*%s*messages"),"POP3 LIST command failed")
+
+end
+
+
+
 
