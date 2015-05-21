@@ -14,11 +14,6 @@ module("TestSmtpModule", package.seeall)
 local SMTPclear = {}
 
 function suite_setup()
-  vmsSW:setPropertiesByName({
-      MailSessionIdleTimeout = 1,
-      GpsInEmails = true,
-      AllowedEmailDomains = " ",
-    })
 end
 
 -- executed after each test suite
@@ -28,7 +23,12 @@ end
 
 --- setup function
 function setup()
-  --gateway.setHighWaterMark()
+  vmsSW:setPropertiesByName({
+      MailSessionIdleTimeout = 1,
+      GpsInEmails = true,
+      AllowedEmailDomains = "",
+    })
+  gateway.setHighWaterMark()
 end
 
 -----------------------------------------------------------------------------------------------
@@ -41,6 +41,8 @@ function teardown()
     end
     SMTPclear = {}
   end
+  vmsSW:setPropertiesByName({
+      AllowedEmailDomains = ""})
 end
 
 -------------------------
@@ -512,23 +514,47 @@ function test_SMTP_WhenCorrectMailToigwsatkywavecomIsSent_ServerReturns250AndEma
   vmsSW:setHighWaterMark()
   
   SMTPclear[1] = "QUIT"
-  smtp:sendMail({from = "sii@skywave.com", to = {"igws@skywave.com"}, subject="some subject", data="some data"})
+  
+  local mailInfo = {
+    from = "sii@skywave.com", 
+    to = {"sii@pl.sii.eu", "igws@skywave.com"}, 
+    subject = "some subject", 
+    data = "some data"
+  }
+  smtp:sendMail(mailInfo)
   SMTPclear = {}
   local emailMessage = vmsSW:waitForMessagesByName("Email")["Email"]
   assert_not_nil(emailMessage, "Email message not received")
   
   emailMessage:_verify({
     Timestamp =      {assert_not_nil},
-    Latitude =        {assert_not_nil},
-    Longitude =   {assert_not_nil},
-    From =  {assert_not_nil},
-    Subject =  {assert_not_nil},
+    Latitude =        {assert_equal, GPS:degrees2MiliMinutes(gpsFix.latitude), 1},
+    Longitude =   {assert_equal, GPS:degrees2MiliMinutes(gpsFix.longitude), 1},
+    From = mailInfo.from,
+    Subject =  mailInfo.subject,
     Recipients = {assert_not_nil},
-    Data = {assert_not_nil},
+    Data = mailInfo.data .. "\r\n",
   })
-  -- TODO: add verification
 end
 
-
+function test_SMTP_WhenCorrectMailToUserDifferentThanigwsatkywavecomIsSent_ServerReturns250AndEmailMessageIsNotSent()
+  local gpsFix = GPS:getRandom()
+  GPS:set(gpsFix)
+  vmsSW:setHighWaterMark()
+  
+  SMTPclear[1] = "QUIT"
+  
+  local mailInfo = {
+    from = "sii@skywave.com", 
+    to = {"sii@pl.sii.eu", "somemail@skywave.com"}, 
+    subject = "some subject", 
+    data = "some data"
+  }
+  smtp:sendMail(mailInfo)
+  SMTPclear = {}
+  local emailMessage = vmsSW:waitForMessagesByName("Email", 15)["Email"]
+  assert_nil(emailMessage, "Email message received")
+  
+end
 -- TODO: Test if HELO command issued - session should be reset (HELO/EHLO invokes RSET) - not possible to test in current implementation
 -- TODO: Test if RSET properly resets session information - not possible to test in current implementation

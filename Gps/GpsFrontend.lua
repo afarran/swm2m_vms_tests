@@ -87,6 +87,14 @@ GpsFrontend = {}
     return tonumber(value) * 60000
   end
   
+  function GpsFrontend:miliMinutes2Degrees(value)
+    return tonumber(value) / 60000
+  end
+  
+  function GpsFrontend:degrees2MiliMinutes(value)
+    return tonumber(value) * 60000
+  end
+  
   -- from km/h to knots 
   function GpsFrontend:denormalizeSpeed(value)
     return tonumber(value) * 5.39957
