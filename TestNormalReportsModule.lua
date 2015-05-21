@@ -840,6 +840,11 @@ function test_AcceleratedReport_WhenStandardReport3IntervalIsSetAboveZeroAndAcce
   )
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,interfereWithAbnormal,1)
+@method(test_StandardReport_WhenGpsJammedAbnormalReportIsSent_StandartReport1ReportsAreCorrectlySent)
+@module(TestNormalReportsModule)
+]])
 --- TC checks if Abnormal Reports do not interfere Standard Reports.
   --
   -- Steps:
@@ -859,7 +864,7 @@ end
   -- 4. GpsJammed Abnormal Report will be triggered in 20 secs.
   -- 5. Standard Report is sent correctly.
   -- 6. Standard Report is sent correctly.
-function test_GORUNInterfereWithAbnormal()
+function test_StandardReport_WhenGpsJammedAbnormalReportIsSent_StandartReport1ReportsAreCorrectlySent()
 
   -- abnormal 
   triggerGpsJammedAbnormal(20)
@@ -893,6 +898,121 @@ function test_GORUNInterfereWithAbnormal()
  
 end
 
+Annotations:register([[
+@randIn(tcRandomizer,batch,interfereWithAbnormal,2)
+@method(test_StandardReport_WhenGpsJammedAbnormalReportIsSent_StandartReport2ReportsAreCorrectlySent)
+@module(TestNormalReportsModule)
+]])
+--- TC checks if Abnormal Reports do not interfere Standard Reports.
+  --
+  -- Steps:
+  --
+  -- 1. Gps Jammed Abnormal Report conditions are set.
+  -- 2. Waiting for first Standard Report is performed.
+  -- 3. Waiting for second Standard Report is performed.
+  -- 4. Gps Jammed Abnormal Report conditions are set.
+  -- 5. Waiting for third Standard Report is performed.
+  -- 6. Waiting for fourth Standard Report is performed.
+  --
+  -- Results:
+  --
+  -- 1. GpsJammed Abnormal Report will be triggered in 20 secs.
+  -- 2. Standard Report is sent correctly.
+  -- 3. Standard Report is sent correctly and time diff is correct.
+  -- 4. GpsJammed Abnormal Report will be triggered in 20 secs.
+  -- 5. Standard Report is sent correctly.
+  -- 6. Standard Report is sent correctly.
+function test_StandardReport_WhenGpsJammedAbnormalReportIsSent_StandartReport2ReportsAreCorrectlySent()
+
+  -- abnormal 
+  triggerGpsJammedAbnormal(20)
+  D:log("GpsJammed Abnormal Report will be sent in 20 secs")
+
+  -- Checking of the positions values should be turn off
+  ASSERT_POSITION = false
+
+  -- standard report
+  generic_test_StandardReportContent({
+    firstReportKey = "StandardReport2",
+    reportKey = "StandardReport2",
+    properties = {StandardReport2Interval=1, AcceleratedReport2Rate=1}, -- minute , divide
+    firstReportInterval = 1, -- minute
+    reportInterval = 1 -- minute
+  })
+
+  -- abnormal 
+  GPS:set({fixType=3})
+  triggerGpsJammedAbnormal(20)
+  D:log("GpsJammed Abnormal Report will be sent in 20 secs")
+
+  -- standard report
+  generic_test_StandardReportContent({
+    firstReportKey = "StandardReport2",
+    reportKey = "StandardReport2",
+    properties = {StandardReport2Interval=1, AcceleratedReport2Rate=1}, -- minute , divide
+    firstReportInterval = 1, -- minute
+    reportInterval = 1 -- minute
+  })
+ 
+end
+
+Annotations:register([[
+@randIn(tcRandomizer,batch,interfereWithAbnormal,3)
+@method(test_StandardReport_WhenGpsJammedAbnormalReportIsSent_StandartReport3ReportsAreCorrectlySent)
+@module(TestNormalReportsModule)
+]])
+--- TC checks if Abnormal Reports do not interfere Standard Reports.
+  --
+  -- Steps:
+  --
+  -- 1. Gps Jammed Abnormal Report conditions are set.
+  -- 2. Waiting for first Standard Report is performed.
+  -- 3. Waiting for second Standard Report is performed.
+  -- 4. Gps Jammed Abnormal Report conditions are set.
+  -- 5. Waiting for third Standard Report is performed.
+  -- 6. Waiting for fourth Standard Report is performed.
+  --
+  -- Results:
+  --
+  -- 1. GpsJammed Abnormal Report will be triggered in 20 secs.
+  -- 2. Standard Report is sent correctly.
+  -- 3. Standard Report is sent correctly and time diff is correct.
+  -- 4. GpsJammed Abnormal Report will be triggered in 20 secs.
+  -- 5. Standard Report is sent correctly.
+  -- 6. Standard Report is sent correctly.
+function test_StandardReport_WhenGpsJammedAbnormalReportIsSent_StandartReport3ReportsAreCorrectlySent()
+
+  -- abnormal 
+  triggerGpsJammedAbnormal(20)
+  D:log("GpsJammed Abnormal Report will be sent in 20 secs")
+
+  -- Checking of the positions values should be turn off
+  ASSERT_POSITION = false
+
+  -- standard report
+  generic_test_StandardReportContent({
+    firstReportKey = "StandardReport3",
+    reportKey = "StandardReport3",
+    properties = {StandardReport3Interval=1, AcceleratedReport3Rate=1}, -- minute , divide
+    firstReportInterval = 1, -- minute
+    reportInterval = 1 -- minute
+  })
+
+  -- abnormal 
+  GPS:set({fixType=3})
+  triggerGpsJammedAbnormal(20)
+  D:log("GpsJammed Abnormal Report will be sent in 20 secs")
+
+  -- standard report
+  generic_test_StandardReportContent({
+    firstReportKey = "StandardReport3",
+    reportKey = "StandardReport3",
+    properties = {StandardReport3Interval=1, AcceleratedReport3Rate=1}, -- minute , divide
+    firstReportInterval = 1, -- minute
+    reportInterval = 1 -- minute
+  })
+ 
+end
 -----------------------------------------------------------------------------------------------
 -- Test Cases for CONFIG CHANGE REPORTS
 -----------------------------------------------------------------------------------------------
