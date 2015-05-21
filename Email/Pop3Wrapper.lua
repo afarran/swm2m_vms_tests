@@ -13,9 +13,10 @@ Pop3Wrapper = {}
     end,})
 
   function Pop3Wrapper:start()
+    D:log("Starting pop3 ...")
     local response = self:request("")
     if not string.match(response, ".*mail>") then
       self:request("mail")
     end
-    self:execute("pop3")
+    self:request("pop3")
   end

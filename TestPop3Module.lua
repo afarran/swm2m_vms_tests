@@ -13,6 +13,10 @@ module("TestPop3Module", package.seeall)
 
 
 function suite_setup()
+
+  -- needs some time to start shell
+  --framework.delay(15)
+
   vmsSW:setPropertiesByName({
       MailSessionIdleTimeout = 1,
       GpsInEmails = true,
@@ -22,30 +26,32 @@ end
 
 -- executed after each test suite
 function suite_teardown()
-
 end
 
 --- setup function
 function setup()
   --gateway.setHighWaterMark()
+  pop3:start()
+  if not pop3:ready() then
+    skip("Pop3 is not ready - serial port not opened (".. serialMain.name .. ")")
+  end
+  assert_true(pop3:ready(), "Pop3 is not ready - serial port not opened")
+end
+
+function teardown()
+  pop3:request("quit")
 end
 
 -----------------------------------------------------------------------------------------------
---- teardown function executed after each unit test
-function teardown()
-end
 
 -------------------------
 -- Test Cases
 -------------------------
 
-function test_POP3_ServerReady()
-  if not pop3:ready() then
-    skip("Pop3 is not ready - serial port not opened (".. serialMain.name .. ")")
-  end
-  assert_true(pop3:ready(), "Pop3 is not ready - serial port not opened")
-  pop3:start()
-  local result = pop3:execute("")
-  D:log(result)
+function test_POP3_ServerLogin()
+  local result = pop3:request("USER pblo")
+  assert_not_nil(string.find(result,"+OK%s*pblo%s*accepted"),"POP3 USER command failed")
+  local result = pop3:request("PASS abcd123")
+  assert_not_nil(string.find(result,"+OK%s*password%s*accepted"),"POP3 PASS command failed")
 end
 
