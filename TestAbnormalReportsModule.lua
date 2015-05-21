@@ -1247,7 +1247,7 @@ function test_GpsBlocked_WhenGpsSignalIsBlockedAndBlockedStartDebounceTimeHasNot
 end
 
 --- This TC checks if terminal has never obtained valid fix default values of GPS information fields are sent in reports
-  -- Scenario: params.dat file is deleted, position service is restarted and standard reports are triggered
+  -- Scenario: gps.dat file is deleted, position service is restarted and standard reports are triggered
 function test_GpsBlocked_WhenGpsSignalIsBlockedAndNoFixWasObtainedByTerminal_DefaultValuesOfLattitudeAndLongitudeAreSentInReports()
 
   -- *** Setup
@@ -1263,7 +1263,7 @@ function test_GpsBlocked_WhenGpsSignalIsBlockedAndNoFixWasObtainedByTerminal_Def
   -- GPS signal is blocked from now - no fix provided
   GPS:set(GpsBlockedPosition)
   ----------------------------------------------------------------------------------------
-  -- params.dat file should be deleted - no gps information should be there
+  -- gps.dat file should be deleted - no gps information should be there
   ----------------------------------------------------------------------------------------
 
   local deleteParamsFileMessage = {SIN = 26, MIN = 1}
@@ -1983,9 +1983,10 @@ test_PowerDisconnected_WhenTerminalIsPoweCycled_TwoPowerDisconnectedAbnormalRepo
 
   -- terminal stationary
   local InitialPosition = {
-    speed = 0,                      -- kmh
+    speed = 11,                     -- kmh
     latitude = 1,                   -- degrees
     longitude = 1,                  -- degrees
+    heading = 55,                   -- degrees
   }
 
   -- terminal stationary
@@ -2122,13 +2123,13 @@ test_PowerDisconnected_WhenTerminalIsPoweCycled_TwoPowerDisconnectedAbnormalRepo
   )
 
   assert_equal(
-    InitialPosition.speed,
+    InitialPosition.speed*5.39956803,
     tonumber(PowerDisconnectedAbnormalReportTrue.Payload.Speed),
     "Wrong speed value in PowerDisconnected abnormal report send after restart"
   )
 
   assert_equal(
-    361,
+    InitialPosition.heading,
     tonumber(PowerDisconnectedAbnormalReportTrue.Payload.Course),
     "Wrong course value in PowerDisconnected abnormal report send after restart"
   )
@@ -2157,6 +2158,7 @@ test_PowerDisconnected_WhenTerminalIsPoweCycled_TwoPowerDisconnectedAbnormalRepo
 end
 
 
+
 function test_PowerDisconnected_WhenTerminalIsPoweCycledAndFixIsNotObtainedForMaxFixTimeoutPeriod_TwoPowerDisconnectedAbnormalReportsAreSentContainingLastSavedPositionInformation()
 
   -- *** Setup
@@ -2177,7 +2179,7 @@ function test_PowerDisconnected_WhenTerminalIsPoweCycledAndFixIsNotObtainedForMa
     latitude = 5,                   -- degrees
     longitude = 5,                  -- degrees
     heading = 90,                   -- degrees
-    fixType = 1,                    -- no fix - GPS BLOCKED
+    fixType = 3,                    -- no fix - GPS BLOCKED
   }
 
 
@@ -2308,7 +2310,7 @@ function test_PowerDisconnected_WhenTerminalIsPoweCycledAndFixIsNotObtainedForMa
   )
 
   assert_equal(
-    InitialPosition.speed,
+    InitialPosition.speed*5.39956803,
     tonumber(PowerDisconnectedAbnormalReportTrue.Payload.Speed),
     "Wrong speed value in PowerDisconnected abnormal report send after restart"
   )
