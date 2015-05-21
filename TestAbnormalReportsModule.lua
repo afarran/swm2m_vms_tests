@@ -3444,15 +3444,15 @@ function test_MultipleAbnormalReportsEnabled_When3AbnormalReportsAreTriggered_3A
                                InterfaceUnitDisconnectedSendReport = true,
                             }
   )
+  -- INTERFACE UNIT disconnected from terminal
+  InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = false})
+
 
   gateway.setHighWaterMark() -- to get the newest messages
   GPS:set({jammingDetect = true, fixType = 3})
-
-  -- External power source disconnected from INTERFACE UNIT
-  helmPanel:externalPowerConnected("true")
-
   -- INTERFACE UNIT disconnected from terminal
-  InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = true})
+  InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = false})
+ 
 
   framework.delay(35)
 
@@ -3467,7 +3467,7 @@ function test_MultipleAbnormalReportsEnabled_When3AbnormalReportsAreTriggered_3A
     namesOfAbnormalReports[#namesOfAbnormalReports+1] = AllReceivedAbnormalReports[index].Payload.EventType
   end
 
-  local expectedAbnormalReports = {"PowerDisconnected", "GpsJammed","InterfaceUnitDisconnected"}
+  local expectedAbnormalReports = {"GpsJammed","InterfaceUnitDisconnected"}
 
   D:log(expectedAbnormalReports)
   D:log(namesOfAbnormalReports)
