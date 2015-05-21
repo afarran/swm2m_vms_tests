@@ -14,7 +14,11 @@ module("TestSmtpModule", package.seeall)
 local SMTPclear = {}
 
 function suite_setup()
-
+  vmsSW:setPropertiesByName({
+      MailSessionIdleTimeout = 1,
+      GpsInEmails = true,
+      AllowedEmailDomains = " ",
+    })
 end
 
 -- executed after each test suite
@@ -500,6 +504,32 @@ function test_SMTP_WhenTextIsSentWithoutCRLF_421ConnectionTimeoutIsSentAfterTime
   D:log(response)
   assert_match("^421.*\r\n", response, "A command not ended with CRLF was executed after timeout instead of 421 Connection timeout message sent in response")
 
+end
+
+function test_SMTP_WhenCorrectMailToigwsatkywavecomIsSent_ServerReturns250AndEmailMessageIsSent()
+  local gpsFix = GPS:getRandom()
+  GPS:set(gpsFix)
+  vmsSW:setHighWaterMark()
+  startSmtp()
+  smtp:execute("HELO")
+  local response = smtp:getResponse()
+  smtp:execute("MAIL FROM:<skywave@skywave.com>")
+  response = smtp:getResponse()
+  smtp:execute("RCPT TO:<igws@skywave.com>")
+  response = smtp:getResponse()
+  smtp:execute("DATA")
+  response = smtp:getResponse()
+  assert_match("^354.*\r\n", response, "DATA command response is incorrect")
+
+  smtp:execute("Some special message data")
+
+  smtp:execute("\r\n.", "\r\n")
+  response = smtp:getResponse()
+  assert_match("^250.*\r\n", response, "DATA command end response is incorrect")
+  local email = vmsSW:waitForMessagesByName("Email")["Email"]
+  assert_not_nil(email, "Email message not received")
+  -- TODO: add verification
+  -- TODO: report houskeeping bug
 end
 
 

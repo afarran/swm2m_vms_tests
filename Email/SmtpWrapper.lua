@@ -1,58 +1,21 @@
 cfg, framework, gateway, lsf, device, gps = require "TestFramework"()
 
+require("Serial/ShellWrapper")
+
 SmtpWrapper = {}
   SmtpWrapper.__index = SmtpWrapper
   setmetatable(SmtpWrapper, {
+    __index = ShellWrapper, -- this is what makes the inheritance work
     __call = function(cls, ...)
       local self = setmetatable({}, cls)
       self:_init(...)
       return self
     end,})
 
-  function SmtpWrapper:_init(serialPort)
-    self.port = serialPort
-    self.timeout = 60 -- default SMTP timeout
-  end
-
-  function SmtpWrapper:execute(command, newline)
-    self.port:writeLine(command, newline)
-  end
-  
-  function SmtpWrapper:request(command, newline, timeout, delay)
-    self:execute(command, newline)
-    return self:getResponse(timeout, delay)
-  end
-  
   function SmtpWrapper:start()
     local response = self:request("")
     if not string.match(response, ".*mail>") then
       self:request("mail")
-    else
-      self:execute("smtp")
     end
-  end
-  
-  function SmtpWrapper:ready()
-    return self.port:opened()
-  end
-  
-  function SmtpWrapper:getResponse(timeout, delay)
-    local timeout = timeout or self.timeout
-    local delay = delay or 0.2
-    local startTime = os.time()
-    local startAvailable = self.port:available()
-    while (os.time() - startTime < timeout) do
-    
-      local currentAvailable = self.port:available()
-      if (currentAvailable > 0) and (currentAvailable == startAvailable) then
-        return self.port:read(), os.time() - startTime
-      end
-      startAvailable = currentAvailable
-      framework.delay(delay)
-    end
-    return "", os.time() - startTime
-  end
-  
-  function SmtpWrapper:setTimeout(timeout)
-    self.timeout = timeout
+    self:execute("smtp")
   end

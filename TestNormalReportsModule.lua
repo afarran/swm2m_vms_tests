@@ -11,7 +11,10 @@ module("TestNormalReportsModule", package.seeall)
 -- 1 turns debug output ON 
 -- 0 turns debug output OFF
 -- For more info see: Debugger.lua
-DEBUG_MODE = 1 
+DEBUG_MODE = 1
+
+-- turn on/off asserting of gps position in TCs 
+ASSERT_POSITION = true
 
 -----------------------------------------------------------------------------------------------
 -- SETUP
@@ -60,6 +63,8 @@ function teardown()
       -- ... and debounce time in seconds
       PropertyChangeDebounceTime=1 
   })
+  GPS:set({fixType=3})
+  ASSERT_POSITION = true
 
 end
 -----------------------------------------------------------------------------------------------
@@ -646,7 +651,7 @@ Annotations:register([[
   -- 7. Difference between reports is correct.
   -- 8. Values in report are correct.
 
-function test_AcceleretedReport_GORUNWhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport1IsSentAccordingToSetIntervalWithCorrectValues()
+function test_AcceleretedReport_WhenStandardReportIntervalAndAcceleratedReportIntervalIsSet_AcceleratedReport1IsSentAccordingToSetIntervalWithCorrectValues()
   generic_test_StandardReportContent({
     firstReportKey = "StandardReport1",
     reportKey = "AcceleratedReport1",
@@ -835,8 +840,179 @@ function test_AcceleratedReport_WhenStandardReport3IntervalIsSetAboveZeroAndAcce
   )
 end
 
---TODO: TC for interfering with abnormal reports
+Annotations:register([[
+@randIn(tcRandomizer,batch,interfereWithAbnormal,1)
+@method(test_StandardReport_WhenGpsJammedAbnormalReportIsSent_StandartReport1ReportsAreCorrectlySent)
+@module(TestNormalReportsModule)
+]])
+--- TC checks if Abnormal Reports do not interfere Standard Reports.
+  --
+  -- Steps:
+  --
+  -- 1. Gps Jammed Abnormal Report conditions are set.
+  -- 2. Waiting for first Standard Report is performed.
+  -- 3. Waiting for second Standard Report is performed.
+  -- 4. Gps Jammed Abnormal Report conditions are set.
+  -- 5. Waiting for third Standard Report is performed.
+  -- 6. Waiting for fourth Standard Report is performed.
+  --
+  -- Results:
+  --
+  -- 1. GpsJammed Abnormal Report will be triggered in 20 secs.
+  -- 2. Standard Report is sent correctly.
+  -- 3. Standard Report is sent correctly and time diff is correct.
+  -- 4. GpsJammed Abnormal Report will be triggered in 20 secs.
+  -- 5. Standard Report is sent correctly.
+  -- 6. Standard Report is sent correctly.
+function test_StandardReport_WhenGpsJammedAbnormalReportIsSent_StandartReport1ReportsAreCorrectlySent()
 
+  -- abnormal 
+  triggerGpsJammedAbnormal(20)
+  D:log("GpsJammed Abnormal Report will be sent in 20 secs")
+
+  -- Checking of the positions values should be turn off
+  ASSERT_POSITION = false
+
+  -- standard report
+  generic_test_StandardReportContent({
+    firstReportKey = "StandardReport1",
+    reportKey = "StandardReport1",
+    properties = {StandardReport1Interval=1, AcceleratedReport1Rate=1}, -- minute , divide
+    firstReportInterval = 1, -- minute
+    reportInterval = 1 -- minute
+  })
+
+  -- abnormal 
+  GPS:set({fixType=3})
+  triggerGpsJammedAbnormal(20)
+  D:log("GpsJammed Abnormal Report will be sent in 20 secs")
+
+  -- standard report
+  generic_test_StandardReportContent({
+    firstReportKey = "StandardReport1",
+    reportKey = "StandardReport1",
+    properties = {StandardReport1Interval=1, AcceleratedReport1Rate=1}, -- minute , divide
+    firstReportInterval = 1, -- minute
+    reportInterval = 1 -- minute
+  })
+ 
+end
+
+Annotations:register([[
+@randIn(tcRandomizer,batch,interfereWithAbnormal,2)
+@method(test_StandardReport_WhenGpsJammedAbnormalReportIsSent_StandartReport2ReportsAreCorrectlySent)
+@module(TestNormalReportsModule)
+]])
+--- TC checks if Abnormal Reports do not interfere Standard Reports.
+  --
+  -- Steps:
+  --
+  -- 1. Gps Jammed Abnormal Report conditions are set.
+  -- 2. Waiting for first Standard Report is performed.
+  -- 3. Waiting for second Standard Report is performed.
+  -- 4. Gps Jammed Abnormal Report conditions are set.
+  -- 5. Waiting for third Standard Report is performed.
+  -- 6. Waiting for fourth Standard Report is performed.
+  --
+  -- Results:
+  --
+  -- 1. GpsJammed Abnormal Report will be triggered in 20 secs.
+  -- 2. Standard Report is sent correctly.
+  -- 3. Standard Report is sent correctly and time diff is correct.
+  -- 4. GpsJammed Abnormal Report will be triggered in 20 secs.
+  -- 5. Standard Report is sent correctly.
+  -- 6. Standard Report is sent correctly.
+function test_StandardReport_WhenGpsJammedAbnormalReportIsSent_StandartReport2ReportsAreCorrectlySent()
+
+  -- abnormal 
+  triggerGpsJammedAbnormal(20)
+  D:log("GpsJammed Abnormal Report will be sent in 20 secs")
+
+  -- Checking of the positions values should be turn off
+  ASSERT_POSITION = false
+
+  -- standard report
+  generic_test_StandardReportContent({
+    firstReportKey = "StandardReport2",
+    reportKey = "StandardReport2",
+    properties = {StandardReport2Interval=1, AcceleratedReport2Rate=1}, -- minute , divide
+    firstReportInterval = 1, -- minute
+    reportInterval = 1 -- minute
+  })
+
+  -- abnormal 
+  GPS:set({fixType=3})
+  triggerGpsJammedAbnormal(20)
+  D:log("GpsJammed Abnormal Report will be sent in 20 secs")
+
+  -- standard report
+  generic_test_StandardReportContent({
+    firstReportKey = "StandardReport2",
+    reportKey = "StandardReport2",
+    properties = {StandardReport2Interval=1, AcceleratedReport2Rate=1}, -- minute , divide
+    firstReportInterval = 1, -- minute
+    reportInterval = 1 -- minute
+  })
+ 
+end
+
+Annotations:register([[
+@randIn(tcRandomizer,batch,interfereWithAbnormal,3)
+@method(test_StandardReport_WhenGpsJammedAbnormalReportIsSent_StandartReport3ReportsAreCorrectlySent)
+@module(TestNormalReportsModule)
+]])
+--- TC checks if Abnormal Reports do not interfere Standard Reports.
+  --
+  -- Steps:
+  --
+  -- 1. Gps Jammed Abnormal Report conditions are set.
+  -- 2. Waiting for first Standard Report is performed.
+  -- 3. Waiting for second Standard Report is performed.
+  -- 4. Gps Jammed Abnormal Report conditions are set.
+  -- 5. Waiting for third Standard Report is performed.
+  -- 6. Waiting for fourth Standard Report is performed.
+  --
+  -- Results:
+  --
+  -- 1. GpsJammed Abnormal Report will be triggered in 20 secs.
+  -- 2. Standard Report is sent correctly.
+  -- 3. Standard Report is sent correctly and time diff is correct.
+  -- 4. GpsJammed Abnormal Report will be triggered in 20 secs.
+  -- 5. Standard Report is sent correctly.
+  -- 6. Standard Report is sent correctly.
+function test_StandardReport_WhenGpsJammedAbnormalReportIsSent_StandartReport3ReportsAreCorrectlySent()
+
+  -- abnormal 
+  triggerGpsJammedAbnormal(20)
+  D:log("GpsJammed Abnormal Report will be sent in 20 secs")
+
+  -- Checking of the positions values should be turn off
+  ASSERT_POSITION = false
+
+  -- standard report
+  generic_test_StandardReportContent({
+    firstReportKey = "StandardReport3",
+    reportKey = "StandardReport3",
+    properties = {StandardReport3Interval=1, AcceleratedReport3Rate=1}, -- minute , divide
+    firstReportInterval = 1, -- minute
+    reportInterval = 1 -- minute
+  })
+
+  -- abnormal 
+  GPS:set({fixType=3})
+  triggerGpsJammedAbnormal(20)
+  D:log("GpsJammed Abnormal Report will be sent in 20 secs")
+
+  -- standard report
+  generic_test_StandardReportContent({
+    firstReportKey = "StandardReport3",
+    reportKey = "StandardReport3",
+    properties = {StandardReport3Interval=1, AcceleratedReport3Rate=1}, -- minute , divide
+    firstReportInterval = 1, -- minute
+    reportInterval = 1 -- minute
+  })
+ 
+end
 -----------------------------------------------------------------------------------------------
 -- Test Cases for CONFIG CHANGE REPORTS
 -----------------------------------------------------------------------------------------------
@@ -2093,29 +2269,31 @@ function generic_test_StandardReportContent(configuration)
   D:log("First report "..firstReportKey.." is sent")
 
   -- check values from first report
-  D:log("Checking values from first report -  "..firstReportKey)
-  assert_equal(
-    GPS:denormalize(newPosition.latitude),
-    tonumber(preReportMessage[firstReportKey].Latitude),
-    "Wrong latitude in " .. firstReportKey
-  )
-  assert_equal(
-    GPS:denormalize(newPosition.longitude),
-    tonumber(preReportMessage[firstReportKey].Longitude),
-    "Wrong longitude in " .. firstReportKey
-  )
-  assert_equal(
-    GPS:denormalizeSpeed(newPosition.speed),
-    tonumber(preReportMessage[firstReportKey].Speed),
-    1,
-    "Wrong speed in " .. firstReportKey
-  )
-  assert_equal(
-    1,
-    tonumber(preReportMessage[firstReportKey].Course),
-    0,
-    "Wrong course in report " .. firstReportKey
-  )
+  if ASSERT_POSITION then
+    D:log("Checking values from first report -  "..firstReportKey)
+    assert_equal(
+      GPS:denormalize(newPosition.latitude),
+      tonumber(preReportMessage[firstReportKey].Latitude),
+      "Wrong latitude in " .. firstReportKey
+    )
+    assert_equal(
+      GPS:denormalize(newPosition.longitude),
+      tonumber(preReportMessage[firstReportKey].Longitude),
+      "Wrong longitude in " .. firstReportKey
+    )
+    assert_equal(
+      GPS:denormalizeSpeed(newPosition.speed),
+      tonumber(preReportMessage[firstReportKey].Speed),
+      1,
+      "Wrong speed in " .. firstReportKey
+    )
+    assert_equal(
+      1,
+      tonumber(preReportMessage[firstReportKey].Course),
+      0,
+      "Wrong course in report " .. firstReportKey
+    )
+  end
 
   -- saving timestamp for diff calculations
   local timestampStart = preReportMessage[firstReportKey].Timestamp
@@ -2147,41 +2325,43 @@ function generic_test_StandardReportContent(configuration)
   )
   D:log("Second report "..firstReportKey.." is sent")
 
-  -- calculate time diff
-  D:log("Checking diff between timestamps of two reports")
-  local timestampEnd = reportMessage[reportKey].Timestamp
-  local timestampDiff = timestampEnd - timestampStart
-  assert_equal(
-    reportInterval*60,
-    timestampDiff,
-    5,
-    "Wrong time diff between raports"
-  )
 
-  D:log("Checking values from second report -  "..reportKey)
-  -- check values
-  assert_equal(
-    GPS:denormalize(newPosition.latitude),
-    tonumber(reportMessage[reportKey].Latitude),
-    "Wrong latitude in " .. reportKey
-  )
-  assert_equal(
-    GPS:denormalize(newPosition.longitude),
-    tonumber(reportMessage[reportKey].Longitude),
-    "Wrong longitude in " .. reportKey
-  )
-  assert_equal(
-    GPS:denormalizeSpeed(newPosition.speed),
-    tonumber(reportMessage[reportKey].Speed),
-    1,
-    "Wrong speed in " .. reportKey
-  )
-  assert_equal(
-    2,
-    tonumber(reportMessage[reportKey].Course),
-    0,
-    "Wrong course in report " .. reportKey
-  )
+  if ASSERT_POSITION then
+    -- calculate time diff
+    D:log("Checking diff between timestamps of two reports")
+    local timestampEnd = reportMessage[reportKey].Timestamp
+    local timestampDiff = timestampEnd - timestampStart
+    assert_equal(
+      reportInterval*60,
+      timestampDiff,
+      5,
+      "Wrong time diff between raports"
+    )
+    D:log("Checking values from second report -  "..reportKey)
+    -- check values
+    assert_equal(
+      GPS:denormalize(newPosition.latitude),
+      tonumber(reportMessage[reportKey].Latitude),
+      "Wrong latitude in " .. reportKey
+    )
+    assert_equal(
+      GPS:denormalize(newPosition.longitude),
+      tonumber(reportMessage[reportKey].Longitude),
+      "Wrong longitude in " .. reportKey
+    )
+    assert_equal(
+      GPS:denormalizeSpeed(newPosition.speed),
+      tonumber(reportMessage[reportKey].Speed),
+      1,
+      "Wrong speed in " .. reportKey
+    )
+    assert_equal(
+      2,
+      tonumber(reportMessage[reportKey].Course),
+      0,
+      "Wrong course in report " .. reportKey
+    )
+  end
 
   -- some of values are being checked just for their existance
   -- TODO_not_implemented: add checking values of following fields when test framework functions will be implemented
@@ -2756,4 +2936,17 @@ function generic_test_PollRequest(pollRequestMsgKey, pollResponseMsgKey)
 
 end
 
+--- Helper function for sending abnormal reports.
+function triggerGpsJammedAbnormal(startTime)
+  local GPS_JAMMED_START_DEBOUNCE_TIME = startTime  -- seconds
+  local GPS_JAMMED_END_DEBOUNCE_TIME = 1     -- seconds
+
+  vmsSW:setPropertiesByName({ 
+    GpsJammedStartDebounceTime = GPS_JAMMED_START_DEBOUNCE_TIME,
+    GpsJammedEndDebounceTime = GPS_JAMMED_END_DEBOUNCE_TIME,
+    GpsJammedSendReport = true,
+  })
+
+  GPS:set({fixType=1})
+end
 
