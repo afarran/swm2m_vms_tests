@@ -510,26 +510,23 @@ function test_SMTP_WhenCorrectMailToigwsatkywavecomIsSent_ServerReturns250AndEma
   local gpsFix = GPS:getRandom()
   GPS:set(gpsFix)
   vmsSW:setHighWaterMark()
-  startSmtp()
-  smtp:execute("HELO")
-  local response = smtp:getResponse()
-  smtp:execute("MAIL FROM:<skywave@skywave.com>")
-  response = smtp:getResponse()
-  smtp:execute("RCPT TO:<igws@skywave.com>")
-  response = smtp:getResponse()
-  smtp:execute("DATA")
-  response = smtp:getResponse()
-  assert_match("^354.*\r\n", response, "DATA command response is incorrect")
-
-  smtp:execute("Some special message data")
-
-  smtp:execute("\r\n.", "\r\n")
-  response = smtp:getResponse()
-  assert_match("^250.*\r\n", response, "DATA command end response is incorrect")
-  local email = vmsSW:waitForMessagesByName("Email")["Email"]
-  assert_not_nil(email, "Email message not received")
+  
+  SMTPclear[1] = "QUIT"
+  smtp:sendMail({from = "sii@skywave.com", to = {"igws@skywave.com"}, subject="some subject", data="some data"})
+  SMTPclear = {}
+  local emailMessage = vmsSW:waitForMessagesByName("Email")["Email"]
+  assert_not_nil(emailMessage, "Email message not received")
+  
+  emailMessage:_verify({
+    Timestamp =      {assert_not_nil},
+    Latitude =        {assert_not_nil},
+    Longitude =   {assert_not_nil},
+    From =  {assert_not_nil},
+    Subject =  {assert_not_nil},
+    Recipients = {assert_not_nil},
+    Data = {assert_not_nil},
+  })
   -- TODO: add verification
-  -- TODO: report houskeeping bug
 end
 
 
