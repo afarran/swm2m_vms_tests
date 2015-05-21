@@ -54,7 +54,7 @@ VmsServiceWrapper = {}
       { pin=102, name="ShellTimeout", ptype="unsignedint"},
       { pin=103, name="MailSessionIdleTimeout", ptype="unsignedint"},
       { pin=104, name="GpsInEmails", ptype="boolean"},
-      { pin=105, name="AllowedEmailDomains", ptype="boolean"}
+      { pin=105, name="AllowedEmailDomains", ptype="string"}
     }
     
     local messages_from = {
