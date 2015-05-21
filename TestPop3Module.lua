@@ -83,6 +83,22 @@ function test_List_WhenListRequested_CorrectServerResponseIsReceived()
 end
 
 function test_GORUNRetrive_WhenMailIsSentViaSmtp_ItIsPossibleToRetriveItViaPop3()
+  
+  -- login 
+  D:log("Login to POP3 server")
+  local result = pop3:request("USER "..USER)
+  assert_not_nil(string.find(result,"+OK%s*"..USER.."%s*accepted"),"POP3 USER command failed ")
+  D:log("Correct user name")
+  local result = pop3:request("PASS "..PASSWD)
+  assert_not_nil(string.find(result,"+OK%s*password%s*accepted"),"POP3 PASS command failed")
+  D:log("Correct password")
+  
+  -- checking messages number before sending email
+  local result = pop3:request("LIST")
+  assert_not_nil(string.find(result,"+OK%s*%d*%s*messages"),"POP3 LIST command failed")
+  local messagesNoBefore = string.match(result,"+OK%s*(%d*)%s*messages")
+  assert_not_nil(messagesNoBefore, "Wrong messages number.")
+  D:log("Messages no before sendin email: "..messagesNoBefore)
 
   D:log("Sending test email message")
   pop3:request("quit")
@@ -113,6 +129,7 @@ function test_GORUNRetrive_WhenMailIsSentViaSmtp_ItIsPossibleToRetriveItViaPop3(
   assert_not_nil(messagesNo, "Wrong messages number.")
   D:log("Messages no: "..messagesNo)
   assert_gt(0,tonumber(messagesNo), "Wrong messages number.")
+  assert_equal(1,tonumber(messagesNo) - tonumber(messagesNoBefore),"Wrong messages diff.")
   
   -- retrieve message
 
