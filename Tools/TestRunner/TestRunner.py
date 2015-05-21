@@ -62,8 +62,8 @@ class ModemSimulator():
 			"GpsURL" : "http://localhost:" + port + "/GpsWebService",
 			"DeviceURL" : "http://localhost:" + port + "/DeviceWebService",
 			"TerminalName" : "IDP680-VMS-" + instance,
-			"ModemLogFile" : os.path.join(self.env, "_run", "test_" + instance + ".log"),
-			"ModemLogTimestamp" : "true"
+			#"ModemLogFile" : os.path.join(self.env, "_run", "test_" + instance + ".log"),
+			#"ModemLogTimestamp" : "true"
 		}
 		self.update_options(new_options)
 		if self.com_port:
