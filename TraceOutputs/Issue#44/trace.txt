@@ -1,0 +1,490 @@
+[ 12:26:35.384 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:26:35.384 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:26:35.391 ] [27:INFO] res: \r\n%GPS: $GPGGA,122635.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*38\r\n$GPRMC,122635.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*6D\r\n\r\nOK\r\n
+[ 12:26:36.196 ] [27:INFO] cmd: AT%EVNT=3,1*BC22
+[ 12:26:36.201 ] [27:INFO] res: \r\n%EVNT: 24,16777215,0,453903995,3,1,4,89590,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,257,0,0,0,0\r\n\r\nOK\r\n
+[ 12:26:37.393 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:26:37.396 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:26:37.396 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:26:37.403 ] [27:INFO] res: \r\n%GPS: $GPGGA,122637.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*3A\r\n$GPRMC,122637.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*6F\r\n\r\nOK\r\n
+[ 12:26:39.405 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:26:39.409 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:26:39.409 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:26:39.420 ] [27:INFO] res: \r\n%GPS: $GPGGA,122639.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*34\r\n$GPRMC,122639.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*61\r\n\r\nOK\r\n
+[ 12:26:41.418 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:26:41.424 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:26:41.424 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:26:41.430 ] [27:INFO] res: \r\n%GPS: $GPGGA,122641.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*3B\r\n$GPRMC,122641.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*6E\r\n\r\nOK\r\n
+[ 12:26:42.933 ] [27:INFO] cmd: AT%EVNT=3,1*BC22
+[ 12:26:42.939 ] [27:INFO] res: \r\n%EVNT: 24,16777215,0,453904000,3,1,4,89600,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,257,0,0,0,0\r\n\r\nOK\r\n
+[ 12:26:42.940 ] [27:INFO] cmd: AT%EVNT=3,1*BC22
+[ 12:26:42.948 ] [27:INFO] res: \r\n%EVNT: 24,16777215,0,453904000,3,1,4,89600,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,257,0,0,0,0\r\n\r\nOK\r\n
+[ 12:26:43.429 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:26:43.434 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:26:43.435 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:26:43.440 ] [27:INFO] res: \r\n%GPS: $GPGGA,122643.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*39\r\n$GPRMC,122643.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*6C\r\n\r\nOK\r\n
+[ 12:26:45.444 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:26:45.448 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:26:45.449 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:26:45.456 ] [27:INFO] res: \r\n%GPS: $GPGGA,122645.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*3F\r\n$GPRMC,122645.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*6A\r\n\r\nOK\r\n
+[ 12:26:47.454 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:26:47.458 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:26:47.459 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:26:47.464 ] [27:INFO] res: \r\n%GPS: $GPGGA,122647.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*3D\r\n$GPRMC,122647.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*68\r\n\r\nOK\r\n
+[ 12:26:49.467 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:26:49.472 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:26:49.473 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:26:49.479 ] [27:INFO] res: \r\n%GPS: $GPGGA,122649.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*33\r\n$GPRMC,122649.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*66\r\n\r\nOK\r\n
+[ 12:26:51.480 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:26:51.482 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:26:51.483 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:26:51.488 ] [27:INFO] res: \r\n%GPS: $GPGGA,122651.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*3A\r\n$GPRMC,122651.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*6F\r\n\r\nOK\r\n
+[ 12:26:52.895 ] [27:INFO] cmd: AT%EVNT=3,1*BC22
+[ 12:26:52.900 ] [27:INFO] res: \r\n%EVNT: 24,16777215,0,453904010,3,1,4,89620,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,257,0,0,0,0\r\n\r\nOK\r\n
+[ 12:26:52.901 ] [27:INFO] cmd: AT%EVNT=3,1*BC22
+[ 12:26:52.907 ] [27:INFO] res: \r\n%EVNT: 24,16777215,0,453904010,3,1,4,89620,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,257,0,0,0,0\r\n\r\nOK\r\n
+[ 12:26:53.494 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:26:53.500 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:26:53.501 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:26:53.507 ] [27:INFO] res: \r\n%GPS: $GPGGA,122653.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*38\r\n$GPRMC,122653.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*6D\r\n\r\nOK\r\n
+[ 12:26:55.504 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:26:55.507 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:26:55.508 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:26:55.516 ] [27:INFO] res: \r\n%GPS: $GPGGA,122655.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*3E\r\n$GPRMC,122655.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*6B\r\n\r\nOK\r\n
+[ 12:26:57.518 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:26:57.521 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:26:57.521 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:26:57.526 ] [27:INFO] res: \r\n%GPS: $GPGGA,122657.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*3C\r\n$GPRMC,122657.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*69\r\n\r\nOK\r\n
+[ 12:26:59.531 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:26:59.534 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:26:59.535 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:26:59.543 ] [27:INFO] res: \r\n%GPS: $GPGGA,122659.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*32\r\n$GPRMC,122659.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*67\r\n\r\nOK\r\n
+[ 12:27:01.544 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:01.547 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:27:01.548 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:27:01.560 ] [27:INFO] res: \r\n%GPS: $GPGGA,122701.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*3E\r\n$GPRMC,122701.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*6B\r\n\r\nOK\r\n
+[ 12:27:02.857 ] [27:INFO] cmd: AT%EVNT=3,1*BC22
+[ 12:27:02.862 ] [27:INFO] res: \r\n%EVNT: 24,16777215,0,453904020,3,1,4,89640,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,257,0,0,0,0\r\n\r\nOK\r\n
+[ 12:27:02.864 ] [27:INFO] cmd: AT%EVNT=3,1*BC22
+[ 12:27:02.871 ] [27:INFO] res: \r\n%EVNT: 24,16777215,0,453904020,3,1,4,89640,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,257,0,0,0,0\r\n\r\nOK\r\n
+[ 12:27:03.556 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:03.559 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:27:03.560 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:27:03.566 ] [27:INFO] res: \r\n%GPS: $GPGGA,122703.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*3C\r\n$GPRMC,122703.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*69\r\n\r\nOK\r\n
+[ 12:27:05.567 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:05.570 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:27:05.570 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:27:05.576 ] [27:INFO] res: \r\n%GPS: $GPGGA,122705.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*3A\r\n$GPRMC,122705.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*6F\r\n\r\nOK\r\n
+[ 12:27:06.182 ] [27:INFO] cmd: AT%EVNT=3,1*BC22
+[ 12:27:06.186 ] [27:INFO] res: \r\n%EVNT: 24,16777215,0,453904025,3,1,4,89650,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,257,0,0,0,0\r\n\r\nOK\r\n
+[ 12:27:07.580 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:07.583 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:27:07.583 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:27:07.589 ] [27:INFO] res: \r\n%GPS: $GPGGA,122707.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*38\r\n$GPRMC,122707.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*6D\r\n\r\nOK\r\n
+[ 12:27:09.592 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:09.599 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:27:09.600 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:27:09.607 ] [27:INFO] res: \r\n%GPS: $GPGGA,122709.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*36\r\n$GPRMC,122709.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*63\r\n\r\nOK\r\n
+[ 12:27:09.691 ] Lua Services Framework starting (Version 9.0.10)
+[ 12:27:09.695 ] Starting svcmgr.init
+[ 12:27:09.698 ] Loading core services from /act/svc/svclist.lua
+[ 12:27:09.698 ] Ignoring 'svc.eeio'
+[ 12:27:09.698 ] Ignoring 'svc.power'
+[ 12:27:09.698 ] Ignoring 'svc.accel'
+[ 12:27:09.698 ] Ignoring 'svc.cell'
+[ 12:27:09.698 ] Ignoring 'svc.accelerometer'
+[ 12:27:09.746 ] Services loaded in 0 seconds
+[ 12:27:09.746 ] Starting svcmgr.startall
+[ 12:27:09.746 ] svcmgr: calling log.init()
+[ 12:27:09.746 ] svcmgr: calling system.init()
+[ 12:27:09.747 ] svcmgr: calling idp.init()
+[ 12:27:09.747 ] svcmgr: calling message.init()
+[ 12:27:09.747 ] svcmgr: calling serial.init()
+[ 12:27:09.747 ] svcmgr: calling eio.init()
+[ 12:27:09.747 ] svcmgr: calling position.init()
+[ 12:27:09.747 ] svcmgr: calling report.init()
+[ 12:27:09.747 ] svcmgr: calling filesystem.init()
+[ 12:27:09.747 ] svcmgr: calling shell.init()
+[ 12:27:09.747 ] svcmgr: calling geofence.init()
+[ 12:27:09.747 ] svcmgr: calling campaign.init()
+[ 12:27:09.747 ] svcmgr: calling VMS.init()
+[ 12:27:09.747 ] svcmgr: calling UniboxInOut.init()
+[ 12:27:09.751 ] log.init() done
+[ 12:27:09.752 ] [16:INFO] Skywave package version: 5.0.10.9363
+[ 12:27:09.752 ] system.init() done
+[ 12:27:09.752 ] [27:INFO] IDP modem: === initializing communication ===
+[ 12:27:09.752 ] [27:INFO] cmd: AT%CRC=0*BBEB
+[ 12:27:09.753 ] message.init() done
+[ 12:27:09.754 ] serial.init() done
+[ 12:27:09.772 ] eio.init() done
+[ 12:27:09.772 ] position.init() done
+[ 12:27:09.772 ] report.init() done
+[ 12:27:09.772 ] filesystem.init() done
+[ 12:27:09.772 ] shell.init() done
+[ 12:27:09.772 ] geofence.init() done
+[ 12:27:09.781 ] VMS.init() done
+[ 12:27:09.781 ] UniboxInOut.init() done
+[ 12:27:09.781 ] campaign.init() done
+[ 12:27:10.293 ] [27:INFO] res: \r\nOK\r\n
+[ 12:27:10.293 ] [27:INFO] cmd: ATS88?
+[ 12:27:10.806 ] [27:INFO] res: \r\n02047\r\n\r\nOK\r\n
+[ 12:27:10.806 ] [27:INFO] cmd: AT%CRC=1
+[ 12:27:10.807 ] [27:INFO] res: \r\nOK\r\n
+[ 12:27:10.807 ] [27:INFO] cmd: ATE0*DA8C
+[ 12:27:10.807 ] [27:INFO] res: \r\nOK\r\n
+[ 12:27:10.808 ] [27:INFO] cmd: ATV1*9C8D
+[ 12:27:10.808 ] [27:INFO] res: \r\nOK\r\n
+[ 12:27:10.808 ] [27:INFO] cmd: ATQ0*153B
+[ 12:27:10.809 ] [27:INFO] res: \r\nOK\r\n
+[ 12:27:10.809 ] [27:INFO] cmd: ATS3=13*19C3
+[ 12:27:10.809 ] [27:INFO] res: \r\nOK\r\n
+[ 12:27:10.809 ] [27:INFO] cmd: ATS4=10*788D
+[ 12:27:10.810 ] [27:INFO] res: \r\nOK\r\n
+[ 12:27:10.810 ] [27:INFO] cmd: AT+GMM*EE01
+[ 12:27:10.813 ] [27:INFO] res: \r\n+GMM: IsatDataPro Modem Simulator\r\n\r\nOK\r\n
+[ 12:27:10.813 ] [27:INFO] cmd: ATS88=2047*2104
+[ 12:27:10.814 ] [27:INFO] res: \r\nOK\r\n
+[ 12:27:10.814 ] [27:INFO] IDP modem: == communication established ===
+[ 12:27:10.814 ] [27:INFO] cmd: AT+GSN*FE1E
+[ 12:27:10.815 ] [27:INFO] res: \r\n+GSN: 00000000SKYEE3D\r\n\r\nOK\r\n
+[ 12:27:10.815 ] [27:INFO] cmd: AT+GMR*0DDF
+[ 12:27:10.816 ] [27:INFO] res: \r\n+GMR: 10.000,4.2,7\r\n\r\nOK\r\n
+[ 12:27:10.816 ] [27:INFO] cmd: ATS56?*15A9
+[ 12:27:10.817 ] [27:INFO] res: \r\n001\r\n\r\nOK\r\n
+[ 12:27:10.817 ] [27:INFO] cmd: ATS57?*2698
+[ 12:27:10.818 ] [27:INFO] res: \r\n000\r\n\r\nOK\r\n
+[ 12:27:10.818 ] [27:INFO] cmd: ATS51?*8C3E
+[ 12:27:10.819 ] [27:INFO] res: \r\n000\r\n\r\nOK\r\n
+[ 12:27:10.820 ] [27:INFO] cmd: at%evmon=*778B
+[ 12:27:10.821 ] [27:INFO] res: \r\nOK\r\n
+[ 12:27:10.822 ] [27:INFO] cmd: AT%TRK=0,0*D778
+[ 12:27:10.823 ] [27:INFO] res: \r\nOK\r\n
+[ 12:27:10.823 ] [27:INFO] cmd: ATS39=0*B00D
+[ 12:27:10.824 ] [27:INFO] res: \r\nOK\r\n
+[ 12:27:10.824 ] [27:INFO] cmd: AT%TRK=0,0*D778
+[ 12:27:10.825 ] [27:INFO] res: \r\nOK\r\n
+[ 12:27:10.825 ] [27:INFO] cmd: ATS40=0*7FB1
+[ 12:27:10.826 ] [27:INFO] res: \r\nOK\r\n
+[ 12:27:10.826 ] [27:INFO] cmd: ATS41=180*8893
+[ 12:27:10.826 ] [27:INFO] res: \r\nOK\r\n
+[ 12:27:10.827 ] [27:INFO] cmd: ATS52=2500*1ADF
+[ 12:27:10.827 ] [27:INFO] res: \r\nOK\r\n
+[ 12:27:10.827 ] [27:INFO] cmd: ATS50=0*0905
+[ 12:27:10.828 ] [27:INFO] res: \r\nOK\r\n
+[ 12:27:10.828 ] [27:INFO] cmd: AT%MGRS*04F9
+[ 12:27:10.829 ] [27:INFO] res: \r\n%MGRS: \r\n\r\nOK\r\n
+[ 12:27:10.829 ] idp.init() done
+[ 12:27:10.832 ] svcmgr: spawning log.entry()
+[ 12:27:10.832 ] svcmgr: spawning system.entry()
+[ 12:27:10.833 ] svcmgr: spawning idp.entry()
+[ 12:27:10.833 ] svcmgr: spawning message.entry()
+[ 12:27:10.833 ] svcmgr: spawning serial.entry()
+[ 12:27:10.833 ] svcmgr: spawning eio.entry()
+[ 12:27:10.833 ] svcmgr: spawning position.entry()
+[ 12:27:10.833 ] svcmgr: spawning report.entry()
+[ 12:27:10.833 ] svcmgr: spawning filesystem.entry()
+[ 12:27:10.833 ] svcmgr: spawning shell.entry()
+[ 12:27:10.833 ] svcmgr: spawning geofence.entry()
+[ 12:27:10.833 ] svcmgr: spawning campaign.entry()
+[ 12:27:10.833 ] svcmgr: spawning VMS.entry()
+[ 12:27:10.833 ] svcmgr: spawning UniboxInOut.entry()
+[ 12:27:10.833 ] Services loaded and initialized in 1 seconds
+[ 12:27:10.834 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:10.836 ] [26:INFO] spawning Shell Cmd Processor
+[ 12:27:10.836 ] [26:INFO] attach
+[ 12:27:10.836 ] [22:INFO] Opening rs232main port @ 9600 baud
+[ 12:27:12.657 ] [26:INFO] spawning Shell CLI
+[ 12:27:12.660 ] [115:INFO] Service started v1.4.1 r2370
+[ 12:27:12.662 ] [16:INFO] Hardware reset reason = SOFTWARE, software cause = CONSOLE, desc= 
+[ 12:27:12.662 ] [26:INFO] CLI Thread: starting
+[ 12:27:12.662 ] [21:INFO] Setting up DB File
+[ 12:27:12.662 ] [21:INFO] Indexed 0 fences
+[ 12:27:12.663 ] [27:INFO] res: \r\n00000\r\n\r\nOK\r\n
+[ 12:27:12.663 ] [27:INFO] cmd: AT%MGFN*08D2
+[ 12:27:12.664 ] [27:INFO] res: \r\n%MGFN: \r\n\r\nOK\r\n
+[ 12:27:12.664 ] [27:INFO] cmd: ATS85?*02AB
+[ 12:27:12.665 ] [27:INFO] res: \r\n00250\r\n\r\nOK\r\n
+[ 12:27:12.666 ] [27:INFO] cmd: AT%UTC*397D
+[ 12:27:12.667 ] [27:INFO] res: \r\n%UTC: 2015-05-21 12:27:12\r\n\r\nOK\r\n
+[ 12:27:12.667 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:12.670 ] [18:INFO] completed log msg #1 (SIN=16), status=Success
+[ 12:27:12.670 ] [16:INFO] *** TIME Synchronized from MODEM, old=0, new=1432211232 ***
+[ 12:27:12.674 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:27:12.674 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:27:12.677 ] [27:INFO] res: \r\n%GPS: $GPGGA,122712.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*3C\r\n$GPRMC,122712.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*69\r\n\r\nOK\r\n
+[ 12:27:12.677 ] [27:INFO] cmd: AT%EVNT=3,1*BC22
+[ 12:27:12.679 ] [27:INFO] res: \r\n%EVNT: 24,16777215,0,453904030,3,1,4,89660,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,257,0,0,0,0\r\n\r\nOK\r\n
+[ 12:27:12.680 ] [27:INFO] cmd: AT%EVNT=3,17*02E3
+[ 12:27:12.683 ] [27:INFO] res: \r\n%EVNT: 7,127,0,453903910,3,17,4,0,0,0,0,0,0,0\r\n\r\nOK\r\n
+[ 12:27:12.686 ] [18:INFO] completed log msg #2 (SIN=16), status=Success
+[ 12:27:12.688 ] [18:INFO] queuing RL msg #3 (SIN=16, bits=344)
+[ 12:27:12.688 ] [18:INFO] sending RL msg #3 trn #1 (SIN=16, bits=344)
+[ 12:27:12.689 ] [27:INFO] cmd: AT%MGRT="00000003",1,16,3,CAEEBgkABwY5LjAuMTALDhAS
+[ 12:27:12.690 ] [27:INFO] res: \r\nOK\r\n
+[ 12:27:13.744 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:13.747 ] [27:INFO] res: \r\n00002\r\n\r\nOK\r\n
+[ 12:27:13.748 ] [27:INFO] cmd: AT%MGFN*08D2
+[ 12:27:13.751 ] [27:INFO] res: \r\n%MGFN: "FM03.01",03.01,0,16,2,2,2\r\n\r\nOK\r\n
+[ 12:27:13.752 ] [27:INFO] cmd: AT%MGFG="FM03.01",3*A2C9
+[ 12:27:13.757 ] [27:INFO] res: \r\n%MGFG: "FM03.01",03.01,0,16,2,1,3,AQ==\r\n\r\nOK\r\n
+[ 12:27:13.759 ] [18:INFO] sending decoded message from transport=1 to SIN=16
+[ 12:27:13.766 ] [18:INFO] queuing RL msg #4 (SIN=16, bits=512)
+[ 12:27:13.766 ] [18:INFO] sending RL msg #4 trn #1 (SIN=16, bits=512)
+[ 12:27:13.767 ] [27:INFO] cmd: AT%MGRT="00000004",3,16,3,AQEEAAAAAAAAAAAKU0tZLUFB
+[ 12:27:13.772 ] [27:INFO] res: \r\nOK\r\n
+[ 12:27:16.806 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:16.807 ] [27:INFO] res: \r\n00002\r\n\r\nOK\r\n
+[ 12:27:16.809 ] [27:INFO] cmd: AT%MGFN*08D2
+[ 12:27:16.810 ] [27:INFO] res: \r\n%MGFN: "FM04.01",04.01,0,16,2,13,13\r\n\r\nOK\r\n
+[ 12:27:16.810 ] [27:INFO] cmd: AT%MGFG="FM04.01",3*BB8D
+[ 12:27:16.812 ] [27:INFO] res: \r\n%MGFG: "FM04.01",04.01,0,16,2,12,3,CQFzA2dAC0G0wBIA\r\n\r\nOK\r\n
+[ 12:27:16.813 ] [18:INFO] sending decoded message from transport=1 to SIN=16
+[ 12:27:16.813 ] [16:INFO] config changes for service 'VMS'
+[ 12:27:16.814 ] [26:INFO] CLI Cmd: [mail]
+[ 12:27:17.213 ] [26:INFO] CLI Cmd: [pop3]
+[ 12:27:17.612 ] [26:INFO] CLI Cmd: [USER pblo@skywave.com]
+[ 12:27:18.013 ] [26:INFO] CLI Cmd: [quit]
+[ 12:27:18.280 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:18.285 ] [27:INFO] res: \r\n00004\r\n\r\nOK\r\n
+[ 12:27:18.285 ] [27:INFO] cmd: AT%MGRS*04F9
+[ 12:27:18.295 ] [27:INFO] res: \r\n%MGRS: "00000003",6.1,1,16,6,43,43\r\n"00000004",7.1,3,16,5,64,0\r\n\r\nOK\r\n
+[ 12:27:18.297 ] [18:INFO] completed RL msg #3 (SIN=16), status=Success
+[ 12:27:19.296 ] [16:INFO] config changes for service 'position'
+[ 12:27:19.297 ] [27:INFO] cmd: AT%TRK=2,0*B918
+[ 12:27:19.300 ] [27:INFO] res: \r\nOK\r\n
+[ 12:27:19.301 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:19.305 ] [27:INFO] res: \r\n00004\r\n\r\nOK\r\n
+[ 12:27:19.305 ] [27:INFO] cmd: AT%MGRS*04F9
+[ 12:27:19.310 ] [27:INFO] res: \r\n%MGRS: "00000004",7.1,3,16,6,64,64\r\n\r\nOK\r\n
+[ 12:27:19.311 ] [27:INFO] cmd: AT%GPS=1,1,"GGA","RMC"*352B
+[ 12:27:19.314 ] [18:INFO] completed RL msg #4 (SIN=16), status=Success
+[ 12:27:19.318 ] [27:INFO] res: \r\n%GPS: $GPGGA,122719.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*37\r\n$GPRMC,122719.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*62\r\n\r\nOK\r\n
+[ 12:27:19.323 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:19.324 ] [26:INFO] detach()
+[ 12:27:26.429 ] [22:INFO] Closed rs232main port
+[ 12:27:26.429 ] [22:INFO] Opening rs232main port @ 9600 baud
+[ 12:27:26.434 ] [115:INFO] Tx[16]: Attaching 'mail'
+[ 12:27:26.434 ] [115:INFO] Entering 'mail' mode
+[ 12:27:26.435 ] [115:INFO] Tx[8]: <CR><LF>mail> 
+[ 12:27:26.436 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:27:26.436 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:27:26.438 ] [27:INFO] res: \r\n%GPS: $GPGGA,122726.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*3B\r\n$GPRMC,122726.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*6E\r\n\r\nOK\r\n
+[ 12:27:26.439 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:26.440 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:27:26.440 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:27:26.445 ] [27:INFO] res: \r\n%GPS: $GPGGA,122726.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*3B\r\n$GPRMC,122726.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*6E\r\n\r\nOK\r\n
+[ 12:27:26.445 ] [27:INFO] cmd: AT%EVNT=3,17*02E3
+[ 12:27:26.446 ] [27:INFO] res: \r\n%EVNT: 7,127,0,453903910,3,17,4,0,0,0,0,0,0,0\r\n\r\nOK\r\n
+[ 12:27:26.447 ] [27:INFO] cmd: at%evmon=3.17*8211
+[ 12:27:26.448 ] [27:INFO] res: \r\nOK\r\n
+[ 12:27:26.449 ] [115:INFO] Report 1 stopped
+[ 12:27:26.449 ] [115:INFO] Report 2 stopped
+[ 12:27:26.449 ] [115:INFO] Report 3 stopped
+[ 12:27:26.449 ] [16:INFO] config changes for service 'geofence'
+[ 12:27:26.450 ] [115:INFO] Event PowerDisconnected changed to true
+[ 12:27:26.453 ] [18:INFO] queuing RL msg #5 (SIN=115, bits=156)
+[ 12:27:26.453 ] [115:INFO] Event PowerDisconnected changed to false
+[ 12:27:26.456 ] [18:INFO] queuing RL msg #6 (SIN=115, bits=156)
+[ 12:27:26.456 ] [115:INFO] Debouncing InterfaceUnitDisconnected=true for 120s
+[ 12:27:26.457 ] [18:INFO] sending RL msg #5 trn #1 (SIN=115, bits=156)
+[ 12:27:26.457 ] [27:INFO] cmd: AT%EVNT=3,1*BC22
+[ 12:27:26.460 ] [27:INFO] res: \r\n%EVNT: 24,16777215,0,453904045,3,1,4,89690,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,257,0,0,0,0\r\n\r\nOK\r\n
+[ 12:27:26.460 ] [27:INFO] cmd: AT%MGRT="00000005",3,115,3,Mqq7mVwAAAAAAAAAAAeUAAB
+[ 12:27:26.461 ] [115:INFO] Debouncing IdpBlocked=true for 120s
+[ 12:27:26.461 ] [16:INFO] config changes for service 'UniboxInOut'
+[ 12:27:26.462 ] [27:INFO] res: \r\nOK\r\n
+[ 12:27:26.462 ] [27:INFO] cmd: AT%EVNT=3,1*BC22
+[ 12:27:26.463 ] [18:INFO] sending RL msg #6 trn #1 (SIN=115, bits=156)
+[ 12:27:26.464 ] [27:INFO] res: \r\n%EVNT: 24,16777215,0,453904045,3,1,4,89690,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,257,0,0,0,0\r\n\r\nOK\r\n
+[ 12:27:26.464 ] [27:INFO] cmd: AT%MGRT="00000006",3,115,3,Mqq7nlwAAAAAAAAAWkeUAAA
+[ 12:27:26.466 ] [16:INFO] config changes for service 'UniboxInOut'
+[ 12:27:26.468 ] [27:INFO] res: \r\nOK\r\n
+[ 12:27:26.569 ] [27:INFO] cmd: AT%EVNT=3,1*BC22
+[ 12:27:26.574 ] [27:INFO] res: \r\n%EVNT: 24,16777215,0,453904045,3,1,4,89690,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,257,0,0,0,0\r\n\r\nOK\r\n
+[ 12:27:26.576 ] [27:INFO] cmd: AT%EVNT=3,1*BC22
+[ 12:27:26.582 ] [27:INFO] res: \r\n%EVNT: 24,16777215,0,453904045,3,1,4,89690,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,257,0,0,0,0\r\n\r\nOK\r\n
+[ 12:27:27.344 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:27.348 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:27:27.348 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:27:27.355 ] [27:INFO] res: \r\n%GPS: $GPGGA,122727.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*3A\r\n$GPRMC,122727.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*6F\r\n\r\nOK\r\n
+[ 12:27:27.528 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:27.533 ] [27:INFO] res: \r\n00002\r\n\r\nOK\r\n
+[ 12:27:27.533 ] [27:INFO] cmd: AT%MGFN*08D2
+[ 12:27:27.538 ] [27:INFO] res: \r\n%MGFN: "FM05.01",05.01,0,16,2,2,2\r\n\r\nOK\r\n
+[ 12:27:27.539 ] [27:INFO] cmd: AT%MGFG="FM05.01",3*03EC
+[ 12:27:27.547 ] [27:INFO] res: \r\n%MGFG: "FM05.01",05.01,0,16,2,1,3,AQ==\r\n\r\nOK\r\n
+[ 12:27:27.547 ] [18:INFO] sending decoded message from transport=1 to SIN=16
+[ 12:27:27.548 ] [18:INFO] queuing RL msg #7 (SIN=16, bits=512)
+[ 12:27:27.548 ] [18:INFO] sending RL msg #7 trn #1 (SIN=16, bits=512)
+[ 12:27:27.549 ] [27:INFO] cmd: AT%MGRT="00000007",3,16,3,AQEEAAAAAAAAAAAKU0tZLUFB
+[ 12:27:27.552 ] [27:INFO] res: \r\nOK\r\n
+[ 12:27:29.356 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:29.361 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:27:29.362 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:27:29.367 ] [27:INFO] res: \r\n%GPS: $GPGGA,122729.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*34\r\n$GPRMC,122729.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*61\r\n\r\nOK\r\n
+[ 12:27:30.588 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:30.593 ] [27:INFO] res: \r\n00002\r\n\r\nOK\r\n
+[ 12:27:30.594 ] [27:INFO] cmd: AT%MGFN*08D2
+[ 12:27:30.597 ] [27:INFO] res: \r\n%MGFN: "FM06.01",06.01,0,16,2,13,13\r\n\r\nOK\r\n
+[ 12:27:30.598 ] [27:INFO] cmd: AT%MGFG="FM06.01",3*DB6E
+[ 12:27:30.603 ] [27:INFO] res: \r\n%MGFG: "FM06.01",06.01,0,16,2,12,3,CQFzA2dAC0G0wBIA\r\n\r\nOK\r\n
+[ 12:27:30.605 ] [18:INFO] sending decoded message from transport=1 to SIN=16
+[ 12:27:30.608 ] [115:INFO] Rx[1]: <CR>
+[ 12:27:30.609 ] [115:INFO] Tx[8]: <CR><LF>mail> 
+[ 12:27:30.609 ] [115:INFO] Rx[5]: pop3<CR>
+[ 12:27:30.609 ] [115:INFO] Starting a new POP session
+[ 12:27:30.609 ] [115:INFO] Tx[64]: +OK 00000000SKYEE3D.isatdatapro.skywave.com POP3 Service Ready<CR><LF>
+[ 12:27:31.011 ] [115:INFO] Rx[23]: USER pblo@skywave.com<CR><LF>
+[ 12:27:31.011 ] [115:INFO] Tx[32]: +OK  pblo@skywave.com accepted<CR><LF>
+[ 12:27:31.373 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:31.376 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:27:31.376 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:27:31.381 ] [27:INFO] res: \r\n%GPS: $GPGGA,122731.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*3D\r\n$GPRMC,122731.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*68\r\n\r\nOK\r\n
+[ 12:27:31.412 ] [115:INFO] Rx[14]: PASS abcd123<CR><LF>
+[ 12:27:31.415 ] [115:INFO] Tx[23]: +OK password accepted<CR><LF>
+[ 12:27:31.463 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:31.466 ] [27:INFO] res: \r\n00004\r\n\r\nOK\r\n
+[ 12:27:31.467 ] [27:INFO] cmd: AT%MGRS*04F9
+[ 12:27:31.473 ] [27:INFO] res: \r\n%MGRS: "00000005",8.1,3,115,6,20,20\r\n"00000006",9.1,3,115,5,20,0\r\n"00000007",10.1,3,16,5,64,0\r\n\r\nOK\r\n
+[ 12:27:31.475 ] [18:INFO] completed RL msg #5 (SIN=115), status=Success
+[ 12:27:31.813 ] [115:INFO] Rx[6]: LIST<CR><LF>
+[ 12:27:31.813 ] [115:INFO] Tx[16]: +OK 0 messages<CR><LF>
+[ 12:27:32.215 ] [115:INFO] Rx[6]: quit<CR><LF>
+[ 12:27:32.215 ] [115:INFO] End of POP session
+[ 12:27:32.215 ] [115:INFO] Tx[9]: +OK bye<CR><LF>
+[ 12:27:32.216 ] [115:INFO] Tx[8]: <CR><LF>mail> 
+[ 12:27:32.477 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:32.481 ] [27:INFO] res: \r\n00004\r\n\r\nOK\r\n
+[ 12:27:32.481 ] [27:INFO] cmd: AT%MGRS*04F9
+[ 12:27:32.486 ] [27:INFO] res: \r\n%MGRS: "00000006",9.1,3,115,6,20,20\r\n"00000007",10.1,3,16,5,64,0\r\n\r\nOK\r\n
+[ 12:27:32.487 ] [18:INFO] completed RL msg #6 (SIN=115), status=Success
+[ 12:27:32.615 ] [115:INFO] Rx[1]: <CR>
+[ 12:27:32.615 ] [115:INFO] Tx[8]: <CR><LF>mail> 
+[ 12:27:33.015 ] [115:INFO] Rx[5]: smtp<CR>
+[ 12:27:33.015 ] [115:INFO] Starting a new SMTP session
+[ 12:27:33.016 ] [115:INFO] Tx[64]: 220 00000000SKYEE3D.isatdatapro.skywave.com SMTP Service Ready<CR><LF>
+[ 12:27:33.382 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:33.385 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:27:33.386 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:27:33.396 ] [27:INFO] res: \r\n%GPS: $GPGGA,122733.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*3F\r\n$GPRMC,122733.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*6A\r\n\r\nOK\r\n
+[ 12:27:33.415 ] [115:INFO] Rx[6]: HELO<CR><LF>
+[ 12:27:33.415 ] [115:INFO] SMTP cmd: HELO
+[ 12:27:33.416 ] [115:INFO] Tx[45]: 250 Hello from 00000000SKYEE3D IDP terminal<CR><LF>
+[ 12:27:33.491 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:33.495 ] [27:INFO] res: \r\n00004\r\n\r\nOK\r\n
+[ 12:27:33.495 ] [27:INFO] cmd: AT%MGRS*04F9
+[ 12:27:33.501 ] [27:INFO] res: \r\n%MGRS: "00000007",10.1,3,16,6,64,64\r\n\r\nOK\r\n
+[ 12:27:33.502 ] [18:INFO] completed RL msg #7 (SIN=16), status=Success
+[ 12:27:33.815 ] [115:INFO] Rx[27]: MAIL FROM:<pblo@pblo.com><CR><LF>
+[ 12:27:33.815 ] [115:INFO] SMTP cmd: MAIL
+[ 12:27:33.816 ] [115:INFO] Tx[8]: 250 OK<CR><LF>
+[ 12:27:34.215 ] [115:INFO] Rx[28]: RCPT TO:<pblo@skywave.com><CR><LF>
+[ 12:27:34.215 ] [115:INFO] SMTP cmd: RCPT
+[ 12:27:34.216 ] [115:INFO] Tx[8]: 250 OK<CR><LF>
+[ 12:27:34.615 ] [115:INFO] Rx[6]: DATA<CR><LF>
+[ 12:27:34.615 ] [115:INFO] SMTP cmd: DATA
+[ 12:27:34.620 ] [115:INFO] Tx[49]: 354 OK, Send data ending with <CR><LF>.<CR><LF><CR><LF>
+[ 12:27:35.015 ] [115:INFO] Rx[21]: From: pblo@pblo.com<CR><LF>
+[ 12:27:35.017 ] [115:INFO] Rx[24]: To: pblo@skywave.com, <CR><LF>
+[ 12:27:35.018 ] [115:INFO] Rx[23]: Subject: Test subject<CR><LF>
+[ 12:27:35.018 ] [115:INFO] Rx[2]: <CR><LF>
+[ 12:27:35.020 ] [115:INFO] Rx[27]: Some special message data<CR><LF>
+[ 12:27:35.021 ] [115:INFO] Rx[2]: <CR><LF>
+[ 12:27:35.022 ] [115:INFO] Rx[3]: .<CR><LF>
+[ 12:27:35.023 ] [115:INFO] Sending e-mail over IP
+[ 12:27:35.023 ] [115:ERROR] SendEmailOverIp: svc.ip not enabled
+[ 12:27:35.030 ] [115:INFO] Tx[44]: 250 97 bytes received. Message queued as 0<CR><LF>
+[ 12:27:35.394 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:35.397 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:27:35.398 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:27:35.404 ] [27:INFO] res: \r\n%GPS: $GPGGA,122735.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*39\r\n$GPRMC,122735.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*6C\r\n\r\nOK\r\n
+[ 12:27:35.416 ] [115:INFO] Rx[6]: QUIT<CR><LF>
+[ 12:27:35.416 ] [115:INFO] SMTP cmd: QUIT
+[ 12:27:35.416 ] [115:INFO] SMTP session Ended.
+[ 12:27:35.416 ] [115:INFO] Tx[9]: 221 bye<CR><LF>
+[ 12:27:35.416 ] [115:INFO] Tx[8]: <CR><LF>mail> 
+[ 12:27:35.818 ] [115:INFO] Rx[1]: <CR>
+[ 12:27:35.818 ] [115:INFO] Tx[8]: <CR><LF>mail> 
+[ 12:27:36.218 ] [115:INFO] Rx[5]: pop3<CR>
+[ 12:27:36.218 ] [115:INFO] Starting a new POP session
+[ 12:27:36.219 ] [115:INFO] Tx[64]: +OK 00000000SKYEE3D.isatdatapro.skywave.com POP3 Service Ready<CR><LF>
+[ 12:27:36.521 ] [27:INFO] cmd: AT%EVNT=3,1*BC22
+[ 12:27:36.527 ] [27:INFO] res: \r\n%EVNT: 24,16777215,0,453904055,3,1,4,89710,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,257,0,0,0,0\r\n\r\nOK\r\n
+[ 12:27:36.529 ] [27:INFO] cmd: AT%EVNT=3,1*BC22
+[ 12:27:36.537 ] [27:INFO] res: \r\n%EVNT: 24,16777215,0,453904055,3,1,4,89710,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,257,0,0,0,0\r\n\r\nOK\r\n
+[ 12:27:36.619 ] [115:INFO] Rx[23]: USER pblo@skywave.com<CR><LF>
+[ 12:27:36.620 ] [115:INFO] Tx[32]: +OK  pblo@skywave.com accepted<CR><LF>
+[ 12:27:37.021 ] [115:INFO] Rx[14]: PASS abcd123<CR><LF>
+[ 12:27:37.024 ] [115:INFO] Tx[23]: +OK password accepted<CR><LF>
+[ 12:27:37.406 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:37.409 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:27:37.409 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:27:37.416 ] [27:INFO] res: \r\n%GPS: $GPGGA,122737.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*3B\r\n$GPRMC,122737.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*6E\r\n\r\nOK\r\n
+[ 12:27:37.423 ] [115:INFO] Rx[6]: LIST<CR><LF>
+[ 12:27:37.424 ] [115:INFO] Tx[16]: +OK 0 messages<CR><LF>
+[ 12:27:37.825 ] [115:INFO] Rx[6]: quit<CR><LF>
+[ 12:27:37.825 ] [115:INFO] End of POP session
+[ 12:27:37.825 ] [115:INFO] Tx[9]: +OK bye<CR><LF>
+[ 12:27:37.826 ] [115:INFO] Tx[8]: <CR><LF>mail> 
+[ 12:27:39.419 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:39.422 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:27:39.422 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:27:39.433 ] [27:INFO] res: \r\n%GPS: $GPGGA,122739.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*35\r\n$GPRMC,122739.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*60\r\n\r\nOK\r\n
+[ 12:27:41.432 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:41.435 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:27:41.436 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:27:41.443 ] [27:INFO] res: \r\n%GPS: $GPGGA,122741.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*3A\r\n$GPRMC,122741.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*6F\r\n\r\nOK\r\n
+[ 12:27:42.645 ] [27:INFO] cmd: AT%EVNT=3,1*BC22
+[ 12:27:42.649 ] [27:INFO] res: \r\n%EVNT: 24,16777215,0,453904060,3,1,4,89720,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,257,0,0,0,0\r\n\r\nOK\r\n
+[ 12:27:43.445 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:43.448 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:27:43.449 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:27:43.456 ] [27:INFO] res: \r\n%GPS: $GPGGA,122743.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*38\r\n$GPRMC,122743.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*6D\r\n\r\nOK\r\n
+[ 12:27:45.456 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:45.459 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:27:45.459 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:27:45.467 ] [27:INFO] res: \r\n%GPS: $GPGGA,122745.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*3E\r\n$GPRMC,122745.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*6B\r\n\r\nOK\r\n
+[ 12:27:46.457 ] [27:INFO] cmd: AT%EVNT=3,1*BC22
+[ 12:27:46.462 ] [27:INFO] res: \r\n%EVNT: 24,16777215,0,453904065,3,1,4,89730,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,257,0,0,0,0\r\n\r\nOK\r\n
+[ 12:27:46.464 ] [27:INFO] cmd: AT%EVNT=3,1*BC22
+[ 12:27:46.469 ] [27:INFO] res: \r\n%EVNT: 24,16777215,0,453904065,3,1,4,89730,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,257,0,0,0,0\r\n\r\nOK\r\n
+[ 12:27:47.471 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:47.475 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:27:47.475 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:27:47.480 ] [27:INFO] res: \r\n%GPS: $GPGGA,122747.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*3C\r\n$GPRMC,122747.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*69\r\n\r\nOK\r\n
+[ 12:27:49.481 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:49.484 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:27:49.485 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:27:49.491 ] [27:INFO] res: \r\n%GPS: $GPGGA,122749.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*32\r\n$GPRMC,122749.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*67\r\n\r\nOK\r\n
+[ 12:27:51.494 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:51.497 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:27:51.497 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:27:51.503 ] [27:INFO] res: \r\n%GPS: $GPGGA,122751.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*3B\r\n$GPRMC,122751.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*6E\r\n\r\nOK\r\n
+[ 12:27:53.512 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:53.515 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:27:53.515 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:27:53.522 ] [27:INFO] res: \r\n%GPS: $GPGGA,122753.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*39\r\n$GPRMC,122753.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*6C\r\n\r\nOK\r\n
+[ 12:27:55.518 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:55.523 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:27:55.524 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:27:55.528 ] [27:INFO] res: \r\n%GPS: $GPGGA,122755.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*3F\r\n$GPRMC,122755.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*6A\r\n\r\nOK\r\n
+[ 12:27:56.433 ] [27:INFO] cmd: AT%EVNT=3,1*BC22
+[ 12:27:56.438 ] [27:INFO] res: \r\n%EVNT: 24,16777215,0,453904075,3,1,4,89750,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,257,0,0,0,0\r\n\r\nOK\r\n
+[ 12:27:56.440 ] [27:INFO] cmd: AT%EVNT=3,1*BC22
+[ 12:27:56.444 ] [27:INFO] res: \r\n%EVNT: 24,16777215,0,453904075,3,1,4,89750,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,257,0,0,0,0\r\n\r\nOK\r\n
+[ 12:27:57.530 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:57.534 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:27:57.534 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:27:57.540 ] [27:INFO] res: \r\n%GPS: $GPGGA,122757.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*3D\r\n$GPRMC,122757.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*68\r\n\r\nOK\r\n
+[ 12:27:59.542 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:27:59.549 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:27:59.549 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:27:59.556 ] [27:INFO] res: \r\n%GPS: $GPGGA,122759.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*33\r\n$GPRMC,122759.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*66\r\n\r\nOK\r\n
+[ 12:28:01.557 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:28:01.561 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:28:01.562 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:28:01.567 ] [27:INFO] res: \r\n%GPS: $GPGGA,122801.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*31\r\n$GPRMC,122801.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*64\r\n\r\nOK\r\n
+[ 12:28:03.568 ] [27:INFO] cmd: ATS89?*47C6
+[ 12:28:03.570 ] [27:INFO] res: \r\n00001\r\n\r\nOK\r\n
+[ 12:28:03.571 ] [27:INFO] cmd: AT%GPS=30,2,"RMC","GGA"*D90A
+[ 12:28:03.576 ] [27:INFO] res: \r\n%GPS: $GPGGA,122803.000,0000.0000,N,00000.0000,E,1,05,3.0,0.00,M,,,,0000*33\r\n$GPRMC,122803.000,A,0000.0000,N,00000.0000,E,0.00,000.00,210515,,,A*66\r\n\r\nOK\r\n

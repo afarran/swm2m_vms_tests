@@ -14,7 +14,7 @@ smtp:setTimeout(5)
 
 module("TestPop3Module", package.seeall)
 
-USER = "pblo@pblo.com"
+USER = "pblo@skywave.com"
 PASSWD = "abcd123"
 
 function suite_setup()
@@ -82,7 +82,7 @@ function test_List_WhenListRequested_CorrectServerResponseIsReceived()
 
 end
 
-function test_GORUNRetrive_WhenMailIsSentViaSmtp_ItIsPossibleToRetriveItViaPop3()
+function test_Retrive_WhenMailIsSentViaSmtp_ItIsPossibleToRetriveItViaPop3()
   
   -- login 
   D:log("Login to POP3 server")
@@ -130,7 +130,24 @@ function test_GORUNRetrive_WhenMailIsSentViaSmtp_ItIsPossibleToRetriveItViaPop3(
   D:log("Messages no: "..messagesNo)
   assert_gt(0,tonumber(messagesNo), "Wrong messages number.")
   assert_equal(1,tonumber(messagesNo) - tonumber(messagesNoBefore),"Wrong messages diff.")
-  
+  -- BUG HERE: always 0 on the list
+ 
   -- retrieve message
+  --TODO
 
+end
+
+function test_Stat_WhenStatCommandIsSent_CorrectResponseIsReceived()
+
+  -- login 
+  D:log("Login to POP3 server")
+  local result = pop3:request("USER "..USER)
+  assert_not_nil(string.find(result,"+OK%s*"..USER.."%s*accepted"),"POP3 USER command failed ")
+  D:log("Correct user name")
+  local result = pop3:request("PASS "..PASSWD)
+  assert_not_nil(string.find(result,"+OK%s*password%s*accepted"),"POP3 PASS command failed")
+  D:log("Correct password")
+
+  local result = pop3:request("STAT")
+  assert_not_nil(string.find(result,"+OK%s*%s*%s*%d*"),"Wrong response to command: STAT")
 end
