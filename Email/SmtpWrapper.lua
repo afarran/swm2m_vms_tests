@@ -39,7 +39,7 @@ SmtpWrapper = {}
       D:log("Smtp is not ready - serial port not opened (".. self.port.name .. ")")
       return nil
     end
-    
+
     mailInfo.data = mailInfo.data or ""
     mailInfo.subject = mailInfo.subject or ""
     self:start()

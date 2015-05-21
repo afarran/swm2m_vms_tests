@@ -9,8 +9,13 @@ require "Email/Pop3Wrapper"
 local pop3 = Pop3Wrapper(serialMain)
 pop3:setTimeout(5)
 
+local smtp = SmtpWrapper(serialMain)
+smtp:setTimeout(5)
+
 module("TestPop3Module", package.seeall)
 
+USER = "pblo@pblo.com"
+PASSWD = "abcd123"
 
 function suite_setup()
 
@@ -51,30 +56,64 @@ end
 function test_Login_WhenUserNameAndPasswordIsSent_CorrectServerResponseIsReceived()
 
   D:log("Login to POP3 server")
-  local result = pop3:request("USER pblo")
-  assert_not_nil(string.find(result,"+OK%s*pblo%s*accepted"),"POP3 USER command failed ")
+  local result = pop3:request("USER "..USER)
+  assert_not_nil(string.find(result,"+OK%s*"..USER.."%s*accepted"),"POP3 USER command failed ")
   D:log("Correct user name")
 
-  local result = pop3:request("PASS abcd123")
+  local result = pop3:request("PASS "..PASSWD)
   assert_not_nil(string.find(result,"+OK%s*password%s*accepted"),"POP3 PASS command failed")
   D:log("Correct password")
 end
 
 function test_List_WhenListRequested_CorrectServerResponseIsReceived()
-  
+ 
+  -- login 
   D:log("Login to POP3 server")
-  local result = pop3:request("USER pblo")
-  assert_not_nil(string.find(result,"+OK%s*pblo%s*accepted"),"POP3 USER command failed ")
+  local result = pop3:request("USER "..USER)
+  assert_not_nil(string.find(result,"+OK%s*"..USER.."%s*accepted"),"POP3 USER command failed ")
   D:log("Correct user name")
-  local result = pop3:request("PASS abcd123")
+  local result = pop3:request("PASS "..PASSWD)
   assert_not_nil(string.find(result,"+OK%s*password%s*accepted"),"POP3 PASS command failed")
   D:log("Correct password")
 
+  -- request LIST
   local result = pop3:request("LIST")
   assert_not_nil(string.find(result,"+OK%s*%d*%s*messages"),"POP3 LIST command failed")
 
 end
 
+function test_GORUNRetrive_WhenMailIsSentViaSmtp_ItIsPossibleToRetriveItViaPop3()
 
+  D:log("Sending test email message")
+  pop3:request("quit")
+  --sendViaSmtp
+  smtp:sendMail({
+    from = "pblo@pblo.com",
+    to = {USER},
+    subject = "Test subject",
+    data = "Test content"
+  })
+  D:log("Restoring pop3 session")
+  pop3:start()
 
+  -- login 
+  D:log("Login to POP3 server")
+  local result = pop3:request("USER "..USER)
+  assert_not_nil(string.find(result,"+OK%s*"..USER.."%s*accepted"),"POP3 USER command failed ")
+  D:log("Correct user name")
+  local result = pop3:request("PASS "..PASSWD)
+  assert_not_nil(string.find(result,"+OK%s*password%s*accepted"),"POP3 PASS command failed")
+  D:log("Correct password")
 
+  -- request LIST
+  local result = pop3:request("LIST")
+  assert_not_nil(string.find(result,"+OK%s*%d*%s*messages"),"POP3 LIST command failed")
+
+  local messagesNo = string.match(result,"+OK%s*(%d*)%s*messages")
+  assert_not_nil(messagesNo, "Wrong messages number.")
+  D:log("Messages no: "..messagesNo)
+  assert_gt(0,tonumber(messagesNo), "Wrong messages number.")
+  
+  -- retrieve message
+
+end
