@@ -1,6 +1,7 @@
 import argparse
 import subprocess
 import time
+import os
 
 class ModemSimulator():
 	def __init__(self, path, com_port):
