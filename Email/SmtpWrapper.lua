@@ -63,7 +63,7 @@ SmtpWrapper = {}
     self:execute("To: " .. self:_prepareBodyRecipients(mailInfo.to))
     self:execute("Subject: " .. mailInfo.subject)
     self:execute("") -- blank line delimits header
-    self:execute("Some special message data")
+    self:execute(mailInfo.data)
 
     response = self:request("\r\n.", "\r\n")
     assert_match("^250.*\r\n", response, "DATA command end response is incorrect")
