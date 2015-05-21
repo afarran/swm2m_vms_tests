@@ -16,7 +16,7 @@ class ModemSimulator():
 		try:
 			self.env = os.environ["WORKSPACE"]
 		except:
-			self.env = r"../../"
+			self.env = r"..\\..\\"
 		
 	def default_options(self):
 		self.options = {
@@ -62,8 +62,8 @@ class ModemSimulator():
 			"GpsURL" : "http://localhost:" + port + "/GpsWebService",
 			"DeviceURL" : "http://localhost:" + port + "/DeviceWebService",
 			"TerminalName" : "IDP680-VMS-" + instance,
-			#"ModemLogFile" : os.path.join(self.env, "_run", "test_" + instance + ".log"),
-			#"ModemLogTimestamp" : "true"
+			"TraceLogFile" : os.path.join(self.env, "_run", "test_" + instance + ".log"),
+			"TraceLogTimestamp" : "",
 		}
 		self.update_options(new_options)
 		if self.com_port:
