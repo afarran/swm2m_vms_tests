@@ -285,12 +285,6 @@ function test_Retrive_WhenMailIsSentViaSmtp_ItIsPossibleToRetriveItViaPop3()
   local result = pop3:request("TOP "..messagesNo.." 1")
   assert_not_nil(string.find(result,"+OK"),"Cannot top message")
 
-  -- uidl message
-  -- QUESTION: is UIDL command implemented?
-  -- D:log("uidl message no "..messagesNo)
-  -- local result = pop3:request("UIDL "..messagesNo.." 1")
-  -- assert_not_nil(string.find(result,"+OK"),"Cannot UIDL message")
-
   -- delete message
   D:log("Delete message no "..messagesNo)
   local result = pop3:request("DELE "..messagesNo)
@@ -419,7 +413,7 @@ end
   -- 1. Correct is checked for syntax error (occurs when command does not exists)
 function test_UidlImplemented_WhenUidlCommnadIsSent_CorrectResponseIsReceived()
   login()
-  local result = pop3:request("UIDL 1 1")
+  local result = pop3:request("UIDL")
   assert_nil(string.find(result,"syntax error"),"Command UIDL not implemented")
   quit()
 end
