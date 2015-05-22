@@ -31,8 +31,6 @@ function setup()
                                GpsJammedStartDebounceTime = 1,
                                GpsJammedEndDebounceTime = 1,
                                StandardReport1Interval = 0,
-                               PowerDisconnectedStartDebounceTime = 1,
-                               PowerDisconnectedEndDebounceTime = 1,
                                InterfaceUnitDisconnectedStartDebounceTime = 1,
                                InterfaceUnitDisconnectedEndDebounceTime = 1,
                                HwClientDisconnectedStartDebounceTime = 1,
@@ -2395,7 +2393,7 @@ function test_InterfaceUnitDisconnected_WhenInterfaceUnitIsConnectedForTimeAbove
   D:log(framework.dump(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"]), "InterfaceUnitDisconnectedState")
   assert_true(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"], "InterfaceUnitDisconnectedState property has been changed before InterfaceUnitDisconnectedEndDebounceTime has passed")
 
-  framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME)
+  framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME + 3)
 
   timeOfEvent = os.time()
 
@@ -2508,7 +2506,7 @@ function test_InterfaceUnitDisconnected_WhenInterfaceUnitIsDisconnectedForTimeAb
   InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = true})
   
   D:log("INTERFACE UNIT CONNECTED TO TERMINAL")
-  framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME)
+  framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME + 3)
 
   -- checking InterfaceUnitDisconnectedState property
   InterfaceUnitDisconnectedStateProperty = vmsSW:getPropertiesByName({"InterfaceUnitDisconnectedState"})
@@ -2643,7 +2641,7 @@ function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitDisconnectedSt
   local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
   D:log(ReceivedMessages["AbnormalReport"])
 
-  framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME)
+  framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME + 3)
 
   if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "InterfaceUnitDisconnected" ) then
     assert_nil(1, "InterfaceUnitDisconnected abnormal report sent but not expected - sending reports disabled")
@@ -2689,7 +2687,7 @@ function test_InterfaceUnitDisconnected_WhenInterfaceUnitServiceIsDisabledForTim
   D:log("INTERFACE UNIT CONNECTED TO TERMINAL")
   -- INTERFACE UNIT is connected to terminal from now
   InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = true})
-  framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME)
+  framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME + 3)
   
   -- checking InterfaceUnitDisconnectedState property - unit is connected now
   local InterfaceUnitDisconnectedStateProperty = vmsSW:getPropertiesByName({"InterfaceUnitDisconnectedState"})
@@ -2752,7 +2750,7 @@ function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitConnectedWhenI
   -- INTERFACE UNIT is connected to terminal from now
   InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = true})
 
-  framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME)
+  framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME + 3)
 
   -- checking InterfaceUnitDisconnectedState property
   InterfaceUnitDisconnectedStateProperty = vmsSW:getPropertiesByName({"InterfaceUnitDisconnectedState"})
@@ -2817,7 +2815,7 @@ function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitDisconnectedSt
   -- INTERFACE UNIT is connected to terminal from now
   InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = true})
 
-  framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME)
+  framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME + 3)
 
   local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
   D:log(ReceivedMessages["AbnormalReport"])
@@ -3380,18 +3378,11 @@ function test_SetProperties_WhenSetPropertiesMessageIsSet_PropertiesIncludedInTh
       {Name="PropertyChangeDebounceTime",Value=counter},
       {Name="MinStandardReportLedFlashTime",Value=counter},
       {Name="LogReportInterval", Value=counter},
-      {Name="StandardReport1Interval", Value=counter},
-      {Name="AcceleratedReport1Rate", Value=counter},
-      {Name="StandardReport2Interval", Value=counter},
-      {Name="AcceleratedReport2Rate", Value=counter},
-      {Name="StandardReport3Interval", Value=counter},
-      {Name="AcceleratedReport3Rate", Value=counter},
       {Name="InsideGeofenceSendReport", Value=enabled},
       {Name="InsideGeofenceStartDebounceTime", Value=counter},
       {Name="InsideGeofenceEndDebounceTime", Value=counter},
       {Name="PropertyChangeDebounceTime", Value=counter},
       {Name="ShellTimeout", Value=counter},
-      {Name="MailSessionIdleTimeout", Value=counter},
       {Name="GpsInEmails", Value=enabled},
      }
      
@@ -3440,12 +3431,12 @@ function test_SetProperties_WhenSetPropertiesMessageIsSet_PropertiesIncludedInTh
     D:log(propertyGetByLsf)
 
 
-    for name, value in pairs(ReceivedProperties) do
+    for name, value in pairs(SetProperties) do
           if name ~= "MIN" and name~= "SIN"  and name~= "Name" then
           D:log(name)
           D:log(propertyGetByLsf[name])
           D:log(ReceivedProperties[name])
-       --   assert_equal(SetProperties[name], propertyGetByLsf[name], "Property:" ..ReceivedProperties[name] .."has not been correctly set by message")
+          assert_equal(SetProperties[name], propertyGetByLsf[name], "Property:" ..ReceivedProperties[name] .."has not been correctly set by message")
           assert_equal(SetProperties[name], ReceivedProperties[name], "Property:" ..ReceivedProperties[name] .."has not been correctly set by message")
         end
     end

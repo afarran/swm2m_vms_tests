@@ -181,7 +181,7 @@ ServiceWrapper = {}
 
   -- pinValues = {pin1 = val1, pin2 = val2}
   function ServiceWrapper:setProperties(pinValues, raw, save)
-    self:log("Setting new properies: " .. string.tableAsList(self:__processPinValues(pinValues)))
+    self:log("Setting new properties: " .. string.tableAsList(self:__processPinValues(pinValues)))
     raw = raw or false
     local pinValueTypes = {}
     for pin, value in pairs(pinValues) do
