@@ -52,6 +52,13 @@ ShellWrapper = {}
     return "", timediff
   end
   
+  function ShellWrapper:clear()
+    local silent = self.silent
+    self.silent = true
+    self:getResponse(0.5, 0.5)
+    self.silent = silent    
+  end
+  
   function ShellWrapper:setTimeout(timeout)
     self.timeout = timeout
   end

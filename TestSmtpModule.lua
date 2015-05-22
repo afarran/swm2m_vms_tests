@@ -50,6 +50,7 @@ function setup()
       AllowedEmailDomains = "",
     })
   gateway.setHighWaterMark()
+  smtp:clear()
 end
 
 -----------------------------------------------------------------------------------------------

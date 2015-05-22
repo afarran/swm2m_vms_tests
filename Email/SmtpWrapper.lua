@@ -15,7 +15,7 @@ SmtpWrapper = {}
   function SmtpWrapper:start()
     self:execute("smtp")
   end
-
+  
   --- sends an email over SMTP rs232 session.
   -- TODO strip from lunatest assertions and add error handling
   -- TODO move to test logic container when assertion mechanism ready
