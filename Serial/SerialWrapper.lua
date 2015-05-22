@@ -54,7 +54,7 @@ SerialWrapper = {}
     if not self:opened() then
       return nil
     end
-    local timeout = timeout or 60
+    timeout = timeout or 60
     local startTime = os.time()
         
     while (os.time() - startTime) < timeout do

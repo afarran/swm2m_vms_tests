@@ -7,6 +7,7 @@ require "UtilLibs/Text"
 require "Email/SmtpWrapper"
 
 local smtp = SmtpWrapper(serialMain)
+smtp:setSamplingDelay(0.05)
 smtp:setTimeout(5)
 
 module("TestSmtpModule", package.seeall)
@@ -119,8 +120,6 @@ function test_SMTP_WhenQUITCommandCalled_ServerReturns221()
   local quitResponse = smtp:getResponse()
   assert_match("^221.*\r\n", quitResponse, "QUIT command response incorrect")
 end
-
-
 
 function test_SMTP_WhenNOOPCommandCalled_ServerReturns250()
   startSmtp()
@@ -555,21 +554,63 @@ function test_SMTP_WhenCorrectMailToUserDifferentThanigwsatkywavecomIsSent_Serve
   
 end
 
-
+-- [[AllowedEmailDomains]]
 function test_SMTP_WhenAllowedEmailDomainsFilledAndEmailToNotAllowedDomainSent_EmailRefused()
-  vmsSW:setPropertiesByName({AllowedEmailDomains = "skywave.com"})
+  vmsSW:setPropertiesByName({AllowedEmailDomains = "skywave.com, sky"})
   startSmtp()
-  smtp:execute("HELO")
-  local response = smtp:getResponse()
-  smtp:execute("MAIL FROM:<skywave@sky.com>")
-  response = smtp:getResponse()
-  smtp:execute("RCPT TO:<receiver@sky.com>")
-  response = smtp:getResponse()
-  smtp:execute("DATA")
-  response = smtp:getResponse()
+  local response = smtp:request("HELO")
+  response = smtp:request("MAIL FROM:<skywave@sky.com>")
+  response = smtp:request("RCPT TO:<receiver@sky.com>")
+  response = smtp:request("DATA")
   assert_match("^354.*\r\n", response, "DATA command response is incorrect")
-  SMTPclear[1] = "\r\n.\r\n"
-  SMTPclear[2] = "QUIT"
+  smtp:execute("Email body")
+  response = smtp:request("\r\n.\r\n", "")
+  assert_match("^451.*\r\n", response, "Email is not allowed but was not refused")
+  SMTPclear[1] = "QUIT"
+end
+
+function test_SMTP_WhenAllowedEmailDomainsFilledWithTwoDomainsAndEmailToTwoAllowedDomainsSent_EmailAccepted()
+  vmsSW:setPropertiesByName({AllowedEmailDomains = "skywave.com,sky.com"})
+  startSmtp()
+  local response = smtp:request("HELO")
+  response = smtp:request("MAIL FROM:<skywave@sky.com>")
+  response = smtp:request("RCPT TO:<receiver@sky.com>")
+  response = smtp:request("RCPT TO:<receiver@skywave.com>")
+  response = smtp:request("DATA")
+  assert_match("^354.*\r\n", response, "DATA command response is incorrect")
+  smtp:execute("Email body")
+  response = smtp:request("\r\n.\r\n", "")
+  assert_match("^250.*\r\n", response, "Email is allowed but was refused")
+  SMTPclear[1] = "QUIT"
+end
+
+function test_SMTP_WhenAllowedEmailDomainsFilledWithTwoDomainsAndEmailToOneAllowedDomainAndOneNotAllowedDomainSent_EmailAccepted()
+  vmsSW:setPropertiesByName({AllowedEmailDomains = "skywave.com,sky.com"})
+  startSmtp()
+  local response = smtp:request("HELO")
+  response = smtp:request("MAIL FROM:<skywave@sky.com>")
+  response = smtp:request("RCPT TO:<receiver1@sky.com>")
+  response = smtp:request("RCPT TO:<receiver2@notallowed.com>")
+  response = smtp:request("DATA")
+  assert_match("^354.*\r\n", response, "DATA command response is incorrect")
+  smtp:execute("Email body")
+  response = smtp:request("\r\n.\r\n", "")
+  assert_match("^250.*\r\n", response, "Email is allowed but was refused")
+  SMTPclear[1] = "QUIT"
+end
+
+function test_SMTP_WhenAllowedEmailDomainsFilledWithThreeDomainsAndEmailToThirdDomainIsSent_EmailIsAccepted()
+  vmsSW:setPropertiesByName({AllowedEmailDomains = "skywave.com,sky.com,sii.pl"})
+  startSmtp()
+  local response = smtp:request("HELO")
+  response = smtp:request("MAIL FROM:<skywave@sky.com>")
+  response = smtp:request("RCPT TO:<receiver1@sii.pl>")
+  response = smtp:request("DATA")
+  assert_match("^354.*\r\n", response, "DATA command response is incorrect")
+  smtp:execute("Email body")
+  response = smtp:request("\r\n.\r\n", "")
+  assert_match("^250.*\r\n", response, "Email is allowed but was refused")
+  SMTPclear[1] = "QUIT"
 end
 
 -- TODO: Test if HELO command issued - session should be reset (HELO/EHLO invokes RSET) - not possible to test in current implementation
