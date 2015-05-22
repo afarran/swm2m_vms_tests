@@ -32,7 +32,7 @@ ShellWrapper = {}
   
   function ShellWrapper:getResponse(timeout, delay)
     timeout = timeout or self.timeout
-    delay = delay or 0.2
+    delay = self.samplingDelay or delay or 0.2
     local startTime = os.time()
     local startAvailable = self.port:available()
     while (os.time() - startTime < timeout) do
@@ -52,8 +52,19 @@ ShellWrapper = {}
     return "", timediff
   end
   
+  function ShellWrapper:clear()
+    local silent = self.silent
+    self.silent = true
+    self:getResponse(0.5, 0.5)
+    self.silent = silent    
+  end
+  
   function ShellWrapper:setTimeout(timeout)
     self.timeout = timeout
+  end
+  
+  function ShellWrapper:setSamplingDelay(delay)
+    self.samplingDelay = delay
   end
 
   function ShellWrapper:log(data)

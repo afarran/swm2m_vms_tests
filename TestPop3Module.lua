@@ -10,24 +10,41 @@ module("TestPop3Module", package.seeall)
 require "UtilLibs/Text"
 require "Email/Pop3Wrapper"
 
--- pop3 session state
-local logged = false;
+-------------------------
+-- SETUP
+-------------------------
+
+-- setup for wrappers verbosity
+local SILENT = true
+
+-- setup for waiting after message is sent via smtp, sometimes it needs time
+local TRIES_AFTER_SENDING_EMAIL = 1 -- how many tries should be performed
+local WAIT_FOR_MESSAGE_DELAY = 6    -- how many seconds of the delay after each try
+
+-- user setup
+local DOMAIN = "isadatapro.skywave.com"
+local USER = "<terminal_id>@"..DOMAIN
+local PASSWD = "abcd123"
+
+-------------------------
+-- SETUP
+-------------------------
 
 -- pop session wrapper
-local pop3 = Pop3Wrapper(serialMain)
+local pop3 = Pop3Wrapper(serialMain,SILENT)
 pop3:setTimeout(5)
 
 -- smtp session wrapper
-local smtp = SmtpWrapper(serialMain)
+local smtp = SmtpWrapper(serialMain,SILENT)
 smtp:setTimeout(5)
 
--- user setup
-local USER = "terminal_id@isadatapro.skywave.com"
-local PASSWD = "abcd123"
 
 -------------------------
 -- LOGIC
 -------------------------
+
+-- pop3 session state
+local logged = false;
 
 local function login()
   pop3:start()
@@ -71,7 +88,8 @@ function suite_setup()
     })
 
   local terminalId = systemSW:getTerminalId()
-  USER = terminalId.."@isadatapro.skywave.com"
+  USER = terminalId.."@"..DOMAIN
+  D:log("Using user: "..USER)
 
 end
 
@@ -94,6 +112,23 @@ end
 -- Test Cases
 -------------------------
 
+--- TC checks commands: USER, PASS, QUIT
+  -- 
+  -- Initial conditions:
+  -- 
+  -- * pop3 shell session is established
+  --
+  -- Steps:
+  --
+  -- 1. 'USER <username>' request is sent.
+  -- 2. 'PASS passwd' request is sent.
+  -- 3. 'QUIT' request is sent.
+  --
+  -- Results:
+  --
+  -- 1. '+OK' status is received.
+  -- 2. '+OK password accepted' status is received.
+  -- 3. '+OK' status is received.
 function test_Login_WhenUserNameAndPasswordIsSent_CorrectServerResponseIsReceived()
   
   -- starting pop3 shell
@@ -114,6 +149,20 @@ function test_Login_WhenUserNameAndPasswordIsSent_CorrectServerResponseIsReceive
   assert_not_nil(string.find(result,"+OK"),"POP3 QUIT command failed")
 end
 
+--- TC checks commands: LIST
+  -- 
+  -- Initial conditions:
+  -- 
+  -- * pop3 shell session is established
+  -- * authorization is performed
+  --
+  -- Steps:
+  --
+  -- 1. 'LIST' request is sent.
+  --
+  -- Results:
+  --
+  -- 1. '+OK x messages' status is received.
 function test_List_WhenListRequested_CorrectServerResponseIsReceived()
  
   -- login 
@@ -127,7 +176,43 @@ function test_List_WhenListRequested_CorrectServerResponseIsReceived()
   quit()
 end
 
-function test_GORUNRetrive_WhenMailIsSentViaSmtp_ItIsPossibleToRetriveItViaPop3()
+--- TC checks commands: LIST, RETR, 
+  -- 
+  -- Initial conditions:
+  -- 
+  -- * pop3 shell session is established
+  -- * authorization is performed
+  --
+  -- Steps:
+  --
+  -- 1. Initial messages count is requested (LIST).
+  -- 2. E-mail messages is sent via smtp.
+  -- 3. Checking inbox is perfomed in a loop.
+  -- 4. Messages count is checked.
+  -- 5. Message is retrieved (RETR).
+  -- 6. 'TOP' command is sent.
+  -- 7. 'DELE' command is sent.
+  -- 8. 'RSET' command is sent.
+  -- 9. Messages count is checked.
+  -- 10. 'DELE' command is sent.
+  -- 11. 'QUIT' command is sent.
+  -- 12. Messages count is checked.
+  --
+  -- Results:
+  --
+  -- 1. Initial messages count is fetched.
+  -- 2. E-mail is corretly sent.
+  -- 3. Messages count is received.
+  -- 4. Messages count is correct.
+  -- 5. '+OK' status is received.
+  -- 6. '+OK' status is received.
+  -- 7. '+OK' status is received (means deleted flag is set).
+  -- 8. '+OK' status is received (means deleted flag is unset).
+  -- 9. Messages count is correct.
+  -- 10. '+OK' status is received (means deleted flag is set).
+  -- 11. Message is finaly deleted.
+  -- 12. Messages count is correct.
+function test_Retrive_WhenMailIsSentViaSmtp_ItIsPossibleToRetriveItViaPop3()
  
   -- login pop3 session
   login()
@@ -150,7 +235,7 @@ function test_GORUNRetrive_WhenMailIsSentViaSmtp_ItIsPossibleToRetriveItViaPop3(
   })
 
   -- waiting for test message (it can take several minutes)
-  local tries = 2
+  local tries = TRIES_AFTER_SENDING_EMAIL
   local messagesNo = 0 
   while tries > 0 do
     login()
@@ -159,7 +244,7 @@ function test_GORUNRetrive_WhenMailIsSentViaSmtp_ItIsPossibleToRetriveItViaPop3(
     if messagesNo - messagesNoBefore == 1 then
       break
     end
-    framework.delay(60)
+    framework.delay(WAIT_FOR_MESSAGE_DELAY)
     tries = tries - 1
   end
 
@@ -172,18 +257,86 @@ function test_GORUNRetrive_WhenMailIsSentViaSmtp_ItIsPossibleToRetriveItViaPop3(
   login()
 
   -- retrieve message
-  --local result = pop3:request("RETR "..messagesNo)
+  D:log("Retrive message no "..messagesNo)
+  local result = pop3:request("RETR "..messagesNo)
+  assert_not_nil(string.find(result,"+OK"),"Cannot retrieve message")
 
+  -- top message
+  D:log("top message no "..messagesNo)
+  local result = pop3:request("TOP "..messagesNo.." 1")
+  assert_not_nil(string.find(result,"+OK"),"Cannot top message")
+
+  -- uidl message
+  -- QUESTION: is UIDL command implemented?
+  -- D:log("uidl message no "..messagesNo)
+  -- local result = pop3:request("UIDL "..messagesNo.." 1")
+  -- assert_not_nil(string.find(result,"+OK"),"Cannot UIDL message")
+
+  -- delete message
+  D:log("Delete message no "..messagesNo)
+  local result = pop3:request("DELE "..messagesNo)
+  assert_not_nil(string.find(result,"+OK"),"Cannot delete message")
+
+  -- rset message
+  D:log("Rset message no "..messagesNo)
+  local result = pop3:request("RSET "..messagesNo)
+  assert_not_nil(string.find(result,"+OK"),"Cannot rset message")
+
+  quit() -- that should not delete message
+
+  -- checking messages count after rset message
+  login()
+  local messagesNoFinal = getMessagesNo()
+  assert_equal(messagesNoBefore+1,messagesNoFinal,"Wrong messages number after deleting message")
+
+  -- delete message again
+  D:log("Delete message no "..messagesNo)
+  local result = pop3:request("DELE "..messagesNo)
+  assert_not_nil(string.find(result,"+OK"),"Cannot delete message")
+
+  quit()  -- that should delete message
+
+  -- checking messages count after deleting message
+  login()
+  local messagesNoFinal = getMessagesNo()
+  assert_equal(messagesNoBefore,messagesNoFinal,"Wrong messages number after deleting message")
   quit()
+
 end
 
 function test_Stat_WhenStatCommandIsSent_CorrectResponseIsReceived()
 
   login()
-
   local result = pop3:request("STAT")
   assert_not_nil(string.find(result,"+OK%s*%s*%s*%d*"),"Wrong response to command: STAT")
-
   quit()
 end
 
+
+function test_Noop_WhenNoopCommnadIsSent_CorrectResponseIsReceived()
+  login()
+  local result = pop3:request("NOOP")
+  assert_not_nil(string.find(result,"+OK"),"Wrong response to command: NOOP")
+  quit()
+end
+
+function test_ApopImplemented_WhenApopCommnadIsSent_CorrectResponseIsReceived()
+  login()
+  local result = pop3:request("APOP fakeuser c4c9334bac560ecc979e58001b3e22fb")
+  assert_nil(string.find(result,"syntax error"),"Command APOP not implemented")
+  quit()
+end
+
+function test_RsetImplemented_WhenRsetCommnadIsSent_CorrectResponseIsReceived()
+  login()
+  local result = pop3:request("RSET")
+  assert_nil(string.find(result,"syntax error"),"Command APOP not implemented")
+  quit()
+end
+
+function test_UidlImplemented_WhenUidlCommnadIsSent_CorrectResponseIsReceived()
+  login()
+  local result = pop3:request("UILD 1 1")
+  assert_nil(string.find(result,"syntax error"),"Command UIDL not implemented")
+  quit()
+end
