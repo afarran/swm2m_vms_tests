@@ -428,7 +428,10 @@ ServiceWrapper = {}
 
   function ServiceWrapper:log(data)
     local swName = self.name or "UnnamedServiceWrapper"
-    D:log(swName .. ": " .. data)
+    local lines = string.split(data, "\r\n")
+    for _, line in pairs(lines) do
+      D:log(swName .. ": " .. line)
+    end
   end
 
   function ServiceWrapper:getPropertiesDefinition()

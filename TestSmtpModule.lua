@@ -41,8 +41,6 @@ function teardown()
     end
     SMTPclear = {}
   end
-  vmsSW:setPropertiesByName({
-      AllowedEmailDomains = ""})
 end
 
 -------------------------
@@ -556,5 +554,23 @@ function test_SMTP_WhenCorrectMailToUserDifferentThanigwsatkywavecomIsSent_Serve
   assert_nil(emailMessage, "Email message received")
   
 end
+
+
+function test_SMTP_WhenAllowedEmailDomainsFilledAndEmailToNotAllowedDomainSent_EmailRefused()
+  vmsSW:setPropertiesByName({AllowedEmailDomains = "skywave.com"})
+  startSmtp()
+  smtp:execute("HELO")
+  local response = smtp:getResponse()
+  smtp:execute("MAIL FROM:<skywave@sky.com>")
+  response = smtp:getResponse()
+  smtp:execute("RCPT TO:<receiver@sky.com>")
+  response = smtp:getResponse()
+  smtp:execute("DATA")
+  response = smtp:getResponse()
+  assert_match("^354.*\r\n", response, "DATA command response is incorrect")
+  SMTPclear[1] = "\r\n.\r\n"
+  SMTPclear[2] = "QUIT"
+end
+
 -- TODO: Test if HELO command issued - session should be reset (HELO/EHLO invokes RSET) - not possible to test in current implementation
 -- TODO: Test if RSET properly resets session information - not possible to test in current implementation
