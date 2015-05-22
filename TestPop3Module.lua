@@ -146,7 +146,7 @@ function test_List_WhenListRequested_CorrectServerResponseIsReceived()
 end
 
 
-function test_Retrive_WhenMailIsSentViaSmtp_ItIsPossibleToRetriveItViaPop3GORUN()
+function test_Retrive_WhenMailIsSentViaSmtp_ItIsPossibleToRetriveItViaPop3()
  
   -- login pop3 session
   login()
@@ -265,5 +265,12 @@ function test_RsetImplemented_WhenRsetCommnadIsSent_CorrectResponseIsReceived()
   login()
   local result = pop3:request("RSET")
   assert_nil(string.find(result,"syntax error"),"Command APOP not implemented")
+  quit()
+end
+
+function test_UidlImplemented_WhenUidlCommnadIsSent_CorrectResponseIsReceived()
+  login()
+  local result = pop3:request("UILD 1 1")
+  assert_nil(string.find(result,"syntax error"),"Command UIDL not implemented")
   quit()
 end
