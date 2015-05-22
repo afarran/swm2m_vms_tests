@@ -31,8 +31,6 @@ function setup()
                                GpsJammedStartDebounceTime = 1,
                                GpsJammedEndDebounceTime = 1,
                                StandardReport1Interval = 0,
-                               PowerDisconnectedStartDebounceTime = 1,
-                               PowerDisconnectedEndDebounceTime = 1,
                                InterfaceUnitDisconnectedStartDebounceTime = 1,
                                InterfaceUnitDisconnectedEndDebounceTime = 1,
                                HwClientDisconnectedStartDebounceTime = 1,
@@ -3438,7 +3436,7 @@ function test_SetProperties_WhenSetPropertiesMessageIsSet_PropertiesIncludedInTh
           D:log(name)
           D:log(propertyGetByLsf[name])
           D:log(ReceivedProperties[name])
-       --   assert_equal(SetProperties[name], propertyGetByLsf[name], "Property:" ..ReceivedProperties[name] .."has not been correctly set by message")
+          assert_equal(SetProperties[name], propertyGetByLsf[name], "Property:" ..ReceivedProperties[name] .."has not been correctly set by message")
           assert_equal(SetProperties[name], ReceivedProperties[name], "Property:" ..ReceivedProperties[name] .."has not been correctly set by message")
         end
     end
