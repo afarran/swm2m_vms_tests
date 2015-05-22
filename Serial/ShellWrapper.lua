@@ -11,7 +11,7 @@ ShellWrapper = {}
 
   function ShellWrapper:_init(serialPort)
     self.port = serialPort
-    self.timeout = 60 -- default SMTP timeout
+    self.timeout = 60
   end
 
   function ShellWrapper:execute(command, newline)
