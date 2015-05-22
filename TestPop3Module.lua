@@ -19,13 +19,14 @@ require "Email/SmtpWrapper"
 local SILENT = true
 
 -- setup for waiting after message is sent via smtp, sometimes it needs time
-local TRIES_AFTER_SENDING_EMAIL = 1 -- how many tries should be performed
-local WAIT_FOR_MESSAGE_DELAY = 6    -- how many seconds of the delay after each try
+local TRIES_AFTER_SENDING_EMAIL = 2 -- how many tries should be performed
+local WAIT_FOR_MESSAGE_DELAY = 60    -- how many seconds of the delay after each try
 
 -- user setup
 local DOMAIN = "isadatapro.skywave.com"
 local USER = "<terminal_id>@"..DOMAIN
 local PASSWD = "abcd123"
+
 
 -------------------------
 -- SETUP
@@ -46,6 +47,8 @@ smtp:setTimeout(5)
 
 -- pop3 session state
 local logged = false;
+-- gps position in emails
+local gpsInEmails = false
 
 local function login()
   pop3:start()
@@ -74,13 +77,20 @@ local function getMessagesNo()
   return no
 end
 
+
+
 -------------------------
 -- SETUP/TEARDOWN
 -------------------------
 function suite_setup()
 
   -- needs some time to start shell
-  --framework.delay(15)
+  framework.delay(15)
+
+  -- gps in emails randomization
+  if lunatest.random_int(0, 100) > 50 then
+    gpsInEmails = true
+  end
 
   vmsSW:setPropertiesByName({
       MailSessionIdleTimeout = 20,
@@ -191,13 +201,14 @@ end
   -- 3. Checking inbox is perfomed in a loop.
   -- 4. Messages count is checked.
   -- 5. Message is retrieved (RETR).
-  -- 6. 'TOP' command is sent.
-  -- 7. 'DELE' command is sent.
-  -- 8. 'RSET' command is sent.
-  -- 9. Messages count is checked.
-  -- 10. 'DELE' command is sent.
-  -- 11. 'QUIT' command is sent.
-  -- 12. Messages count is checked.
+  -- 6. gpsInEmails is checked (if exists or not,randomly)
+  -- 7. 'TOP' command is sent.
+  -- 8. 'DELE' command is sent.
+  -- 9. 'RSET' command is sent.
+  -- 10. Messages count is checked.
+  -- 11. 'DELE' command is sent.
+  -- 12. 'QUIT' command is sent.
+  -- 13. Messages count is checked.
   --
   -- Results:
   --
@@ -206,13 +217,14 @@ end
   -- 3. Messages count is received.
   -- 4. Messages count is correct.
   -- 5. '+OK' status is received.
-  -- 6. '+OK' status is received.
-  -- 7. '+OK' status is received (means deleted flag is set).
-  -- 8. '+OK' status is received (means deleted flag is unset).
-  -- 9. Messages count is correct.
-  -- 10. '+OK' status is received (means deleted flag is set).
-  -- 11. Message is finaly deleted.
-  -- 12. Messages count is correct.
+  -- 6. gpsInEmails result is correct.
+  -- 7. '+OK' status is received.
+  -- 8. '+OK' status is received (means deleted flag is set).
+  -- 9. '+OK' status is received (means deleted flag is unset).
+  -- 10. Messages count is correct.
+  -- 11. '+OK' status is received (means deleted flag is set).
+  -- 12. Message is finaly deleted.
+  -- 13. Messages count is correct.
 function test_Retrive_WhenMailIsSentViaSmtp_ItIsPossibleToRetriveItViaPop3()
  
   -- login pop3 session
@@ -261,6 +273,16 @@ function test_Retrive_WhenMailIsSentViaSmtp_ItIsPossibleToRetriveItViaPop3()
   D:log("Retrive message no "..messagesNo)
   local result = pop3:request("RETR "..messagesNo)
   assert_not_nil(string.find(result,"+OK"),"Cannot retrieve message")
+
+  -- checking gpsInEmails
+  local pattern = ".*Pos:[^,]*,[^,]*,.*"
+  if gpsInEmails then
+    D:log("Checking gps position in email content. It should exists.")
+    assert_not_nil(string.find(result,pattern,1,false),"There is no gps position in email")
+  else
+    D:log("Checking gps position in email content. It should not exists.")
+    assert_nil(string.find(result,pattern,1,false),"There should not be gps position in email")
+  end
 
   -- top message
   D:log("top message no "..messagesNo)
@@ -404,4 +426,7 @@ function test_UidlImplemented_WhenUidlCommnadIsSent_CorrectResponseIsReceived()
   local result = pop3:request("UIDL 1 1")
   assert_nil(string.find(result,"syntax error"),"Command UIDL not implemented")
   quit()
+end
+
+function test_GpsInEmails()
 end
