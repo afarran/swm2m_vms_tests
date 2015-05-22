@@ -88,8 +88,8 @@ function suite_setup()
       AllowedEmailDomains = " ",
     })
 
-  local terminalId = systemSW:getTerminalId()
-  USER = terminalId.."@"..DOMAIN
+  local mobileId = idpSW:getPropertiesByName({'mobileID'})
+  USER = mobileId['mobileID'].."@"..DOMAIN
   D:log("Using user: "..USER)
 
 end

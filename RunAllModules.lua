@@ -49,6 +49,7 @@ require("Service/LogServiceWrapper")
 require("Service/ShellServiceWrapper")
 require("Service/UniboxServiceWrapper")
 require("Service/InterfaceUnitHelpServiceWrapper")
+require("Service/IdpServiceWrapper")
 
 -- Gps Frontend
 require("Gps/GpsFrontend")
@@ -61,6 +62,7 @@ vmsSW = VmsServiceWrapper()
 geofenceSW = GeofenceServiceWrapper()
 logSW = LogServiceWrapper()
 shellSW = ShellServiceWrapper()
+idpSW = IdpServiceWrapper()
 uniboxSW = UniboxServiceWrapper()
 InterfaceUnitHelpSW = InterfaceUnitHelpServiceWrapper()
 
