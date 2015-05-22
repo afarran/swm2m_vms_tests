@@ -440,7 +440,7 @@ end
 
 --- Check if InsideGeofenceState property is set correctly and 
 -- StatusBitmap indicates Inside Geofence after debounce time when entered geofence
--- 1. Set InsideGeofenceStartDebounceTime to 10-15 sec, and InsideGeofenceSendReport to true
+-- 1. Set InsideGeofenceStartDebounceTime to 20-25 sec, and InsideGeofenceSendReport to true
 -- 2. Go inside Geofence zone and wait for GeofenceEntry
 -- 3. Check if InsideGeofenceState property remains false
 -- 4. Wait for AbnormalReport which will be sent after debounce time
@@ -448,8 +448,8 @@ end
 -- 6. Check if status bitmap indicates that terminal is in geofence zone
 -- 7. Check if InsideGeofenceState property was set to true
 function test_GeofenceFeatures_WhenTerminalGoesInsideGeofenceZoneWithInsideGeofenceStartDebounceTime_InsideGeofenceStateIsSetAfterDebounce()
-  -- 1. Set InsideGeofenceStartDebounceTime to 10-15 sec, and InsideGeofenceSendReport to true  
-  local startDebounce = lunatest.random_int(10, 15)
+  -- 1. Set InsideGeofenceStartDebounceTime to 20-25 sec, and InsideGeofenceSendReport to true  
+  local startDebounce = lunatest.random_int(20, 25)
   vmsSW:setPropertiesByName({InsideGeofenceStartDebounceTime = startDebounce, InsideGeofenceSendReport = true})
 
   -- 2. Go inside Geofence zone and wait for GeofenceEntry
@@ -469,7 +469,7 @@ function test_GeofenceFeatures_WhenTerminalGoesInsideGeofenceZoneWithInsideGeofe
   assert_not_nil(abnormalReport, "AbnormalReport not received")
   
   -- 5. Check if time difference between GeofenceEntry and AbnormalReport matches debounce time
-  assert_equal(abnormalReport.Timestamp - startDebounce, geofenceEntry.Timestamp, 3, "Timestamp of AbnormalReport indicates incorrect Debounce time")
+  assert_equal(abnormalReport.Timestamp - startDebounce, geofenceEntry.Timestamp, 10, "Timestamp of AbnormalReport indicates incorrect Debounce time")
   
   -- 6. Check if status bitmap indicates that terminal is in geofence zone
   insideGeofence = vmsSW:decodeBitmap(abnormalReport.StatusBitmap, "EventStateId").InsideGeofence
@@ -483,7 +483,7 @@ end
 
 --- Check if InsideGeofenceState property is set correctly and 
 -- StatusBitmap indicates Inside Geofence false after debounce time when exit geofence
--- 1. Set InsideGeofenceEndDebounceTime to 10-15 sec, and InsideGeofenceSendReport to true
+-- 1. Set InsideGeofenceEndDebounceTime to 20-25 sec, and InsideGeofenceSendReport to true
 -- 2. Go inside Geofence zone and wait for GeofenceEntry
 -- 3. Check if InsideGeofenceState property is set to true
 -- 4. Go outside Geofence zone and wait for GeofenceExit
@@ -492,8 +492,8 @@ end
 -- 7. Check if time difference between GeofenceExit and AbnormalReport matches debounce time
 -- 8. Check if InsideGeofenceStarte property is set to false and AbnormalReport.StatusBitmap indicates InsideGeofence false
 function test_GeofenceFeatures_WhenTerminalGoesInsideGeofenceZoneWithOutsideGeofenceEndDebounceTime_InsideGeofenceStateIsSetAfterDebounce()
-  -- 1. Set InsideGeofenceEndDebounceTime to 10-15 sec, and InsideGeofenceSendReport to true
-  local endDebounce = lunatest.random_int(10, 15)
+  -- 1. Set InsideGeofenceEndDebounceTime to 20-25 sec, and InsideGeofenceSendReport to true
+  local endDebounce = lunatest.random_int(20, 25)
   vmsSW:setPropertiesByName({InsideGeofenceEndDebounceTime = endDebounce, InsideGeofenceSendReport = true})
 
 
@@ -526,7 +526,7 @@ function test_GeofenceFeatures_WhenTerminalGoesInsideGeofenceZoneWithOutsideGeof
   assert_not_nil(abnormalReport, "AbnormalReport not received")
   
   -- 7. Check if time difference between GeofenceExit and AbnormalReport matches debounce time
-  assert_equal(abnormalReport.Timestamp - endDebounce, geofenceExit.Timestamp, 3, "Timestamp of AbnormalReport indicates incorrect Debounce time")
+  assert_equal(abnormalReport.Timestamp - endDebounce, geofenceExit.Timestamp, 10, "Timestamp of AbnormalReport indicates incorrect Debounce time")
   
   -- 8. Check if InsideGeofenceStarte property is set to false and AbnormalReport.StatusBitmap indicates InsideGeofence false
   insideGeofence = vmsSW:decodeBitmap(abnormalReport.StatusBitmap, "EventStateId").InsideGeofence

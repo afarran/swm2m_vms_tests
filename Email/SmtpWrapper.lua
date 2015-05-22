@@ -13,13 +13,9 @@ SmtpWrapper = {}
     end,})
 
   function SmtpWrapper:start()
-    local response = self:request("")
-    if not string.match(response, ".*mail>") then
-      self:request("mail")
-    end
     self:execute("smtp")
   end
-
+  
   --- sends an email over SMTP rs232 session.
   -- TODO strip from lunatest assertions and add error handling
   -- TODO move to test logic container when assertion mechanism ready
