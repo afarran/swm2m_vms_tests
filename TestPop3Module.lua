@@ -18,8 +18,8 @@ require "Email/Pop3Wrapper"
 local SILENT = true
 
 -- setup for waiting after message is sent via smtp, sometimes it needs time
-local TRIES_AFTER_SENDING_EMAIL = 10 -- how many tries should be performed
-local WAIT_FOR_MESSAGE_DELAY = 60    -- how many second of the delay after each try
+local TRIES_AFTER_SENDING_EMAIL = 1 -- how many tries should be performed
+local WAIT_FOR_MESSAGE_DELAY = 6    -- how many seconds of the delay after each try
 
 -- user setup
 local DOMAIN = "isadatapro.skywave.com"
@@ -112,7 +112,7 @@ end
 -- Test Cases
 -------------------------
 
-function test_Login_GORUNWhenUserNameAndPasswordIsSent_CorrectServerResponseIsReceived()
+function test_Login_WhenUserNameAndPasswordIsSent_CorrectServerResponseIsReceived()
   
   -- starting pop3 shell
   pop3:start()
@@ -145,7 +145,8 @@ function test_List_WhenListRequested_CorrectServerResponseIsReceived()
   quit()
 end
 
-function test_Retrive_WhenMailIsSentViaSmtp_ItIsPossibleToRetriveItViaPop3()
+
+function test_Retrive_WhenMailIsSentViaSmtp_ItIsPossibleToRetriveItViaPop3GORUN()
  
   -- login pop3 session
   login()
@@ -194,12 +195,40 @@ function test_Retrive_WhenMailIsSentViaSmtp_ItIsPossibleToRetriveItViaPop3()
   local result = pop3:request("RETR "..messagesNo)
   assert_not_nil(string.find(result,"+OK"),"Cannot retrieve message")
 
+  -- top message
+  D:log("top message no "..messagesNo)
+  local result = pop3:request("TOP "..messagesNo.." 1")
+  assert_not_nil(string.find(result,"+OK"),"Cannot top message")
+
+  -- uidl message
+  -- QUESTION: is UIDL command implemented?
+  -- D:log("uidl message no "..messagesNo)
+  -- local result = pop3:request("UIDL "..messagesNo.." 1")
+  -- assert_not_nil(string.find(result,"+OK"),"Cannot UIDL message")
+
   -- delete message
   D:log("Delete message no "..messagesNo)
   local result = pop3:request("DELE "..messagesNo)
   assert_not_nil(string.find(result,"+OK"),"Cannot delete message")
 
-  quit()
+  -- rset message
+  D:log("Rset message no "..messagesNo)
+  local result = pop3:request("RSET "..messagesNo)
+  assert_not_nil(string.find(result,"+OK"),"Cannot rset message")
+
+  quit() -- that should not delete message
+
+  -- checking messages count after rset message
+  login()
+  local messagesNoFinal = getMessagesNo()
+  assert_equal(messagesNoBefore+1,messagesNoFinal,"Wrong messages number after deleting message")
+
+  -- delete message again
+  D:log("Delete message no "..messagesNo)
+  local result = pop3:request("DELE "..messagesNo)
+  assert_not_nil(string.find(result,"+OK"),"Cannot delete message")
+
+  quit()  -- that should delete message
 
   -- checking messages count after deleting message
   login()
@@ -217,3 +246,24 @@ function test_Stat_WhenStatCommandIsSent_CorrectResponseIsReceived()
   quit()
 end
 
+
+function test_Noop_WhenNoopCommnadIsSent_CorrectResponseIsReceived()
+  login()
+  local result = pop3:request("NOOP")
+  assert_not_nil(string.find(result,"+OK"),"Wrong response to command: NOOP")
+  quit()
+end
+
+function test_ApopImplemented_WhenApopCommnadIsSent_CorrectResponseIsReceived()
+  login()
+  local result = pop3:request("APOP fakeuser c4c9334bac560ecc979e58001b3e22fb")
+  assert_nil(string.find(result,"syntax error"),"Command APOP not implemented")
+  quit()
+end
+
+function test_RsetImplemented_WhenRsetCommnadIsSent_CorrectResponseIsReceived()
+  login()
+  local result = pop3:request("RSET")
+  assert_nil(string.find(result,"syntax error"),"Command APOP not implemented")
+  quit()
+end
