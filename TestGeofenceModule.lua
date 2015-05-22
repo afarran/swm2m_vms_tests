@@ -30,7 +30,7 @@ local geofenceSettings = {
 -- Set gps position to outside geofecne.
 function suite_setup()
   vmsSW:setPropertiesByName({
-      InsideGeofenceSendReport = false, 
+      InsideGeofenceSendReport = true, 
       InsideGeofenceStartDebounceTime = 0, 
       InsideGeofenceEndDebounceTime = 0,
       StandardReport1Interval = 1,
@@ -38,9 +38,14 @@ function suite_setup()
   geofenceSW:setPropertiesByName(geofenceSettings)
   geofenceSW:setRectangle(zone1)
   geofenceSW:setRectangle(zone0)
-  geofenceSW:waitForRefresh()
-  GPS:set({latitude = 0, longitude = 0})
-  geofenceSW:waitForRefresh()
+  
+  geofenceSW:goOutside()
+  vmsSW:setHighWaterMark()
+  geofenceSW:goInside(zone1, nil, 0)
+  local receivedMessages = vmsSW:waitForMessagesByName("AbnormalReport")
+  vmsSW:setPropertiesByName({InsideGeofenceSendReport = false})
+  geofenceSW:goOutside(0)
+  receivedMessages = vmsSW:waitForMessagesByName("GeofenceExit")
 end
 
 --- Disable two geofence zones.
