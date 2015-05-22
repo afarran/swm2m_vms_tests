@@ -1,4 +1,3 @@
-
 -------------------------
 -- Pop3 test module
 -- contains VMS features dependant on pop3
@@ -19,14 +18,13 @@ require "Email/SmtpWrapper"
 local SILENT = true
 
 -- setup for waiting after message is sent via smtp, sometimes it needs time
-local TRIES_AFTER_SENDING_EMAIL = 2 -- how many tries should be performed
+local TRIES_AFTER_SENDING_EMAIL = 10 -- how many tries should be performed
 local WAIT_FOR_MESSAGE_DELAY = 60    -- how many seconds of the delay after each try
 
 -- user setup
 local DOMAIN = "isadatapro.skywave.com"
-local USER = "<terminal_id>@"..DOMAIN
+local USER = "<terminal_id>@"..DOMAIN -- it will be filled in suite setup
 local PASSWD = "abcd123"
-
 
 -------------------------
 -- SETUP
@@ -77,15 +75,13 @@ local function getMessagesNo()
   return no
 end
 
-
-
 -------------------------
 -- SETUP/TEARDOWN
 -------------------------
 function suite_setup()
 
   -- needs some time to start shell
-  framework.delay(15)
+  framework.delay(25)
 
   -- gps in emails randomization
   if lunatest.random_int(0, 100) > 50 then
@@ -426,7 +422,4 @@ function test_UidlImplemented_WhenUidlCommnadIsSent_CorrectResponseIsReceived()
   local result = pop3:request("UIDL 1 1")
   assert_nil(string.find(result,"syntax error"),"Command UIDL not implemented")
   quit()
-end
-
-function test_GpsInEmails()
 end
