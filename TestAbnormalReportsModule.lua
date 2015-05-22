@@ -2393,7 +2393,7 @@ function test_InterfaceUnitDisconnected_WhenInterfaceUnitIsConnectedForTimeAbove
   D:log(framework.dump(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"]), "InterfaceUnitDisconnectedState")
   assert_true(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"], "InterfaceUnitDisconnectedState property has been changed before InterfaceUnitDisconnectedEndDebounceTime has passed")
 
-  framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME)
+  framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME + 3)
 
   timeOfEvent = os.time()
 
@@ -2506,7 +2506,7 @@ function test_InterfaceUnitDisconnected_WhenInterfaceUnitIsDisconnectedForTimeAb
   InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = true})
   
   D:log("INTERFACE UNIT CONNECTED TO TERMINAL")
-  framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME)
+  framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME + 3)
 
   -- checking InterfaceUnitDisconnectedState property
   InterfaceUnitDisconnectedStateProperty = vmsSW:getPropertiesByName({"InterfaceUnitDisconnectedState"})
@@ -2641,7 +2641,7 @@ function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitDisconnectedSt
   local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
   D:log(ReceivedMessages["AbnormalReport"])
 
-  framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME)
+  framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME + 3)
 
   if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "InterfaceUnitDisconnected" ) then
     assert_nil(1, "InterfaceUnitDisconnected abnormal report sent but not expected - sending reports disabled")
@@ -2687,7 +2687,7 @@ function test_InterfaceUnitDisconnected_WhenInterfaceUnitServiceIsDisabledForTim
   D:log("INTERFACE UNIT CONNECTED TO TERMINAL")
   -- INTERFACE UNIT is connected to terminal from now
   InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = true})
-  framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME)
+  framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME + 3)
   
   -- checking InterfaceUnitDisconnectedState property - unit is connected now
   local InterfaceUnitDisconnectedStateProperty = vmsSW:getPropertiesByName({"InterfaceUnitDisconnectedState"})
@@ -2750,7 +2750,7 @@ function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitConnectedWhenI
   -- INTERFACE UNIT is connected to terminal from now
   InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = true})
 
-  framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME)
+  framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME + 3)
 
   -- checking InterfaceUnitDisconnectedState property
   InterfaceUnitDisconnectedStateProperty = vmsSW:getPropertiesByName({"InterfaceUnitDisconnectedState"})
@@ -2815,7 +2815,7 @@ function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitDisconnectedSt
   -- INTERFACE UNIT is connected to terminal from now
   InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = true})
 
-  framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME)
+  framework.delay(INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME + 3)
 
   local ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
   D:log(ReceivedMessages["AbnormalReport"])
