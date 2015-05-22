@@ -112,6 +112,23 @@ end
 -- Test Cases
 -------------------------
 
+--- TC checks commands: USER, PASS, QUIT
+  -- 
+  -- Initial conditions:
+  -- 
+  -- * pop3 shell session is established
+  --
+  -- Steps:
+  --
+  -- 1. 'USER <username>' request is sent.
+  -- 2. 'PASS passwd' request is sent.
+  -- 3. 'QUIT' request is sent.
+  --
+  -- Results:
+  --
+  -- 1. '+OK' status is received.
+  -- 2. '+OK password accepted' status is received.
+  -- 3. '+OK' status is received.
 function test_Login_WhenUserNameAndPasswordIsSent_CorrectServerResponseIsReceived()
   
   -- starting pop3 shell
