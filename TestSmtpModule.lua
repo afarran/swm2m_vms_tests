@@ -210,7 +210,7 @@ end
 --Since it has been a common source of errors, it is worth noting that
 --   spaces are not permitted on either side of the colon following FROM
 --   in the MAIL command or TO in the RCPT command.
-
+--[[ test 
 function test_SMTP_WhenMAILWithSpaceBeforeColonCalled_ServerReturns550()
   startSmtp()
   smtp:execute("HELO")
