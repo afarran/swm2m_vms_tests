@@ -19,6 +19,7 @@ InterfaceUnitHelpServiceWrapper = {}
       FAST_FLASH = 2,
       ON = 3
     }
+    
 
     local properties = {
       { name ="led1State", pin=2, ptype="enum", enums=statesSet1},
@@ -34,6 +35,68 @@ InterfaceUnitHelpServiceWrapper = {}
         name = "InterfaceUnitHelpService",
         properties = properties
     })
+  
+   
+  end
+  
+  
+  
+  function InterfaceUnitHelpServiceWrapper:isSatelliteLedOn()
+    local properties = self:getPropertiesByName({"led3State"})
+    local state = properties.led3State
+    D:log("Sat LED state is "..state)
+    if state == 'OFF' then
+      return false
+    end
+    return true
+  end
 
+  function InterfaceUnitHelpServiceWrapper:isSatelliteLedFlashingSlow()
+    local properties = self:getPropertiesByName({"led3State"})
+    local state = properties.led3State
+    D:log("Sat LED state is "..state)
+    if state == 'SLOW_FLASH' then
+      return false
+    end
+    return true
+  end
 
+  function InterfaceUnitHelpServiceWrapper:isGpsLedOn()
+    local properties = self:getPropertiesByName({"led2State"})
+    local state = properties.led2State
+    D:log("GPS LED state is "..state)
+    if state == 'OFF' then
+      return false
+    end
+    return true
+  end
+
+  function InterfaceUnitHelpServiceWrapper:isConnectLedOn()
+    local properties = self:getPropertiesByName({"led1State"})
+    local state = properties.led1State
+    D:log("IDP connect LED state is "..state)
+    if state == 'OFF' then
+      return false
+    end
+    return true
+  end
+
+  function InterfaceUnitHelpServiceWrapper:isConnectLedFlashingFast()
+    local properties = self:getPropertiesByName({"led1State"})
+    local state = properties.led1State
+    D:log("IDP connect LED state is "..state)
+    if state == 'FAST_FLASH' then
+      return true
+    end
+    return false
+  end
+
+  function InterfaceUnitHelpServiceWrapper:isConnectLedFlashingSlow()
+    local properties = self:getPropertiesByName({"led1State"})
+    local state = properties.led1State
+    D:log("IDP connect LED state is "..state)
+    if state == 'SLOW_FLASH'  then
+      return true
+    end
+    return false
   end

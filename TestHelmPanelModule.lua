@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------------------------
--- VMS Helm Panel test module
+-- VMS Interface Unit test module
 -----------------------------------------------------------------------------------------------
 -- @module TestHelmPanelModule
 -----------------------------------------------------------------------------------------------
@@ -52,11 +52,8 @@ function setup()
 
   GPS:set({jammingDetect = false, fixType = 3}) -- good signal quality simulated
 
-  -- External power source disconnected from Helm panel
-  helmPanel:externalPowerConnected("false")
-
-  -- Helm Panel disconnected from terminal
-  helmPanel:setConnected("false")
+  -- Interface Unit disconnected from terminal
+  InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = false})
 
   framework.delay(2)  -- to let terminal go into desired state
 
@@ -81,7 +78,7 @@ end
 --- TC checks if TerminalConnected LED is not flashing when feature is disabled (MinStandardReportLedFlashTime is set to 0)
   -- Initial Conditions:
   --
-  -- * Helm Panel service installed on terminal
+  -- * Interface Unit service installed on terminal
   -- Steps:
   --
   -- 1. Set StandardReport1Interval, StandardReport2Interval and StandardReport3Interval to 1 minute
@@ -116,7 +113,7 @@ function test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetTo0AndS
   )
 
   -- chack LED state
-  assert_false(helmPanel:isConnectLedFlashingSlow(), "Terminal Connected LED is flashing when feature is disabled")
+  assert_false(InterfaceUnitHelpSW:isConnectLedFlashingSlow(), "Terminal Connected LED is flashing when feature is disabled")
 
 end
 
@@ -124,7 +121,7 @@ end
 --- TC checks if TerminalConnected LED is flashing slow when standard reports are being sent
   -- Initial Conditions:
   --
-  -- * Helm Panel service installed on terminal
+  -- * Interface Unit service installed on terminal
   -- Steps:
   --
   -- 1. Set StandardReport1Interval to 1 minute
@@ -148,16 +145,17 @@ Annotations:register([[
 function test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsFlashingForMinStandardReportLedFlashTime()
 
   -- *** Setup
-  local ledFlashingStateTrueTable = {}
   local STANDARD_REPORT_1_INTERVAL = 1
-  local FLASH_TIME = 20
-
+  local FLASH_TIME = 30
+  
   vmsSW:setPropertiesByName({StandardReport1Interval = STANDARD_REPORT_1_INTERVAL,
                              StandardReport2Interval = 0,
                              StandardReport3Interval = 0, 
                              MinStandardReportLedFlashTime = FLASH_TIME}     -- feature enabled
   )
-
+  
+  -- Interface Unit disconnected from terminal
+  InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = false})
   gateway.setHighWaterMark() -- to get the newest messages
 
    -- wait for report
@@ -170,8 +168,10 @@ function test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetToValue
   local currentTime = os.time()
 
   while currentTime - startTime  < FLASH_TIME   do
-      assert_true(helmPanel:isConnectLedFlashingSlow(), "Slow flash has been active for improper period of time")
-      framework.delay(1)
+    D:log(InterfaceUnitHelpSW:isConnectLedFlashingSlow())
+      assert_true(InterfaceUnitHelpSW:isConnectLedFlashingSlow(), "Slow flash has been active for improper period of time")
+      D:log(InterfaceUnitHelpSW:isConnectLedFlashingSlow())
+      framework.delay(2)
       local currentTime = os.time()
   end
 
@@ -182,7 +182,7 @@ end
 --- TC checks if TerminalConnected LED is flashing fast when standard report is waiting in queue
   -- Initial Conditions:
   --
-  -- * Helm Panel service installed on terminal
+  -- * Interface Unit service installed on terminal
   -- Steps:
   --
   -- 1. Set StandardReport1Interval to 1 minute
@@ -230,7 +230,7 @@ function test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetToValue
   -- shell command should be used
   while currentTime < standardReportEnabledStartTime + STANDARD_REPORT_1_INTERVAL*60 + 60 do
       currentTime = os.time()
-      if(helmPanel:isConnectLedFlashing()) then
+      if(InterfaceUnitHelpSW:isConnectLedFlashing()) then
         currentTime = os.time()
         ledFlashingStateTrueTable[#ledFlashingStateTrueTable + 1] = currentTime
       end
@@ -253,7 +253,7 @@ end
 --- TC checks if TerminalConnected LED is flashing slowly when an incoming email is waiting to be read
   -- Initial Conditions:
   --
-  -- * Helm Panel service installed on terminal
+  -- * Interface Unit service installed on terminal
   -- Steps:
   --
   -- 1. Simulate an incoming email message received
@@ -286,8 +286,8 @@ function test_TerminalConnectedLED_WhenToMobileEmailIsUnread_TerminalConnectedLE
   gateway.setHighWaterMark() -- to get the newest messages
 
   -- simulate receivied email now
-  helmPanel:isConnectLedFlashingSlow()
-  assert_true(helmPanel:isConnectLedFlashingSlow(), "IDP Connected LED is not flashing slow when to-mobile email is received")
+  InterfaceUnitHelpSW:isConnectLedFlashingSlow()
+  assert_true(InterfaceUnitHelpSW:isConnectLedFlashingSlow(), "IDP Connected LED is not flashing slow when to-mobile email is received")
 
 end
 
@@ -298,7 +298,7 @@ end
 --- TC checks if GPS LED is OFF when GPS signal is blocked
   -- Initial Conditions:
   --
-  -- * Helm Panel service installed on terminal
+  -- * Interface Unit service installed on terminal
   -- Steps:
   --
   -- 1. Set GpsBlockedStartDebounceTime and GpsBlockedEndDebounceTime to 1 second (to get immediate change)
@@ -334,15 +334,16 @@ function test_GpsLED_WhenGpsIsBlockedAndNotBlocked_GpsLedIsOffOrOnAccordingToGPS
   positionSW:setPropertiesByName({maxFixTimeout = MAX_FIX_TIMEOUT})
   GPS:set({fixType = 1})
 
-  framework.delay(MAX_FIX_TIMEOUT + GPS_BLOCKED_START_DEBOUNCE_TIME + GPS_CHECK_INTERVAL)
+  framework.delay(GPS_BLOCKED_START_DEBOUNCE_TIME + GPS_CHECK_INTERVAL)
 
-  local ledState = helmPanel:isGpsLedOn()
+  local ledState = InterfaceUnitHelpSW:isConnectLedFlashingFast()
+  
   assert_false(ledState,"The GPS LED is not Off when there is no GPS signal")
 
   GPS:set({fixType = 3})
   framework.delay(GPS_BLOCKED_END_DEBOUNCE_TIME + GPS_CHECK_INTERVAL)
 
-  ledState = helmPanel:isGpsLedOn()
+  ledState = InterfaceUnitHelpSW:isGpsLedOn()
   assert_true(ledState,"The GPS LED is not ON when GPS signal is good")
 
 end
@@ -355,7 +356,7 @@ end
 --- TC checks if Satellite LED is flashing slowly when IDP link is being estabilished
   -- Initial Conditions:
   --
-  -- * Helm Panel service installed on terminal
+  -- * Interface Unit service installed on terminal
   -- Steps:
   --
   -- 1. Set IdpBlockedStartDebounceTime to 1 second and IdpBlockedEndDebounceTime to 20 seconds (not to get immediate change)
@@ -397,14 +398,14 @@ function test_SatelliteLED_WhenIDPSignalIsBeingEstabilished_SatelliteLEDIsFlashi
   vmsSW:SatelliteControlState("NotActive")
   framework.delay(IDP_BLOCKED_START_DEBOUNCE_TIME)   -- wait until terminal goes back to IdpBlocked = true state
 
-  local ledState = helmPanel:isSatelliteLedOn()
+  local ledState = InterfaceUnitHelpSW:isSatelliteLedOn()
   assert_false(ledState, "Satellite LED is not OFF when IDP link is unavailable")
 
   ------------------------------------------------------------------------------
   -- IDP signal is being estabilished - LED is expected to be flashing slowly
   ------------------------------------------------------------------------------
   vmsSW:SatelliteControlState("Active")
-  ledState = helmPanel:isSatelliteLedFlashingSlow()
+  ledState = InterfaceUnitHelpSW:isSatelliteLedFlashingSlow()
   assert_true(ledState, "Satellite LED is not flashing slowly when IDP connection is being estabilished")
 
 end
@@ -413,7 +414,7 @@ end
 --- TC checks if Satellite LED is ON and OFF according to IDP connection
   -- Initial Conditions:
   --
-  -- * Helm Panel service installed on terminal
+  -- * Interface Unit service installed on terminal
   -- Steps:
   --
   -- 1. Set IdpBlockedStartDebounceTime to 1 second and IdpBlockedEndDebounceTime to 1 seconds (to get immediate change)
@@ -458,7 +459,7 @@ function test_SatelliteLED_WhenIDPSignalIsNotAvailableOrIDPSignalIsGood_Satellit
   vmsSW:SatelliteControlState("NotActive")
   framework.delay(IDP_BLOCKED_START_DEBOUNCE_TIME)   -- wait until terminal goes back to IdpBlocked = true state
 
-  local ledState = helmPanel:isSatelliteLedOn()
+  local ledState = InterfaceUnitHelpSW:isSatelliteLedOn()
   assert_false(ledState, "Satellite LED is not OFF when IDP link is unavailable")
 
   ------------------------------------------------------------------------------
@@ -466,29 +467,29 @@ function test_SatelliteLED_WhenIDPSignalIsNotAvailableOrIDPSignalIsGood_Satellit
   ------------------------------------------------------------------------------
   vmsSW:SatelliteControlState("Active")
   framework.delay(IDP_BLOCKED_END_DEBOUNCE_TIME)   -- wait until terminal goes back to IdpBlocked = false state
-  ledState = helmPanel:isSatelliteLedOn()
+  ledState = InterfaceUnitHelpSW:isSatelliteLedOn()
   assert_true(ledState, "Satellite LED is not ON when IDP link is OK")
 
 end
 -----------------------------------------------------------------------------------------------
 -- Test Cases - TerminalConnected LED
 -----------------------------------------------------------------------------------------------
---- TC checks if TerminalConnected LED is ON when IDP terminal is connected to Helm Panel
+--- TC checks if TerminalConnected LED is ON when IDP terminal is connected to Interface Unit
   -- Initial Conditions:
   --
-  -- * Helm Panel service installed on terminal
+  -- * Interface Unit service installed on terminal
   -- Steps:
   --
-  -- 1. Simulate IDP terminal connected to Helm Panel
+  -- 1. Simulate IDP terminal connected to Interface Unit
   -- 2. Read the state of TerminalConnected LED
   -- 3. Simulate IDP terminal disconnected from HelmPanel
   -- 4. Read the state of TerminalConnected LED
   --
   -- Results:
   --
-  -- 1. Terminal is connected to Helm Panel
+  -- 1. Terminal is connected to Interface Unit
   -- 2. TerminalConnected LED is ON
-  -- 3. Terminal disconnected from Helm Panel
+  -- 3. Terminal disconnected from Interface Unit
   -- 4. TerminalConnected LED is OFF
 Annotations:register([[
 @dependOn(helmPanel,isReady)
@@ -497,24 +498,24 @@ Annotations:register([[
 ]])
 function test_TerminalConnectedLED_WhenTerminalIsConnectedOrDisconnectedFromHelmPanel_TerminalConnectedLEDIsOnOrOffAccordingToConnection()
 
-  -- Terminal is connected to helm panel
-  helmPanel:setConnected("true")
+  -- Terminal is connected to Interface Unit
+  InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = true})
   framework.delay(3)  -- wait until led state is changed
 
   -- read TerminalConnected led when connection is estabilished
-  local ledState = helmPanel:isConnectLedOn()
-  assert_true(ledState, "Terminal Connected LED is not ON when terminal is connected to helm panel")
-  D:log(ledState, "TerminalConnected LED state for terminal connected to helm panel")
+  local ledState = InterfaceUnitHelpSW:isConnectLedOn()
+  assert_true(ledState, "Terminal Connected LED is not ON when terminal is connected to Interface Unit")
+  D:log(ledState, "TerminalConnected LED state for terminal connected to Interface Unit")
 
-  -- Helm Panel disconnected from terminal
-  helmPanel:setConnected("false")
+  -- Interface Unit disconnected from terminal
+  InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = false})
 
   framework.delay(3)  -- wait until led state is changed
 
   -- check LED again after switch
-  ledState = helmPanel:isConnectLedOn()
-  assert_false(ledState, "Terminal Connected LED is not OFF when terminal is disconnected from helm panel")
-  D:log(ledState,"TerminalConnected LED state for terminal disconnected from helm panel")
+  ledState = InterfaceUnitHelpSW:isConnectLedOn()
+  assert_false(ledState, "Terminal Connected LED is not OFF when terminal is disconnected from Interface Unit")
+  D:log(ledState,"TerminalConnected LED state for terminal disconnected from Interface Unit")
 
 end
 
