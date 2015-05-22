@@ -149,6 +149,20 @@ function test_Login_WhenUserNameAndPasswordIsSent_CorrectServerResponseIsReceive
   assert_not_nil(string.find(result,"+OK"),"POP3 QUIT command failed")
 end
 
+--- TC checks commands: LIST
+  -- 
+  -- Initial conditions:
+  -- 
+  -- * pop3 shell session is established
+  -- * authorization is performed
+  --
+  -- Steps:
+  --
+  -- 1. 'LIST' request is sent.
+  --
+  -- Results:
+  --
+  -- 1. '+OK x messages' status is received.
 function test_List_WhenListRequested_CorrectServerResponseIsReceived()
  
   -- login 
@@ -162,7 +176,42 @@ function test_List_WhenListRequested_CorrectServerResponseIsReceived()
   quit()
 end
 
-
+--- TC checks commands: LIST, RETR, 
+  -- 
+  -- Initial conditions:
+  -- 
+  -- * pop3 shell session is established
+  -- * authorization is performed
+  --
+  -- Steps:
+  --
+  -- 1. Initial messages count is requested (LIST).
+  -- 2. E-mail messages is sent via smtp.
+  -- 3. Checking inbox is perfomed in a loop.
+  -- 4. Messages count is checked.
+  -- 5. Message is retrieved (RETR).
+  -- 6. 'TOP' command is sent.
+  -- 7. 'DELE' command is sent.
+  -- 8. 'RSET' command is sent.
+  -- 9. Messages count is checked.
+  -- 10. 'DELE' command is sent.
+  -- 11. 'QUIT' command is sent.
+  -- 12. Messages count is checked.
+  --
+  -- Results:
+  --
+  -- 1. Initial messages count is fetched.
+  -- 2. E-mail is corretly sent.
+  -- 3. Messages count is received.
+  -- 4. Messages count is correct.
+  -- 5. '+OK' status is received.
+  -- 6. '+OK' status is received.
+  -- 7. '+OK' status is received (means deleted flag is set).
+  -- 8. '+OK' status is received (means deleted flag is unset).
+  -- 9. Messages count is correct.
+  -- 10. '+OK' status is received (means deleted flag is set).
+  -- 11. Message is finaly deleted.
+  -- 12. Messages count is correct.
 function test_Retrive_WhenMailIsSentViaSmtp_ItIsPossibleToRetriveItViaPop3()
  
   -- login pop3 session
