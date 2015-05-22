@@ -3380,18 +3380,11 @@ function test_SetProperties_WhenSetPropertiesMessageIsSet_PropertiesIncludedInTh
       {Name="PropertyChangeDebounceTime",Value=counter},
       {Name="MinStandardReportLedFlashTime",Value=counter},
       {Name="LogReportInterval", Value=counter},
-      {Name="StandardReport1Interval", Value=counter},
-      {Name="AcceleratedReport1Rate", Value=counter},
-      {Name="StandardReport2Interval", Value=counter},
-      {Name="AcceleratedReport2Rate", Value=counter},
-      {Name="StandardReport3Interval", Value=counter},
-      {Name="AcceleratedReport3Rate", Value=counter},
       {Name="InsideGeofenceSendReport", Value=enabled},
       {Name="InsideGeofenceStartDebounceTime", Value=counter},
       {Name="InsideGeofenceEndDebounceTime", Value=counter},
       {Name="PropertyChangeDebounceTime", Value=counter},
       {Name="ShellTimeout", Value=counter},
-      {Name="MailSessionIdleTimeout", Value=counter},
       {Name="GpsInEmails", Value=enabled},
      }
      
@@ -3440,7 +3433,7 @@ function test_SetProperties_WhenSetPropertiesMessageIsSet_PropertiesIncludedInTh
     D:log(propertyGetByLsf)
 
 
-    for name, value in pairs(ReceivedProperties) do
+    for name, value in pairs(SetProperties) do
           if name ~= "MIN" and name~= "SIN"  and name~= "Name" then
           D:log(name)
           D:log(propertyGetByLsf[name])
