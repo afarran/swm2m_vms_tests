@@ -9,6 +9,7 @@ module("TestPop3Module", package.seeall)
 
 require "UtilLibs/Text"
 require "Email/Pop3Wrapper"
+require "Email/SmtpWrapper"
 
 -------------------------
 -- SETUP
@@ -112,7 +113,7 @@ end
 -- Test Cases
 -------------------------
 
---- TC checks commands: USER, PASS, QUIT
+--- TC checks commands: USER, PASS, QUIT for authorization.
   -- 
   -- Initial conditions:
   -- 
@@ -149,7 +150,7 @@ function test_Login_WhenUserNameAndPasswordIsSent_CorrectServerResponseIsReceive
   assert_not_nil(string.find(result,"+OK"),"POP3 QUIT command failed")
 end
 
---- TC checks commands: LIST
+--- TC checks commands: LIST for fetching messages count.
   -- 
   -- Initial conditions:
   -- 
@@ -176,7 +177,7 @@ function test_List_WhenListRequested_CorrectServerResponseIsReceived()
   quit()
 end
 
---- TC checks commands: LIST, RETR, 
+--- TC checks commands: LIST, RETR, TOP, DELE, RETR, QUIT for receiving and deleting email message. 
   -- 
   -- Initial conditions:
   -- 
@@ -304,6 +305,19 @@ function test_Retrive_WhenMailIsSentViaSmtp_ItIsPossibleToRetriveItViaPop3()
 
 end
 
+--- TC checks commands: STAT.
+  -- Initial conditions:
+  -- 
+  -- * pop3 shell session is established
+  -- * authorization is performed
+  --
+  -- Steps:
+  --
+  -- 1. 'STAT' command is sent.
+  --
+  -- Results:
+  --
+  -- 1. Correct response is received.
 function test_Stat_WhenStatCommandIsSent_CorrectResponseIsReceived()
 
   login()
@@ -312,7 +326,19 @@ function test_Stat_WhenStatCommandIsSent_CorrectResponseIsReceived()
   quit()
 end
 
-
+--- TC checks commands: NOOP.
+  -- Initial conditions:
+  -- 
+  -- * pop3 shell session is established
+  -- * authorization is performed
+  --
+  -- Steps:
+  --
+  -- 1. 'NOOP' command is sent.
+  --
+  -- Results:
+  --
+  -- 1. Correct response is received.
 function test_Noop_WhenNoopCommnadIsSent_CorrectResponseIsReceived()
   login()
   local result = pop3:request("NOOP")
@@ -320,6 +346,19 @@ function test_Noop_WhenNoopCommnadIsSent_CorrectResponseIsReceived()
   quit()
 end
 
+--- TC checks commands: APOP (if implementation exists in vms pop3)
+  -- Initial conditions:
+  -- 
+  -- * pop3 shell session is established
+  -- * authorization is performed
+  --
+  -- Steps:
+  --
+  -- 1. 'APOP' command is sent.
+  --
+  -- Results:
+  --
+  -- 1. Correct is checked for syntax error (occurs when command does not exists)
 function test_ApopImplemented_WhenApopCommnadIsSent_CorrectResponseIsReceived()
   login()
   local result = pop3:request("APOP fakeuser c4c9334bac560ecc979e58001b3e22fb")
@@ -327,16 +366,42 @@ function test_ApopImplemented_WhenApopCommnadIsSent_CorrectResponseIsReceived()
   quit()
 end
 
+--- TC checks commands: RSET (if implementation exists in vms pop3)
+  -- Initial conditions:
+  -- 
+  -- * pop3 shell session is established
+  -- * authorization is performed
+  --
+  -- Steps:
+  --
+  -- 1. 'RSET' command is sent.
+  --
+  -- Results:
+  --
+  -- 1. Correct is checked for syntax error (occurs when command does not exists)
 function test_RsetImplemented_WhenRsetCommnadIsSent_CorrectResponseIsReceived()
   login()
   local result = pop3:request("RSET")
-  assert_nil(string.find(result,"syntax error"),"Command APOP not implemented")
+  assert_nil(string.find(result,"syntax error"),"Command RSET not implemented")
   quit()
 end
 
+--- TC checks commands: UIDL (if implementation exists in vms pop3)
+  -- Initial conditions:
+  -- 
+  -- * pop3 shell session is established
+  -- * authorization is performed
+  --
+  -- Steps:
+  --
+  -- 1. 'UIDL' command is sent.
+  --
+  -- Results:
+  --
+  -- 1. Correct is checked for syntax error (occurs when command does not exists)
 function test_UidlImplemented_WhenUidlCommnadIsSent_CorrectResponseIsReceived()
   login()
-  local result = pop3:request("UILD 1 1")
+  local result = pop3:request("UIDL 1 1")
   assert_nil(string.find(result,"syntax error"),"Command UIDL not implemented")
   quit()
 end
