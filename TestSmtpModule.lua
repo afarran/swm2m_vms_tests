@@ -221,7 +221,7 @@ function test_SMTP_WhenMAILWithSpaceBeforeColonCalled_ServerReturns550()
 
 end
 
---[[ works fine with Outlook
+-- works fine with Outlook
 function test_SMTP_WhenMAILWithSpaceAfterColonCalled_ServerReturns550()
   startSmtp()
   smtp:execute("HELO")
