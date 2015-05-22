@@ -10,24 +10,41 @@ module("TestPop3Module", package.seeall)
 require "UtilLibs/Text"
 require "Email/Pop3Wrapper"
 
--- pop3 session state
-local logged = false;
+-------------------------
+-- SETUP
+-------------------------
+
+-- setup for wrappers verbosity
+local SILENT = true
+
+-- setup for waiting after message is sent via smtp, sometimes it needs time
+local TRIES_AFTER_SENDING_EMAIL = 10 -- how many tries should be performed
+local WAIT_FOR_MESSAGE_DELAY = 60    -- how many second of the delay after each try
+
+-- user setup
+local DOMAIN = "isadatapro.skywave.com"
+local USER = "<terminal_id>@"..DOMAIN
+local PASSWD = "abcd123"
+
+-------------------------
+-- SETUP
+-------------------------
 
 -- pop session wrapper
-local pop3 = Pop3Wrapper(serialMain)
+local pop3 = Pop3Wrapper(serialMain,SILENT)
 pop3:setTimeout(5)
 
 -- smtp session wrapper
-local smtp = SmtpWrapper(serialMain)
+local smtp = SmtpWrapper(serialMain,SILENT)
 smtp:setTimeout(5)
 
--- user setup
-local USER = "terminal_id@isadatapro.skywave.com"
-local PASSWD = "abcd123"
 
 -------------------------
 -- LOGIC
 -------------------------
+
+-- pop3 session state
+local logged = false;
 
 local function login()
   pop3:start()
@@ -71,7 +88,8 @@ function suite_setup()
     })
 
   local terminalId = systemSW:getTerminalId()
-  USER = terminalId.."@isadatapro.skywave.com"
+  USER = terminalId.."@"..DOMAIN
+  D:log("Using user: "..USER)
 
 end
 
@@ -94,7 +112,7 @@ end
 -- Test Cases
 -------------------------
 
-function test_Login_WhenUserNameAndPasswordIsSent_CorrectServerResponseIsReceived()
+function test_Login_GORUNWhenUserNameAndPasswordIsSent_CorrectServerResponseIsReceived()
   
   -- starting pop3 shell
   pop3:start()
@@ -127,7 +145,7 @@ function test_List_WhenListRequested_CorrectServerResponseIsReceived()
   quit()
 end
 
-function test_GORUNRetrive_WhenMailIsSentViaSmtp_ItIsPossibleToRetriveItViaPop3()
+function test_Retrive_WhenMailIsSentViaSmtp_ItIsPossibleToRetriveItViaPop3()
  
   -- login pop3 session
   login()
@@ -150,7 +168,7 @@ function test_GORUNRetrive_WhenMailIsSentViaSmtp_ItIsPossibleToRetriveItViaPop3(
   })
 
   -- waiting for test message (it can take several minutes)
-  local tries = 2
+  local tries = TRIES_AFTER_SENDING_EMAIL
   local messagesNo = 0 
   while tries > 0 do
     login()
@@ -159,7 +177,7 @@ function test_GORUNRetrive_WhenMailIsSentViaSmtp_ItIsPossibleToRetriveItViaPop3(
     if messagesNo - messagesNoBefore == 1 then
       break
     end
-    framework.delay(60)
+    framework.delay(WAIT_FOR_MESSAGE_DELAY)
     tries = tries - 1
   end
 
@@ -172,18 +190,30 @@ function test_GORUNRetrive_WhenMailIsSentViaSmtp_ItIsPossibleToRetriveItViaPop3(
   login()
 
   -- retrieve message
-  --local result = pop3:request("RETR "..messagesNo)
+  D:log("Retrive message no "..messagesNo)
+  local result = pop3:request("RETR "..messagesNo)
+  assert_not_nil(string.find(result,"+OK"),"Cannot retrieve message")
+
+  -- delete message
+  D:log("Delete message no "..messagesNo)
+  local result = pop3:request("DELE "..messagesNo)
+  assert_not_nil(string.find(result,"+OK"),"Cannot delete message")
 
   quit()
+
+  -- checking messages count after deleting message
+  login()
+  local messagesNoFinal = getMessagesNo()
+  assert_equal(messagesNoBefore,messagesNoFinal,"Wrong messages number after deleting message")
+  quit()
+
 end
 
 function test_Stat_WhenStatCommandIsSent_CorrectResponseIsReceived()
 
   login()
-
   local result = pop3:request("STAT")
   assert_not_nil(string.find(result,"+OK%s*%s*%s*%d*"),"Wrong response to command: STAT")
-
   quit()
 end
 
