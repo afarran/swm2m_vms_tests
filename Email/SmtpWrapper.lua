@@ -22,6 +22,7 @@ SmtpWrapper = {}
 
   --- sends an email over SMTP rs232 session.
   -- TODO strip from lunatest assertions and add error handling
+  -- TODO move to test logic container when assertion mechanism ready
   -- @tparam table mailInfo
   -- @tparam string mailInfo.from sender 
   -- @tparam table mailInfo.to list of receipents
