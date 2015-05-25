@@ -168,6 +168,7 @@ argparser.add_argument("--testoutput", help="Specifies a test output file")
 args = argparser.parse_args()
 
 args.comportA = "com8"
+args.instance = "666"
 
 modemsim = ModemSimulator(args.modemsim, com_port=args.comportB)
 modemsim.update_options(
@@ -176,9 +177,9 @@ modemsim.update_options(
 	}
 )
 
-modemsim.set_instance(666)
-modemsim.run()
-time.sleep(5)
+#modemsim.set_instance(666)
+#modemsim.run()
+#time.sleep(5)
 test_runner = TestRunner(test_output=args.testoutput, com_port=args.comportA)
 test_runner.set_instance(args.instance)
 
