@@ -39,10 +39,35 @@ function setup()
   shell:start()
 end
 
+-- sametimes password must be cleared after TC
+local clearPassword = false
+
 -----------------------------------------------------------------------------------------------
 --- teardown function executed after each unit test
 function teardown()
+
+  if clearPassword then
+    D:log("Clear password")
+    local result = shell:request("setpass")
+    assert_not_nil(string.find(result,"Enter old password:"),"Wrong answer for setpass")
+    D:log("Sending old password")
+    local result = shell:request("test100")
+    assert_not_nil(string.find(result,"Enter new password:"),"Wrong old password")
+    D:log("Sending new password")
+    local result = shell:request("")
+    assert_not_nil(string.find(result,"Enter new password again:"),"Wrong answer")
+    D:log("Sending new password again")
+    local result = shell:request("")
+    assert_not_nil(string.find(result,"Success"),"Password not changed")
+    clearPassword = false
+  end
+
+  vmsSW:setPropertiesByName({
+      MailSessionIdleTimeout = 20,
+      ShellTimeout = 20,
+  })
 end
+
 
 -------------------------
 -- Test Cases
@@ -264,9 +289,15 @@ function test_ShellTimeout_WhenShellTimeoutIsSetFormOneMinute_ShellModeIsCorretl
   D:log("Checking shell mode")
   local result = shell:request("shell")
   assert_not_nil(string.find(result,"shell>"),"No shell mode established.")
+  D:log("Checking mail mode")
+  local result = shell:request("mail")
+  assert_not_nil(string.find(result,"mail>"),"No mail mode established.")
+  D:log("Checking shell mode")
+  local result = shell:request("shell")
+  assert_not_nil(string.find(result,"shell>"),"No shell mode established.")
 
   D:log("Waiting for shell session idle timeout (60s)")
-  framework.delay(60+5)
+  framework.delay(60+15)
 
   D:log("Checking mail mode")
   local result = shell:request("")
@@ -302,11 +333,17 @@ function test_ShellTimeout_WhenShellTimeoutIsSetFormOneMinute_LuaModeIsCorretlyS
 
   D:log("Checking shell mode")
   local result = shell:request("shell")
+  D:log("Checking mail mode")
+  local result = shell:request("mail")
+  assert_not_nil(string.find(result,"mail>"),"No mail mode established.")
+  local result = shell:request("shell")
+  local result = shell:request("mail")
+  local result = shell:request("shell")
   local result = shell:request("lua")
   assert_not_nil(string.find(result,"lua>"),"No lua mode established.")
 
   D:log("Waiting for shell session idle timeout (60s)")
-  framework.delay(60+5)
+  framework.delay(60+15)
 
   D:log("Checking mail mode")
   local result = shell:request("")
@@ -333,11 +370,13 @@ end
   -- 5. Shell in level 1 is established.
 function test_SetPass_WhenSetPassIsInvokedAndPasswordGiven_TheNewPasswordIsCorrectlySet()
   
+  clearPassword = true
+  
   D:log("Sending setpass command")
   local result = shell:request("setpass")
   assert_not_nil(string.find(result,"Enter old password:"),"Wrong answer for setpass")
   D:log("Sending old password")
-  local result = shell:request("test100")
+  local result = shell:request("")
   assert_not_nil(string.find(result,"Enter new password:"),"Wrong old password")
   D:log("Sending new password")
   local result = shell:request("test100")
@@ -351,4 +390,64 @@ function test_SetPass_WhenSetPassIsInvokedAndPasswordGiven_TheNewPasswordIsCorre
  
   assert_not_nil(string.find(result,"shell:1"),"Access level has not been changed.")
   local result = shell:request("exit")
+  
 end
+
+--- TC checks if access level zero has its restrictions.
+  --
+  -- Steps:
+  --
+  -- 1. Password setup and access level 1 is requested .
+  -- 2. Access level zero is requested.
+  -- 3. Command 'prop get' is requested.
+  -- 4. Command 'prop set' is requested.
+  -- 5. Command 'service list' is requested.
+  -- 6. Command 'service disable' is requested.
+  -- 7. Command 'service enable' is requested.
+  --
+  -- Results:
+  --
+  -- 1. Access level 1 is established.
+  -- 2. Access level zero is established.
+  -- 3. Access restriction response is sent.
+  -- 4. Access restriction response is sent.
+  -- 5. Access restriction response is sent.
+  -- 6. Access restriction response is sent.
+  -- 7. Access restriction response is sent.
+function test_Access_WhenAccessLevelZeroIsEstablished_ThenRestrictionsOfThisLevelAreValid()
+
+  clearPassword = true
+
+  D:log("Sending setpass command")
+  local result = shell:request("setpass")
+  assert_not_nil(string.find(result,"Enter old password:"),"Wrong answer for setpass")
+  D:log("Sending old password")
+  local result = shell:request("")
+  assert_not_nil(string.find(result,"Enter new password:"),"Wrong old password")
+  D:log("Sending new password")
+  local result = shell:request("test100")
+  assert_not_nil(string.find(result,"Enter new password again:"),"Wrong answer")
+  D:log("Sending new password again")
+  local result = shell:request("test100")
+  assert_not_nil(string.find(result,"Success"),"Password not changed")
+
+  local result = shell:request("access 1")
+  local result = shell:request("test100")
+
+  assert_not_nil(string.find(result,"shell:1"),"Access level has not been changed.")
+  local result = shell:request("exit")
+  assert_not_nil(string.find(result,"shell"),"Wrong shell level.")
+  
+  local result = shell:request("prop get system")
+  assert_not_nil(string.find(result,"error: Insufficient access level"),"There should be a message: insufficient access level")
+  local result = shell:request("prop set system 1 1 ")
+  assert_not_nil(string.find(result,"error: Insufficient access level"),"There should be a message: insufficient access level")
+  local result = shell:request("service list")
+  assert_not_nil(string.find(result,"error: Insufficient access level"),"There should be a message: insufficient access level")
+  local result = shell:request("service disable VMS")
+  assert_not_nil(string.find(result,"error: Insufficient access level"),"There should be a message: insufficient access level")
+  local result = shell:request("service enable VMS")
+  assert_not_nil(string.find(result,"error: Insufficient access level"),"There should be a message: insufficient access level")
+  
+end
+

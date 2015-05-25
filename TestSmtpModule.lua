@@ -50,7 +50,11 @@ function setup()
       AllowedEmailDomains = "",
     })
   gateway.setHighWaterMark()
-  smtp:clear()
+  if not smtp:ready() then
+    skip()
+  else
+    smtp:clear()
+  end
 end
 
 -----------------------------------------------------------------------------------------------
@@ -566,9 +570,9 @@ function test_SMTP_WhenCorrectMailToigwsatkywavecomIsSent_ServerReturns250AndEma
     Latitude =        {assert_equal, GPS:degrees2MiliMinutes(gpsFix.latitude), 1},
     Longitude =   {assert_equal, GPS:degrees2MiliMinutes(gpsFix.longitude), 1},
     From = mailInfo.from,
-    Subject =  mailInfo.subject .. "\r\n",
+    Subject =  mailInfo.subject,
     Recipients = {assert_not_nil},
-    Data = mailInfo.data .. "\r\n",
+    Data = mailInfo.data .. "\r\n\r\n\r\n",
   })
 end
 

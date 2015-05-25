@@ -56,12 +56,12 @@ SmtpWrapper = {}
     local response = self:request("DATA")
     assert_match("^354.*\r\n", response, "DATA command response is incorrect")
 
-    self:request("From: " .. mailInfo.from)
-    self:request("To: " .. self:_prepareBodyRecipients(mailInfo.to))
-    self:request("Subject: " .. mailInfo.subject)
-    self:request("") -- blank line delimits header
-    self:request(mailInfo.data)
-    response = self:request("\r\n")
+    self:execute("From: " .. mailInfo.from)
+    self:execute("To: " .. self:_prepareBodyRecipients(mailInfo.to))
+    self:execute("Subject: " .. mailInfo.subject)
+    self:execute("") -- blank line delimits header
+    self:execute(mailInfo.data)
+    self:execute("\r\n")
     response = self:request("\r\n.\r\n", "")
     assert_match("^250.*\r\n", response, "DATA command end response is incorrect")
     self:request("QUIT")
