@@ -566,7 +566,7 @@ function test_SMTP_WhenCorrectMailToigwsatkywavecomIsSent_ServerReturns250AndEma
     Latitude =        {assert_equal, GPS:degrees2MiliMinutes(gpsFix.latitude), 1},
     Longitude =   {assert_equal, GPS:degrees2MiliMinutes(gpsFix.longitude), 1},
     From = mailInfo.from,
-    Subject =  mailInfo.subject,
+    Subject =  mailInfo.subject .. "\r\n",
     Recipients = {assert_not_nil},
     Data = mailInfo.data .. "\r\n",
   })
