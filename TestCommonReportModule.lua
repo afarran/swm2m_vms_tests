@@ -201,7 +201,7 @@ local function changePropertyDefinition()
   local propertyOffset, propertyOffsetEnd, currentPropertyNumber = string.find(strData, "%,(%d+)%)\n")
 
   local currentNumber = string.sub(currentPropertyNumber, 1, 1)
-  ;
+  
   local nextNumber = (tonumber(currentNumber) + 1) % 10
   -- propertyNameOffset = propertyNameOffset - 1 -- Offset calculation is not needed, string.find returns match with "," so it has to be shifted +1
   local writeOK, writeResult = filesystemSW:write(path, propertyOffset, ""..nextNumber)
