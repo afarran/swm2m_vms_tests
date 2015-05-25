@@ -3432,9 +3432,13 @@ function test_SetProperties_WhenSetPropertiesMessageIsSet_PropertiesIncludedInTh
     gateway.setHighWaterMark() -- to get the newest messages
     -- requesting Properties message
     
-    local ReceivedMessages = vmsSW:requestMessageByName("GetProperties",nil,"Properties",60)
+    vmsSW:sendMessageByName("GetProperties") 
+    
+    local  ReceivedMessages = vmsSW:waitForMessagesByName({"Properties"})
     assert_not_nil(ReceivedMessages["Properties"], "Properties message not received in response for GetProperties message")
 
+    
+    
     local ReceivedProperties = ReceivedMessages["Properties"]
     local SetProperties = nameValueToArray(SetPropertiesMessage.Fields)
     local propertyGetByLsf = vmsSW:getPropertiesByName(nameToArray(SetPropertiesMessage.Fields))
