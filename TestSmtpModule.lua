@@ -207,6 +207,21 @@ function test_SMTP_WhenMAILCorrectCommandCalledTwice_ServerReturns5xx()
   assert_match("^5%d%d.*\r\n", mailResponse, "MAIL FROM second response incorrect")
 end
 
+function test_SMTP_WhenMAILThenRSETThenMail_ServerReturns250()
+  startSmtp()
+  local mailResponse = smtp:request("MAIL FROM:<skywave1@skywave.com>")
+  assert_match("^250.*\r\n", mailResponse, "MAIL FROM response incorrect")
+
+  mailResponse = smtp:request("MAIL FROM:<skywave1@skywave.com>")
+  assert_match("^5%d%d.*\r\n", mailResponse, "MAIL FROM second response incorrect")
+  
+  mailResponse = smtp:request("RSET")
+  assert_match("^250.*\r\n", mailResponse, "RSET response is incorrect")
+  
+  mailResponse = smtp:request("MAIL FROM:<skywave1@skywave.com>")
+  assert_match("^250.*\r\n", mailResponse, "MAIL FROM response incorrect")
+end
+
 --Since it has been a common source of errors, it is worth noting that
 --   spaces are not permitted on either side of the colon following FROM
 --   in the MAIL command or TO in the RCPT command.
