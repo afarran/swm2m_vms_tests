@@ -170,12 +170,6 @@ args = argparser.parse_args()
 args.comportA = "com8"
 args.instance = "666"
 
-modemsim = ModemSimulator(args.modemsim, com_port=args.comportB)
-modemsim.update_options(
-	{
-		"DefaultDirectory" : args.firmwaredir,
-	}
-)
 
 #modemsim.set_instance(666)
 #modemsim.run()
