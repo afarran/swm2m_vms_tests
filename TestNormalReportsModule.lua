@@ -2477,7 +2477,6 @@ function generic_test_ConfigChangeReportConfigChangeReportIsSent(messageKey,prop
       0,
       "Property " .. propertiesToChange[i] .. " is different than property fetched from lsf!"
     )
-    --TODO: check fields in ConfigChangeReport (previous and current)
   end
 
   D:log(configChangeMessage)

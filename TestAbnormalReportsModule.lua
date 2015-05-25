@@ -3197,6 +3197,8 @@ function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateTrueWhe
   if(ReceivedMessages["AbnormalReport"] ~= nil and ReceivedMessages["AbnormalReport"].EventType == "HwClientDisconnected" ) then
     assert_nil(1, "HwClientDisconnected abnormal report sent but not expected")
   end
+  
+  framework.delay(HW_CLIENT_DISCONNECTED_END_DEBOUNCE_TIME)
 
   -- checking HwClientDisconnectedState property
   local HwClientDisconnectedStateProperty = vmsSW:getPropertiesByName({"HwClientDisconnectedState"})
@@ -3278,7 +3280,7 @@ end
 
 
 --- TC checks if when Hardware Client is connected to IDP terminal for time above thresholds HwClientDisconnected AbnormalReport is not sent when sending HwClientDisconnected reports is disabled
-function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateTrueWhenHwClientIsConnectedDisconnectedForTimeAboveThresholdsButHwClientDisconnectedReportsAreDisabled_HwClientDisconnectedAbnormalReportIsNotSent()
+function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateTrueWhenHwClientIsConnectedForTimeAboveThresholdsButHwClientDisconnectedReportsAreDisabled_HwClientDisconnectedAbnormalReportIsNotSent()
 
   local HW_CLIENT_DISCONNECTED_START_DEBOUNCE_TIME = 1
   local HW_CLIENT_DISCONNECTED_END_DEBOUNCE_TIME = 1
@@ -3306,6 +3308,7 @@ function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateTrueWhe
   gateway.setHighWaterMark() -- to get the newest messages
   D:log("HW CLIENT CONNECTED TO TERMINAL")
   -- Hw client is connected to terminal
+  shellSW:eval("serialDTEConnected = true")
   shellSW:postEvent(
                     "\"_RS232\"",
                     "DTECONNECTED",
@@ -3328,6 +3331,7 @@ function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateTrueWhe
   gateway.setHighWaterMark() -- to get the newest messages
   D:log(os.time(), "HW CLIENT DISCONNECTED FROM TERMINAL")
   -- Hw client is disconnected from terminal
+  shellSW:eval("serialDTEConnected = false")
   shellSW:postEvent(
                     "\"_RS232\"",
                     "DTECONNECTED",
@@ -3497,8 +3501,8 @@ function test_MultipleAbnormalReportsEnabled_When3AbnormalReportsAreTriggered_3A
                             }
   )
   -- INTERFACE UNIT disconnected from terminal
-  InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = false})
-
+  InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = true})
+  framework.delay(2)
 
   gateway.setHighWaterMark() -- to get the newest messages
   GPS:set({jammingDetect = true, fixType = 3})
