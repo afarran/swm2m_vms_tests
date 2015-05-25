@@ -145,17 +145,19 @@ Annotations:register([[
 function test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetToValueAbove0AndStandardReportsAreBeingSent_TerminalConnectedLEDIsFlashingForMinStandardReportLedFlashTime()
 
   -- *** Setup
-  local STANDARD_REPORT_1_INTERVAL = 1
-  local FLASH_TIME = 30
+  local STANDARD_REPORT_1_INTERVAL = 1   -- minutes
+  local FLASH_TIME = 30                  
   
   vmsSW:setPropertiesByName({StandardReport1Interval = STANDARD_REPORT_1_INTERVAL,
                              StandardReport2Interval = 0,
                              StandardReport3Interval = 0, 
                              MinStandardReportLedFlashTime = FLASH_TIME}     -- feature enabled
+                             InterfaceUnitDisconnectedStartDebounceTime = 1, -- seconds
+                             InterfaceUnitDisconnectedEndDebounceTime = 1,   -- seconds
   )
   
   -- Interface Unit disconnected from terminal
-  InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = false})
+  InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = true})
   gateway.setHighWaterMark() -- to get the newest messages
 
    -- wait for report

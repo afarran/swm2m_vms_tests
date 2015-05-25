@@ -12,6 +12,16 @@ IDPBlockageFeaturesImplemented = false
 function suite_setup()
   -- reset of properties
   -- restarting VMS agent ?
+  shellSW:eval([[
+    serialDTEConnected = false
+    oldSerialOnGetVolatile = svc.serial.onGetVolatile
+    svc.serial.onGetVolatile = function(pin, name)
+    if pin == 7 then 
+      return serialDTEConnected
+    else
+      oldSerialOnGetVolatile(pin, name)
+    end 
+  end]])
 
 end
 
@@ -19,7 +29,11 @@ end
 function suite_teardown()
 
   GPS:set({jammingDetect = false, fixType = 3}) -- not to interrupt other suits
-
+  shellSW:eval([[
+    svc.serial.onGetVolatile = oldSerialOnGetVolatile
+    oldSerialOnGetVolatile = nil
+    serialDTEConnected = nil
+  ]])
 
 end
 
@@ -47,17 +61,14 @@ function setup()
   )
 
   GPS:set({jammingDetect = false, fixType = 3})
-  
+  shellSW:eval([[serialDTEConnected = false]])
   -- disconnecting HW Client
   shellSW:postEvent(
                     "\"_RS232\"",
                     "DTECONNECTED",
                     "false"
   )
-  
-  -- INTERFACE UNIT is disconnected from external power 
-  helmPanel:externalPowerConnected("false")
-
+ 
   framework.delay(2)
 
 
@@ -70,13 +81,29 @@ function teardown()
 
   GPS:set({jammingDetect = false, fixType = 3})
 
+shellSW:eval([[
+  serialDTEConnected = false
+oldSerialOnGetVolatile = svc.serial.onGetVolatile
+svc.serial.onGetVolatile = function(pin, name)
+  if pin == 7 then 
+    return serialDTEConnected
+  else
+    oldSerialOnGetVolatile(pin, name)
+  end
+end]])
+
+  shellSW:eval("serialDTEConnected = true")
   -- disconnecting HW Client
   shellSW:postEvent(
                     "\"_RS232\"",
                     "DTECONNECTED",
                     "false"
   )
+  
+--]]
 
+  -- Add in suite teardown
+  -- svc.serial.onGetVolatile = oldSerialOnGetVolatile
 end
 
 -------------------------
@@ -2887,6 +2914,7 @@ function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateTrueWhe
 
   D:log("HW CLIENT CONNECTED TO TERMINAL")
   -- Hw client is connected to terminal
+  shellSW:eval("serialDTEConnected = true")
   shellSW:postEvent(
                     "\"_RS232\"",
                     "DTECONNECTED",
@@ -3003,15 +3031,16 @@ function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateFalseWh
 
   -- *** Execute
   GPS:set(InitialPosition)
-
+ 
   D:log("HW CLIENT CONNECTED TO TERMINAL")
   -- Hw client is connected to terminal
+  shellSW:eval("serialDTEConnected = true")
   shellSW:postEvent(
                     "\"_RS232\"",
                     "DTECONNECTED",
                     "true"
   )
-
+  
   framework.delay(HW_CLIENT_DISCONNECTED_END_DEBOUNCE_TIME)
 
   -- checking HwClientDisconnectedState property
@@ -3023,7 +3052,8 @@ function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateFalseWh
 
   gateway.setHighWaterMark() -- to get the newest messages
   -- Hw client is disconnected from terminal
-  shellSW:postEvent(
+ shellSW:eval("serialDTEConnected = false")
+ shellSW:postEvent(
                     "\"_RS232\"",
                     "DTECONNECTED",
                     "false"
@@ -3146,6 +3176,7 @@ function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateTrueWhe
 
   D:log("HW CLIENT CONNECTED TO TERMINAL")
   -- Hw client is connected to terminal
+   shellSW:eval("serialDTEConnected = true")
   shellSW:postEvent(
                     "\"_RS232\"",
                     "DTECONNECTED",
@@ -3156,6 +3187,7 @@ function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateTrueWhe
   D:log(ReceivedMessages["AbnormalReport"])
 
   -- back to HW Client disconnected
+  shellSW:eval("serialDTEConnected = false")
   shellSW:postEvent(
                     "\"_RS232\"",
                     "DTECONNECTED",
@@ -3204,6 +3236,7 @@ function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateFalseWh
 
   D:log("HW CLIENT CONNECTED TO TERMINAL")
   -- Hw client is connected to terminal
+   shellSW:eval("serialDTEConnected = true")
   shellSW:postEvent(
                     "\"_RS232\"",
                     "DTECONNECTED",
@@ -3221,6 +3254,7 @@ function test_HwClientDisconnected_ForTerminalInHwClientDisconnectedStateFalseWh
 
   gateway.setHighWaterMark() -- to get the newest messages
   -- Hw client is disconnected from terminal
+  shellSW:eval("serialDTEConnected = false")
   shellSW:postEvent(
                     "\"_RS232\"",
                     "DTECONNECTED",
