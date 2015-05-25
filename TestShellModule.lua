@@ -14,6 +14,13 @@ module("TestShellModule", package.seeall)
 function suite_setup()
   -- wait for VMS shell
   framework.delay(15)
+
+  vmsSW:setPropertiesByName({
+      MailSessionIdleTimeout = 20,
+      ShellTimeout = 20,
+  })
+
+
 end
 
 -- executed after each test suite
@@ -307,4 +314,41 @@ function test_ShellTimeout_WhenShellTimeoutIsSetFormOneMinute_LuaModeIsCorretlyS
 
 end
 
+--- TC checks if setpass command is able to set password correctly.
+  --
+  -- Steps:
+  --
+  -- 1. 'setpass' command is sent.
+  -- 2. Old password is sent.
+  -- 3. New password is sent.
+  -- 4. New password is sent.
+  -- 5. Access level 1 is requested
+  --
+  -- Results:
+  --
+  -- 1. Old password prompt is received.
+  -- 2. New password prompt is received.
+  -- 3. New password prompt is received.
+  -- 4. Success status is received.
+  -- 5. Shell in level 1 is established.
+function test_SetPass_WhenSetPassIsInvokedAndPasswordGiven_TheNewPasswordIsCorrectlySet()
+  
+  D:log("Sending setpass command")
+  local result = shell:request("setpass")
+  assert_not_nil(string.find(result,"Enter old password:"),"Wrong answer for setpass")
+  D:log("Sending old password")
+  local result = shell:request("test100")
+  assert_not_nil(string.find(result,"Enter new password:"),"Wrong old password")
+  D:log("Sending new password")
+  local result = shell:request("test100")
+  assert_not_nil(string.find(result,"Enter new password again:"),"Wrong answer")
+  D:log("Sending new password again")
+  local result = shell:request("test100")
+  assert_not_nil(string.find(result,"Success"),"Password not changed")
 
+  local result = shell:request("access 1")
+  local result = shell:request("test100")
+ 
+  assert_not_nil(string.find(result,"shell:1"),"Access level has not been changed.")
+  local result = shell:request("exit")
+end
