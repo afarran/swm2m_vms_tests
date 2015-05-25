@@ -35,21 +35,27 @@ ShellWrapper = {}
     delay = self.samplingDelay or delay or 0.2
     local startTime = os.time()
     local startAvailable = self.port:available()
+    local response = ""
     while (os.time() - startTime < timeout) do
     
       local currentAvailable = self.port:available()
       if (currentAvailable > 0) and (currentAvailable == startAvailable) then
-        local response = self.port:read()
-        local timediff = os.time() - startTime
-        self:log("Response received in " .. timediff .. "s. : " .. response)
-        return response, timediff
+        response = response .. self.port:read()
+        -- postpone timeout
+        timeout = (os.time() - startTime) + 2*delay 
+      else
+        framework.delay(delay)
       end
       startAvailable = currentAvailable
-      framework.delay(delay)
+      
     end
     local timediff = os.time() - startTime
-    self:log("Response not received after " .. timediff .. "s.")
-    return "", timediff
+    if (string.len(response) > 0) then
+      self:log("Response received in " .. timediff .. "s. : " .. response)
+    else
+      self:log("Response not received after " .. timediff .. "s.")
+    end
+    return response, timediff
   end
   
   function ShellWrapper:clear()
