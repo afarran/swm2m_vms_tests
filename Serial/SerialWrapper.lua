@@ -10,6 +10,11 @@ SerialWrapper = {}
     end,})
 
   function SerialWrapper:_init(args)
+    if args.name then 
+      D:log("Trying to use " .. args.name .. " as serial com port")
+    else
+      D:log("Serial com port will not be used")
+    end
     self.buffer = ""
     if args.open then
       self:open(args)
