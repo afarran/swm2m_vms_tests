@@ -151,9 +151,9 @@ function test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetToValue
   vmsSW:setPropertiesByName({StandardReport1Interval = STANDARD_REPORT_1_INTERVAL,
                              StandardReport2Interval = 0,
                              StandardReport3Interval = 0, 
-                             MinStandardReportLedFlashTime = FLASH_TIME}     -- feature enabled
-                             InterfaceUnitDisconnectedStartDebounceTime = 1, -- seconds
-                             InterfaceUnitDisconnectedEndDebounceTime = 1,   -- seconds
+                             MinStandardReportLedFlashTime = FLASH_TIME},     -- feature enabled
+                             InterfaceUnitDisconnectedStartDebounceTime = 1,  -- seconds
+                             InterfaceUnitDisconnectedEndDebounceTime = 1,    -- seconds
   )
   
   -- Interface Unit disconnected from terminal
