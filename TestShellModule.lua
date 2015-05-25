@@ -228,40 +228,40 @@ function test_ShellCommandMail_WhenMailCommandIsSentShellIsSwitchedToMailMode()
   assert_not_nil(string.find(result,"mail>"),"shell should be in 'mail' mode")
 end
 
---- TC checks VMS if setting MailSessioinIdleTimeout switches to mail mode (from pop3 mode).
-  --
-  -- Initial Conditions:
-  --
-  -- * There should be VMS shell mode turned on and MailSessionIdleTimeout set to 1 minute.
+--- TC checks VMS if setting ShellTimeout switches to mail mode (from shell mode).
   --
   -- Steps:
   --
-  -- 1. 'pop3' shell command is requested.
-  -- 2.  Waiting for 1 minute is performed.
+  -- 1. Mail mode is executed.
+  -- 2. ShellTimeout is changed for 1 minute.
+  -- 3. Shell mode is executed.
+  -- 4. Waiting for 1 minute is performed.
   --
   -- Results:
   --
-  -- 1. 'pop3' mode is correctly established.
-  -- 2. Shell is switched to 'mail' mode.
-function test_MailSessionIdleTimeout_WhenMailSessionIdleTimeoutIsSetToOneMinuteAndShellModeIsSetToSmtp_AfterTimeoutShellIsSwitchedToMailMode()
+  -- 1. Mail mode is correctly established.
+  -- 2. ShellTimeout is correctly set.
+  -- 3. Shell mode is correctly established.
+  -- 4. Shell is switched to 'mail' mode.
+function test_ShellTimeout_WhenShellTimeoutIsSetFormOneMinute_ShellModeIsCorretlySwitchedToMailModeWithinOneMinuteTimeout()
 
-  D:log("Requesting mail mode")
+  D:log("Checking mail mode")
   local result = shell:request("mail")
+  assert_not_nil(string.find(result,"mail>"),"No mail mode established.")
 
-  -- MailSessionIdleTimeout set to 1 minute.
+  -- ShellTimeout set to 1 minute.
   vmsSW:setPropertiesByName({
-    MailSessionIdleTimeout  = 1,
+    ShellTimeout  = 1,
   })
 
-  D:log("Requesting pop3 mode")
-  local result = shell:request("pop3")
-  D:log(result)
-  assert_not_nil(string.find(result,"POP3 Service Ready"),"POP3 service is not ready")
-  
-  D:log("Waiting for mail session idle timeout (60s)")
+  D:log("Checking shell mode")
+  local result = shell:request("shell")
+  assert_not_nil(string.find(result,"shell>"),"No shell mode established.")
+
+  D:log("Waiting for shell session idle timeout (60s)")
   framework.delay(60+5)
 
-  D:log("Checking shell mode")
+  D:log("Checking mail mode")
   local result = shell:request("")
   assert_not_nil(string.find(result,"mail>"),"Idle timeout has not been executed")
   
