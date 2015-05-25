@@ -518,7 +518,6 @@ function test_SMTP_WhenTextEndedWithCRInsteadOfCRLFAreIsSent_TextIsNotTreatedAsC
 
 end
 
---[[ data from buffor is executed even if cr+lf was not passed. Works with Outlook
 function test_SMTP_WhenTextIsSentWithoutCRLF_421ConnectionTimeoutIsSentAfterTimeout()
   local timeout = 1
   vmsSW:setPropertiesByName({MailSessionIdleTimeout = timeout})
@@ -528,7 +527,6 @@ function test_SMTP_WhenTextIsSentWithoutCRLF_421ConnectionTimeoutIsSentAfterTime
   D:log(response)
   assert_match("^421.*\r\n", response, "A command not ended with CRLF was executed after timeout instead of 421 Connection timeout message sent in response")
 end
---]]
 
 function test_SMTP_WhenCorrectMailToigwsatkywavecomIsSent_ServerReturns250AndEmailMessageIsSent()
   local gpsFix = GPS:getRandom()

@@ -52,3 +52,21 @@ ShellServiceWrapper = {}
     local code = "sched.post("..handleName..",\""..eventName.."\","..data..")"
     self:eval(code)
   end
+  
+  function ShellServiceWrapper:execute(command, tag)
+    self:log("Executing shell command: " .. command)
+    tag = tag or 0
+    local fields = {{Name="tag",Value=tag},{Name="data",Value=command}}
+    local result = self:requestMessageByName("executeCmd", fields, "cmdResult")
+    return result.cmdResult
+  end
+  
+  function ShellServiceWrapper:renameFile(inFile, outFile)
+    self:log("Renaming file: " .. inFile .. " -> " .. outFile)
+    local result = self:execute("rename " .. inFile .. " " .. outFile)
+    if result then
+      return result.success, result.output
+    else
+      return nil, "Response not received"
+    end
+  end

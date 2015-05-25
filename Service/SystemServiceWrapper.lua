@@ -79,13 +79,17 @@ SystemServiceWrapper = {}
     self:sendMessageByName("resetProperties", Fields)
   end
   
-  function SystemServiceWrapper:restartService(sin)
+  function SystemServiceWrapper:restartService(sinOrService)
+    local sin = self:_sinOrSinFromService(sinOrService)
     local Fields = {{Name="sin",Value=sin}}
     self:sendMessageByName("restartService", Fields)
   end
   
-  function SystemServiceWrapper:restartFramework()
+  function SystemServiceWrapper:restartFramework(waitForTerminalRegistration)
     self:sendMessageByName("restartFramework")
+    if waitForTerminalRegistration then
+      self:waitForMessagesByName("terminalRegistration")
+    end
   end
 
   function SystemServiceWrapper:getTerminalId() 
@@ -113,4 +117,39 @@ SystemServiceWrapper = {}
     elseif terminalInfo.hardwareVariant == "IDP-8XX" then return 3
     end
     
+  end
+
+  function SystemServiceWrapper:getServiceInfo(sinOrService)
+    local sin
+    if type(sinOrService) == "table" then
+      sin = sinOrService.sin
+    else
+      sin = sinOrService
+    end
+    local fields = {{Name="sin",Value=sin}}
+    
+    return self:requestMessageByName("getServiceInfo", fields, "serviceInfo")["serviceInfo"]
+    
+  end
+  
+  function SystemServiceWrapper:disableService(sinOrService)
+    local sin = self:_sinOrSinFromService(sinOrService)
+    local fields = {{Name="sin",Value=sin},{Name="disable",Value=true}}
+    self:sendMessageByName("disableService", fields)
+  end
+  
+  function SystemServiceWrapper:enableService(sinOrService)
+    local sin = self:_sinOrSinFromService(sinOrService)
+    local fields = {{Name="sin",Value=sin},{Name="disable",Value=false}}
+    self:sendMessageByName("disableService", fields)
+  end
+  
+  function SystemServiceWrapper:_sinOrSinFromService(sinOrService)
+    local sin
+    if type(sinOrService) == "table" then
+      sin = sinOrService.sin
+    else
+      sin = sinOrService
+    end
+    return sin
   end
