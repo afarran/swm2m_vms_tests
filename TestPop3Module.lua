@@ -417,3 +417,47 @@ function test_UidlImplemented_WhenUidlCommnadIsSent_CorrectResponseIsReceived()
   assert_nil(string.find(result,"syntax error"),"Command UIDL not implemented")
   quit()
 end
+
+--- TC checks VMS if setting MailSessioinIdleTimeout switches to mail mode (from pop3 mode).
+  --
+  -- Initial Conditions:
+  --
+  -- * There should be VMS shell mode turned on and MailSessionIdleTimeout set to 1 minute.
+  --
+  -- Steps:
+  --
+  -- 1. 'pop3' shell command is requested.
+  -- 2.  Waiting for 1 minute is performed.
+  --
+  -- Results:
+  --
+  -- 1. 'pop3' mode is correctly established.
+  -- 2. Shell is switched to 'mail' mode.
+function test_MailSessionIdleTimeout_WhenMailSessionIdleTimeoutIsSetToOneMinuteAndShellModeIsSetToSmtp_AfterTimeoutShellIsSwitchedToMailMode()
+
+  -- smtp session wrapper
+  local shell = ShellWrapper(serialMain,SILENT)
+  shell:setTimeout(5)
+
+
+  -- MailSessionIdleTimeout set to 1 minute.
+  vmsSW:setPropertiesByName({
+    MailSessionIdleTimeout  = 1,
+  })
+
+  D:log("Starting pop3.")
+  pop3:start()
+
+  D:log("Waiting for mail session idle timeout (60s)")
+  framework.delay(60+15)
+
+  D:log("Checking shell mode")
+  local result = shell:request("")
+  assert_not_nil(string.find(result,"mail>"),"Idle timeout has not been executed")
+
+  -- MailSessionIdleTimeout set to 1 minute.
+  vmsSW:setPropertiesByName({
+    MailSessionIdleTimeout  = 20,
+  })
+end
+
