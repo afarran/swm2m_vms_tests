@@ -182,6 +182,4 @@ test_runner.args["t"] = args.test
 
 test_runner.run()
 
-modemsim.close()
-
 
