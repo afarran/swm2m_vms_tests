@@ -727,7 +727,7 @@ function test_GpsBlocked_WhenGpsSignalIsBlockedForTimeAboveGpsBlockedStartDeboun
   assert_equal(
     timeOfEvent,
     tonumber(ReceivedMessages["AbnormalReport"].Timestamp),
-    20,
+    40,
     "Wrong Timestamp value in GpsBlocked abnormal report"
   )
 
