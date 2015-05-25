@@ -167,7 +167,7 @@ argparser.add_argument("--testoutput", help="Specifies a test output file")
 
 args = argparser.parse_args()
 
-args.comportA = "com8"
+args.comportA = "8"
 args.instance = "666"
 
 
