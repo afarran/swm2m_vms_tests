@@ -2810,7 +2810,7 @@ end
 
 
 --- TC checks if when InterfaceUnit is connected and disconnected for time above thresholds InterfaceUnitDisconnected AbnormalReports are not sent when sending is disabled
-function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitDisconnectedStateTrueWhenInterfaceUnitIsConnectedAndConnectedForTimeAboveThresholdAndInterfaceUnitDisconnectedReportsAreDisabled_InterfaceUnitDisconnectedAbnormalReportIsNotSent()
+function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitDisconnectedStateTrueWhenInterfaceUnitIsDisconnectedAndConnectedForTimeAboveThresholdAndInterfaceUnitDisconnectedReportsAreDisabled_InterfaceUnitDisconnectedAbnormalReportIsNotSent()
 
   local INTERFACE_UNIT_DISCONNECTED_START_DEBOUNCE_TIME = 1
   local INTERFACE_UNIT_DISCONNECTED_END_DEBOUNCE_TIME = 1
@@ -2833,6 +2833,12 @@ function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitDisconnectedSt
 
   GPS:set(InitialPosition)
   -- *** Execute
+  D:log("INTERFACE UNIT DISCONNECTED FROM TERMINAL")
+  -- INTERFACE UNIT is diconnected to terminal from now
+  InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = false})
+
+  framework.delay(INTERFACE_UNIT_DISCONNECTED_START_DEBOUNCE_TIME)
+  
   -- checking InterfaceUnitDisconnectedState property
   local InterfaceUnitDisconnectedStateProperty = vmsSW:getPropertiesByName({"InterfaceUnitDisconnectedState"})
   D:log(framework.dump(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"]), "InterfaceUnitDisconnectedState")
@@ -2856,11 +2862,7 @@ function test_InterfaceUnitDisconnected_ForTerminalInInterfaceUnitDisconnectedSt
 
   InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = false})
 
-  D:log("INTERFACE UNIT DISCONNECTED FROM TERMINAL")
-  -- INTERFACE UNIT is diconnected to terminal from now
-  InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = false})
-
-  framework.delay(INTERFACE_UNIT_DISCONNECTED_START_DEBOUNCE_TIME)
+  
 
   ReceivedMessages = vmsSW:waitForMessagesByName({"AbnormalReport"}, 15)
   D:log(ReceivedMessages["AbnormalReport"])

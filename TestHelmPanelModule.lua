@@ -154,7 +154,7 @@ function test_TerminalConnectedLED_WhenMinStandardReportLedFlashTimeIsSetToValue
                              MinStandardReportLedFlashTime = FLASH_TIME,     -- feature enabled
                              InterfaceUnitDisconnectedStartDebounceTime = 1,  -- seconds
                              InterfaceUnitDisconnectedEndDebounceTime = 1,    -- seconds
-  )
+  })
   
   -- Interface Unit disconnected from terminal
   InterfaceUnitHelpSW:setPropertiesByName({uniboxConnected = true})
