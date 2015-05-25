@@ -8,7 +8,7 @@ require "Email/SmtpWrapper"
 
 local smtp = SmtpWrapper(serialMain)
 smtp:setSamplingDelay(0.05)
-smtp:setTimeout(5)
+smtp:setTimeout(10)
 
 module("TestSmtpModule", package.seeall)
 
