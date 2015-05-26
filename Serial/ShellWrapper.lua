@@ -31,10 +31,10 @@ ShellWrapper = {}
   end
   
   --- This function listens on serial port to get data until it receives bytes or timeout
-  function ShellWrapper:getResponse(timeout, delay)
+  function ShellWrapper:getResponse(timeout, samplingDelay)
     local startTime = os.time()
     timeout = timeout or self.timeout
-    delay = self.samplingDelay or delay or 0.2    
+    samplingDelay = self.samplingDelay or samplingDelay or 0.2    
     local response = ""
     local dataReceived
     
@@ -45,14 +45,14 @@ ShellWrapper = {}
         response = response .. self.port:read()
         -- some data was received, try to receive more and finish - change timeout
         timeout = (os.time() - startTime) + 1
-        framework.delay(0.1)
+        framework.delay(0.1) -- wait for 100ms, algorithm will try to receive next chunk of data, if not available it will break the loop
         dataReceived = true
       else
         -- we already got some data and 
         if dataReceived then 
           break 
         end
-        framework.delay(delay)
+        framework.delay(samplingDelay)
       end
       
       
