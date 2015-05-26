@@ -88,7 +88,7 @@ SystemServiceWrapper = {}
   function SystemServiceWrapper:restartFramework(waitForTerminalRegistration)
     self:sendMessageByName("restartFramework")
     if waitForTerminalRegistration then
-      self:waitForMessagesByName("terminalRegistration")
+      self:waitForMessagesByName("terminalRegistration", 240)
     end
   end
 
