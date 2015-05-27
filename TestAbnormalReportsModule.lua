@@ -2738,7 +2738,7 @@ function test_InterfaceUnitDisconnected_WhenInterfaceUnitServiceIsDisabledForTim
   assert_false(InterfaceUnitDisconnectedStateProperty["InterfaceUnitDisconnectedState"], "InterfaceUnitDisconnectedState property has not been changed after  InterfaceUnitDisconnectedEndDebounceTime has passed")
   
   -- enabling InterfaceUnit Service not to interrupt other TCs
-  systemSW:sendMessageByName("setEnabledServices", {{Name="sinList",Value="og=="}}) 
+  systemSW:enableService(162)
 
 end
 
