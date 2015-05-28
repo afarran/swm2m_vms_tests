@@ -59,7 +59,9 @@ ShellWrapper = {}
     end
     local timediff = os.time() - startTime
     if (string.len(response) > 0) then
-      self:log("Response received in " .. timediff .. "s. : " .. response)
+	  local escaped = string.gsub(response, "\r", "<CR>")
+	  escaped = string.gsub(escaped, "\n", "<LF>")
+      self:log("Response received in " .. timediff .. "s. : " .. escaped)
     else
       self:log("Response not received after " .. timediff .. "s.")
     end
