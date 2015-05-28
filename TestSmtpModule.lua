@@ -44,16 +44,16 @@ end
 
 --- setup function
 function setup()
-  vmsSW:setPropertiesByName({
-      MailSessionIdleTimeout = 1,
-      GpsInEmails = true,
-      AllowedEmailDomains = "",
-    })
-  gateway.setHighWaterMark()
   if not smtp:ready() then
     skip()
   else
     smtp:clear()
+	vmsSW:setPropertiesByName({
+      MailSessionIdleTimeout = 1,
+      GpsInEmails = true,
+      AllowedEmailDomains = "",
+    })
+	gateway.setHighWaterMark()
   end
 end
 
