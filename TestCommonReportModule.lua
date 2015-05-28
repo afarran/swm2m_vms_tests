@@ -309,13 +309,13 @@ function test_CommonReport_WhenFirmwarePackageHasChanged_VersionReportIsSent()
   changeFirmwarePackageVersion()
   --restart Framework
   systemSW:restartFramework(true)
-  framework.delay(3)
-  receivedMessages = systemSW:requestMessageByName("getTerminalInfo", nil, "terminalInfo")
-  local terminalInfo = receivedMessages.terminalInfo
   
   --wait for Version message
   vmsSW:setHighWaterMark()
   receivedMessages = vmsSW:waitForMessagesByName({"Version"})
+  
+  receivedMessages = systemSW:requestMessageByName("getTerminalInfo", nil, "terminalInfo")
+  local terminalInfo = receivedMessages.terminalInfo
   
   --verify Version message
   local versionMessageAfterChange = receivedMessages.Version
