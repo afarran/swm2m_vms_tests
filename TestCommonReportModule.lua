@@ -36,7 +36,7 @@ function teardown()
       vmsSW:waitForMessagesByName({"Version"})
     end
     if restoreData.restartFramework then
-      systemSW:restartFramework()
+      systemSW:restartFramework(true)
       vmsSW:waitForMessagesByName({"Version"})
     end
     restoreData = nil
@@ -308,7 +308,7 @@ function test_CommonReport_WhenFirmwarePackageHasChanged_VersionReportIsSent()
   
   changeFirmwarePackageVersion()
   --restart Framework
-  systemSW:restartFramework()
+  systemSW:restartFramework(true)
   framework.delay(3)
   receivedMessages = systemSW:requestMessageByName("getTerminalInfo", nil, "terminalInfo")
   local terminalInfo = receivedMessages.terminalInfo
@@ -354,7 +354,7 @@ function test_CommonReport_WhenVmsVersionHasChanged_VersionReportIsSent()
   changeVmsVersion(versionMessage.VmsAgent)
   
   vmsSW:setHighWaterMark()
-  systemSW:restartFramework()
+  systemSW:restartFramework(true)
   receivedMessages = vmsSW:waitForMessagesByName({"Version"})
   local versionMessageAfterChange = receivedMessages.Version
   
@@ -476,7 +476,7 @@ function test_CommonReport_WhenHelmPanelVersionHasChanged_VersionReportIsSent()
   changeHelmPanelVersion(versionMessage.InterfaceUnit)
   
   vmsSW:setHighWaterMark()
-  systemSW:restartFramework()
+  systemSW:restartFramework(true)
   receivedMessages = vmsSW:waitForMessagesByName({"Version"})
   local versionMessageAfterChange = receivedMessages.Version
   
