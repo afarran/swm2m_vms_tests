@@ -45,7 +45,7 @@ ShellWrapper = {}
         response = response .. self.port:read()
         -- some data was received, try to receive more and finish - change timeout
         timeout = (os.time() - startTime) + 1
-        framework.delay(0.1) -- wait for 100ms, algorithm will try to receive next chunk of data, if not available it will break the loop
+        framework.delay(0.25) -- wait for 100ms, algorithm will try to receive next chunk of data, if not available it will break the loop
         dataReceived = true
       else
         -- we already got some data and 
